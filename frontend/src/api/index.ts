@@ -10,6 +10,7 @@ import {
   ChatSession,
   Dataset,
   DatasetMetric,
+  DatasetRootCausesResponse,
   ExecutiveSummaryResponse,
   Forecast,
   ForecastHorizon,
@@ -65,8 +66,11 @@ export const DecisionApi = {
   // ------------------------------------------------------------------------
   // Root Causes & Recommendations
   // ------------------------------------------------------------------------
+  getRootCausesResponse: (datasetId: string) =>
+    apiClient<DatasetRootCausesResponse>(`/datasets/${datasetId}/root-causes`),
+
   listRootCauses: (datasetId: string) =>
-    apiClient<RootCause[]>(`/datasets/${datasetId}/root-causes`),
+    apiClient<DatasetRootCausesResponse>(`/datasets/${datasetId}/root-causes`),
 
   listRecommendations: (datasetId: string) =>
     apiClient<Recommendation[]>(`/datasets/${datasetId}/recommendations`),

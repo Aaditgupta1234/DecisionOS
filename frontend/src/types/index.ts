@@ -84,14 +84,85 @@ export interface DiagnosticFinding {
 
 export interface RootCause {
   id: string;
-  root_cause_key: string;
+  root_cause_key?: string;
   title: string;
   category: string;
-  probability_score: number;
+  probability_score?: number;
   confidence_score: number;
-  supporting_evidence?: string;
+  impact_score?: number;
+  supporting_evidence?: string | Record<string, any>;
   affected_finding_ids?: string[];
+  created_at?: string;
+}
+
+export interface CausalGraphNode {
+  id: string;
+  title: string;
+  category: string;
+  subtype: string;
+  severity: FindingSeverity | string;
+  confidence_score: number;
+}
+
+export interface CausalGraphEdge {
+  source_id: string;
+  target_id: string;
+  relationship_type: string;
+  relationship_strength: string;
+  confidence_score: number;
+  impact_score: number;
+}
+
+export interface CausalGraphData {
+  nodes: CausalGraphNode[];
+  edges: CausalGraphEdge[];
+}
+
+export interface RootCauseAnalysisRecord {
+  id: string;
+  dataset_id: string;
+  primary_finding_id: string;
+  root_cause_finding_id: string;
+  relationship_type: string;
+  relationship_strength: string;
+  confidence_score: number;
+  impact_score: number;
+  explanation: string;
+  supporting_evidence?: Record<string, any>;
   created_at: string;
+  primary_finding?: DiagnosticFinding;
+  root_cause_finding?: DiagnosticFinding;
+}
+
+export interface RootCauseSummaryItem {
+  finding_id: string;
+  title: string;
+  category: string;
+  subtype: string;
+  severity: string;
+  relationship_type: string;
+  relationship_strength: string;
+  confidence_score: number;
+  impact_score: number;
+  explanation: string;
+}
+
+export interface RootCauseSummaryGroup {
+  primary_issue: string;
+  primary_finding_id: string;
+  primary_severity: string;
+  root_causes: RootCauseSummaryItem[];
+  overall_confidence: number;
+  highest_impact: number;
+  causal_chains: string[][];
+}
+
+export interface DatasetRootCausesResponse {
+  dataset_id: string;
+  total_root_causes: number;
+  analyses: RootCauseAnalysisRecord[];
+  summaries: RootCauseSummaryGroup[];
+  graph: CausalGraphData;
 }
 
 export interface Recommendation {
