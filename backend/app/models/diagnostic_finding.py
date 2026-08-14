@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from sqlalchemy import (
     CheckConstraint,
     DateTime,
@@ -106,6 +106,18 @@ class DiagnosticFinding(TimestampMixin, Base):
     dataset: Mapped["Dataset"] = relationship(
         "Dataset",
         back_populates="diagnostic_findings",
+    )
+    primary_causes: Mapped[List["RootCauseAnalysis"]] = relationship(
+        "RootCauseAnalysis",
+        foreign_keys="[RootCauseAnalysis.primary_finding_id]",
+        back_populates="primary_finding",
+        cascade="all, delete-orphan",
+    )
+    root_effects: Mapped[List["RootCauseAnalysis"]] = relationship(
+        "RootCauseAnalysis",
+        foreign_keys="[RootCauseAnalysis.root_cause_finding_id]",
+        back_populates="root_cause_finding",
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self) -> str:

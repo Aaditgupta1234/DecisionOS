@@ -165,6 +165,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(DiagnosticFinding.generated_at)",
     )
+    root_cause_analyses: Mapped[List["RootCauseAnalysis"]] = relationship(
+        "RootCauseAnalysis",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(RootCauseAnalysis.impact_score)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],

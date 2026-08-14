@@ -19,6 +19,16 @@ from app.schemas.diagnostic import (
     DiagnosticSeverityBreakdown,
     DiagnosticSummaryResponse,
 )
+from app.schemas.root_cause import (
+    CausalChainEdge,
+    CausalChainNode,
+    CausalGraphResponse,
+    DatasetRootCausesResponse,
+    GenerateRootCauseRequest,
+    RootCauseAnalysisResponse,
+    RootCauseItem,
+    RootCauseSummary,
+)
 from app.schemas.metric import (
     MetricDefinitionResponse,
     MetricGenerationResponse,
@@ -60,4 +70,13 @@ __all__ = [
     "DiagnosticSummaryResponse",
     "DiagnosticGenerationResponse",
     "DiagnosticGenerationStatusResponse",
+    # Root Cause Analysis
+    "RootCauseAnalysisResponse",
+    "RootCauseItem",
+    "RootCauseSummary",
+    "CausalChainNode",
+    "CausalChainEdge",
+    "CausalGraphResponse",
+    "DatasetRootCausesResponse",
+    "GenerateRootCauseRequest",
 ]
