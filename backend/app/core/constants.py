@@ -56,6 +56,37 @@ class ScenarioAdjustmentType(str, Enum):
     ABSOLUTE_VALUE = "ABSOLUTE_VALUE"            # projected = baseline + val
 
 
+class ForecastHorizon(str, Enum):
+    """Supported forecast horizons for time-series projections."""
+    HORIZON_30_DAYS = "30_DAYS"
+    HORIZON_90_DAYS = "90_DAYS"
+    HORIZON_180_DAYS = "180_DAYS"
+    HORIZON_365_DAYS = "365_DAYS"
+
+
+class ForecastFrequency(str, Enum):
+    """Supported temporal observation frequencies."""
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+    MONTHLY = "MONTHLY"
+
+
+class ForecastStatus(str, Enum):
+    """Lifecycle states for analytical forecasts."""
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    ARCHIVED = "ARCHIVED"
+
+
+class ForecastTrend(str, Enum):
+    """Directional trend classification for forecasted trajectories."""
+    INCREASING = "INCREASING"
+    DECREASING = "DECREASING"
+    STABLE = "STABLE"
+    VOLATILE = "VOLATILE"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+
+
 class DatasetStatus(str, Enum):
     """Lifecycle states for dataset uploads and processing."""
     UPLOADED = "UPLOADED"

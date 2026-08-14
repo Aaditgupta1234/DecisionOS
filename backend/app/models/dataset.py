@@ -207,6 +207,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(Scenario.created_at)",
     )
+    forecasts: Mapped[List["Forecast"]] = relationship(
+        "Forecast",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(Forecast.created_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],

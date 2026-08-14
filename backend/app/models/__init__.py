@@ -6,6 +6,10 @@ from app.core.constants import (
     ExpectedTimeToValue,
     FindingSeverity,
     FindingType,
+    ForecastFrequency,
+    ForecastHorizon,
+    ForecastStatus,
+    ForecastTrend,
     MetricCategory,
     MetricsGenerationStatus,
     RecommendationPriority,
@@ -29,6 +33,7 @@ from app.models.dataset import Dataset
 from app.models.dataset_column import DatasetColumn
 from app.models.dataset_metric import DatasetMetric
 from app.models.diagnostic_finding import DiagnosticFinding
+from app.models.forecast import Forecast
 from app.models.metric_definition import MetricDefinition
 from app.models.recommendation import Recommendation
 from app.models.root_cause_analysis import RootCauseAnalysis
@@ -58,6 +63,11 @@ __all__ = [
     "Scenario",
     "ScenarioStatus",
     "ScenarioAdjustmentType",
+    "Forecast",
+    "ForecastHorizon",
+    "ForecastFrequency",
+    "ForecastStatus",
+    "ForecastTrend",
     "FindingType",
     "FindingSeverity",
     "RelationshipType",
