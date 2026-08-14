@@ -24,9 +24,17 @@ def upload_dataset(
     db: Session,
     file: UploadFile,
     current_user: User,
+    organization_id: Optional[UUID] = None,
 ) -> Dataset:
     """Orchestrates dataset upload, file persistence, validation, column extraction, and preview caching."""
     original_filename = file.filename or "dataset.csv"
+    
+    # If organization_id not provided, attempt to auto-link to user's first organization
+    if not organization_id:
+        from app.models.organization_member import OrganizationMember
+        member_record = db.query(OrganizationMember).filter(OrganizationMember.user_id == current_user.id).first()
+        if member_record:
+            organization_id = member_record.organization_id
     
     # 1. Save uploaded file to disk
     stored_filename, file_path, file_size = storage.save_upload_file(file)
@@ -42,6 +50,7 @@ def upload_dataset(
         version=1,
         status=DatasetStatus.UPLOADED,
         uploaded_by=current_user.id,
+        organization_id=organization_id,
         is_deleted=False,
     )
     db.add(dataset)
@@ -106,16 +115,24 @@ def upload_dataset(
     return dataset
 
 
-def get_datasets(db: Session, current_user: User) -> List[Dataset]:
-    """Retrieves list of datasets scoped by user role: Admin sees all, Analyst sees READY only."""
+def get_datasets(
+    db: Session,
+    current_user: User,
+    organization_id: Optional[UUID] = None,
+) -> List[Dataset]:
+    """Retrieves list of datasets scoped by organization and user role."""
     query = db.query(Dataset).filter(Dataset.is_deleted == False)  # noqa: E712
+    
+    if organization_id:
+        query = query.filter(Dataset.organization_id == organization_id)
+        
     if current_user.role != UserRole.ADMIN:
         query = query.filter(Dataset.status == DatasetStatus.READY)
     return query.order_by(Dataset.created_at.desc()).all()
 
 
 def get_dataset_by_id(db: Session, dataset_id: UUID, current_user: User) -> Dataset:
-    """Retrieves a single dataset by ID with role-based access checks."""
+    """Retrieves a single dataset by ID with tenant and role-based access checks."""
     dataset = db.query(Dataset).filter(
         Dataset.id == dataset_id,
         Dataset.is_deleted == False,  # noqa: E712
@@ -126,6 +143,19 @@ def get_dataset_by_id(db: Session, dataset_id: UUID, current_user: User) -> Data
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Dataset not found.",
         )
+
+    # Multi-tenant isolation check: if dataset belongs to an organization, verify user is a member
+    if dataset.organization_id and current_user.role != UserRole.ADMIN:
+        from app.models.organization_member import OrganizationMember
+        membership = db.query(OrganizationMember).filter(
+            OrganizationMember.organization_id == dataset.organization_id,
+            OrganizationMember.user_id == current_user.id,
+        ).first()
+        if not membership:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access denied. Dataset belongs to an organization you are not a member of.",
+            )
 
     if current_user.role != UserRole.ADMIN and dataset.status != DatasetStatus.READY:
         raise HTTPException(

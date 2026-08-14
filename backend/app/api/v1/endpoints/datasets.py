@@ -1,8 +1,8 @@
 """Dataset management, upload, inspection, and schema mapping endpoint handlers."""
 
-from typing import Any, List
+from typing import Any, List, Optional
 from uuid import UUID
-from fastapi import APIRouter, Depends, File, UploadFile, status
+from fastapi import APIRouter, Depends, File, Query, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.auth import get_current_active_user, require_admin
@@ -40,11 +40,12 @@ router = APIRouter()
 )
 def upload(
     file: UploadFile = File(..., description="CSV business dataset file to upload and parse"),
+    organization_id: Optional[UUID] = Query(None, description="Optional organization ID for multi-tenant assignment"),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ) -> Any:
     """Uploads a CSV dataset, runs validation, extracts headers, dtypes, and caches top 20 records."""
-    dataset = upload_dataset(db=db, file=file, current_user=current_user)
+    dataset = upload_dataset(db=db, file=file, current_user=current_user, organization_id=organization_id)
     return SuccessResponse(
         message="Dataset uploaded and validated successfully.",
         data=DatasetUploadResponse(
@@ -66,11 +67,12 @@ def upload(
     summary="List Datasets (Role-scoped)",
 )
 def list_datasets(
+    organization_id: Optional[UUID] = Query(None, description="Filter datasets by organization ID"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ) -> Any:
-    """Lists available datasets. Admins see all non-deleted; Analysts see all READY datasets."""
-    datasets = get_datasets(db=db, current_user=current_user)
+    """Lists available datasets scoped by organization and role."""
+    datasets = get_datasets(db=db, current_user=current_user, organization_id=organization_id)
     return SuccessResponse(
         message="Datasets retrieved successfully.",
         data=[DatasetListResponse.model_validate(d) for d in datasets],
