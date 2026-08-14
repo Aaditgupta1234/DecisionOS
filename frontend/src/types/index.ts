@@ -315,3 +315,32 @@ export interface ChatMessage {
   created_at: string;
   citations?: Array<{ type: string; title: string; ref_id?: string }>;
 }
+
+export interface ReportSectionConfig {
+  includeExecutiveSummary: boolean;
+  includeMetrics: boolean;
+  includeDiagnostics: boolean;
+  includeRootCauses: boolean;
+  includeRecommendations: boolean;
+  includeAIInsights: boolean;
+  includeStrategyPlan: boolean;
+  includeScenarios: boolean;
+  includeForecasts: boolean;
+}
+
+export interface ExecutiveReportData {
+  reportId: string;
+  datasetId: string;
+  generatedAt: string;
+  generatedBy: string;
+  reportVersion: string;
+  dataset: Dataset;
+  health: BusinessHealthResponse;
+  executiveSummary: ExecutiveSummaryResponse;
+  intelligenceReport: IntelligenceReportResponse;
+  rootCausesResponse?: DatasetRootCausesResponse | null;
+  aiInsight?: AIInsight | null;
+  strategyPlan?: StrategyPlan | null;
+  scenarios?: Scenario[];
+  forecasts?: Forecast[];
+}

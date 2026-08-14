@@ -1,0 +1,125 @@
+/* DecisionOS Executive Report Stylesheet */
+
+.report-document {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+}
+
+.report-header-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.report-section {
+  margin-bottom: 36px;
+  page-break-inside: avoid;
+}
+
+.report-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  color: #ffffff;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.report-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.report-table th {
+  background-color: var(--bg-app);
+  padding: 10px 14px;
+  text-align: left;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.report-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-main);
+}
+
+/* Print Specific Rules */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print,
+  .top-nav,
+  .sidebar,
+  .btn,
+  header {
+    display: none !important;
+  }
+
+  .report-document {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    background-color: transparent !important;
+    color: #0f172a !important;
+  }
+
+  .report-section {
+    page-break-inside: avoid;
+    margin-bottom: 24px;
+  }
+
+  .report-section-title {
+    color: #0f172a !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  .card,
+  .card-elevated,
+  .card-ai {
+    border: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+  }
+
+  .badge {
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+}

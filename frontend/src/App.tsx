@@ -14,6 +14,7 @@ import { StrategyPlannerView } from './views/strategy/StrategyPlannerView';
 import { ScenariosView } from './views/scenarios/ScenariosView';
 import { ForecastsView } from './views/forecasts/ForecastsView';
 import { ChatView } from './views/chat/ChatView';
+import { ReportsView } from './views/reports/ReportsView';
 import { DatasetsView } from './views/datasets/DatasetsView';
 
 import './styles/globals.css';
@@ -35,6 +36,7 @@ export function App() {
               <Route path="/scenarios" element={<ScenariosView />} />
               <Route path="/forecasts" element={<ForecastsView />} />
               <Route path="/chat" element={<ChatView />} />
+              <Route path="/reports" element={<ReportsView />} />
               <Route path="/datasets" element={<DatasetsView />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
