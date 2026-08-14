@@ -119,6 +119,11 @@ class DiagnosticFinding(TimestampMixin, Base):
         back_populates="root_cause_finding",
         cascade="all, delete-orphan",
     )
+    recommendations: Mapped[List["Recommendation"]] = relationship(
+        "Recommendation",
+        back_populates="finding",
+        cascade="all, delete-orphan",
+    )
 
     def __repr__(self) -> str:
         return f"<DiagnosticFinding id={self.id} type={self.finding_type} severity={self.severity} title='{self.title}'>"

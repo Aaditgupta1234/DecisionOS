@@ -35,6 +35,15 @@ from app.schemas.metric import (
     MetricResponse,
     MetricSummaryResponse,
 )
+from app.schemas.recommendation import (
+    DatasetRecommendationsResponse,
+    GenerateRecommendationsRequest,
+    RecommendationItem,
+    RecommendationOutcome,
+    RecommendationResponse,
+    RecommendationSummary,
+    UpdateRecommendationStatusRequest,
+)
 from app.schemas.token import TokenPayload, TokenResponse
 from app.schemas.user import UserCreate, UserLogin, UserResponse, UserUpdate
 
@@ -79,4 +88,12 @@ __all__ = [
     "CausalGraphResponse",
     "DatasetRootCausesResponse",
     "GenerateRootCauseRequest",
+    # Recommendations
+    "RecommendationOutcome",
+    "RecommendationResponse",
+    "UpdateRecommendationStatusRequest",
+    "RecommendationItem",
+    "RecommendationSummary",
+    "DatasetRecommendationsResponse",
+    "GenerateRecommendationsRequest",
 ]

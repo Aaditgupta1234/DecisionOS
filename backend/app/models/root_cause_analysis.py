@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from sqlalchemy import (
     CheckConstraint,
     DateTime,
@@ -134,6 +134,10 @@ class RootCauseAnalysis(TimestampMixin, Base):
         "DiagnosticFinding",
         foreign_keys=[root_cause_finding_id],
         back_populates="root_effects",
+    )
+    recommendations: Mapped[List["Recommendation"]] = relationship(
+        "Recommendation",
+        back_populates="root_cause_analysis",
     )
 
     def __repr__(self) -> str:

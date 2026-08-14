@@ -108,6 +108,52 @@ class RelationshipStrength(str, Enum):
     VERY_STRONG = "VERY_STRONG"
 
 
+class RecommendationType(str, Enum):
+    """Business recommendation domain taxonomy."""
+    REVENUE_GROWTH = "REVENUE_GROWTH"
+    CUSTOMER_RETENTION = "CUSTOMER_RETENTION"
+    CUSTOMER_ACQUISITION = "CUSTOMER_ACQUISITION"
+    PRODUCT_OPTIMIZATION = "PRODUCT_OPTIMIZATION"
+    PRICING_STRATEGY = "PRICING_STRATEGY"
+    PROCESS_IMPROVEMENT = "PROCESS_IMPROVEMENT"
+    OPERATIONAL_EFFICIENCY = "OPERATIONAL_EFFICIENCY"
+    COST_OPTIMIZATION = "COST_OPTIMIZATION"
+    RISK_MITIGATION = "RISK_MITIGATION"
+
+
+class RecommendationPriority(str, Enum):
+    """Priority tier for recommendation execution."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class ExpectedTimeToValue(str, Enum):
+    """Estimated implementation timeframe for business returns."""
+    IMMEDIATE = "IMMEDIATE"      # 1-7 days (quick win)
+    SHORT_TERM = "SHORT_TERM"    # 1-4 weeks
+    MEDIUM_TERM = "MEDIUM_TERM"  # 1-3 months
+    LONG_TERM = "LONG_TERM"      # 3+ months (strategic)
+
+
+class RecommendationStatus(str, Enum):
+    """Lifecycle tracking states for business recommendations."""
+    PENDING = "PENDING"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
+    IMPLEMENTED = "IMPLEMENTED"
+    ARCHIVED = "ARCHIVED"
+
+
+class RecommendationSource(str, Enum):
+    """Origin source of the recommendation."""
+    RULE_ENGINE = "RULE_ENGINE"
+    AI_INSIGHT = "AI_INSIGHT"
+    USER_CUSTOM = "USER_CUSTOM"
+    HYBRID = "HYBRID"
+
+
 class MetricCategory(str, Enum):
     """Standard KPI categories."""
     REVENUE = "revenue"

@@ -172,6 +172,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(RootCauseAnalysis.impact_score)",
     )
+    recommendations: Mapped[List["Recommendation"]] = relationship(
+        "Recommendation",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(Recommendation.estimated_impact_score)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],
