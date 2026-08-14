@@ -14,6 +14,9 @@ from app.core.constants import (
     RecommendationType,
     RelationshipStrength,
     RelationshipType,
+    StrategyPlanStatus,
+    TargetDirection,
+    TimeHorizon,
 )
 from app.database.base import Base
 from app.models.ai_insight import AIInsight
@@ -27,6 +30,7 @@ from app.models.diagnostic_finding import DiagnosticFinding
 from app.models.metric_definition import MetricDefinition
 from app.models.recommendation import Recommendation
 from app.models.root_cause_analysis import RootCauseAnalysis
+from app.models.strategy_plan import StrategyPlan
 from app.models.user import User
 
 __all__ = [
@@ -44,6 +48,10 @@ __all__ = [
     "ChatSession",
     "ChatMessage",
     "ChatMessageRole",
+    "StrategyPlan",
+    "StrategyPlanStatus",
+    "TimeHorizon",
+    "TargetDirection",
     "FindingType",
     "FindingSeverity",
     "RelationshipType",

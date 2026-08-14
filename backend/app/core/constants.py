@@ -17,6 +17,31 @@ class ChatMessageRole(str, Enum):
     ASSISTANT = "ASSISTANT"
 
 
+class StrategyPlanStatus(str, Enum):
+    """Lifecycle states for strategic execution plans."""
+    DRAFT = "DRAFT"
+    ACTIVE = "ACTIVE"
+    COMPLETED = "COMPLETED"
+    ARCHIVED = "ARCHIVED"
+
+
+class TimeHorizon(str, Enum):
+    """Execution time horizons for strategic roadmap milestones and actions."""
+    IMMEDIATE = "IMMEDIATE"      # Days 1 - 7
+    DAYS_30 = "30_DAYS"          # Days 8 - 30
+    DAYS_60 = "60_DAYS"          # Days 31 - 60
+    DAYS_90 = "90_DAYS"          # Days 61 - 90
+
+
+class TargetDirection(str, Enum):
+    """Target KPI trajectory direction for strategy success criteria."""
+    IMPROVE = "IMPROVE"
+    INCREASE = "INCREASE"
+    DECREASE = "DECREASE"
+    STABILIZE = "STABILIZE"
+    MAINTAIN = "MAINTAIN"
+
+
 class DatasetStatus(str, Enum):
     """Lifecycle states for dataset uploads and processing."""
     UPLOADED = "UPLOADED"

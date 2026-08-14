@@ -53,6 +53,136 @@ class MockLLMProvider(BaseLLMProvider):
         """
         p_lower = prompt.lower()
 
+        # 0.0 AI Strategy Planner Execution Strategy Generation
+        if "task: generate strategic execution plan" in p_lower or ("strategic_priorities" in p_lower and "action_items" in p_lower and "milestones" in p_lower and "success_criteria" in p_lower):
+            # Extract context JSON from prompt
+            ctx_data = {}
+            try:
+                if "```json" in prompt:
+                    raw_block = prompt.split("```json")[1].split("```")[0].strip()
+                    ctx_data = json.loads(raw_block)
+                elif "```" in prompt:
+                    raw_block = prompt.split("```")[1].split("```")[0].strip()
+                    ctx_data = json.loads(raw_block)
+            except Exception:
+                ctx_data = {}
+
+            recommendations = ctx_data.get("recommendations") or []
+            available_kpis = ctx_data.get("available_kpis") or ctx_data.get("metrics") or []
+            kpi_keys = [
+                k.get("metric_key") or k.get("name")
+                for k in available_kpis
+                if (k.get("metric_key") or k.get("name"))
+            ]
+            valid_kpi = kpi_keys[0] if kpi_keys else "recurring_revenue"
+
+            # If no recommendations exist, return empty
+            if not recommendations:
+                return {
+                    "title": "Strategic Execution Plan",
+                    "objective": "Operationalize recommendations into time-phased execution roadmap.",
+                    "executive_summary": "No approved recommendations available to formulate a strategy plan.",
+                    "strategic_priorities": [],
+                    "action_items": [],
+                    "milestones": [],
+                    "success_criteria": [],
+                    "source_recommendation_ids": [],
+                }
+
+            rec_ids = [str(r.get("id")) for r in recommendations if r.get("id")]
+            rec_titles = [r.get("title", "Strategic Initiative") for r in recommendations]
+            first_id = rec_ids[0] if rec_ids else "rec-001"
+            first_title = rec_titles[0] if rec_titles else "Operational Initiative"
+            first_priority = recommendations[0].get("priority", "HIGH")
+
+            return {
+                "title": f"Strategic Execution Plan: {first_title}",
+                "objective": f"Systematically operationalize '{first_title}' and supporting interventions across 90-day time horizons.",
+                "executive_summary": (
+                    f"This executive strategy translates approved DecisionOS recommendation '{first_title}' "
+                    f"into immediate, 30-day, 60-day, and 90-day operational milestones. "
+                    f"By focusing execution on root causes and tracking performance via existing KPI '{valid_kpi}', "
+                    f"the business establishes clear accountability and time-to-value."
+                ),
+                "strategic_priorities": [
+                    {
+                        "title": f"Execute {first_title}",
+                        "priority": first_priority,
+                        "source_recommendation_ids": [first_id],
+                        "rationale": f"High impact intervention prioritized to address primary operational diagnostic findings.",
+                    }
+                ],
+                "action_items": [
+                    {
+                        "title": f"Phase 1 Triage & Setup for {first_title}",
+                        "description": "Establish dedicated cross-functional taskforce and audit operational bottlenecks.",
+                        "time_horizon": "IMMEDIATE",
+                        "source_recommendation_id": first_id,
+                        "dependencies": [],
+                    },
+                    {
+                        "title": f"Deploy Core Workflows for {first_title}",
+                        "description": "Roll out primary execution steps and enable live operational telemetry.",
+                        "time_horizon": "30_DAYS",
+                        "source_recommendation_id": first_id,
+                        "dependencies": [f"Phase 1 Triage & Setup for {first_title}"],
+                    },
+                    {
+                        "title": f"Scale and Calibrate {first_title}",
+                        "description": "Iterate operational processes and expand coverage across target customer cohorts.",
+                        "time_horizon": "60_DAYS",
+                        "source_recommendation_id": first_id,
+                        "dependencies": [],
+                    },
+                    {
+                        "title": f"Institutionalize & Review {first_title}",
+                        "description": "Formally institutionalize standard operating procedures and evaluate outcome ROI.",
+                        "time_horizon": "90_DAYS",
+                        "source_recommendation_id": first_id,
+                        "dependencies": [],
+                    },
+                ],
+                "milestones": [
+                    {
+                        "title": "Immediate Operational Alignment",
+                        "time_horizon": "IMMEDIATE",
+                        "focus_area": "Preparation & Ownership",
+                        "key_deliverables": ["Taskforce chartered", "Root cause audit complete"],
+                        "success_criteria": ["Operational readiness 100%"],
+                    },
+                    {
+                        "title": "30-Day Deployment Milestone",
+                        "time_horizon": "30_DAYS",
+                        "focus_area": "Initial Rollout",
+                        "key_deliverables": ["Pilot workflows live", "Initial feedback loop active"],
+                        "success_criteria": [f"Initial stability observed in {valid_kpi}"],
+                    },
+                    {
+                        "title": "60-Day Calibration Milestone",
+                        "time_horizon": "60_DAYS",
+                        "focus_area": "Process Optimization",
+                        "key_deliverables": ["Mid-point performance review", "Workflow adjustments deployed"],
+                        "success_criteria": [f"Measurable improvement trajectory in {valid_kpi}"],
+                    },
+                    {
+                        "title": "90-Day Full Outcome Evaluation",
+                        "time_horizon": "90_DAYS",
+                        "focus_area": "Sustained Stabilization",
+                        "key_deliverables": ["Final retrospective report", "Permanent SOP established"],
+                        "success_criteria": [f"Target baseline restored for {valid_kpi}"],
+                    },
+                ],
+                "success_criteria": [
+                    {
+                        "metric_key": valid_kpi,
+                        "target_direction": "IMPROVE",
+                        "source": "existing_kpi",
+                        "rationale": f"Primary corporate KPI utilized to track recovery outcomes from {first_title}.",
+                    }
+                ],
+                "source_recommendation_ids": rec_ids,
+            }
+
         # 0. AI Chat Analyst Conversational Queries (Evaluated first to avoid context substring collisions)
         if "user question:" in p_lower or "task: answer the user's business question" in p_lower or ("sources" in p_lower and "answer" in p_lower and "confidence" in p_lower):
             # Attempt to extract context JSON from prompt
