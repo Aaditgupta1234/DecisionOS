@@ -114,7 +114,7 @@ async def test_validate_dataset_ready_success_and_failure(db_session, engine_tes
 @pytest.mark.anyio
 async def test_register_analyzer_and_deduplication(db_session):
     """Test analyzer registration and prevention of duplicates."""
-    engine = DiagnosticEngine(db_session)
+    engine = DiagnosticEngine(db_session, analyzers=[])
     analyzer_a = FakeAnalyzerA()
 
     assert len(engine.analyzers) == 0

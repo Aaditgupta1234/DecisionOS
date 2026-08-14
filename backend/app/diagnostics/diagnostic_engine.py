@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.core.constants import DatasetStatus, DiagnosticGenerationStatus
+from app.diagnostics.analyzer_registry import AnalyzerRegistry
 from app.diagnostics.base_analyzer import BaseDiagnosticAnalyzer
 from app.models.dataset import Dataset
 from app.models.dataset_metric import DatasetMetric
@@ -42,7 +43,10 @@ class DiagnosticEngine:
     ):
         self.db = db
         self.repo = DiagnosticRepository(db)
-        self.analyzers: list[BaseDiagnosticAnalyzer] = list(analyzers) if analyzers else []
+        if analyzers is not None:
+            self.analyzers = list(analyzers)
+        else:
+            self.analyzers = list(AnalyzerRegistry.get_default_analyzers())
 
     def _is_async(self) -> bool:
         """Determines if the database session is an AsyncSession instance."""

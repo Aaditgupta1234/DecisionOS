@@ -41,6 +41,41 @@ class FindingSeverity(str, Enum):
     CRITICAL = "CRITICAL"
 
 
+class FindingCategory(str, Enum):
+    """Core business diagnostic categories for Phase 5.5."""
+    REVENUE = "REVENUE"
+    CUSTOMER = "CUSTOMER"
+    OPERATIONAL = "OPERATIONAL"
+    PRODUCT = "PRODUCT"
+
+
+class FindingSubtype(str, Enum):
+    """Fine-grained diagnostic anomaly and opportunity subtypes."""
+    # Revenue Subtypes
+    DECLINE = "DECLINE"
+    STAGNATION = "STAGNATION"
+    GROWTH_ACCELERATION = "GROWTH_ACCELERATION"
+    VOLATILITY = "VOLATILITY"
+
+    # Customer Subtypes
+    CHURN_INCREASE = "CHURN_INCREASE"
+    RETENTION_PROBLEM = "RETENTION_PROBLEM"
+    CUSTOMER_GROWTH_SLOWDOWN = "CUSTOMER_GROWTH_SLOWDOWN"
+    ACQUISITION_ACCELERATION = "ACQUISITION_ACCELERATION"
+
+    # Operational Subtypes
+    COST_SPIKE = "COST_SPIKE"
+    MARGIN_COMPRESSION = "MARGIN_COMPRESSION"
+    OPERATIONAL_INEFFICIENCY = "OPERATIONAL_INEFFICIENCY"
+    PRODUCTIVITY_IMPROVEMENT = "PRODUCTIVITY_IMPROVEMENT"
+
+    # Product Subtypes
+    UNDERPERFORMING_PRODUCT = "UNDERPERFORMING_PRODUCT"
+    PRODUCT_CONCENTRATION_RISK = "PRODUCT_CONCENTRATION_RISK"
+    RAPID_PRODUCT_GROWTH = "RAPID_PRODUCT_GROWTH"
+    PRODUCT_PERFORMANCE_DECLINE = "PRODUCT_PERFORMANCE_DECLINE"
+
+
 class FindingType(str, Enum):
     """Canonical business diagnostic finding anomaly types."""
     REVENUE_DROP = "REVENUE_DROP"
