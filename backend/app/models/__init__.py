@@ -1,10 +1,18 @@
 """Database models package."""
 
+from app.core.constants import (
+    DiagnosticGenerationStatus,
+    FindingSeverity,
+    FindingType,
+    MetricCategory,
+    MetricsGenerationStatus,
+)
 from app.database.base import Base
 from app.models.base import TimestampMixin
 from app.models.dataset import Dataset
 from app.models.dataset_column import DatasetColumn
 from app.models.dataset_metric import DatasetMetric
+from app.models.diagnostic_finding import DiagnosticFinding
 from app.models.metric_definition import MetricDefinition
 from app.models.user import User
 
@@ -16,4 +24,10 @@ __all__ = [
     "DatasetColumn",
     "MetricDefinition",
     "DatasetMetric",
+    "DiagnosticFinding",
+    "FindingType",
+    "FindingSeverity",
+    "DiagnosticGenerationStatus",
+    "MetricCategory",
+    "MetricsGenerationStatus",
 ]

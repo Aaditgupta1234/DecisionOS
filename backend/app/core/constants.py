@@ -26,6 +26,33 @@ class MetricsGenerationStatus(str, Enum):
     FAILED = "FAILED"
 
 
+class DiagnosticGenerationStatus(str, Enum):
+    """Lifecycle states for dataset root cause diagnostics."""
+    PENDING = "PENDING"
+    GENERATED = "GENERATED"
+    FAILED = "FAILED"
+
+
+class FindingSeverity(str, Enum):
+    """Severity classification for diagnostic findings."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class FindingType(str, Enum):
+    """Canonical business diagnostic finding anomaly types."""
+    REVENUE_DROP = "REVENUE_DROP"
+    REVENUE_CONCENTRATION = "REVENUE_CONCENTRATION"
+    HIGH_CANCELLATION_RATE = "HIGH_CANCELLATION_RATE"
+    LOW_COMPLETION_RATE = "LOW_COMPLETION_RATE"
+    CUSTOMER_CONCENTRATION = "CUSTOMER_CONCENTRATION"
+    REVIEW_SCORE_DECLINE = "REVIEW_SCORE_DECLINE"
+    DELIVERY_DELAY = "DELIVERY_DELAY"
+    DATA_QUALITY_RISK = "DATA_QUALITY_RISK"
+
+
 class MetricCategory(str, Enum):
     """Standard KPI categories."""
     REVENUE = "revenue"

@@ -4,7 +4,11 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
-from app.core.constants import DatasetStatus, MetricsGenerationStatus
+from app.core.constants import (
+    DatasetStatus,
+    DiagnosticGenerationStatus,
+    MetricsGenerationStatus,
+)
 
 
 class DatasetColumnResponse(BaseModel):
@@ -43,6 +47,8 @@ class DatasetListResponse(BaseModel):
     column_count: Optional[int] = None
     metrics_generation_status: MetricsGenerationStatus = MetricsGenerationStatus.PENDING
     metrics_generated_at: Optional[datetime] = None
+    diagnostics_generation_status: DiagnosticGenerationStatus = DiagnosticGenerationStatus.PENDING
+    diagnostics_generated_at: Optional[datetime] = None
     created_at: datetime
     uploaded_by: UUID
 
@@ -68,6 +74,9 @@ class DatasetDetailResponse(BaseModel):
     metrics_generation_status: MetricsGenerationStatus = MetricsGenerationStatus.PENDING
     metrics_generated_at: Optional[datetime] = None
     metrics_generation_error: Optional[str] = None
+    diagnostics_generation_status: DiagnosticGenerationStatus = DiagnosticGenerationStatus.PENDING
+    diagnostics_generated_at: Optional[datetime] = None
+    diagnostics_generation_error: Optional[str] = None
     columns: List[DatasetColumnResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)

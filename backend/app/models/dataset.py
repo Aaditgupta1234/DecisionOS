@@ -15,13 +15,17 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.core.constants import DatasetStatus, MetricsGenerationStatus
+from app.core.constants import (
+    DatasetStatus,
+    DiagnosticGenerationStatus,
+    MetricsGenerationStatus,
+)
 from app.database.base import Base
 from app.models.base import TimestampMixin
 
 
 class Dataset(TimestampMixin, Base):
-    """Dataset metadata entity tracking uploads, lifecycle, cached preview, schema, and KPI status."""
+    """Dataset metadata entity tracking uploads, lifecycle, cached preview, schema, KPI, and diagnostic status."""
 
     __tablename__ = "datasets"
 
@@ -125,6 +129,22 @@ class Dataset(TimestampMixin, Base):
         nullable=True,
     )
 
+    # Diagnostic Intelligence Tracking
+    diagnostics_generation_status: Mapped[DiagnosticGenerationStatus] = mapped_column(
+        SQLEnum(DiagnosticGenerationStatus, name="diagnostic_generation_status"),
+        default=DiagnosticGenerationStatus.PENDING,
+        index=True,
+        nullable=False,
+    )
+    diagnostics_generated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    diagnostics_generation_error: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     # Relationships
     columns: Mapped[List["DatasetColumn"]] = relationship(
         "DatasetColumn",
@@ -138,10 +158,17 @@ class Dataset(TimestampMixin, Base):
         cascade="all, delete-orphan",
         lazy="selectin",
     )
+    diagnostic_findings: Mapped[List["DiagnosticFinding"]] = relationship(
+        "DiagnosticFinding",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(DiagnosticFinding.generated_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],
     )
 
     def __repr__(self) -> str:
-        return f"<Dataset id={self.id} name={self.name} status={self.status} metrics={self.metrics_generation_status}>"
+        return f"<Dataset id={self.id} name={self.name} status={self.status} diagnostics={self.diagnostics_generation_status}>"
