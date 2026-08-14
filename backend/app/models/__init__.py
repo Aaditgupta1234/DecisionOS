@@ -14,6 +14,8 @@ from app.core.constants import (
     RecommendationType,
     RelationshipStrength,
     RelationshipType,
+    ScenarioAdjustmentType,
+    ScenarioStatus,
     StrategyPlanStatus,
     TargetDirection,
     TimeHorizon,
@@ -30,6 +32,7 @@ from app.models.diagnostic_finding import DiagnosticFinding
 from app.models.metric_definition import MetricDefinition
 from app.models.recommendation import Recommendation
 from app.models.root_cause_analysis import RootCauseAnalysis
+from app.models.scenario import Scenario
 from app.models.strategy_plan import StrategyPlan
 from app.models.user import User
 
@@ -52,6 +55,9 @@ __all__ = [
     "StrategyPlanStatus",
     "TimeHorizon",
     "TargetDirection",
+    "Scenario",
+    "ScenarioStatus",
+    "ScenarioAdjustmentType",
     "FindingType",
     "FindingSeverity",
     "RelationshipType",

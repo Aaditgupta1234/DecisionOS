@@ -200,6 +200,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(StrategyPlan.created_at)",
     )
+    scenarios: Mapped[List["Scenario"]] = relationship(
+        "Scenario",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(Scenario.created_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],

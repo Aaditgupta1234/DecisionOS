@@ -42,6 +42,20 @@ class TargetDirection(str, Enum):
     MAINTAIN = "MAINTAIN"
 
 
+class ScenarioStatus(str, Enum):
+    """Lifecycle states for scenario simulations."""
+    DRAFT = "DRAFT"
+    COMPLETED = "COMPLETED"
+    ARCHIVED = "ARCHIVED"
+
+
+class ScenarioAdjustmentType(str, Enum):
+    """Supported mathematical adjustment types for scenario assumptions."""
+    RELATIVE_PERCENT = "RELATIVE_PERCENT"        # projected = baseline * (1 + val / 100)
+    PERCENTAGE_POINTS = "PERCENTAGE_POINTS"      # projected = baseline + val (e.g. 20% - 5pts = 15%)
+    ABSOLUTE_VALUE = "ABSOLUTE_VALUE"            # projected = baseline + val
+
+
 class DatasetStatus(str, Enum):
     """Lifecycle states for dataset uploads and processing."""
     UPLOADED = "UPLOADED"

@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from app.ai_chat.api import router as chat_router
 from app.ai_insights.api import router as ai_insights_router
 from app.api.v1.endpoints import auth, datasets, health, intelligence, metrics, recommendations, root_cause
+from app.scenario_simulation.api import router as scenario_router
 from app.strategy_planner.api import router as strategy_router
 
 api_router = APIRouter()
@@ -19,3 +20,4 @@ api_router.include_router(intelligence.router, tags=["Intelligence Layer"])
 api_router.include_router(ai_insights_router, tags=["AI Insights & Executive Narrative"])
 api_router.include_router(chat_router, tags=["AI Chat Analyst"])
 api_router.include_router(strategy_router, tags=["AI Strategy Planner"])
+api_router.include_router(scenario_router, tags=["Scenario Simulation Engine"])
