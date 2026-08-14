@@ -48,7 +48,11 @@ class ExecutiveSummary:
         d = asdict(self)
         d["dataset_id"] = str(self.dataset_id)
         d["generated_at"] = self.generated_at.isoformat()
-        d["business_health_status"] = self.business_health_status.value
+        d["business_health_status"] = (
+            self.business_health_status.value
+            if hasattr(self.business_health_status, "value")
+            else str(self.business_health_status)
+        )
         return d
 
 

@@ -179,6 +179,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(Recommendation.estimated_impact_score)",
     )
+    ai_insights: Mapped[List["AIInsight"]] = relationship(
+        "AIInsight",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(AIInsight.created_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],

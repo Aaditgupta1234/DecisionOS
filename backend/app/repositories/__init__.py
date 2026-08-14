@@ -1,5 +1,6 @@
 """Repository layer package for database access abstractions."""
 
+from app.repositories.ai_insight_repository import AIInsightRepository
 from app.repositories.diagnostic_repository import DiagnosticRepository
 from app.repositories.intelligence_repository import IntelligenceRepository
 from app.repositories.recommendation_repository import RecommendationRepository
@@ -10,4 +11,5 @@ __all__ = [
     "RootCauseRepository",
     "RecommendationRepository",
     "IntelligenceRepository",
+    "AIInsightRepository",
 ]

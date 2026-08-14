@@ -15,6 +15,7 @@ from app.core.constants import (
     RelationshipType,
 )
 from app.database.base import Base
+from app.models.ai_insight import AIInsight
 from app.models.base import TimestampMixin
 from app.models.dataset import Dataset
 from app.models.dataset_column import DatasetColumn
@@ -36,6 +37,7 @@ __all__ = [
     "DiagnosticFinding",
     "RootCauseAnalysis",
     "Recommendation",
+    "AIInsight",
     "FindingType",
     "FindingSeverity",
     "RelationshipType",
