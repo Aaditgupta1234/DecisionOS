@@ -44,6 +44,12 @@ from app.schemas.recommendation import (
     RecommendationSummary,
     UpdateRecommendationStatusRequest,
 )
+from app.schemas.intelligence import (
+    BusinessHealthResponse,
+    ExecutiveSummaryResponse,
+    IntelligenceReportResponse,
+    ReportExportSchema,
+)
 from app.schemas.token import TokenPayload, TokenResponse
 from app.schemas.user import UserCreate, UserLogin, UserResponse, UserUpdate
 
@@ -96,4 +102,9 @@ __all__ = [
     "RecommendationSummary",
     "DatasetRecommendationsResponse",
     "GenerateRecommendationsRequest",
+    # Intelligence Layer
+    "BusinessHealthResponse",
+    "ExecutiveSummaryResponse",
+    "IntelligenceReportResponse",
+    "ReportExportSchema",
 ]

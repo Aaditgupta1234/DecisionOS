@@ -154,6 +154,23 @@ class RecommendationSource(str, Enum):
     HYBRID = "HYBRID"
 
 
+class BusinessHealthStatus(str, Enum):
+    """Categorical business health classification based on comprehensive diagnostic health score."""
+    EXCELLENT = "EXCELLENT"      # 90 - 100
+    HEALTHY = "HEALTHY"          # 75 - 89
+    WATCH_LIST = "WATCH_LIST"    # 60 - 74
+    AT_RISK = "AT_RISK"          # 40 - 59
+    CRITICAL = "CRITICAL"        # 0 - 39
+
+
+class ReportExportFormat(str, Enum):
+    """Supported export formats for business intelligence reports."""
+    PDF = "PDF"
+    PPTX = "PPTX"
+    JSON = "JSON"
+    HTML = "HTML"
+
+
 class MetricCategory(str, Enum):
     """Standard KPI categories."""
     REVENUE = "revenue"
