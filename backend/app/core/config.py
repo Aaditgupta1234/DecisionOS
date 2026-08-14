@@ -1,7 +1,6 @@
 """Application configuration settings."""
 
-from typing import List, Union
-from pydantic import AnyHttpUrl, validator
+from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,12 +11,16 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     # Database Settings
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/decisionos"
+    DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@localhost:5432/decisionos"
 
-    # Security Settings
-    SECRET_KEY: str = "development_secret_key_change_in_production"
+    # Security & JWT Settings
+    SECRET_KEY: str = "development_secret_key_change_in_production_4f89d3a7e2b10"
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # 60 minutes for development
+
+    # Storage & Upload Settings
+    UPLOAD_DIR: str = "uploads/datasets"
+    MAX_UPLOAD_SIZE_BYTES: int = 50 * 1024 * 1024  # 50MB
 
     # LLM Settings
     OLLAMA_URL: str = "http://localhost:11434"
