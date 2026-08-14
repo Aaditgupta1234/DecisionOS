@@ -186,6 +186,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(AIInsight.created_at)",
     )
+    chat_sessions: Mapped[List["ChatSession"]] = relationship(
+        "ChatSession",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(ChatSession.created_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],

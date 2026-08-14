@@ -11,6 +11,12 @@ class UserRole(str, Enum):
     VIEWER = "viewer"
 
 
+class ChatMessageRole(str, Enum):
+    """Roles for conversational AI chat messages."""
+    USER = "USER"
+    ASSISTANT = "ASSISTANT"
+
+
 class DatasetStatus(str, Enum):
     """Lifecycle states for dataset uploads and processing."""
     UPLOADED = "UPLOADED"

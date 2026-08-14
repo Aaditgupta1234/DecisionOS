@@ -53,6 +53,96 @@ class MockLLMProvider(BaseLLMProvider):
         """
         p_lower = prompt.lower()
 
+        # 0. AI Chat Analyst Conversational Queries (Evaluated first to avoid context substring collisions)
+        if "user question:" in p_lower or "task: answer the user's business question" in p_lower or ("sources" in p_lower and "answer" in p_lower and "confidence" in p_lower):
+            # Attempt to extract context JSON from prompt
+            ctx_data = {}
+            try:
+                if "```json" in prompt:
+                    raw_block = prompt.split("```json")[1].split("```")[0].strip()
+                    ctx_data = json.loads(raw_block)
+                elif "```" in prompt:
+                    raw_block = prompt.split("```")[1].split("```")[0].strip()
+                    ctx_data = json.loads(raw_block)
+            except Exception:
+                ctx_data = {}
+
+            # Extract dynamic artifacts from context
+            findings = ctx_data.get("findings") or []
+            root_causes = ctx_data.get("root_causes") or []
+            recommendations = ctx_data.get("recommendations") or []
+            health_score = ctx_data.get("business_health_score")
+            health_status = ctx_data.get("business_health_status")
+            primary_issue = ctx_data.get("primary_issue", "No primary issue")
+
+            # If completely empty context or no evidence available
+            if not findings and not root_causes and not recommendations and health_score is None:
+                return {
+                    "answer": "DecisionOS does not currently have sufficient evidence to answer this question.",
+                    "confidence": 0.0,
+                    "sources": [],
+                }
+
+            sources = []
+            f_title = findings[0].get("title", "Diagnostic Finding") if findings else primary_issue
+            if findings:
+                sources.append(f"finding:{findings[0].get('title', 'Primary Finding')}")
+            if root_causes:
+                rc_name = root_causes[0].get("cause") or root_causes[0].get("root_cause_title") or "Root Cause Analysis"
+                sources.append(f"rca:{rc_name}")
+            if recommendations:
+                sources.append(f"rec:{recommendations[0].get('title', 'Actionable Recommendation')}")
+
+            # Grounded conversational responses
+            if "health" in p_lower or "score" in p_lower or "doing" in p_lower:
+                answer = (
+                    f"Your current business health score is {health_score}, placing the business in {health_status} status. "
+                    f"The primary concern flagged is '{primary_issue}'. "
+                )
+                if recommendations:
+                    answer += f"The highest-priority recommendation available to address this is '{recommendations[0].get('title')}'. "
+            elif "why" in p_lower and ("revenue" in p_lower or "decline" in p_lower or "drop" in p_lower or "down" in p_lower):
+                answer = f"Revenue is under pressure primarily due to '{f_title}'. "
+                if root_causes:
+                    rc_exp = root_causes[0].get("explanation") or root_causes[0].get("cause")
+                    answer += f"The root cause analysis directly attributes this to {rc_exp}. "
+                if recommendations:
+                    answer += f"DecisionOS recommends implementing '{recommendations[0].get('title')}' as an immediate countermeasure."
+            elif "risk" in p_lower:
+                answer = f"The most critical operational risk identified is '{f_title}'. "
+                if root_causes:
+                    answer += f"Root cause telemetry confirms this is driven by '{root_causes[0].get('cause', 'underlying operational friction')}'. "
+                if recommendations:
+                    answer += f"Mitigation should focus on '{recommendations[0].get('title')}'. "
+            elif "prioriti" in p_lower or "focus" in p_lower or "action" in p_lower or "what should" in p_lower or "next" in p_lower:
+                if recommendations:
+                    rec = recommendations[0]
+                    answer = (
+                        f"Based on existing DecisionOS recommendation priorities, you should focus first on '{rec.get('title')}'. "
+                        f"This initiative has a priority of {rec.get('priority', 'HIGH')} with an estimated impact score of {rec.get('impact', 0.85)}."
+                    )
+                else:
+                    answer = f"To address '{f_title}', immediate focus should be directed toward operational stabilization."
+            elif "churn" in p_lower or "customer" in p_lower:
+                answer = f"Customer retention is flagged because '{f_title}' is impacting business performance. "
+                if root_causes:
+                    answer += f"Root cause diagnostic analysis links this behavior to '{root_causes[0].get('cause', 'operational delays')}'. "
+                if recommendations:
+                    answer += f"The recommended initiative is '{recommendations[0].get('title')}'. "
+            else:
+                answer = (
+                    f"Based on DecisionOS intelligence, the primary operational focus is '{primary_issue}'. "
+                    f"Business health is currently at {health_score}/100 ({health_status}). "
+                )
+                if recommendations:
+                    answer += f"Top recommended action: '{recommendations[0].get('title')}'. "
+
+            return {
+                "answer": answer.strip(),
+                "confidence": 0.89,
+                "sources": sources,
+            }
+
         # 1. Executive Narrative
         if "executive_narrative" in p_lower or "executive summary" in p_lower or "headline" in p_lower:
             return {

@@ -1,6 +1,7 @@
 """Database models package."""
 
 from app.core.constants import (
+    ChatMessageRole,
     DiagnosticGenerationStatus,
     ExpectedTimeToValue,
     FindingSeverity,
@@ -17,6 +18,8 @@ from app.core.constants import (
 from app.database.base import Base
 from app.models.ai_insight import AIInsight
 from app.models.base import TimestampMixin
+from app.models.chat_message import ChatMessage
+from app.models.chat_session import ChatSession
 from app.models.dataset import Dataset
 from app.models.dataset_column import DatasetColumn
 from app.models.dataset_metric import DatasetMetric
@@ -38,6 +41,9 @@ __all__ = [
     "RootCauseAnalysis",
     "Recommendation",
     "AIInsight",
+    "ChatSession",
+    "ChatMessage",
+    "ChatMessageRole",
     "FindingType",
     "FindingSeverity",
     "RelationshipType",
