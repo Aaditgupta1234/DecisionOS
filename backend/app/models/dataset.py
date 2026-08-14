@@ -88,6 +88,12 @@ class Dataset(TimestampMixin, Base):
         JSON().with_variant(JSONB(), "postgresql"),
         nullable=True,
     )
+    organization_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        index=True,
+        nullable=True,
+    )
     uploaded_by: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -217,6 +223,10 @@ class Dataset(TimestampMixin, Base):
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],
+    )
+    organization: Mapped[Optional["Organization"]] = relationship(
+        "Organization",
+        back_populates="datasets",
     )
 
     def __repr__(self) -> str:

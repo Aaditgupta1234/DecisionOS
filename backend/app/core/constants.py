@@ -11,6 +11,14 @@ class UserRole(str, Enum):
     VIEWER = "viewer"
 
 
+class OrgRole(str, Enum):
+    """Organization-scoped RBAC roles for multi-tenant tenancy."""
+    OWNER = "OWNER"
+    ADMIN = "ADMIN"
+    ANALYST = "ANALYST"
+    VIEWER = "VIEWER"
+
+
 class ChatMessageRole(str, Enum):
     """Roles for conversational AI chat messages."""
     USER = "USER"
