@@ -11,16 +11,17 @@ from sqlalchemy import (
     Integer,
     JSON,
     String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app.core.constants import DatasetStatus
+from app.core.constants import DatasetStatus, MetricsGenerationStatus
 from app.database.base import Base
 from app.models.base import TimestampMixin
 
 
 class Dataset(TimestampMixin, Base):
-    """Dataset metadata entity tracking uploads, lifecycle, cached preview, and schema status."""
+    """Dataset metadata entity tracking uploads, lifecycle, cached preview, schema, and KPI status."""
 
     __tablename__ = "datasets"
 
@@ -108,9 +109,31 @@ class Dataset(TimestampMixin, Base):
         nullable=True,
     )
 
+    # KPI Generation Tracking
+    metrics_generation_status: Mapped[MetricsGenerationStatus] = mapped_column(
+        SQLEnum(MetricsGenerationStatus, name="metrics_generation_status"),
+        default=MetricsGenerationStatus.PENDING,
+        index=True,
+        nullable=False,
+    )
+    metrics_generated_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    metrics_generation_error: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     # Relationships
     columns: Mapped[List["DatasetColumn"]] = relationship(
         "DatasetColumn",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    metrics: Mapped[List["DatasetMetric"]] = relationship(
+        "DatasetMetric",
         back_populates="dataset",
         cascade="all, delete-orphan",
         lazy="selectin",
@@ -121,4 +144,4 @@ class Dataset(TimestampMixin, Base):
     )
 
     def __repr__(self) -> str:
-        return f"<Dataset id={self.id} name={self.name} status={self.status} records={self.record_count}>"
+        return f"<Dataset id={self.id} name={self.name} status={self.status} metrics={self.metrics_generation_status}>"

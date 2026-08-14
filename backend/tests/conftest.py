@@ -119,3 +119,23 @@ def sample_csv_content():
         "C004,2026-01-18,310.25,completed,Electronics\n"
         "C005,2026-01-19,89.90,pending,Home\n"
     ).encode("utf-8")
+
+
+@pytest.fixture(scope="function", autouse=True)
+def seed_metric_defs(db_session):
+    """Automatically seeds default metric definitions into the test database."""
+    from seed_metrics import DEFAULT_METRIC_DEFINITIONS
+    from app.models.metric_definition import MetricDefinition
+    for item in DEFAULT_METRIC_DEFINITIONS:
+        m = MetricDefinition(
+            name=item["name"],
+            metric_key=item["metric_key"],
+            metric_category=item["metric_category"],
+            required_field=item["required_field"],
+            formula=item["formula"],
+            description=item["description"],
+            is_active=True,
+        )
+        db_session.add(m)
+    db_session.commit()
+

@@ -19,6 +19,23 @@ class DatasetStatus(str, Enum):
     FAILED = "FAILED"
 
 
+class MetricsGenerationStatus(str, Enum):
+    """Lifecycle states for dataset KPI calculation."""
+    PENDING = "PENDING"
+    GENERATED = "GENERATED"
+    FAILED = "FAILED"
+
+
+class MetricCategory(str, Enum):
+    """Standard KPI categories."""
+    REVENUE = "revenue"
+    ORDERS = "orders"
+    CUSTOMERS = "customers"
+    REVIEWS = "reviews"
+    DELIVERY = "delivery"
+    QUALITY = "quality"
+
+
 class DatasetType(str, Enum):
     FINANCIAL = "financial"
     SALES = "sales"
