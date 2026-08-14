@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDataset } from '../../context/DatasetContext';
 import { Database, Upload, RefreshCw, ChevronDown, Check, AlertCircle } from 'lucide-react';
 import { DecisionApi } from '../../api';
+import { OrganizationSwitcher } from './OrganizationSwitcher';
 
 export const TopNav: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
@@ -45,12 +46,16 @@ export const TopNav: React.FC = () => {
         zIndex: 50,
       }}
     >
-      {/* Left: Active Dataset Selector */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative' }}>
+      {/* Left: Organization & Dataset Selector Hierarchy */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative' }}>
+        <OrganizationSwitcher />
+
+        <div style={{ width: '1px', height: '24px', backgroundColor: 'var(--border-subtle)' }} />
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Database size={16} color="var(--text-muted)" />
           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            Active Dataset:
+            Dataset:
           </span>
         </div>
 

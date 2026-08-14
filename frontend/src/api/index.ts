@@ -25,16 +25,58 @@ import {
 
 export const DecisionApi = {
   // ------------------------------------------------------------------------
+  // Organizations & SaaS Tenancy
+  // ------------------------------------------------------------------------
+  listOrganizations: () => apiClient<any[]>('/organizations'),
+
+  getCurrentOrganization: () => apiClient<any>('/organizations/current'),
+
+  getOrganization: (orgId: string) => apiClient<any>(`/organizations/${orgId}`),
+
+  createOrganization: (data: { name: string; slug?: string; logo_url?: string }) =>
+    apiClient<any>('/organizations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateOrganization: (orgId: string, data: { name?: string; slug?: string; logo_url?: string; is_active?: boolean }) =>
+    apiClient<any>(`/organizations/${orgId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  listOrganizationMembers: (orgId: string) =>
+    apiClient<any[]>(`/organizations/${orgId}/members`),
+
+  addOrganizationMember: (orgId: string, data: { email: string; role: string }) =>
+    apiClient<any>(`/organizations/${orgId}/members`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateMemberRole: (orgId: string, memberId: string, role: string) =>
+    apiClient<any>(`/organizations/${orgId}/members/${memberId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
+
+  removeOrganizationMember: (orgId: string, memberId: string) =>
+    apiClient<any>(`/organizations/${orgId}/members/${memberId}`, {
+      method: 'DELETE',
+    }),
+
+  // ------------------------------------------------------------------------
   // Datasets
   // ------------------------------------------------------------------------
-  listDatasets: () => apiClient<Dataset[]>('/datasets'),
+  listDatasets: (organizationId?: string) =>
+    apiClient<Dataset[]>(`/datasets${organizationId ? `?organization_id=${organizationId}` : ''}`),
   
   getDataset: (datasetId: string) => apiClient<Dataset>(`/datasets/${datasetId}`),
 
-  uploadDataset: (file: File) => {
+  uploadDataset: (file: File, organizationId?: string) => {
     const formData = new FormData();
     formData.append('file', file);
-    return apiClient<Dataset>('/datasets/upload', {
+    return apiClient<Dataset>(`/datasets/upload${organizationId ? `?organization_id=${organizationId}` : ''}`, {
       method: 'POST',
       body: formData,
     });

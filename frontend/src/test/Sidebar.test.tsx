@@ -23,6 +23,7 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('Forecasting')).toBeInTheDocument();
     expect(screen.getByText('AI Analyst')).toBeInTheDocument();
     expect(screen.getByText('Executive Reports')).toBeInTheDocument();
+    expect(screen.getByText('Organization')).toBeInTheDocument();
     expect(screen.getByText('Datasets')).toBeInTheDocument();
   });
 });

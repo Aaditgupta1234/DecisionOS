@@ -8,7 +8,7 @@ interface DatasetContextType {
   setActiveDataset: (dataset: Dataset) => void;
   loading: boolean;
   error: string | null;
-  refreshDatasets: () => Promise<void>;
+  refreshDatasets: (organizationId?: string) => Promise<void>;
 }
 
 const DatasetContext = createContext<DatasetContextType | undefined>(undefined);
@@ -19,11 +19,11 @@ export const DatasetProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshDatasets = async () => {
+  const refreshDatasets = async (organizationId?: string) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await DecisionApi.listDatasets();
+      const data = await DecisionApi.listDatasets(organizationId);
       const list = Array.isArray(data) ? data : [];
       setDatasets(list);
 

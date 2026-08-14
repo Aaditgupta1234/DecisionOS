@@ -344,3 +344,32 @@ export interface ExecutiveReportData {
   scenarios?: Scenario[];
   forecasts?: Forecast[];
 }
+
+export type OrgRole = 'OWNER' | 'ADMIN' | 'ANALYST' | 'VIEWER';
+
+export interface OrganizationMember {
+  id: string;
+  organization_id: string;
+  user_id: string;
+  role: OrgRole;
+  email?: string;
+  full_name?: string;
+  created_at: string;
+}
+
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  created_by?: string;
+  logo_url?: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  current_user_role?: OrgRole;
+  member_count?: number;
+}
+
+export interface OrganizationDetail extends Organization {
+  members: OrganizationMember[];
+}

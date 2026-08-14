@@ -14,6 +14,7 @@ import {
   Database,
   ShieldCheck,
   FileText,
+  Building2,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -29,6 +30,7 @@ export const Sidebar: React.FC = () => {
     { to: '/forecasts', label: 'Forecasting', icon: TrendingUp },
     { to: '/chat', label: 'AI Analyst', icon: MessageSquare, badge: 'AI' },
     { to: '/reports', label: 'Executive Reports', icon: FileText },
+    { to: '/settings/organization', label: 'Organization', icon: Building2 },
     { to: '/datasets', label: 'Datasets', icon: Database },
   ];
 
