@@ -222,12 +222,23 @@ class DashboardReadModel:
                             "confidence_interval": float(p.get("confidence_interval") or getattr(fc, "confidence_level", 0.95) or 0.95),
                         })
 
+            horizon_days = 90
+            horizon_clean = horizon_str.replace("HORIZON_", "").replace("_DAYS", "").replace("D", "").strip()
+            if horizon_clean.isdigit():
+                horizon_days = int(horizon_clean)
+
+            gen_at_str = fc.created_at.isoformat() if fc.created_at else datetime.now(timezone.utc).isoformat()
+
             result.append({
                 "forecast_id": str(fc.id),
                 "target_metric": metric_key,
                 "target_metric_name": metric_key.replace("_", " ").title(),
                 "horizon": horizon_str,
-                "model_used": getattr(fc, "model_name", "PROPHET_ENSEMBLE") or "PROPHET_ENSEMBLE",
+                "model_used": getattr(fc, "model_name", "Prophet") or "Prophet",
+                "model_name": getattr(fc, "model_name", "Prophet") or "Prophet",
+                "model_version": getattr(fc, "model_version", "1.1.5") or "1.1.5",
+                "forecast_horizon": horizon_days,
+                "generated_at": gen_at_str,
                 "mape_score": mape_score,
                 "accuracy_percentage": round(100.0 - min(100.0, mape_score), 1),
                 "trend": trend_str,
@@ -385,35 +396,57 @@ class DashboardReadModel:
         findings: List[DiagnosticFinding],
         recommendations: List[Recommendation],
         forecasts: List[Forecast],
-    ) -> List[str]:
-        """Deterministically generate dynamic suggested chat questions from verified artifacts."""
-        questions = []
+    ) -> List[Dict[str, str]]:
+        """Deterministically generate dynamic categorized suggested chat questions from verified artifacts."""
+        from app.dashboard.constants import QuestionCategory
+        questions: List[Dict[str, str]] = []
         
-        # 1. Top critical finding question
+        # 1. Top critical finding question (ROOT_CAUSE)
         crit_finding = next((f for f in findings if (f.severity.value if hasattr(f.severity, "value") else str(f.severity)) in ["CRITICAL", "HIGH"]), None)
         if crit_finding:
-            questions.append(f"Why did '{crit_finding.title}' occur and what is the estimated impact?")
+            questions.append({
+                "category": QuestionCategory.ROOT_CAUSE.value,
+                "question": f"Why did '{crit_finding.title}' occur and what is the estimated impact?",
+            })
         else:
-            questions.append("What are the primary operational bottlenecks identified in this dataset?")
+            questions.append({
+                "category": QuestionCategory.ROOT_CAUSE.value,
+                "question": "What are the primary operational bottlenecks identified in this dataset?",
+            })
 
-        # 2. Recommendation priority question
+        # 2. Recommendation priority question (RECOMMENDATION)
         high_rec = next((r for r in recommendations if (r.priority.value if hasattr(r.priority, "value") else str(r.priority)) in ["CRITICAL", "HIGH"]), None)
         if high_rec:
-            questions.append(f"How can we execute the recommendation for '{high_rec.title}'?")
+            questions.append({
+                "category": QuestionCategory.RECOMMENDATION.value,
+                "question": f"How can we execute the recommendation for '{high_rec.title}'?",
+            })
         else:
-            questions.append("Which strategic recommendation offers the highest ROI with lowest effort?")
+            questions.append({
+                "category": QuestionCategory.RECOMMENDATION.value,
+                "question": "Which strategic recommendation offers the highest ROI with lowest effort?",
+            })
 
-        # 3. Forecast risk question
+        # 3. Forecast risk question (FORECAST)
         if forecasts:
             fc = forecasts[0]
             target_m = getattr(fc, "metric_key", None) or getattr(fc, "target_metric", "metric")
             metric_name = target_m.replace("_", " ")
-            questions.append(f"What is the projected {metric_name} trajectory over the next 90 days?")
+            questions.append({
+                "category": QuestionCategory.FORECAST.value,
+                "question": f"What is the projected {metric_name} trajectory over the next 90 days?",
+            })
         else:
-            questions.append("What are the greatest future downside risks facing the business?")
+            questions.append({
+                "category": QuestionCategory.FORECAST.value,
+                "question": "What are the greatest future downside risks facing the business?",
+            })
 
-        # 4. Executive summary question
-        questions.append("Summarize the boardroom briefing and highlight key decision points.")
+        # 4. Executive summary question (HEALTH_SCORE)
+        questions.append({
+            "category": QuestionCategory.HEALTH_SCORE.value,
+            "question": "Summarize the boardroom briefing and highlight key decision points.",
+        })
         return questions
 
     @classmethod

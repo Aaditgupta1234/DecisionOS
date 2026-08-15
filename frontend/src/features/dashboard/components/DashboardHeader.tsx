@@ -90,6 +90,40 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     );
   };
 
+  const getFreshnessBadge = () => {
+    const age = metadata.age_seconds;
+    if (age < 60) {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          Fresh ({age}s)
+        </span>
+      );
+    }
+    if (age < 300) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+          <Clock className="w-3 h-3 text-cyan-400" />
+          Recent ({Math.floor(age / 60)}m)
+        </span>
+      );
+    }
+    if (age < 900) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+          <Clock className="w-3 h-3 text-amber-400" />
+          Moderate ({Math.floor(age / 60)}m)
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 animate-pulse">
+        <AlertCircle className="w-3 h-3 text-rose-400" />
+        Stale ({Math.floor(age / 60)}m old)
+      </span>
+    );
+  };
+
   return (
     <header className="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 px-6 py-4 transition-all">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -105,13 +139,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               </h1>
               {getStatusBadge()}
               {getHealthBadge()}
+              {getFreshnessBadge()}
             </div>
             <div className="flex items-center gap-3 text-xs text-slate-400 mt-1 flex-wrap">
               <span className="text-slate-300 font-medium">{metadata.dataset_name}</span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3 text-slate-500" />
-                Snapshot age: <strong className="text-slate-300 font-mono">{metadata.age_seconds < 60 ? `${metadata.age_seconds}s` : `${Math.floor(metadata.age_seconds / 60)}m`}</strong>
+                <Shield className="w-3 h-3 text-indigo-400" />
+                Forecast: <strong className="text-slate-300">{metadata.forecast_engine?.engine || 'Prophet'} v{metadata.forecast_engine?.version || '1.1.5'}</strong>
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
@@ -172,12 +207,12 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             <span className="text-slate-400 ml-1">({(metadata.snapshot_size_bytes / 1024).toFixed(1)} KB)</span>
           </div>
           <div>
-            <span className="text-slate-500 block mb-0.5">Verified Artifacts Aggregated</span>
-            <span className="font-semibold text-slate-200">{metadata.artifact_count} artifacts</span>
+            <span className="text-slate-500 block mb-0.5">Forecast Engine Provenance</span>
+            <span className="font-semibold text-slate-200">{metadata.forecast_engine?.engine || 'Prophet'} v{metadata.forecast_engine?.version || '1.1.5'}</span>
           </div>
           <div>
-            <span className="text-slate-500 block mb-0.5">Engine Versions</span>
-            <span className="text-slate-300 font-mono">Workspace v{metadata.workspace_version} • Questions v{metadata.question_generation_version}</span>
+            <span className="text-slate-500 block mb-0.5">API &amp; Schema Versions</span>
+            <span className="text-slate-300 font-mono">API {metadata.api_version || 'v1'} • Workspace v{metadata.workspace_version} • Questions v{metadata.question_generation_version}</span>
           </div>
         </div>
       )}

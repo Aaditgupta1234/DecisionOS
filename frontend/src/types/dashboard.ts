@@ -169,6 +169,10 @@ export interface ForecastItem {
   target_metric_name: string;
   horizon: string;
   model_used: string;
+  model_name?: string;
+  model_version?: string;
+  forecast_horizon?: number;
+  generated_at?: string;
   mape_score: number;
   accuracy_percentage: number;
   trend: string;
@@ -241,10 +245,15 @@ export interface ReportsSummaryItem {
   }>;
 }
 
+export interface CategorizedSuggestedQuestion {
+  category: 'FORECAST' | 'ROOT_CAUSE' | 'RECOMMENDATION' | 'HEALTH_SCORE' | 'GENERAL';
+  question: string;
+}
+
 export interface ChatSummaryPayload {
   session_count: number;
   last_message_at?: string;
-  suggested_questions: string[];
+  suggested_questions: Array<CategorizedSuggestedQuestion | string>;
 }
 
 export interface DashboardWorkspacePayload {
@@ -267,7 +276,13 @@ export interface DashboardHealthIndicator {
   stale: boolean;
 }
 
+export interface ForecastEngineMetadata {
+  engine: string;
+  version: string;
+}
+
 export interface WorkspaceMetadata {
+  api_version: string;
   workspace_version: string;
   snapshot_version: string;
   question_generation_version: string;
@@ -282,6 +297,7 @@ export interface WorkspaceMetadata {
   generated_at: string;
   age_seconds: number;
   cache_hit: boolean;
+  forecast_engine?: ForecastEngineMetadata;
   available_sections: Record<string, boolean>;
   available_exports: string[];
 }

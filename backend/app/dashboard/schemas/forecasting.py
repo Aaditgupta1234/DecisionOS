@@ -21,6 +21,10 @@ class ForecastItem(BaseModel):
     target_metric_name: str
     horizon: str  # 30D, 60D, 90D
     model_used: str = "PROPHET_ENSEMBLE"
+    model_name: str = "Prophet"
+    model_version: str = "1.1.5"
+    forecast_horizon: int = 90
+    generated_at: Optional[str] = None
     mape_score: float = 4.2
     accuracy_percentage: float = 95.8
     trend: str = "GROWING"

@@ -131,10 +131,12 @@ class DashboardSnapshotBuilder:
             "recommendation_ids": [str(r.id) for r in recommendations],
         }
 
-        # 5. Compute SHA256 snapshot_hash for no-op detection
-        serialized = json.dumps(workspace_json, sort_keys=True, default=str)
-        snapshot_hash = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
-        snapshot_size_bytes = len(serialized.encode("utf-8"))
+        # 5. Compute SHA256 snapshot_hash from pure business intelligence state
+        from app.dashboard.hash_projection_builder import HashProjectionBuilder
+        canonical_state = HashProjectionBuilder.canonical_json(workspace_json)
+        snapshot_hash = hashlib.sha256(canonical_state.encode("utf-8")).hexdigest()
+        raw_serialized = json.dumps(workspace_json, sort_keys=True, default=str)
+        snapshot_size_bytes = len(raw_serialized.encode("utf-8"))
 
         build_time_ms = (time.perf_counter() - start_time) * 1000.0
 

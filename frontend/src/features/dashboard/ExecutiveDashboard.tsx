@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { dashboardApi } from '../../api';
 import { WorkspaceResponse } from '../../types/dashboard';
@@ -6,17 +6,41 @@ import { DashboardHeader } from './components/DashboardHeader';
 import { DashboardSidebar } from './components/DashboardSidebar';
 import { DashboardSectionErrorBoundary } from './components/DashboardSectionErrorBoundary';
 import { ReportPreviewModal } from './components/ReportPreviewModal';
+
+// Immediate Hydration Sections (Core Executive Shell)
 import { OverviewSection } from './sections/OverviewSection';
 import { KPISection } from './sections/KPISection';
 import { FindingsSection } from './sections/FindingsSection';
 import { RootCauseSection } from './sections/RootCauseSection';
 import { RecommendationSection } from './sections/RecommendationSection';
-import { ForecastSection } from './sections/ForecastSection';
-import { ScenarioSection } from './sections/ScenarioSection';
-import { NarrativeSection } from './sections/NarrativeSection';
-import { InsightSection } from './sections/InsightSection';
-import { ReportsSection } from './sections/ReportsSection';
-import { ChatSection } from './sections/ChatSection';
+
+// Code-Split Lazy Loaded Heavyweight Sections
+const ForecastSection = React.lazy(() =>
+  import('./sections/ForecastSection').then((m) => ({ default: m.ForecastSection }))
+);
+const ScenarioSection = React.lazy(() =>
+  import('./sections/ScenarioSection').then((m) => ({ default: m.ScenarioSection }))
+);
+const NarrativeSection = React.lazy(() =>
+  import('./sections/NarrativeSection').then((m) => ({ default: m.NarrativeSection }))
+);
+const InsightSection = React.lazy(() =>
+  import('./sections/InsightSection').then((m) => ({ default: m.InsightSection }))
+);
+const ReportsSection = React.lazy(() =>
+  import('./sections/ReportsSection').then((m) => ({ default: m.ReportsSection }))
+);
+const ChatSection = React.lazy(() =>
+  import('./sections/ChatSection').then((m) => ({ default: m.ChatSection }))
+);
+
+const SectionSkeleton: React.FC<{ title: string }> = ({ title }) => (
+  <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8 animate-pulse flex flex-col items-center justify-center text-center space-y-3 min-h-[220px]">
+    <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
+    <span className="text-xs font-semibold text-slate-300">Loading {title}...</span>
+    <span className="text-[11px] text-slate-500">Hydrating progressive intelligence module</span>
+  </div>
+);
 
 interface ExecutiveDashboardProps {
   datasetId: string;
@@ -269,7 +293,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
               sectionKey="forecasts"
               onRetry={() => loadWorkspace(true)}
             >
-              <ForecastSection forecasts={ws.forecasts} />
+              <Suspense fallback={<SectionSkeleton title="Predictive Forecasts" />}>
+                <ForecastSection forecasts={ws.forecasts} />
+              </Suspense>
             </DashboardSectionErrorBoundary>
           )}
 
@@ -279,7 +305,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
               sectionKey="scenarios"
               onRetry={() => loadWorkspace(true)}
             >
-              <ScenarioSection scenarios={ws.scenarios} />
+              <Suspense fallback={<SectionSkeleton title="Scenario Simulations" />}>
+                <ScenarioSection scenarios={ws.scenarios} />
+              </Suspense>
             </DashboardSectionErrorBoundary>
           )}
 
@@ -289,7 +317,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
               sectionKey="narratives"
               onRetry={() => loadWorkspace(true)}
             >
-              <NarrativeSection narratives={ws.narratives} />
+              <Suspense fallback={<SectionSkeleton title="Executive Briefings" />}>
+                <NarrativeSection narratives={ws.narratives} />
+              </Suspense>
             </DashboardSectionErrorBoundary>
           )}
 
@@ -299,7 +329,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
               sectionKey="insights"
               onRetry={() => loadWorkspace(true)}
             >
-              <InsightSection insights={ws.insights} />
+              <Suspense fallback={<SectionSkeleton title="Strategic Insights" />}>
+                <InsightSection insights={ws.insights} />
+              </Suspense>
             </DashboardSectionErrorBoundary>
           )}
 
@@ -309,10 +341,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
               sectionKey="reports"
               onRetry={() => loadWorkspace(true)}
             >
-              <ReportsSection
-                reportsSummary={ws.reports}
-                onOpenPreview={(id) => setPreviewReportId(id)}
-              />
+              <Suspense fallback={<SectionSkeleton title="Boardroom Reports" />}>
+                <ReportsSection
+                  reportsSummary={ws.reports}
+                  onOpenPreview={(id) => setPreviewReportId(id)}
+                />
+              </Suspense>
             </DashboardSectionErrorBoundary>
           )}
 
@@ -322,10 +356,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
               sectionKey="chat"
               onRetry={() => loadWorkspace(true)}
             >
-              <ChatSection
-                datasetId={datasetId}
-                chatSummary={ws.chat}
-              />
+              <Suspense fallback={<SectionSkeleton title="AI Decision Copilot" />}>
+                <ChatSection
+                  datasetId={datasetId}
+                  chatSummary={ws.chat}
+                />
+              </Suspense>
             </DashboardSectionErrorBoundary>
           )}
         </main>

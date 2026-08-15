@@ -118,23 +118,31 @@ export const ForecastSection: React.FC<ForecastSectionProps> = ({ forecasts }) =
 
       {/* Main Forecast Card */}
       <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-        {/* Metric Overview Header */}
+        {/* Metric Overview Header & Provenance */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">
                 {activeForecast.target_metric_name || activeForecast.target_metric}
               </span>
               <span className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-slate-800 text-slate-300 border border-slate-700">
-                Model: {activeForecast.model_used || 'Prophet Ensemble'}
+                Engine: {activeForecast.model_name || activeForecast.model_used || 'Prophet'} v{activeForecast.model_version || '1.1.5'}
               </span>
+              <span className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-indigo-950/60 text-indigo-300 border border-indigo-800/50">
+                Horizon: {activeForecast.forecast_horizon || 90}D
+              </span>
+              {activeForecast.generated_at && (
+                <span className="px-2 py-0.5 text-[10px] font-medium rounded-md bg-slate-900 text-slate-400 border border-slate-800">
+                  Gen: {new Date(activeForecast.generated_at).toLocaleDateString()}
+                </span>
+              )}
             </div>
             <h3 className="text-lg font-bold text-white mt-1">
-              90-Day Trajectory Projection
+              {activeForecast.forecast_horizon || 90}-Day Trajectory Projection
             </h3>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-3 text-xs">
             <div className="p-2.5 bg-slate-950/60 rounded-xl border border-slate-800 text-center">
               <span className="text-[10px] text-slate-500 block">Forecast Accuracy</span>
               <span className="font-bold text-emerald-400">

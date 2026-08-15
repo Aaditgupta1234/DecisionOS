@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.dashboard.cache_service import dashboard_cache
 from app.dashboard.constants import (
+    API_VERSION,
     AVAILABLE_SECTIONS_DEFAULT,
     MAX_SNAPSHOT_AGE_MINUTES,
     MIN_REFRESH_INTERVAL_SECONDS,
@@ -41,18 +42,25 @@ def _to_utc(dt: Optional[datetime]) -> Optional[datetime]:
     return dt.astimezone(timezone.utc)
 
 
+from app.dashboard.coordinator import FastAPISnapshotBuildCoordinator, SnapshotBuildCoordinator
+
+
 class DashboardService:
     """
     Orchestrates workspace hydration, snapshot caching, staleness verification,
-    concurrency locking, and telemetry ingestion.
+    concurrency locking, no-op diff detection, and telemetry ingestion.
     Supports both AsyncSession and sync Session.
     """
 
-    def __init__(self, db: Union[AsyncSession, Session]):
+    def __init__(
+        self,
+        db: Union[AsyncSession, Session],
+        coordinator: Optional[SnapshotBuildCoordinator] = None,
+    ):
         self.db = db
         self.query_repo = DashboardQueryRepository(db)
         self.snapshot_repo = DashboardSnapshotRepository(db)
-        self.builder = DashboardSnapshotBuilder(self.query_repo)
+        self.coordinator = coordinator or FastAPISnapshotBuildCoordinator(db)
 
     async def get_workspace(
         self,
@@ -132,6 +140,7 @@ class DashboardService:
         )
 
         metadata = WorkspaceMetadata(
+            api_version=API_VERSION,
             workspace_version=WORKSPACE_VERSION,
             snapshot_version=snapshot.snapshot_version or SNAPSHOT_VERSION,
             question_generation_version=QUESTION_GENERATION_VERSION,
@@ -170,7 +179,7 @@ class DashboardService:
         trigger: SnapshotTrigger = SnapshotTrigger.MANUAL,
     ) -> RefreshResponse:
         """
-        Triggers explicit snapshot regeneration with concurrency build locking.
+        Triggers explicit snapshot regeneration with concurrency build locking and no-op diff skip.
         """
         # 1. Check for active build locking
         active_job = await self.snapshot_repo.get_active_rebuild_job(dataset_id)
@@ -188,8 +197,8 @@ class DashboardService:
                     retry_after_seconds=MIN_REFRESH_INTERVAL_SECONDS - job_age,
                 )
 
-        # 2. Invalidate cache immediately
-        dashboard_cache.invalidate(dataset_id)
+        # 2. Get previous latest snapshot for diff detection
+        previous_snapshot = await self.snapshot_repo.get_latest_snapshot(dataset_id)
 
         # 3. Create pending snapshot lock record
         dataset = await self.query_repo.get_dataset(dataset_id)
@@ -201,7 +210,7 @@ class DashboardService:
             trigger=trigger,
         )
 
-        # 4. Execute rebuild
+        # 4. Execute rebuild via coordinator
         try:
             (
                 workspace_json,
@@ -211,8 +220,28 @@ class DashboardService:
                 build_time_ms,
                 snapshot_size,
                 artifact_count,
-            ) = await self.builder.build(dataset_id)
+            ) = await self.coordinator.build_snapshot(
+                dataset_id=dataset_id,
+                trigger=trigger,
+                organization_id=org_id,
+                pending_snapshot=pending_snapshot,
+            )
 
+            # Snapshot Diff Detection: If identical, skip persist & preserve cache
+            if previous_snapshot and previous_snapshot.snapshot_hash == snapshot_hash and previous_snapshot.status == SnapshotStatus.READY:
+                await self.snapshot_repo.delete_snapshot(pending_snapshot.id)
+                dashboard_metrics.record_build(build_time_ms)
+                dashboard_metrics.record_refresh(success=True)
+                return RefreshResponse(
+                    dataset_id=dataset_id,
+                    snapshot_id=previous_snapshot.id,
+                    status=SnapshotStatus.READY,
+                    trigger=trigger,
+                    message="Snapshot unchanged (no-op diff detected)",
+                )
+
+            # Invalidate cache and persist new snapshot
+            dashboard_cache.invalidate(dataset_id)
             await self.snapshot_repo.save_snapshot(
                 dataset_id=dataset_id,
                 workspace_json=workspace_json,
@@ -334,7 +363,11 @@ class DashboardService:
             build_time_ms,
             snapshot_size,
             artifact_count,
-        ) = await self.builder.build(dataset_id)
+        ) = await self.coordinator.build_snapshot(
+            dataset_id=dataset_id,
+            trigger=trigger,
+            organization_id=org_id,
+        )
 
         snapshot = await self.snapshot_repo.save_snapshot(
             dataset_id=dataset_id,

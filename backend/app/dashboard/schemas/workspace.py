@@ -6,10 +6,14 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.dashboard.constants import (
+    API_VERSION,
     AVAILABLE_SECTIONS_DEFAULT,
+    DEFAULT_FORECAST_ENGINE,
+    DEFAULT_FORECAST_VERSION,
     QUESTION_GENERATION_VERSION,
     SNAPSHOT_VERSION,
     WORKSPACE_VERSION,
+    QuestionCategory,
     SnapshotStatus,
 )
 from app.dashboard.schemas.forecasting import ForecastItem, ScenarioItem
@@ -57,10 +61,15 @@ class ReportsSummaryItem(BaseModel):
     reports: List[Dict[str, Any]] = Field(default_factory=list)
 
 
+class CategorizedSuggestedQuestion(BaseModel):
+    category: QuestionCategory = QuestionCategory.GENERAL
+    question: str
+
+
 class ChatSummaryPayload(BaseModel):
     session_count: int = 0
     last_message_at: Optional[datetime] = None
-    suggested_questions: List[str] = Field(default_factory=list)
+    suggested_questions: List[CategorizedSuggestedQuestion] = Field(default_factory=list)
 
 
 class DashboardWorkspacePayload(BaseModel):
@@ -79,9 +88,15 @@ class DashboardWorkspacePayload(BaseModel):
     chat: ChatSummaryPayload = Field(default_factory=ChatSummaryPayload)
 
 
+class ForecastEngineMetadata(BaseModel):
+    engine: str = DEFAULT_FORECAST_ENGINE
+    version: str = DEFAULT_FORECAST_VERSION
+
+
 class WorkspaceMetadata(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    api_version: str = API_VERSION
     workspace_version: str = WORKSPACE_VERSION
     snapshot_version: str = SNAPSHOT_VERSION
     question_generation_version: str = QUESTION_GENERATION_VERSION
@@ -96,6 +111,7 @@ class WorkspaceMetadata(BaseModel):
     generated_at: datetime
     age_seconds: int = 0
     cache_hit: bool = False
+    forecast_engine: ForecastEngineMetadata = Field(default_factory=ForecastEngineMetadata)
     available_sections: Dict[str, bool] = Field(default_factory=lambda: dict(AVAILABLE_SECTIONS_DEFAULT))
     available_exports: List[str] = Field(
         default_factory=lambda: ["EXECUTIVE_SUMMARY_PDF", "BOARD_PACKAGE_PDF", "WORKSPACE_HTML"]

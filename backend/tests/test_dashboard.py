@@ -661,6 +661,144 @@ def test_api_metrics_summary(client, admin_headers):
     assert "snapshot_build_count" in response.json()["data"]
 
 
+# ==============================================================================
+# PHASE 9.6 PRODUCTION-GRADE HARDENING TESTS
+# ==============================================================================
+
+def test_hash_projection_builder_determinism_and_report_invariance():
+    """Verify HashProjectionBuilder strips transient metadata and export IDs."""
+    import hashlib
+    from app.dashboard.hash_projection_builder import HashProjectionBuilder
+
+    sample_workspace = {
+        "overview": {
+            "health_dimensions": {"data_quality": 95},
+            "scorecard": {"overall_score": 92},
+            "top_risks": [],
+            "top_opportunities": [],
+            "watchlist_metrics": [],
+            "executive_summary_brief": "Healthy business operations.",
+        },
+        "kpis": [{"metric_key": "revenue", "current_value": 500000}],
+        "findings": [{"title": "Server spike", "severity": "HIGH"}],
+        "root_causes": [],
+        "recommendations": [{"title": "Scale pods", "quadrant": "QUICK_WIN"}],
+        "forecasts": [{"model_name": "Prophet", "model_version": "1.1.5", "forecast_horizon": 90}],
+        "scenarios": [],
+        "narratives": [],
+        "insights": {},
+        "chat": {"suggested_questions": [{"category": "ROOT_CAUSE", "question": "Why?"}]},
+        "reports": {
+            "total_count": 3,
+            "latest_report_type": "EXECUTIVE_SUMMARY",
+            "report_ids": [str(uuid.uuid4())],  # Transient export ID
+            "download_urls": ["/download/pdf/123"],
+        },
+    }
+
+    # 1. Compute canonical JSON and hash
+    canonical_1 = HashProjectionBuilder.canonical_json(sample_workspace)
+    hash_1 = hashlib.sha256(canonical_1.encode("utf-8")).hexdigest()
+
+    # 2. Modify only transient metadata (export IDs, generation timestamps)
+    mutated_workspace = dict(sample_workspace)
+    mutated_workspace["reports"] = {
+        "total_count": 3,
+        "latest_report_type": "EXECUTIVE_SUMMARY",
+        "report_ids": [str(uuid.uuid4()), str(uuid.uuid4())],  # New export ID
+        "download_urls": ["/download/pdf/different_id"],
+    }
+    mutated_workspace["generated_at"] = "2026-08-15T12:00:00Z"
+    mutated_workspace["workspace_generation_id"] = str(uuid.uuid4())
+
+    canonical_2 = HashProjectionBuilder.canonical_json(mutated_workspace)
+    hash_2 = hashlib.sha256(canonical_2.encode("utf-8")).hexdigest()
+
+    # HASH MUST BE 100% INVARIANT to report export IDs and timestamps
+    assert hash_1 == hash_2
+    assert "report_ids" not in canonical_1
+    assert "download_urls" not in canonical_1
+    assert "hash_schema_version" in canonical_1
+
+
+@pytest.mark.anyio
+async def test_coordinator_timeout_and_cancellation_handling(db_session, admin_user):
+    """Verify SnapshotBuildCoordinator cleanly handles timeouts and asyncio.CancelledError."""
+    import asyncio
+    from app.dashboard.coordinator import FastAPISnapshotBuildCoordinator
+    from unittest.mock import AsyncMock, patch
+
+    empty_ds = Dataset(
+        name="Coordinator Test Dataset",
+        original_filename="coord.csv",
+        stored_filename=f"{uuid.uuid4().hex[:12]}_coord.csv",
+        file_path="/tmp/coord.csv",
+        file_size=1024,
+        uploaded_by=admin_user.id,
+    )
+    db_session.add(empty_ds)
+    db_session.commit()
+    db_session.refresh(empty_ds)
+
+    coordinator = FastAPISnapshotBuildCoordinator(db_session)
+    pending_snap = await coordinator.snapshot_repo.create_pending_snapshot(empty_ds.id)
+
+    # 1. Test TimeoutError
+    with patch.object(coordinator.builder, "build", new=AsyncMock(side_effect=asyncio.TimeoutError())):
+        with pytest.raises(TimeoutError):
+            await coordinator.build_snapshot(empty_ds.id, pending_snapshot=pending_snap)
+        
+        # Verify status transitioned to FAILED
+        failed_snap = await coordinator.snapshot_repo.get_by_id(pending_snap.id)
+        assert failed_snap.status == SnapshotStatus.FAILED
+        assert "timeout" in failed_snap.error_message.lower()
+
+    # 2. Test CancelledError
+    pending_snap_2 = await coordinator.snapshot_repo.create_pending_snapshot(empty_ds.id)
+    with patch.object(coordinator.builder, "build", new=AsyncMock(side_effect=asyncio.CancelledError())):
+        with pytest.raises(asyncio.CancelledError):
+            await coordinator.build_snapshot(empty_ds.id, pending_snapshot=pending_snap_2)
+        
+        failed_snap_2 = await coordinator.snapshot_repo.get_by_id(pending_snap_2.id)
+        assert failed_snap_2.status == SnapshotStatus.FAILED
+        assert "cancelled" in failed_snap_2.error_message.lower()
+
+
+def test_dashboard_metrics_histogram_and_percentiles():
+    """Verify DashboardMetrics calculates p50, p95, p99 on bounded deque."""
+    from app.dashboard.dashboard_metrics import DashboardMetrics
+
+    metrics = DashboardMetrics()
+    for duration in [10.0, 20.0, 30.0, 40.0, 50.0, 100.0, 200.0, 500.0]:
+        metrics.record_build(duration)
+
+    summary = metrics.get_summary()
+    assert summary["snapshot_build_count"] == 8
+    assert summary["p50_build_time_ms"] > 0
+    assert summary["p95_build_time_ms"] > summary["p50_build_time_ms"]
+    assert summary["p99_build_time_ms"] >= summary["p95_build_time_ms"]
+    assert len(metrics.snapshot_build_durations) == 8
+
+
+def test_categorized_suggested_questions_generation():
+    """Verify DashboardReadModel produces categorized questions with QuestionCategory enums."""
+    from app.dashboard.read_model import DashboardReadModel
+    from app.dashboard.constants import QuestionCategory
+
+    questions = DashboardReadModel.build_suggested_questions(
+        findings=[],
+        recommendations=[],
+        forecasts=[],
+    )
+
+    assert len(questions) == 4
+    categories = [q["category"] for q in questions]
+    assert QuestionCategory.ROOT_CAUSE.value in categories
+    assert QuestionCategory.RECOMMENDATION.value in categories
+    assert QuestionCategory.FORECAST.value in categories
+    assert QuestionCategory.HEALTH_SCORE.value in categories
+
+
 @pytest.mark.anyio
 async def test_dashboard_empty_dataset_graceful_degradation(db_session, admin_user):
     """Verify snapshot generation does not crash on a newly created empty dataset."""

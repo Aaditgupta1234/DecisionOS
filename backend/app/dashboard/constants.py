@@ -5,8 +5,10 @@ Constants and Enums for Phase 9.6 Executive Dashboard & Intelligence Workspace.
 from enum import Enum
 from typing import Dict, Any
 
+API_VERSION: str = "v1"
 WORKSPACE_VERSION: str = "1.0"
 SNAPSHOT_VERSION: str = "1.0"
+HASH_SCHEMA_VERSION: str = "1.0"
 QUESTION_GENERATION_VERSION: str = "1.0"
 
 CACHE_TTL_SECONDS: int = 60
@@ -14,6 +16,18 @@ MAX_SNAPSHOT_AGE_MINUTES: int = 15
 MIN_REFRESH_INTERVAL_SECONDS: int = 30
 MAX_SNAPSHOTS_PER_DATASET: int = 25
 TELEMETRY_RETENTION_DAYS: int = 90
+SNAPSHOT_BUILD_TIMEOUT_SECONDS: int = 60
+
+DEFAULT_FORECAST_ENGINE: str = "Prophet"
+DEFAULT_FORECAST_VERSION: str = "1.1.5"
+
+
+class QuestionCategory(str, Enum):
+    FORECAST = "FORECAST"
+    ROOT_CAUSE = "ROOT_CAUSE"
+    RECOMMENDATION = "RECOMMENDATION"
+    HEALTH_SCORE = "HEALTH_SCORE"
+    GENERAL = "GENERAL"
 
 
 class SnapshotStatus(str, Enum):

@@ -40,15 +40,38 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
+  const rawQuestions = chatSummary?.suggested_questions || [];
+  const normalizedQuestions = rawQuestions.map((item) => {
+    if (typeof item === 'string') {
+      return { category: 'GENERAL' as const, question: item };
+    }
+    return item;
+  });
+
   const suggestedQuestions =
-    chatSummary?.suggested_questions && chatSummary.suggested_questions.length > 0
-      ? chatSummary.suggested_questions
+    normalizedQuestions.length > 0
+      ? normalizedQuestions
       : [
-          'What are the primary operational bottlenecks identified in this dataset?',
-          'Which strategic recommendation offers the highest ROI with lowest effort?',
-          'What is the projected revenue trajectory over the next 90 days?',
-          'Summarize the boardroom briefing and highlight key decision points.',
+          { category: 'ROOT_CAUSE' as const, question: 'What are the primary operational bottlenecks identified in this dataset?' },
+          { category: 'RECOMMENDATION' as const, question: 'Which strategic recommendation offers the highest ROI with lowest effort?' },
+          { category: 'FORECAST' as const, question: 'What is the projected revenue trajectory over the next 90 days?' },
+          { category: 'HEALTH_SCORE' as const, question: 'Summarize the boardroom briefing and highlight key decision points.' },
         ];
+
+  const getCategoryColor = (cat: string) => {
+    switch (cat) {
+      case 'FORECAST':
+        return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
+      case 'ROOT_CAUSE':
+        return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+      case 'RECOMMENDATION':
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+      case 'HEALTH_SCORE':
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
+      default:
+        return 'bg-slate-800 text-slate-400 border-slate-700';
+    }
+  };
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = (textToSend || inputText).trim();
@@ -129,14 +152,17 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
             <span>Suggested Executive Inquiries (Auto-Generated):</span>
           </div>
           <div className="flex flex-wrap gap-2">
-            {suggestedQuestions.map((q, idx) => (
+            {suggestedQuestions.map((qObj, idx) => (
               <button
                 key={idx}
-                onClick={() => handleSendMessage(q)}
+                onClick={() => handleSendMessage(qObj.question)}
                 disabled={sending}
-                className="px-3 py-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-xl transition-all text-left flex items-center gap-1.5 disabled:opacity-50"
+                className="px-3 py-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-xl transition-all text-left flex items-center gap-2 disabled:opacity-50"
               >
-                <span>{q}</span>
+                <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded uppercase border ${getCategoryColor(qObj.category)}`}>
+                  {qObj.category.replace('_', ' ')}
+                </span>
+                <span>{qObj.question}</span>
                 <ArrowRight className="w-3 h-3 text-cyan-400 shrink-0" />
               </button>
             ))}

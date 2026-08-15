@@ -6,7 +6,7 @@ import time
 from typing import Dict, Any, Optional
 import uuid
 
-from app.dashboard.constants import CACHE_TTL_SECONDS
+from app.dashboard.constants import CACHE_TTL_SECONDS, WORKSPACE_VERSION
 from app.dashboard.dashboard_metrics import dashboard_metrics
 
 
@@ -14,6 +14,7 @@ class DashboardCacheService:
     """
     In-memory performance cache for active workspace snapshots.
     Supports TTL expiration and manual cache busting on refresh.
+    Uses versioned cache keys (workspace:v1:{dataset_id}).
     """
 
     def __init__(self, ttl_seconds: int = CACHE_TTL_SECONDS):
@@ -21,7 +22,7 @@ class DashboardCacheService:
         self._cache: Dict[str, Dict[str, Any]] = {}
 
     def _make_key(self, dataset_id: uuid.UUID) -> str:
-        return f"dashboard:workspace:{dataset_id}"
+        return f"workspace:v{WORKSPACE_VERSION}:{dataset_id}"
 
     def get(self, dataset_id: uuid.UUID) -> Optional[Dict[str, Any]]:
         key = self._make_key(dataset_id)
