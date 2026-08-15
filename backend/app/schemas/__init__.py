@@ -85,6 +85,13 @@ from app.schemas.executive_insight import (
 )
 from app.schemas.token import TokenPayload, TokenResponse
 from app.schemas.user import UserCreate, UserLogin, UserResponse, UserUpdate
+from app.reporting.schemas import (
+    GenerateReportRequest,
+    ReportFilterRequest,
+    ReportExportResponse,
+    ReportDetailResponse,
+    ReportListResponse,
+)
 
 __all__ = [
     # Base
@@ -170,4 +177,10 @@ __all__ = [
     "BoardCommentary",
     "ExecutiveInsightPackage",
     "ExecutiveInsightHistoryItem",
+    # Reporting Engine
+    "GenerateReportRequest",
+    "ReportFilterRequest",
+    "ReportExportResponse",
+    "ReportDetailResponse",
+    "ReportListResponse",
 ]

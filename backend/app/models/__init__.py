@@ -44,6 +44,7 @@ from app.models.root_cause_analysis import RootCauseAnalysis
 from app.models.scenario import Scenario
 from app.models.strategy_plan import StrategyPlan
 from app.models.user import User
+from app.reporting.models import ReportExport, ReportTemplate
 
 __all__ = [
     "Base",
@@ -60,6 +61,8 @@ __all__ = [
     "Recommendation",
     "NarrativeReport",
     "ExecutiveInsightReport",
+    "ReportExport",
+    "ReportTemplate",
     "AIInsight",
 
     "ChatSession",

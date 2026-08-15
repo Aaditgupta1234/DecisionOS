@@ -461,6 +461,46 @@ export const chatAnalystApi = {
     apiClient<any[]>(`/chat/sessions/${sessionId}/messages?limit=${limit}&offset=${offset}`),
 };
 
+export const reportingApi = {
+  generateReport: (payload: {
+    dataset_id: string;
+    report_type?: string;
+    export_format?: string;
+    title?: string;
+    company_name?: string;
+    include_raw_evidence?: boolean;
+  }) =>
+    apiClient<any>(`/reports/generate`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+
+  getReport: (reportId: string) =>
+    apiClient<any>(`/reports/${reportId}`),
+
+  listReports: (
+    datasetId: string,
+    options?: { report_type?: string; export_format?: string; limit?: number; offset?: number }
+  ) => {
+    const params = new URLSearchParams();
+    if (options?.report_type) params.append('report_type', options.report_type);
+    if (options?.export_format) params.append('export_format', options.export_format);
+    if (options?.limit) params.append('limit', options.limit.toString());
+    if (options?.offset) params.append('offset', options.offset.toString());
+    const qs = params.toString();
+    return apiClient<any[]>(`/reports/dataset/${datasetId}${qs ? `?${qs}` : ''}`);
+  },
+
+  deleteReport: (reportId: string) =>
+    apiClient<any>(`/reports/${reportId}`, {
+      method: 'DELETE',
+    }),
+
+  downloadReportUrl: (reportId: string) =>
+    `/api/v1/reports/download/${reportId}`,
+};
+
+
 
 
 

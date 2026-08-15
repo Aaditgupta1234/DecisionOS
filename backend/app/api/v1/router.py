@@ -9,6 +9,7 @@ from app.forecasting.api import router as forecast_router
 from app.narratives.api import narrative_router
 from app.scenario_simulation.api import router as scenario_router
 from app.strategy_planner.api import router as strategy_router
+from app.reporting.api import report_router
 
 api_router = APIRouter()
 
@@ -29,6 +30,7 @@ api_router.include_router(chat_router, tags=["AI Chat Analyst"])
 api_router.include_router(strategy_router, tags=["AI Strategy Planner"])
 api_router.include_router(scenario_router, tags=["Scenario Simulation Engine"])
 api_router.include_router(forecast_router, tags=["Forecasting Engine"])
+api_router.include_router(report_router, tags=["Executive Report Generation & PDF Export Engine"])
 
 
 
