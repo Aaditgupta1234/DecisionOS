@@ -45,6 +45,7 @@ from app.models.scenario import Scenario
 from app.models.strategy_plan import StrategyPlan
 from app.models.user import User
 from app.reporting.models import ReportExport, ReportTemplate
+from app.dashboard.models import DashboardSnapshot, DashboardViewEvent
 
 __all__ = [
     "Base",
@@ -63,6 +64,8 @@ __all__ = [
     "ExecutiveInsightReport",
     "ReportExport",
     "ReportTemplate",
+    "DashboardSnapshot",
+    "DashboardViewEvent",
     "AIInsight",
 
     "ChatSession",

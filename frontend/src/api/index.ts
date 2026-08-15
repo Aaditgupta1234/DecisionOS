@@ -500,6 +500,29 @@ export const reportingApi = {
     `/api/v1/reports/download/${reportId}`,
 };
 
+export const dashboardApi = {
+  getWorkspace: (datasetId: string, sections?: string) =>
+    apiClient<any>(`/dashboard/${datasetId}/workspace${sections ? `?sections=${sections}` : ''}`),
+
+  refreshSnapshot: (datasetId: string, trigger = 'MANUAL') =>
+    apiClient<any>(`/dashboard/${datasetId}/refresh?trigger=${trigger}`, {
+      method: 'POST',
+    }),
+
+  getStatus: (datasetId: string) =>
+    apiClient<any>(`/dashboard/${datasetId}/status`),
+
+  recordTelemetry: (datasetId: string, events: Array<{ section: string; viewed_at?: string; event_metadata?: Record<string, any> }>) =>
+    apiClient<any>(`/dashboard/${datasetId}/telemetry`, {
+      method: 'POST',
+      body: JSON.stringify({ events }),
+    }),
+
+  getMetricsSummary: () =>
+    apiClient<any>(`/dashboard/metrics/summary`),
+};
+
+
 
 
 
