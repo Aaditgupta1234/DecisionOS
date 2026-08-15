@@ -70,6 +70,40 @@ class MockLLMProvider(BaseLLMProvider):
                 pass
             return {}
 
+        # 0.0 Phase 9.4: AI Chat Analyst Conversational Dispatcher
+        if "task: answer the user's business intelligence question" in p_lower or ("cited_finding_ids" in p_lower and "cited_recommendation_ids" in p_lower):
+            ctx_data = _extract_ctx()
+            findings = ctx_data.get("findings") or []
+            root_causes = ctx_data.get("root_causes") or []
+            recommendations = ctx_data.get("recommendations") or []
+            h_score = ctx_data.get("business_health_score", 85)
+            h_status = ctx_data.get("business_health_status", "HEALTHY")
+
+            f_ids = [str(f.get("id")) for f in findings if f.get("id")]
+            rca_ids = [str(r.get("id")) for r in root_causes if r.get("id")]
+            rec_ids = [str(r.get("id")) for r in recommendations if r.get("id")]
+
+            p_find = findings[0].get("title") if findings else "operational performance"
+            p_rca = root_causes[0].get("cause") if root_causes else "operational friction"
+            p_rec = recommendations[0].get("title") if recommendations else "standard execution cadence"
+
+            ans = (
+                f"Based on verified diagnostic analysis for this dataset, enterprise performance reflects a Business Health Score of "
+                f"{h_score}/100 ({h_status}). Diagnostic telemetry identifies '{p_find}' as the primary operational variance. "
+                f"Root-cause attribution confirms this variance is driven by '{p_rca}'. "
+                f"To resolve this bottleneck, DecisionOS recommends executing '{p_rec}' to safeguard gross margins and customer retention."
+            )
+
+            return {
+                "answer": ans,
+                "response_type": "ROOT_CAUSE" if "why" in p_lower or "cause" in p_lower else ("RECOMMENDATION" if "recommend" in p_lower or "action" in p_lower else "GENERAL"),
+                "cited_finding_ids": f_ids[:2],
+                "cited_root_cause_ids": rca_ids[:2],
+                "cited_recommendation_ids": rec_ids[:2],
+                "cited_forecast_ids": [],
+                "cited_scenario_ids": [],
+            }
+
         # 0.0 Phase 9.3: Executive Insight Synthesis Handlers
         if "task: synthesize top strategic business risks" in p_lower or ("top_risks" in p_lower and "source_finding_ids" in p_lower):
             ctx_data = _extract_ctx()

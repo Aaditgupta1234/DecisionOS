@@ -1,8 +1,8 @@
 """Central APIRouter aggregating all v1 sub-routers."""
 
 from fastapi import APIRouter
-from app.ai_chat.api import router as chat_router
 from app.ai_insights.api import router as ai_insights_router
+from app.chat_analyst.api import chat_router
 from app.api.v1.endpoints import ai, auth, datasets, health, intelligence, metrics, organizations, recommendations, root_cause
 from app.executive_insights.api import executive_insight_router
 from app.forecasting.api import router as forecast_router

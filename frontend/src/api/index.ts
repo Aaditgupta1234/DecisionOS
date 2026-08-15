@@ -425,6 +425,43 @@ export const executiveInsightsApi = {
     apiClient<any[]>(`/datasets/${datasetId}/executive-insights/history?limit=${limit}&offset=${offset}`),
 };
 
+export const chatAnalystApi = {
+  createSession: (
+    datasetId: string,
+    title?: string,
+    options?: { provider?: string; model?: string }
+  ) =>
+    apiClient<any>(`/chat/sessions`, {
+      method: 'POST',
+      body: JSON.stringify({ dataset_id: datasetId, title, ...(options || {}) }),
+    }),
+
+  listSessions: (datasetId: string, limit = 20, offset = 0) =>
+    apiClient<any[]>(`/chat/sessions?dataset_id=${datasetId}&limit=${limit}&offset=${offset}`),
+
+  getSession: (sessionId: string) =>
+    apiClient<any>(`/chat/sessions/${sessionId}`),
+
+  deleteSession: (sessionId: string) =>
+    apiClient<any>(`/chat/sessions/${sessionId}`, {
+      method: 'DELETE',
+    }),
+
+  sendMessage: (
+    sessionId: string,
+    message: string,
+    options?: { provider_override?: string; model_override?: string; temperature?: number }
+  ) =>
+    apiClient<any>(`/chat/sessions/${sessionId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ message, ...(options || {}) }),
+    }),
+
+  getMessages: (sessionId: string, limit = 50, offset = 0) =>
+    apiClient<any[]>(`/chat/sessions/${sessionId}/messages?limit=${limit}&offset=${offset}`),
+};
+
+
 
 
 
