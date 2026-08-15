@@ -57,8 +57,202 @@ class MockLLMProvider(BaseLLMProvider):
         """
         p_lower = prompt.lower()
 
+        # Helper to extract context JSON from prompt
+        def _extract_ctx() -> Dict[str, Any]:
+            try:
+                if "```json" in prompt:
+                    raw_block = prompt.split("```json")[1].split("```")[0].strip()
+                    return json.loads(raw_block)
+                elif "```" in prompt:
+                    raw_block = prompt.split("```")[1].split("```")[0].strip()
+                    return json.loads(raw_block)
+            except Exception:
+                pass
+            return {}
+
+        # 0.0 Phase 9.2: Executive Narrative Synthesis
+        if "task: synthesize executive narrative from verified analytics" in p_lower or ("task: synthesize executive narrative" in p_lower and "key_takeaways" in p_lower) or ("headline" in p_lower and "key_takeaways" in p_lower and "health_assessment" in p_lower):
+            ctx_data = _extract_ctx()
+            h_score = ctx_data.get("business_health_score", 85)
+            h_status = ctx_data.get("business_health_status", "GOOD")
+            findings = ctx_data.get("findings") or []
+            root_causes = ctx_data.get("root_causes") or []
+            recommendations = ctx_data.get("recommendations") or []
+            p_find = findings[0].get("title") if findings else "operational stability"
+            p_rca = root_causes[0].get("cause") if root_causes else "steady baseline dynamics"
+            p_rec = recommendations[0].get("title") if recommendations else "maintain current operational standards"
+
+            return {
+                "headline": f"Executive Briefing: Business Health Index Evaluated at {h_score}/100 ({h_status})",
+                "executive_summary": (
+                    f"During the current performance evaluation cycle, enterprise operations recorded a composite Business Health Score of "
+                    f"{h_score} out of 100, reflecting a {h_status.lower()} operational environment across analyzed business streams. "
+                    f"Diagnostic analysis isolated {len(findings)} key performance findings across operational indicators. "
+                    f"The primary vulnerability impacting top-line outcomes is categorized as '{p_find}', with root-cause causal telemetry "
+                    f"attributing this variance directly to '{p_rca}'. Leadership prioritization must concentrate on executing '{p_rec}' "
+                    f"alongside {len(recommendations)} supporting initiatives to accelerate margin recovery, stabilize customer retention, "
+                    f"and institutionalize resilient operating standards across corporate divisions."
+                ),
+                "health_assessment": (
+                    f"The Business Health Score of {h_score}/100 confirms a {h_status.lower()} operating profile with manageable variance "
+                    f"and actionable upside potential across all operational divisions."
+                ),
+                "key_takeaways": [
+                    f"Composite Business Health Index currently evaluated at {h_score}/100 ({h_status}).",
+                    f"Primary operational constraint identified: '{p_find}'.",
+                    f"Strategic intervention prioritized for executive rollout: '{p_rec}'.",
+                ],
+                "primary_risk": p_find,
+                "recommended_focus": p_rec,
+            }
+
+        # 0.1 Phase 9.2: KPI Performance Narrative Synthesis
+        if "task: synthesize kpi" in p_lower or ("metric_highlights" in p_lower and "stability_assessment" in p_lower):
+            ctx_data = _extract_ctx()
+            metrics = ctx_data.get("metrics") or []
+            highlights = []
+            for m in metrics[:4]:
+                name = m.get("name") or m.get("metric_key", "Metric")
+                cat = m.get("category", "OPERATIONAL")
+                val = m.get("value", 0.0)
+                highlights.append({
+                    "category": cat,
+                    "observation": f"{name} is currently recorded at {val}, reflecting consistent operating velocity.",
+                })
+            return {
+                "summary": (
+                    f"Evaluation of {len(metrics)} primary performance metrics across revenue, customer, and operational categories "
+                    f"demonstrates consistent underlying business stability. Performance telemetry shows steady operational execution "
+                    f"with focused opportunities for margin enhancement and accelerated customer expansion."
+                ),
+                "metric_highlights": highlights,
+                "anomaly_commentary": "Telemetry reveals normal statistical distribution across core operational indicators.",
+                "stability_assessment": "STABLE",
+            }
+
+        # 0.2 Phase 9.2: Root Cause Narrative Synthesis
+        if "task: synthesize root cause" in p_lower or ("primary_drivers" in p_lower and "causal_chain_narrative" in p_lower):
+            ctx_data = _extract_ctx()
+            rcas = ctx_data.get("root_causes") or []
+            drivers = []
+            attributions = []
+            if rcas:
+                for idx, r in enumerate(rcas[:3]):
+                    cause = r.get("cause", "Operational Friction")
+                    effect = r.get("effect", "Performance Variance")
+                    drivers.append({
+                        "cause": cause,
+                        "effect": effect,
+                        "strength": "STRONG",
+                        "attribution_percentage": float(65.0 - idx * 15),
+                    })
+                    attributions.append(f"{cause} accounts for primary variance observed in {effect}.")
+            else:
+                drivers.append({
+                    "cause": "Baseline Operational Steady State",
+                    "effect": "Overall Performance",
+                    "strength": "MODERATE",
+                    "attribution_percentage": 50.0,
+                })
+                attributions.append("Operational telemetry indicates normal baseline variance across functional areas.")
+
+            p_cause = drivers[0]["cause"]
+            p_effect = drivers[0]["effect"]
+
+            return {
+                "summary": (
+                    f"Causal graph analysis across diagnostic telemetry isolated {len(rcas)} primary root-cause linkages. "
+                    f"The dominant systemic driver identified is '{p_cause}', directly influencing '{p_effect}'. "
+                    f"Interventions targeting upstream operational drivers will yield systemic recovery across downstream KPIs."
+                ),
+                "primary_drivers": drivers,
+                "causal_chain_narrative": (
+                    f"Upstream factor '{p_cause}' propagates directly through operational workflows to trigger '{p_effect}', "
+                    f"confirming that targeted root-cause remediation will produce immediate downstream relief."
+                ),
+                "attribution_breakdown": attributions,
+            }
+
+        # 0.3 Phase 9.2: Recommendation Narrative Synthesis
+        if "task: synthesize strategic recommendations" in p_lower or ("priority_actions" in p_lower and "expected_impact_narrative" in p_lower):
+            ctx_data = _extract_ctx()
+            recs = ctx_data.get("recommendations") or []
+            actions = []
+            for r in recs[:3]:
+                actions.append({
+                    "title": r.get("title", "Strategic Initiative"),
+                    "priority": r.get("priority", "HIGH"),
+                    "rationale": r.get("rationale", "Directly targets identified root causes."),
+                    "expected_outcome": r.get("expected_outcome", "Restores operational margin and growth."),
+                })
+            first_rec = actions[0]["title"] if actions else "Operational Stabilization"
+            return {
+                "summary": (
+                    f"Strategic synthesis prioritized {len(recs)} high-leverage initiatives designed to address verified root causes. "
+                    f"Immediate leadership focus centers on executing '{first_rec}' to restore baseline operational efficiency "
+                    f"and capture measurable top-line improvement across upcoming quarters."
+                ),
+                "priority_actions": actions,
+                "expected_impact_narrative": (
+                    "Execution of prioritized interventions is projected to eliminate root-cause bottlenecks and drive "
+                    "a 10-15% recovery across primary operating margins."
+                ),
+                "time_to_value_summary": (
+                    "Initial operational triage delivers measurable impact within 30 days, with complete milestone "
+                    "institutionalization achieved across 90 days."
+                ),
+            }
+
+        # 0.4 Phase 9.2: Time-Series Forecast Narrative Synthesis
+        if "task: synthesize time-series forecasting" in p_lower or ("horizon_commentary" in p_lower and "confidence_assessment" in p_lower):
+            ctx_data = _extract_ctx()
+            m_key = ctx_data.get("metric_key", "Core Revenue")
+            trend = ctx_data.get("trend_direction", "STABLE")
+            return {
+                "summary": (
+                    f"Statistical forecasting models project a {trend.lower()} trajectory for '{m_key}' across upcoming reporting periods. "
+                    f"Baseline projections indicate steady performance continuation under prevailing operating parameters."
+                ),
+                "trend_direction": trend.upper(),
+                "horizon_commentary": (
+                    f"Projections across short and medium horizons show steady consistency with historical variance, "
+                    f"reinforcing predictable top-line performance."
+                ),
+                "confidence_assessment": (
+                    "Statistical evaluation metrics confirm high prediction confidence with narrow uncertainty intervals."
+                ),
+                "risk_warnings": [
+                    f"Unresolved operational constraints could induce downside volatility to {m_key} projections.",
+                    "Sudden shifts in market or customer dynamics may impact baseline trajectories.",
+                ],
+            }
+
+        # 0.5 Phase 9.2: Scenario Simulation Narrative Synthesis
+        if "task: synthesize scenario simulation" in p_lower or ("baseline_vs_scenario_comparison" in p_lower and "strategic_implications" in p_lower):
+            ctx_data = _extract_ctx()
+            sc_name = ctx_data.get("scenario_name", "Target Strategic Intervention")
+            return {
+                "summary": (
+                    f"Scenario simulation modeling evaluated the business impact of executing '{sc_name}' relative to baseline operations. "
+                    f"The projection indicates positive metric acceleration and improved operational resilience."
+                ),
+                "baseline_vs_scenario_comparison": (
+                    "Compared to baseline projections, the simulated intervention drives accelerated metric recovery and "
+                    "significantly reduces operational downside exposure."
+                ),
+                "sensitivity_insights": [
+                    f"Execution of {sc_name} delivers robust sensitivity margins across varying operating conditions.",
+                    "Resource allocation should be structured to capitalize on projected volume gains.",
+                ],
+                "strategic_implications": (
+                    "Executive leadership is advised to proceed with scenario implementation based on favorable "
+                    "risk-adjusted returns."
+                ),
+            }
+
         # 0.0 AI Strategy Planner Execution Strategy Generation
         if "task: generate strategic execution plan" in p_lower or ("strategic_priorities" in p_lower and "action_items" in p_lower and "milestones" in p_lower and "success_criteria" in p_lower):
+
             # Extract context JSON from prompt
             ctx_data = {}
             try:

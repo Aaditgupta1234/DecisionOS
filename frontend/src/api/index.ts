@@ -277,6 +277,79 @@ export const DecisionApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
+
+  // ------------------------------------------------------------------------
+  // AI Narrative Engine (Phase 9.2)
+  // ------------------------------------------------------------------------
+  getExecutiveNarrative: (
+    datasetId: string,
+    options?: { provider?: string; model?: string; temperature?: number; focus_areas?: string[] }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/executive-summary`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getKPINarrative: (
+    datasetId: string,
+    options?: { provider?: string; model?: string; temperature?: number; focus_areas?: string[] }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/kpis`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getRootCauseNarrative: (
+    datasetId: string,
+    options?: { provider?: string; model?: string; temperature?: number; focus_areas?: string[] }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/root-causes`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getRecommendationNarrative: (
+    datasetId: string,
+    options?: { provider?: string; model?: string; temperature?: number; focus_areas?: string[] }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/recommendations`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getForecastNarrative: (
+    datasetId: string,
+    options?: { forecast_id?: string; metric_key?: string; provider?: string; model?: string; temperature?: number }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/forecasts`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getScenarioNarrative: (
+    datasetId: string,
+    options?: { scenario_id?: string; provider?: string; model?: string; temperature?: number }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/scenarios`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  generateFullNarrativePackage: (
+    datasetId: string,
+    options?: { force_regenerate?: boolean; provider?: string; model?: string; temperature?: number }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/full-package`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getLatestPersistedNarrativeReport: (datasetId: string) =>
+    apiClient<any>(`/datasets/${datasetId}/narratives/latest`),
+
+  listPersistedNarrativeHistory: (datasetId: string, limit = 10, offset = 0) =>
+    apiClient<any[]>(`/datasets/${datasetId}/narratives/history?limit=${limit}&offset=${offset}`),
 };
+
 
 

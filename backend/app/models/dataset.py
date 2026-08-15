@@ -220,6 +220,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(Forecast.created_at)",
     )
+    narrative_reports: Mapped[List["NarrativeReport"]] = relationship(
+        "NarrativeReport",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(NarrativeReport.created_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],
@@ -228,6 +235,7 @@ class Dataset(TimestampMixin, Base):
         "Organization",
         back_populates="datasets",
     )
+
 
     def __repr__(self) -> str:
         return f"<Dataset id={self.id} name={self.name} status={self.status} diagnostics={self.diagnostics_generation_status}>"

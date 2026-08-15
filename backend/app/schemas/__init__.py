@@ -57,6 +57,20 @@ from app.schemas.ai import (
     AITestRequest,
     AITestResponse,
 )
+from app.schemas.narrative import (
+    DatasetNarrativePackageResponse,
+    ExecutiveNarrativeResponse,
+    ForecastNarrativeRequest,
+    ForecastNarrativeResponse,
+    KPINarrativeResponse,
+    NarrativeGenerateRequest,
+    NarrativeMetadata,
+    NarrativeReportHistoryItem,
+    RecommendationNarrativeResponse,
+    RootCauseNarrativeResponse,
+    ScenarioNarrativeRequest,
+    ScenarioNarrativeResponse,
+)
 from app.schemas.token import TokenPayload, TokenResponse
 from app.schemas.user import UserCreate, UserLogin, UserResponse, UserUpdate
 
@@ -120,5 +134,19 @@ __all__ = [
     "AIProvidersResponse",
     "AITestRequest",
     "AITestResponse",
+    # AI Narrative Engine
+    "NarrativeMetadata",
+    "NarrativeGenerateRequest",
+    "ForecastNarrativeRequest",
+    "ScenarioNarrativeRequest",
+    "ExecutiveNarrativeResponse",
+    "KPINarrativeResponse",
+    "RootCauseNarrativeResponse",
+    "RecommendationNarrativeResponse",
+    "ForecastNarrativeResponse",
+    "ScenarioNarrativeResponse",
+    "DatasetNarrativePackageResponse",
+    "NarrativeReportHistoryItem",
 ]
+
 

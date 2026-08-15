@@ -35,8 +35,10 @@ from app.models.dataset_metric import DatasetMetric
 from app.models.diagnostic_finding import DiagnosticFinding
 from app.models.forecast import Forecast
 from app.models.metric_definition import MetricDefinition
+from app.models.narrative_report import NarrativeReport
 from app.models.organization import Organization
 from app.models.organization_member import OrganizationMember
+from app.models.recommendation import Recommendation
 from app.models.root_cause_analysis import RootCauseAnalysis
 from app.models.scenario import Scenario
 from app.models.strategy_plan import StrategyPlan
@@ -55,7 +57,9 @@ __all__ = [
     "DiagnosticFinding",
     "RootCauseAnalysis",
     "Recommendation",
+    "NarrativeReport",
     "AIInsight",
+
     "ChatSession",
     "ChatMessage",
     "ChatMessageRole",
