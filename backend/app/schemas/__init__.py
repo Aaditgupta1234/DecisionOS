@@ -71,6 +71,18 @@ from app.schemas.narrative import (
     ScenarioNarrativeRequest,
     ScenarioNarrativeResponse,
 )
+from app.schemas.executive_insight import (
+    BoardCommentary,
+    ExecutiveAlert,
+    ExecutiveInsightHistoryItem,
+    ExecutiveInsightMetadata,
+    ExecutiveInsightPackage,
+    ExecutiveInsightRequest,
+    OpportunityInsight,
+    PriorityAction,
+    RiskInsight,
+    StrategicTheme,
+)
 from app.schemas.token import TokenPayload, TokenResponse
 from app.schemas.user import UserCreate, UserLogin, UserResponse, UserUpdate
 
@@ -147,6 +159,15 @@ __all__ = [
     "ScenarioNarrativeResponse",
     "DatasetNarrativePackageResponse",
     "NarrativeReportHistoryItem",
+    # Executive Insights
+    "ExecutiveInsightRequest",
+    "ExecutiveInsightMetadata",
+    "RiskInsight",
+    "OpportunityInsight",
+    "PriorityAction",
+    "StrategicTheme",
+    "ExecutiveAlert",
+    "BoardCommentary",
+    "ExecutiveInsightPackage",
+    "ExecutiveInsightHistoryItem",
 ]
-
-

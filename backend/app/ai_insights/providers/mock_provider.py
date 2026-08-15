@@ -70,6 +70,187 @@ class MockLLMProvider(BaseLLMProvider):
                 pass
             return {}
 
+        # 0.0 Phase 9.3: Executive Insight Synthesis Handlers
+        if "task: synthesize top strategic business risks" in p_lower or ("top_risks" in p_lower and "source_finding_ids" in p_lower):
+            ctx_data = _extract_ctx()
+            findings = ctx_data.get("findings") or []
+            root_causes = ctx_data.get("root_causes") or []
+            risks = []
+            if findings:
+                for idx, f in enumerate(findings[:3]):
+                    title = f.get("title", f"Strategic Risk {idx+1}")
+                    sev = str(f.get("severity", "HIGH")).upper()
+                    conf = float(f.get("confidence_score", 0.90))
+                    f_id = str(f.get("id")) if f.get("id") else f"find-{idx+1}"
+                    rca_ids = [str(r.get("id")) for r in root_causes if r.get("id")]
+                    risks.append({
+                        "title": f"Risk: {title}",
+                        "description": (
+                            f"Verified diagnostic telemetry confirms that '{title}' constitutes a primary operational risk factor. "
+                            f"Diagnostic analysis isolates this variance as an active impediment to baseline performance trajectory, "
+                            f"requiring prompt executive review and mitigation."
+                        ),
+                        "severity": sev if sev in ["CRITICAL", "HIGH", "MEDIUM", "LOW"] else "HIGH",
+                        "confidence": conf,
+                        "ranking_score": 0.88 - idx * 0.1,
+                        "supporting_evidence": [f"Identified anomaly in {title}"],
+                        "source_finding_ids": [f_id],
+                        "source_root_cause_ids": rca_ids,
+                    })
+            else:
+                risks.append({
+                    "title": "Risk: Operational Baseline Drift",
+                    "description": (
+                        "Baseline business telemetry reflects steady state operations with localized opportunities "
+                        "for proactive monitoring to prevent unexpected margin compression across future reporting periods."
+                    ),
+                    "severity": "LOW",
+                    "confidence": 0.90,
+                    "ranking_score": 0.35,
+                    "supporting_evidence": ["Steady state telemetry"],
+                    "source_finding_ids": [],
+                    "source_root_cause_ids": [],
+                })
+            return {"top_risks": risks}
+
+        if "task: synthesize top strategic opportunities" in p_lower or ("top_opportunities" in p_lower and "source_recommendation_ids" in p_lower):
+            ctx_data = _extract_ctx()
+            recs = ctx_data.get("recommendations") or []
+            opps = []
+            if recs:
+                for idx, r in enumerate(recs[:3]):
+                    title = r.get("title", f"Optimization {idx+1}")
+                    prio = str(r.get("priority", "HIGH")).upper()
+                    conf = float(r.get("confidence_score", 0.92))
+                    r_id = str(r.get("id")) if r.get("id") else f"rec-{idx+1}"
+                    opps.append({
+                        "title": f"Opportunity: {title}",
+                        "description": (
+                            f"Executing '{title}' represents a significant high-leverage growth and margin stabilization opportunity. "
+                            f"Analytical modeling projects that structured implementation will effectively resolve primary diagnostic vulnerabilities "
+                            f"and capture measurable top-line operational upside."
+                        ),
+                        "impact": prio if prio in ["CRITICAL", "HIGH", "MEDIUM", "LOW"] else "HIGH",
+                        "confidence": conf,
+                        "ranking_score": 0.91 - idx * 0.1,
+                        "supporting_evidence": [r.get("rationale") or "Decision rule outcome"],
+                        "source_recommendation_ids": [r_id],
+                    })
+            else:
+                opps.append({
+                    "title": "Opportunity: Continuous Operational Optimization",
+                    "description": (
+                        "Enterprise processes indicate opportunities to institutionalize lean standard operating procedures "
+                        "and optimize recurring cost structures to sustain competitive advantages and protect healthy gross margins."
+                    ),
+                    "impact": "MEDIUM",
+                    "confidence": 0.85,
+                    "ranking_score": 0.60,
+                    "supporting_evidence": ["Operational baseline"],
+                    "source_recommendation_ids": [],
+                })
+            return {"top_opportunities": opps}
+
+        if "task: synthesize executive priority actions" in p_lower or ("priority_actions" in p_lower and "expected_impact" in p_lower and "difficulty" in p_lower):
+            ctx_data = _extract_ctx()
+            recs = ctx_data.get("recommendations") or []
+            actions = []
+            if recs:
+                for idx, r in enumerate(recs[:3]):
+                    title = r.get("title", f"Action {idx+1}")
+                    prio = str(r.get("priority", "HIGH")).upper()
+                    r_id = str(r.get("id")) if r.get("id") else f"rec-{idx+1}"
+                    actions.append({
+                        "action": title,
+                        "priority": prio if prio in ["CRITICAL", "HIGH", "MEDIUM", "LOW"] else "HIGH",
+                        "expected_impact": str(r.get("expected_outcome") or "Accelerates operational recovery."),
+                        "difficulty": "MODERATE",
+                        "ranking_score": 0.89 - idx * 0.1,
+                        "rationale": "Directly addresses primary diagnostic telemetry by implementing verified decision rule interventions to restore target KPI baselines.",
+                        "source_recommendation_ids": [r_id],
+                    })
+            else:
+                actions.append({
+                    "action": "Institutionalize Baseline Operating Cadence",
+                    "priority": "MEDIUM",
+                    "expected_impact": "Maintains predictable top-line stability and throughput velocity.",
+                    "difficulty": "EASY",
+                    "ranking_score": 0.55,
+                    "rationale": "Maintains organizational velocity and ensures timely identification of emerging diagnostic anomalies.",
+                    "source_recommendation_ids": [],
+                })
+            return {"priority_actions": actions}
+
+        if "task: synthesize high-level strategic themes" in p_lower or ("strategic_themes" in p_lower and "key_pillars" in p_lower):
+            ctx_data = _extract_ctx()
+            recs = ctx_data.get("recommendations") or []
+            rec_titles = [r.get("title", "Initiative") for r in recs]
+            return {
+                "strategic_themes": [
+                    {
+                        "theme": "Operational Resilience & Efficiency",
+                        "description": "Streamline core business processes and eliminate systemic friction across operating workflows.",
+                        "key_pillars": ["Diagnostic telemetry tracking", "Root-cause elimination", "Cross-functional execution"],
+                        "aligned_initiatives": rec_titles[:2] if rec_titles else ["Sustain core operating cadence"],
+                    },
+                    {
+                        "theme": "Revenue Protection & Customer Retention",
+                        "description": "Protect recurring top-line revenue by proactively mitigating customer churn and contract attrition.",
+                        "key_pillars": ["High-touch retention taskforces", "Renewal health monitoring", "Value realization loops"],
+                        "aligned_initiatives": rec_titles[2:4] if len(rec_titles) > 2 else ["Customer success audit"],
+                    },
+                ]
+            }
+
+        if "task: synthesize real-time executive alerts" in p_lower or ("executive_alerts" in p_lower and "recommended_immediate_step" in p_lower):
+            ctx_data = _extract_ctx()
+            findings = ctx_data.get("findings") or []
+            alerts = []
+            for f in findings:
+                sev = str(f.get("severity", "")).upper()
+                if sev in ["CRITICAL", "HIGH"]:
+                    f_id = str(f.get("id")) if f.get("id") else "find-01"
+                    alerts.append({
+                        "alert_level": sev,
+                        "headline": f"Operational Alert: {f.get('title', 'Variance Detected')}",
+                        "detail": str(f.get("description") or "Diagnostic anomaly exceeds standard operational tolerance threshold."),
+                        "recommended_immediate_step": "Deploy dedicated triage taskforce and audit upstream causal drivers.",
+                        "source_finding_ids": [f_id],
+                    })
+            if not alerts:
+                alerts.append({
+                    "alert_level": "INFO",
+                    "headline": "System Status: Nominal Operating Telemetry",
+                    "detail": "All monitored business indicators reside within expected statistical tolerance parameters.",
+                    "recommended_immediate_step": "Maintain standard executive review schedule.",
+                    "source_finding_ids": [],
+                })
+            return {"executive_alerts": alerts}
+
+        if "task: synthesize board-level strategic commentary" in p_lower or ("strategic_outlook" in p_lower and "health_summary" in p_lower):
+            ctx_data = _extract_ctx()
+            h_score = ctx_data.get("business_health_score", 85)
+            h_status = ctx_data.get("business_health_status", "GOOD")
+            findings = ctx_data.get("findings") or []
+            recommendations = ctx_data.get("recommendations") or []
+            p_find = findings[0].get("title") if findings else "operational variance"
+            p_rec = recommendations[0].get("title") if recommendations else "standard governance protocols"
+
+            commentary = (
+                f"During the current performance evaluation cycle, enterprise operations recorded a composite Business Health Score of "
+                f"{h_score} out of 100, reflecting a {h_status.lower()} operational profile across analyzed business divisions. "
+                f"Diagnostic telemetry isolated {len(findings)} key performance findings across operational indicators, with primary vulnerability categorized as '{p_find}'. "
+                f"Executive leadership must prioritize deploying '{p_rec}' alongside {len(recommendations)} supporting initiatives to accelerate margin recovery, stabilize customer retention, and institutionalize resilient operating standards across corporate divisions. "
+                f"The Business Health Score of {h_score}/100 confirms a {h_status.lower()} operating profile with manageable variance and actionable upside potential across upcoming quarters. "
+                f"Board oversight should ensure capital and operational capacity remain dedicated to executing strategic priorities on schedule, while monitoring forecasted revenue recovery trends across each key reporting business unit."
+            )
+            return {
+                "headline": f"Board Briefing: Business Health Evaluated at {h_score}/100 ({h_status})",
+                "commentary": commentary,
+                "strategic_outlook": "Predictable operational trajectory with measurable upside upon execution of prioritized strategic interventions.",
+                "health_summary": f"Composite Health Score of {h_score}/100 confirms {h_status} operational profile.",
+            }
+
         # 0.0 Phase 9.2: Executive Narrative Synthesis
         if "task: synthesize executive narrative from verified analytics" in p_lower or ("task: synthesize executive narrative" in p_lower and "key_takeaways" in p_lower) or ("headline" in p_lower and "key_takeaways" in p_lower and "health_assessment" in p_lower):
             ctx_data = _extract_ctx()

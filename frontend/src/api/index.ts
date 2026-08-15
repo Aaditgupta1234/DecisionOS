@@ -351,5 +351,80 @@ export const DecisionApi = {
     apiClient<any[]>(`/datasets/${datasetId}/narratives/history?limit=${limit}&offset=${offset}`),
 };
 
+export const executiveInsightsApi = {
+  getTopRisks: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any[]>(`/datasets/${datasetId}/executive-insights/risks`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getTopOpportunities: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any[]>(`/datasets/${datasetId}/executive-insights/opportunities`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getPriorityActions: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any[]>(`/datasets/${datasetId}/executive-insights/actions`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getStrategicThemes: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any[]>(`/datasets/${datasetId}/executive-insights/themes`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getExecutiveAlerts: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any[]>(`/datasets/${datasetId}/executive-insights/alerts`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getBoardCommentary: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/executive-insights/board-commentary`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  generateExecutiveInsights: (
+    datasetId: string,
+    options?: { provider_name?: string; model_name?: string; temperature?: number; force_regenerate?: boolean }
+  ) =>
+    apiClient<any>(`/datasets/${datasetId}/executive-insights/full-package`, {
+      method: 'POST',
+      body: JSON.stringify(options || {}),
+    }),
+
+  getExecutiveInsights: (datasetId: string) =>
+    apiClient<any>(`/datasets/${datasetId}/executive-insights/latest`),
+
+  getLatestExecutiveInsights: (datasetId: string) =>
+    apiClient<any>(`/datasets/${datasetId}/executive-insights/latest`),
+
+  getExecutiveInsightHistory: (datasetId: string, limit = 10, offset = 0) =>
+    apiClient<any[]>(`/datasets/${datasetId}/executive-insights/history?limit=${limit}&offset=${offset}`),
+};
+
+
 
 

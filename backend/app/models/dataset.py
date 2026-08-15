@@ -227,6 +227,13 @@ class Dataset(TimestampMixin, Base):
         lazy="selectin",
         order_by="desc(NarrativeReport.created_at)",
     )
+    executive_insight_reports: Mapped[List["ExecutiveInsightReport"]] = relationship(
+        "ExecutiveInsightReport",
+        back_populates="dataset",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        order_by="desc(ExecutiveInsightReport.created_at)",
+    )
     uploader: Mapped["User"] = relationship(
         "User",
         foreign_keys=[uploaded_by],

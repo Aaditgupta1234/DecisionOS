@@ -33,6 +33,7 @@ from app.models.dataset import Dataset
 from app.models.dataset_column import DatasetColumn
 from app.models.dataset_metric import DatasetMetric
 from app.models.diagnostic_finding import DiagnosticFinding
+from app.models.executive_insight_report import ExecutiveInsightReport
 from app.models.forecast import Forecast
 from app.models.metric_definition import MetricDefinition
 from app.models.narrative_report import NarrativeReport
@@ -58,6 +59,7 @@ __all__ = [
     "RootCauseAnalysis",
     "Recommendation",
     "NarrativeReport",
+    "ExecutiveInsightReport",
     "AIInsight",
 
     "ChatSession",
