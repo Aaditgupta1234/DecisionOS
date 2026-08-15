@@ -30,6 +30,10 @@ class MockLLMProvider(BaseLLMProvider):
     async def health_check(self) -> bool:
         return True
 
+    async def list_models(self) -> list[str]:
+        """Mock provider reports only its configured model name."""
+        return [self._model_name]
+
     async def generate_text(
         self,
         prompt: str,

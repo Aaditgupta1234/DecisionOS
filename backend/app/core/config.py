@@ -1,6 +1,6 @@
 """Application configuration settings."""
 
-from typing import List
+from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,8 +22,19 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "uploads/datasets"
     MAX_UPLOAD_SIZE_BYTES: int = 50 * 1024 * 1024  # 50MB
 
-    # LLM Settings
-    OLLAMA_URL: str = "http://localhost:11434"
+    # AI Provider Selection
+    # Supported values: "mock" | "ollama" | "openai"
+    # Default is "mock" so the server starts cleanly without any external AI dependency.
+    # Override in .env with AI_PROVIDER=ollama for local Qwen inference.
+    AI_PROVIDER: str = "mock"
+
+    # Ollama Configuration
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "qwen2.5:1.5b"
+    OLLAMA_TIMEOUT: int = 60  # HTTP request timeout in seconds
+
+    # OpenAI Configuration (optional — used when AI_PROVIDER=openai)
+    OPENAI_API_KEY: Optional[str] = None
 
     # CORS Origins
     BACKEND_CORS_ORIGINS: List[str] = [
@@ -57,6 +68,16 @@ class Settings(BaseSettings):
     PRODUCT_UNDERPERFORMANCE_THRESHOLD: float = 0.05  # 5% revenue share floor
     PRODUCT_GROWTH_THRESHOLD: float = 0.30  # 30% category growth trigger
     PRODUCT_DECLINE_THRESHOLD: float = 0.20  # 20% category revenue decline trigger
+
+    @property
+    def OLLAMA_URL(self) -> str:
+        """Backward-compatibility alias for OLLAMA_BASE_URL.
+
+        Preserved so any existing code referencing settings.OLLAMA_URL continues
+        to work unchanged. New code should use settings.OLLAMA_BASE_URL.
+        Scheduled for removal in a future cleanup phase.
+        """
+        return self.OLLAMA_BASE_URL
 
     model_config = SettingsConfigDict(
         env_file=".env",

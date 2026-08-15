@@ -40,10 +40,26 @@ async def test_openai_provider_fallback():
     assert "headline" in json_res
 
 
+from app.ai_insights.providers import (
+    BaseLLMProvider,
+    MockLLMProvider,
+    OllamaProvider,
+    OpenAIProvider,
+    get_llm_provider,
+)
+
+
 def test_get_llm_provider_factory():
-    """Verifies provider factory selection."""
+    """Verifies provider factory selection for all supported providers."""
     p_mock = get_llm_provider("mock")
     assert isinstance(p_mock, MockLLMProvider)
 
+    p_openai = get_llm_provider("openai")
+    assert isinstance(p_openai, OpenAIProvider)
+
+    p_ollama = get_llm_provider("ollama")
+    assert isinstance(p_ollama, OllamaProvider)
+
     p_default = get_llm_provider()
-    assert isinstance(p_default, OpenAIProvider)
+    assert isinstance(p_default, BaseLLMProvider)
+

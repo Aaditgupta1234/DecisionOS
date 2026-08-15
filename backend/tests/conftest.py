@@ -16,6 +16,9 @@ from app.database.session import get_db
 from app.main import app
 from app.models.user import User
 
+# Ensure mock AI provider is active by default for test execution
+settings.AI_PROVIDER = "mock"
+
 # Use in-memory SQLite database for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
@@ -25,6 +28,7 @@ engine = create_engine(
     poolclass=StaticPool,
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 
 @pytest.fixture(scope="function")

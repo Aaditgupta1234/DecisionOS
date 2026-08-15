@@ -137,3 +137,16 @@ class OpenAIProvider(BaseLLMProvider):
                 system_prompt=system_prompt,
                 temperature=temperature,
             )
+
+    async def list_models(self) -> list[str]:
+        """Returns the standard set of OpenAI model identifiers supported by DecisionOS.
+
+        This is a static list rather than a live API query because OpenAI does not expose
+        a public endpoint for listing available models without incurring quota cost.
+        """
+        return [
+            "gpt-4o",
+            "gpt-4o-mini",
+            "gpt-4-turbo",
+            "gpt-3.5-turbo",
+        ]

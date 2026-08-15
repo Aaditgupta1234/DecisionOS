@@ -229,4 +229,54 @@ export const DecisionApi = {
       method: 'POST',
       body: JSON.stringify({ message }),
     }),
+
+  // ------------------------------------------------------------------------
+  // AI Provider Layer (Phase 9.1 Ollama / Local LLM)
+  // ------------------------------------------------------------------------
+  getAIHealth: (provider?: string, model?: string) => {
+    const params = new URLSearchParams();
+    if (provider) params.append('provider', provider);
+    if (model) params.append('model', model);
+    const qs = params.toString();
+    return apiClient<{
+      provider: string;
+      model: string;
+      status: string;
+      latency_ms: number;
+      available_models: string[];
+    }>(`/ai/health${qs ? `?${qs}` : ''}`);
+  },
+
+  listAIProviders: () =>
+    apiClient<{
+      active_provider: string;
+      active_model: string;
+      providers: Array<{
+        name: string;
+        description: string;
+        is_active: boolean;
+        default_model: string;
+        supported_models: string[];
+      }>;
+    }>('/ai/providers'),
+
+  testAIGeneration: (payload: {
+    prompt: string;
+    system_prompt?: string;
+    temperature?: number;
+    max_tokens?: number;
+    provider?: string;
+    model?: string;
+  }) =>
+    apiClient<{
+      generated_text: string;
+      provider: string;
+      model: string;
+      latency_ms: number;
+    }>('/ai/test', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 };
+
+

@@ -50,6 +50,13 @@ from app.schemas.intelligence import (
     IntelligenceReportResponse,
     ReportExportSchema,
 )
+from app.schemas.ai import (
+    AIHealthResponse,
+    AIProviderInfo,
+    AIProvidersResponse,
+    AITestRequest,
+    AITestResponse,
+)
 from app.schemas.token import TokenPayload, TokenResponse
 from app.schemas.user import UserCreate, UserLogin, UserResponse, UserUpdate
 
@@ -107,4 +114,11 @@ __all__ = [
     "ExecutiveSummaryResponse",
     "IntelligenceReportResponse",
     "ReportExportSchema",
+    # AI Provider Layer
+    "AIHealthResponse",
+    "AIProviderInfo",
+    "AIProvidersResponse",
+    "AITestRequest",
+    "AITestResponse",
 ]
+
