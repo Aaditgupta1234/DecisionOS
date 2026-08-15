@@ -1,0 +1,3 @@
+OrderID,CustomerID,Revenue Amount,Order Status
+ORD001,C001,100.0,completed
+ORD002,C002,200.0,completed
