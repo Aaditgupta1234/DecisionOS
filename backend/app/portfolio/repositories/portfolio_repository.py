@@ -163,15 +163,28 @@ class PortfolioRepository:
         res = await self._execute(query)
         return res.scalars().first()
 
-    async def list_workspace_benchmarks(
-        self, organization_id: uuid.UUID, snapshot_id: Optional[uuid.UUID] = None
+    async def get_snapshots_by_org(
+        self, organization_id: uuid.UUID, limit: int = 365, lookback_days: Optional[int] = None
+    ) -> List[PortfolioSnapshot]:
+        """Retrieve historical portfolio snapshots for an organization within an optional lookback window."""
+        query = select(PortfolioSnapshot).where(PortfolioSnapshot.organization_id == organization_id)
+        if lookback_days:
+            from datetime import timedelta
+            cutoff = datetime.now(timezone.utc) - timedelta(days=lookback_days)
+            query = query.where(PortfolioSnapshot.snapshot_date >= cutoff)
+        query = query.order_by(desc(PortfolioSnapshot.snapshot_date)).limit(limit)
+        res = await self._execute(query)
+        return list(res.scalars().all())
+
+    async def get_benchmarks_for_workspace(
+        self, workspace_id: uuid.UUID, limit: int = 365, lookback_days: Optional[int] = None
     ) -> List[WorkspaceBenchmark]:
-        """List workspace benchmarks for an organization, optionally filtered by snapshot."""
-        query = select(WorkspaceBenchmark).where(
-            WorkspaceBenchmark.organization_id == organization_id
-        )
-        if snapshot_id:
-            query = query.where(WorkspaceBenchmark.portfolio_snapshot_id == snapshot_id)
-        query = query.order_by(WorkspaceBenchmark.rank.asc())
+        """Retrieve historical benchmarks for a specific workspace within an optional lookback window."""
+        query = select(WorkspaceBenchmark).where(WorkspaceBenchmark.workspace_id == workspace_id)
+        if lookback_days:
+            from datetime import timedelta
+            cutoff = datetime.now(timezone.utc) - timedelta(days=lookback_days)
+            query = query.where(WorkspaceBenchmark.benchmark_date >= cutoff)
+        query = query.order_by(desc(WorkspaceBenchmark.benchmark_date)).limit(limit)
         res = await self._execute(query)
         return list(res.scalars().all())

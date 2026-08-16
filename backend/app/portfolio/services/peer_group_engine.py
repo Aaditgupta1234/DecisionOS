@@ -3,7 +3,7 @@
 import statistics
 from typing import Dict, List, Optional, Tuple
 
-from app.portfolio.constants import MIN_BENCHMARK_WORKSPACES
+from app.portfolio.constants import MIN_BENCHMARK_WORKSPACES, PEER_GROUP_RANGES
 from app.portfolio.constants.benchmark_constants import PeerGroup
 from app.portfolio.schemas.benchmark import (
     PeerGroupSummaryResponse,
@@ -78,11 +78,15 @@ class PeerGroupEngine:
                 best_ws = members[0]
                 worst_ws = members[-1]
 
+            score_min, score_max = PEER_GROUP_RANGES.get(group.value, (None, None))
+
             summary = PeerGroupSummaryResponse(
                 peer_group=group,
                 workspace_count=count,
                 cohort_size=count,
                 peer_group_available=avail,
+                score_min=score_min,
+                score_max=score_max,
                 average_health_score=avg_score,
                 median_health_score=med_score,
                 best_workspace=best_ws,

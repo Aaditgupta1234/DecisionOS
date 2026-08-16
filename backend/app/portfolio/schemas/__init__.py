@@ -17,6 +17,14 @@ from app.portfolio.schemas.benchmark import (
     WorkspaceBenchmarkDetailResponse,
     WorkspacePeerComparisonResponse,
 )
+from app.portfolio.trends.schemas import (
+    CohortMigrationItem,
+    CohortMigrationResponse,
+    PortfolioMomentumResponse,
+    StrategicInsightsResponse,
+    WorkspaceTrendPoint,
+    WorkspaceTrendResponse,
+)
 
 __all__ = [
     "PortfolioQueryParams",
@@ -34,4 +42,10 @@ __all__ = [
     "PortfolioInsightsResponse",
     "WorkspacePeerComparisonResponse",
     "PortfolioBenchmarkOverviewResponse",
+    "CohortMigrationItem",
+    "CohortMigrationResponse",
+    "PortfolioMomentumResponse",
+    "StrategicInsightsResponse",
+    "WorkspaceTrendPoint",
+    "WorkspaceTrendResponse",
 ]

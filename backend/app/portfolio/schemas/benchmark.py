@@ -42,6 +42,8 @@ class PeerGroupSummaryResponse(BaseModel):
     workspace_count: int
     cohort_size: int
     peer_group_available: bool
+    score_min: Optional[float] = None
+    score_max: Optional[float] = None
     average_health_score: Optional[float] = None
     median_health_score: Optional[float] = None
     best_workspace: Optional[WorkspaceBenchmarkDetailResponse] = None
@@ -55,6 +57,7 @@ class PortfolioDistributionResponse(BaseModel):
     """Mathematical score buckets, tier frequencies, and quartile ranges across the portfolio."""
     organization_id: UUID
     total_workspaces: int
+    portfolio_size: Optional[int] = None
     score_distribution: Dict[str, int] = Field(default_factory=dict)
     tier_distribution: Dict[str, int] = Field(default_factory=dict)
     peer_group_distribution: Dict[str, int] = Field(default_factory=dict)
@@ -68,6 +71,7 @@ class PortfolioInsightsResponse(BaseModel):
     """Executive-level diagnostic summary, strongest/weakest identification, and strategic observations."""
     organization_id: UUID
     total_workspaces: int
+    portfolio_size: Optional[int] = None
     portfolio_health_category: Optional[PortfolioHealthCategory] = None
     portfolio_average_health: Optional[float] = None
     portfolio_median_health: Optional[float] = None
@@ -92,6 +96,7 @@ class WorkspacePeerComparisonResponse(BaseModel):
     benchmark_tier: ExecutiveBenchmarkTier
     peer_group: PeerGroup
     cohort_size: int
+    portfolio_size: Optional[int] = None
     peer_group_available: bool
     peer_group_average: float
     peer_group_median: float
@@ -109,6 +114,7 @@ class PortfolioBenchmarkOverviewResponse(BaseModel):
     """Comprehensive executive portfolio benchmarking overview across all peer groups."""
     organization_id: UUID
     total_workspaces: int
+    portfolio_size: Optional[int] = None
     portfolio_health_score: Optional[float] = None
     portfolio_health_category: Optional[PortfolioHealthCategory] = None
     peer_groups: List[PeerGroupSummaryResponse] = Field(default_factory=list)

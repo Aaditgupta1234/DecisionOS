@@ -1,4 +1,4 @@
-"""Constants package for Phase 11.0 and Phase 11.1 Portfolio Intelligence."""
+"""Constants package for Phase 11.0, 11.1, and 11.2 Portfolio Intelligence."""
 
 from app.portfolio.constants.portfolio_constants import (
     DEFAULT_LOOKBACK_DAYS,
@@ -9,7 +9,6 @@ from app.portfolio.constants.portfolio_constants import (
     VALID_LOOKBACK_DAYS,
     BenchmarkTier,
     PortfolioStatus,
-    TrendDirection,
 )
 from app.portfolio.constants.benchmark_constants import (
     BENCHMARK_TIER_THRESHOLDS,
@@ -19,6 +18,22 @@ from app.portfolio.constants.benchmark_constants import (
     ExecutiveBenchmarkTier,
     PeerGroup,
     PortfolioHealthCategory,
+)
+from app.portfolio.trends.constants import (
+    BENCHMARK_SCHEMA_VERSION,
+    DEFAULT_TREND_WINDOW,
+    MIN_TREND_DATA_POINTS,
+    MovementCategory,
+    PEER_GROUP_LEVELS,
+    PEER_GROUP_RANGES,
+    PERCENT_CHANGE_MINOR,
+    PERCENT_CHANGE_MODERATE,
+    TREND_DIRECTION_THRESHOLD,
+    TREND_STRENGTH_MINOR,
+    TREND_STRENGTH_MODERATE,
+    TrendDirection,
+    TrendStrength,
+    VALID_TREND_WINDOWS,
 )
 
 __all__ = [
@@ -38,4 +53,17 @@ __all__ = [
     "BENCHMARK_TIER_THRESHOLDS",
     "PEER_GROUP_THRESHOLDS",
     "PORTFOLIO_HEALTH_THRESHOLDS",
+    "BENCHMARK_SCHEMA_VERSION",
+    "VALID_TREND_WINDOWS",
+    "DEFAULT_TREND_WINDOW",
+    "MIN_TREND_DATA_POINTS",
+    "TREND_DIRECTION_THRESHOLD",
+    "TREND_STRENGTH_MINOR",
+    "TREND_STRENGTH_MODERATE",
+    "PERCENT_CHANGE_MINOR",
+    "PERCENT_CHANGE_MODERATE",
+    "TrendStrength",
+    "MovementCategory",
+    "PEER_GROUP_RANGES",
+    "PEER_GROUP_LEVELS",
 ]

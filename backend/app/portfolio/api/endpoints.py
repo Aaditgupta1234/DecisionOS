@@ -1,4 +1,4 @@
-"""REST API Endpoints for Phase 11.0: Portfolio Intelligence Foundation."""
+"""REST API Endpoints for Portfolio Intelligence (Phases 11.0, 11.1, 11.2)."""
 
 import uuid
 from typing import Any, Dict, List, Optional
@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.api.dependencies.auth import get_current_active_user, require_admin
 from app.database.session import get_db
 from app.models.user import User
-from app.portfolio.constants import DEFAULT_LOOKBACK_DAYS, VALID_LOOKBACK_DAYS
+from app.portfolio.constants import DEFAULT_LOOKBACK_DAYS, DEFAULT_TREND_WINDOW, VALID_LOOKBACK_DAYS, VALID_TREND_WINDOWS
 from app.portfolio.constants.benchmark_constants import PeerGroup
 from app.portfolio.observability.portfolio_metrics import portfolio_metrics
 from app.portfolio.schemas.benchmark import (
@@ -22,11 +22,19 @@ from app.portfolio.schemas.portfolio import (
     PortfolioHealthResponse,
     PortfolioRankingResponse,
     PortfolioSummaryResponse,
-    PortfolioTrendResponse,
     WorkspaceBenchmarkResponse,
 )
 from app.portfolio.services.portfolio_benchmark_service import PortfolioBenchmarkService
 from app.portfolio.services.portfolio_service import PortfolioService
+from app.portfolio.trends.observability.trend_metrics import portfolio_trend_metrics
+from app.portfolio.trends.schemas import (
+    CohortMigrationResponse,
+    PortfolioMomentumResponse,
+    PortfolioTrendResponse,
+    StrategicInsightsResponse,
+    WorkspaceTrendResponse,
+)
+from app.portfolio.trends.services.portfolio_trends_service import PortfolioTrendsService
 
 portfolio_router = APIRouter(prefix="/portfolio", tags=["Portfolio Intelligence"])
 
@@ -41,6 +49,10 @@ def _resolve_org_id(current_user: User, organization_id: Optional[uuid.UUID] = N
         return current_user.memberships[0].organization_id
     return current_user.id
 
+
+# ==============================================================================
+# PHASE 11.0: FOUNDATION ENDPOINTS
+# ==============================================================================
 
 @portfolio_router.get(
     "/summary",
@@ -95,25 +107,6 @@ async def get_portfolio_health(
     org_id = _resolve_org_id(current_user, organization_id)
     service = PortfolioService(db)
     return await service.get_portfolio_health(org_id)
-
-
-@portfolio_router.get(
-    "/trends",
-    response_model=PortfolioTrendResponse,
-    status_code=status.HTTP_200_OK,
-)
-async def get_portfolio_trends(
-    lookback_days: int = Query(DEFAULT_LOOKBACK_DAYS, ge=1, le=365, description="Lookback window in days"),
-    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
-    db=Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
-):
-    """
-    Retrieve historical portfolio health trend points over a specified lookback window.
-    """
-    org_id = _resolve_org_id(current_user, organization_id)
-    service = PortfolioService(db)
-    return await service.get_portfolio_trends(org_id, lookback_days=lookback_days)
 
 
 @portfolio_router.get(
@@ -271,6 +264,111 @@ async def get_workspace_peer_comparison(
     return await service.get_workspace_peer_comparison(org_id, workspace_id)
 
 
+# ==============================================================================
+# PHASE 11.2: PORTFOLIO TRENDS & STRATEGIC PERFORMANCE INTELLIGENCE ENDPOINTS
+# ==============================================================================
+
+@portfolio_router.get(
+    "/trends",
+    response_model=PortfolioTrendResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_trends(
+    lookback_days: int = Query(DEFAULT_TREND_WINDOW, description="Lookback window in days (7, 30, 90, 180, 365)"),
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve longitudinal portfolio health trend points and trajectory over a specified window.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioTrendsService(db)
+    return await service.get_portfolio_trend(org_id, window_days=lookback_days)
+
+
+@portfolio_router.get(
+    "/workspaces/{workspace_id}/trends",
+    response_model=WorkspaceTrendResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_workspace_trends(
+    workspace_id: uuid.UUID,
+    lookback_days: int = Query(DEFAULT_TREND_WINDOW, description="Lookback window in days (7, 30, 90, 180, 365)"),
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve longitudinal health score and cohort trajectory for a specific workspace.
+    Validates tenant organization scoping (403 on cross-tenant requests).
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioTrendsService(db)
+    return await service.get_workspace_trend(org_id, workspace_id, window_days=lookback_days)
+
+
+@portfolio_router.get(
+    "/migrations",
+    response_model=CohortMigrationResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_cohort_migrations(
+    lookback_days: int = Query(DEFAULT_TREND_WINDOW, description="Lookback window in days (7, 30, 90, 180, 365)"),
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Track workspace peer group cohort mobility (UPGRADE, DOWNGRADE, UNCHANGED) and transition matrix.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioTrendsService(db)
+    return await service.get_cohort_migrations(org_id, window_days=lookback_days)
+
+
+@portfolio_router.get(
+    "/momentum",
+    response_model=PortfolioMomentumResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_momentum(
+    lookback_days: int = Query(DEFAULT_TREND_WINDOW, description="Lookback window in days (7, 30, 90, 180, 365)"),
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve net organizational velocity, momentum score (-100 to +100), and improving/declining ratios.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioTrendsService(db)
+    return await service.get_portfolio_momentum(org_id, window_days=lookback_days)
+
+
+@portfolio_router.get(
+    "/strategic-insights",
+    response_model=StrategicInsightsResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_strategic_insights(
+    lookback_days: int = Query(DEFAULT_TREND_WINDOW, description="Lookback window in days (7, 30, 90, 180, 365)"),
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve deterministic executive strategic observations, momentum summary, and migration narrative.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioTrendsService(db)
+    return await service.get_strategic_insights(org_id, window_days=lookback_days)
+
+
+# ==============================================================================
+# OBSERVABILITY METRICS ENDPOINTS
+# ==============================================================================
+
 @portfolio_router.get(
     "/metrics",
     status_code=status.HTTP_200_OK,
@@ -282,3 +380,16 @@ async def get_portfolio_metrics(
     Retrieve in-memory observability counters for portfolio operations (Admin only).
     """
     return portfolio_metrics.get_summary()
+
+
+@portfolio_router.get(
+    "/trend-metrics",
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_trend_metrics(
+    current_user: User = Depends(require_admin),
+) -> Dict[str, Any]:
+    """
+    Retrieve in-memory observability counters for portfolio trend intelligence operations (Admin only).
+    """
+    return portfolio_trend_metrics.get_summary()
