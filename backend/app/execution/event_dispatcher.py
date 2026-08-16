@@ -28,6 +28,11 @@ class ExecutionEventDispatcher:
         ExecutionEventType.OUTCOME_TARGET_ACHIEVED,
         ExecutionEventType.ADMIN_OVERRIDE,
         ExecutionEventType.GOVERNANCE_REVIEW_COMPLETED,
+        ExecutionEventType.REVIEW_SCHEDULED,
+        ExecutionEventType.REVIEW_COMPLETED,
+        ExecutionEventType.ACTION_OVERDUE,
+        ExecutionEventType.ESCALATION_TRIGGERED,
+        ExecutionEventType.ESCALATION_RESOLVED,
     }
 
     def __init__(self, db: Union[AsyncSession, Session]) -> None:

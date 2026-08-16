@@ -1,7 +1,7 @@
 """Domain Constants and Enums for Phase 12: Strategic Execution Layer."""
 
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 EXECUTION_ENGINE_VERSION = "1.0"
 EXECUTION_SCHEMA_VERSION = "1.0"
@@ -153,6 +153,16 @@ class ExecutionEventType(str, Enum):
     OWNER_CHANGED = "OWNER_CHANGED"
     BUDGET_UPDATED = "BUDGET_UPDATED"
     GOVERNANCE_REVIEW_COMPLETED = "GOVERNANCE_REVIEW_COMPLETED"
+    REVIEW_SCHEDULED = "REVIEW_SCHEDULED"
+    REVIEW_STARTED = "REVIEW_STARTED"
+    REVIEW_COMPLETED = "REVIEW_COMPLETED"
+    REVIEW_CANCELLED = "REVIEW_CANCELLED"
+    ACTION_CREATED = "ACTION_CREATED"
+    ACTION_ASSIGNED = "ACTION_ASSIGNED"
+    ACTION_COMPLETED = "ACTION_COMPLETED"
+    ACTION_OVERDUE = "ACTION_OVERDUE"
+    ESCALATION_TRIGGERED = "ESCALATION_TRIGGERED"
+    ESCALATION_RESOLVED = "ESCALATION_RESOLVED"
     OUTCOME_RECORDED = "OUTCOME_RECORDED"
     OUTCOME_TARGET_ACHIEVED = "OUTCOME_TARGET_ACHIEVED"
     OUTCOME_TARGET_MISSED = "OUTCOME_TARGET_MISSED"
@@ -178,9 +188,100 @@ SCHEDULE_ENGINE_VERSION = "1.0"
 class GovernanceDecision(str, Enum):
     """Formal executive review decision classifications."""
     APPROVED = "APPROVED"
-    CONDITIONALLY_APPROVED = "CONDITIONALLY_APPROVED"
-    REQUIRES_REWORK = "REQUIRES_REWORK"
+    APPROVED_WITH_CONDITIONS = "APPROVED_WITH_CONDITIONS"
+    DEFERRED = "DEFERRED"
     REJECTED = "REJECTED"
+    ESCALATED = "ESCALATED"
+    CONDITIONALLY_APPROVED = "CONDITIONALLY_APPROVED"  # Compatibility alias
+    REQUIRES_REWORK = "REQUIRES_REWORK"  # Compatibility alias
+
+
+class GovernanceDecisionOutcome(str, Enum):
+    """Normalized 3-tier governance decision outcome classification."""
+    POSITIVE = "POSITIVE"
+    NEUTRAL = "NEUTRAL"
+    NEGATIVE = "NEGATIVE"
+
+
+class GovernanceReviewStatus(str, Enum):
+    """Lifecycle status for formal governance reviews."""
+    SCHEDULED = "SCHEDULED"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+
+class EscalationLevel(str, Enum):
+    """Formal escalation tiers for execution risks and blockers."""
+    NONE = "NONE"
+    LEVEL_1 = "LEVEL_1"      # Operational Lead / Manager
+    LEVEL_2 = "LEVEL_2"      # Program Director / Delivery Head
+    EXECUTIVE = "EXECUTIVE"  # Executive Steering Committee / Board
+
+
+class ReviewReadinessLevel(str, Enum):
+    """Readiness classification evaluating preparedness for governance review."""
+    READY = "READY"                              # Score >= 80.0
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"          # Score 60.0 - 79.9
+    ESCALATION_REQUIRED = "ESCALATION_REQUIRED"  # Score 40.0 - 59.9
+    EXECUTIVE_ATTENTION = "EXECUTIVE_ATTENTION"  # Score < 40.0
+
+
+class GovernanceTrend(str, Enum):
+    """Longitudinal trajectory of governance compliance and readiness."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DETERIORATING = "DETERIORATING"
+
+
+class ReviewType(str, Enum):
+    """Categories of governance and executive reviews."""
+    GOVERNANCE_REVIEW = "GOVERNANCE_REVIEW"
+    RISK_REVIEW = "RISK_REVIEW"
+    MILESTONE_REVIEW = "MILESTONE_REVIEW"
+    EXECUTIVE_REVIEW = "EXECUTIVE_REVIEW"
+    PROGRAM_REVIEW = "PROGRAM_REVIEW"
+
+
+class GovernanceStatus(str, Enum):
+    """Executive governance operational posture classification."""
+    HEALTHY = "HEALTHY"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    ESCALATION_REQUIRED = "ESCALATION_REQUIRED"
+    EXECUTIVE_ATTENTION = "EXECUTIVE_ATTENTION"
+
+
+class ActionPriority(str, Enum):
+    """Priority urgency classification for governance review actions."""
+    CRITICAL = "CRITICAL"
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class GovernanceActionStatus(str, Enum):
+    """Operational lifecycle status of governance remediation actions."""
+    OPEN = "OPEN"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    OVERDUE = "OVERDUE"
+    CANCELLED = "CANCELLED"
+
+
+class GovernanceMaturityLevel(str, Enum):
+    """Overall organizational governance maturity level."""
+    OPTIMIZED = "OPTIMIZED"    # Composite maturity score >= 90.0
+    MANAGED = "MANAGED"        # Composite maturity score 75.0 - 89.9
+    DEVELOPING = "DEVELOPING"  # Composite maturity score 60.0 - 74.9
+    AD_HOC = "AD_HOC"          # Composite maturity score < 60.0
+
+
+GOVERNANCE_ENGINE_VERSION = "1.0"
+REVIEW_ENGINE_VERSION = "1.0"
+ACTION_ENGINE_VERSION = "1.0"
+COMPLIANCE_ENGINE_VERSION = "1.0"
+EFFECTIVENESS_ENGINE_VERSION = "1.0"
+MATURITY_ENGINE_VERSION = "1.0"
 
 
 class TargetDirection(str, Enum):
@@ -403,3 +504,50 @@ def calculate_budget_health(score: float, utilization_pct: float) -> BudgetHealt
     if utilization_pct >= 80.0 or score < 80.0:
         return BudgetHealth.WATCH
     return BudgetHealth.HEALTHY
+
+
+def calculate_review_readiness_level(readiness_score: float) -> ReviewReadinessLevel:
+    """Deterministically maps a review readiness score (0-100) to a ReviewReadinessLevel."""
+    if readiness_score >= 80.0:
+        return ReviewReadinessLevel.READY
+    if readiness_score >= 60.0:
+        return ReviewReadinessLevel.REVIEW_REQUIRED
+    if readiness_score >= 40.0:
+        return ReviewReadinessLevel.ESCALATION_REQUIRED
+    return ReviewReadinessLevel.EXECUTIVE_ATTENTION
+
+
+def calculate_governance_decision_outcome(decision: Optional[GovernanceDecision]) -> Optional[GovernanceDecisionOutcome]:
+    """Deterministically classifies a governance decision into POSITIVE, NEUTRAL, or NEGATIVE."""
+    if not decision:
+        return None
+    if decision == GovernanceDecision.APPROVED:
+        return GovernanceDecisionOutcome.POSITIVE
+    if decision in (GovernanceDecision.APPROVED_WITH_CONDITIONS, GovernanceDecision.DEFERRED, GovernanceDecision.CONDITIONALLY_APPROVED):
+        return GovernanceDecisionOutcome.NEUTRAL
+    if decision in (GovernanceDecision.REJECTED, GovernanceDecision.ESCALATED, GovernanceDecision.REQUIRES_REWORK):
+        return GovernanceDecisionOutcome.NEGATIVE
+    return GovernanceDecisionOutcome.NEUTRAL
+
+
+def calculate_governance_maturity_level(
+    compliance_score: float,
+    effectiveness_score: float,
+    action_closure_rate: float,
+    escalation_resolution_rate: float,
+) -> GovernanceMaturityLevel:
+    """Deterministically calculates organization governance maturity from 4 composite factors."""
+    composite = (
+        (0.35 * compliance_score)
+        + (0.35 * effectiveness_score)
+        + (0.15 * action_closure_rate)
+        + (0.15 * escalation_resolution_rate)
+    )
+    if composite >= 90.0:
+        return GovernanceMaturityLevel.OPTIMIZED
+    if composite >= 75.0:
+        return GovernanceMaturityLevel.MANAGED
+    if composite >= 60.0:
+        return GovernanceMaturityLevel.DEVELOPING
+    return GovernanceMaturityLevel.AD_HOC
+

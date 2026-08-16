@@ -10,6 +10,31 @@ from app.execution.schemas.event import (
     ExecutionEventListResponse,
     ExecutionEventResponse,
 )
+from app.execution.schemas.governance import (
+    GovernanceHealthMetrics,
+    GovernanceReviewCreate,
+    GovernanceReviewListResponse,
+    GovernanceReviewResponse,
+    GovernanceReviewUpdate,
+    GovernanceSummaryResponse,
+    InitiativeGovernanceDetailResponse,
+    ProgramGovernanceDetailResponse,
+    ReviewActionCreate,
+    ReviewActionListResponse,
+    ReviewActionResponse,
+    ReviewActionUpdate,
+    ReviewComplianceMetrics,
+)
+from app.execution.schemas.health import (
+    EarlyWarningResponse,
+    ExecutionHealthMetrics,
+    ExecutionRiskMetrics,
+    InitiativeHealthDetailResponse,
+    InterventionQueueResponse,
+    InterventionRecommendation,
+    PortfolioExecutionHealthSummary,
+    ProgramHealthDetailResponse,
+)
 from app.execution.schemas.initiative import (
     InitiativeCreate,
     InitiativeDetailResponse,
@@ -55,17 +80,6 @@ from app.execution.schemas.timeline import (
     MilestoneUpdate,
     ProgramTimelineMetrics,
     TimelineRiskMetrics,
-)
-
-from app.execution.schemas.health import (
-    EarlyWarningResponse,
-    ExecutionHealthMetrics,
-    ExecutionRiskMetrics,
-    InitiativeHealthDetailResponse,
-    InterventionQueueResponse,
-    InterventionRecommendation,
-    PortfolioExecutionHealthSummary,
-    ProgramHealthDetailResponse,
 )
 
 __all__ = [
@@ -119,4 +133,17 @@ __all__ = [
     "InitiativeHealthDetailResponse",
     "ProgramHealthDetailResponse",
     "PortfolioExecutionHealthSummary",
+    "GovernanceReviewCreate",
+    "GovernanceReviewUpdate",
+    "GovernanceReviewResponse",
+    "GovernanceReviewListResponse",
+    "ReviewActionCreate",
+    "ReviewActionUpdate",
+    "ReviewActionResponse",
+    "ReviewActionListResponse",
+    "ReviewComplianceMetrics",
+    "GovernanceHealthMetrics",
+    "InitiativeGovernanceDetailResponse",
+    "ProgramGovernanceDetailResponse",
+    "GovernanceSummaryResponse",
 ]

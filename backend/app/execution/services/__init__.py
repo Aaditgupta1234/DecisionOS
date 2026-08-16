@@ -20,6 +20,11 @@ from app.execution.services.execution_risk_engine import ExecutionRiskEngine
 from app.execution.services.intervention_engine import InterventionPrioritizationEngine
 from app.execution.services.portfolio_risk_engine import PortfolioExecutionRiskEngine
 
+from app.execution.services.action_tracking_engine import GovernanceActionTrackingEngine
+from app.execution.services.governance_engine import GovernanceIntelligenceEngine
+from app.execution.services.governance_service import GovernanceService
+from app.execution.services.review_compliance_engine import ReviewComplianceEngine
+
 __all__ = [
     "ProgramRollupEngine",
     "ProgramService",
@@ -39,4 +44,8 @@ __all__ = [
     "EarlyWarningEngine",
     "InterventionPrioritizationEngine",
     "PortfolioExecutionRiskEngine",
+    "GovernanceIntelligenceEngine",
+    "ReviewComplianceEngine",
+    "GovernanceActionTrackingEngine",
+    "GovernanceService",
 ]

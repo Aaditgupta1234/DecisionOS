@@ -228,3 +228,24 @@ class InitiativeRepository:
             "average_completion_percentage": avg_progress,
             "average_health_score": avg_health,
         }
+
+    async def list_by_program(
+        self,
+        program_id: uuid.UUID,
+        organization_id: uuid.UUID,
+    ) -> List[StrategicInitiative]:
+        """Lists all initiatives under a strategic program."""
+        stmt = (
+            select(StrategicInitiative)
+            .where(
+                StrategicInitiative.program_id == program_id,
+                StrategicInitiative.organization_id == organization_id,
+            )
+            .order_by(StrategicInitiative.created_at.desc())
+        )
+        if self.is_async:
+            res = await self.db.execute(stmt)
+            return list(res.scalars().all())
+        res = self.db.execute(stmt)
+        return list(res.scalars().all())
+

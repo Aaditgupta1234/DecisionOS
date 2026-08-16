@@ -29,7 +29,7 @@ from app.models.base import TimestampMixin
 if TYPE_CHECKING:
     from app.execution.models.dependency import InitiativeDependency
     from app.execution.models.event import InitiativeExecutionEvent
-    from app.execution.models.governance import InitiativeReview
+    from app.execution.models.governance import GovernanceReview
     from app.execution.models.milestone import InitiativeMilestone
     from app.execution.models.outcome import InitiativeOutcome
     from app.execution.models.program import StrategicProgram
@@ -258,8 +258,8 @@ class StrategicInitiative(TimestampMixin, Base):
         cascade="all, delete-orphan",
     )
 
-    governance_reviews: Mapped[List["InitiativeReview"]] = relationship(
-        "InitiativeReview",
+    governance_reviews: Mapped[List["GovernanceReview"]] = relationship(
+        "GovernanceReview",
         back_populates="initiative",
         cascade="all, delete-orphan",
     )

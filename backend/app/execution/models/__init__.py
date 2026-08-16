@@ -2,7 +2,12 @@
 
 from app.execution.models.dependency import InitiativeDependency
 from app.execution.models.event import InitiativeExecutionEvent
-from app.execution.models.governance import InitiativeReview
+from app.execution.models.governance import (
+    GovernanceAction,
+    GovernanceReview,
+    InitiativeReview,
+    ReviewAction,
+)
 from app.execution.models.initiative import StrategicInitiative
 from app.execution.models.milestone import InitiativeMilestone
 from app.execution.models.milestone_dependency import MilestoneDependency
@@ -19,7 +24,10 @@ __all__ = [
     "InitiativeTargetMetric",
     "InitiativeMilestone",
     "MilestoneDependency",
+    "GovernanceReview",
     "InitiativeReview",
+    "ReviewAction",
+    "GovernanceAction",
     "InitiativeOutcome",
     "ExecutionSnapshot",
 ]

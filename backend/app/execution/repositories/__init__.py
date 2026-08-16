@@ -2,6 +2,12 @@
 
 from app.execution.repositories.dependency_repository import DependencyRepository
 from app.execution.repositories.event_repository import EventRepository
+from app.execution.repositories.governance_action_repository import (
+    GovernanceActionRepository,
+)
+from app.execution.repositories.governance_review_repository import (
+    GovernanceReviewRepository,
+)
 from app.execution.repositories.initiative_repository import InitiativeRepository
 from app.execution.repositories.milestone_dependency_repository import (
     MilestoneDependencyRepository,
@@ -18,4 +24,6 @@ __all__ = [
     "TargetMetricRepository",
     "MilestoneRepository",
     "MilestoneDependencyRepository",
+    "GovernanceReviewRepository",
+    "GovernanceActionRepository",
 ]
