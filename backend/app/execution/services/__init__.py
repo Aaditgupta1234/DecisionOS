@@ -1,10 +1,18 @@
 """Execution services package for Phase 12."""
 
+from app.execution.services.budget_engine import BudgetIntelligenceEngine
+from app.execution.services.critical_path_engine import CriticalPathEngine
 from app.execution.services.dependency_service import DependencyService
 from app.execution.services.event_service import EventService
 from app.execution.services.initiative_service import InitiativeService
+from app.execution.services.milestone_engine import MilestoneIntelligenceEngine
+from app.execution.services.milestone_service import MilestoneService
+from app.execution.services.progress_engine import ProgressEngine
 from app.execution.services.program_rollup_engine import ProgramRollupEngine
 from app.execution.services.program_service import ProgramService
+from app.execution.services.schedule_engine import ScheduleAdherenceEngine
+from app.execution.services.timeline_risk_engine import TimelineRiskEngine
+from app.execution.services.velocity_engine import ExecutionVelocityEngine
 
 __all__ = [
     "ProgramRollupEngine",
@@ -12,4 +20,12 @@ __all__ = [
     "InitiativeService",
     "EventService",
     "DependencyService",
+    "ProgressEngine",
+    "ExecutionVelocityEngine",
+    "ScheduleAdherenceEngine",
+    "BudgetIntelligenceEngine",
+    "MilestoneIntelligenceEngine",
+    "TimelineRiskEngine",
+    "CriticalPathEngine",
+    "MilestoneService",
 ]

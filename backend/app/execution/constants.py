@@ -86,21 +86,67 @@ class DependencyType(str, Enum):
     RELATES_TO = "RELATES_TO"
 
 
+TIMELINE_ENGINE_VERSION = "1.0"
+CRITICAL_PATH_ENGINE_VERSION = "1.0"
+MILESTONE_ENGINE_VERSION = "1.0"
+
+
+class MilestoneType(str, Enum):
+    """Categorical deliverable type for initiative milestones."""
+    DELIVERABLE = "DELIVERABLE"  # Core technical/operational deliverable
+    APPROVAL = "APPROVAL"        # Budget or stakeholder sign-off
+    GOVERNANCE = "GOVERNANCE"    # Steering committee / compliance review
+    OUTCOME = "OUTCOME"          # Target metric achievement validation
+    CHECKPOINT = "CHECKPOINT"    # Mid-stage completion audit
+
+
+class MilestoneCriticality(str, Enum):
+    """Criticality level determining milestone impact on initiative critical path."""
+    CRITICAL = "CRITICAL"  # On critical path / non-negotiable blocker
+    HIGH = "HIGH"          # Major dependency
+    MEDIUM = "MEDIUM"      # Standard deliverable
+    LOW = "LOW"            # Non-blocking / administrative
+
+
+class MilestoneDependencyType(str, Enum):
+    """Dependency relationship type between sequential/concurrent milestones."""
+    FINISH_TO_START = "FINISH_TO_START"  # Successor cannot start until predecessor finishes
+    START_TO_START = "START_TO_START"    # Successor cannot start until predecessor starts
+    FINISH_TO_FINISH = "FINISH_TO_FINISH"# Successor cannot finish until predecessor finishes
+    START_TO_FINISH = "START_TO_FINISH"  # Successor cannot finish until predecessor starts
+
+
 class MilestoneStatus(str, Enum):
-    """Execution status for intermediate initiative milestones."""
+    """Execution lifecycle status for initiative milestones."""
+    PLANNED = "PLANNED"
     NOT_STARTED = "NOT_STARTED"
     IN_PROGRESS = "IN_PROGRESS"
+    BLOCKED = "BLOCKED"
     COMPLETED = "COMPLETED"
     OVERDUE = "OVERDUE"
     CANCELLED = "CANCELLED"
 
 
+class TimelineRiskLevel(str, Enum):
+    """Risk tier evaluating likelihood and impact of timeline delays."""
+    LOW = "LOW"          # Score < 30.0
+    MEDIUM = "MEDIUM"    # 30.0 - 59.9
+    HIGH = "HIGH"        # 60.0 - 79.9
+    CRITICAL = "CRITICAL"# >= 80.0
+
+
 class ExecutionEventType(str, Enum):
     """Operational event types recorded across the execution timeline."""
     STATUS_CHANGED = "STATUS_CHANGED"
+    MILESTONE_CREATED = "MILESTONE_CREATED"
     MILESTONE_STARTED = "MILESTONE_STARTED"
     MILESTONE_COMPLETED = "MILESTONE_COMPLETED"
     MILESTONE_DELAYED = "MILESTONE_DELAYED"
+    MILESTONE_BLOCKED = "MILESTONE_BLOCKED"
+    MILESTONE_REOPENED = "MILESTONE_REOPENED"
+    MILESTONE_REASSIGNED = "MILESTONE_REASSIGNED"
+    MILESTONE_RESCHEDULED = "MILESTONE_RESCHEDULED"
+    CRITICAL_PATH_CHANGED = "CRITICAL_PATH_CHANGED"
     RISK_ESCALATED = "RISK_ESCALATED"
     BLOCKER_RECORDED = "BLOCKER_RECORDED"
     BLOCKER_RESOLVED = "BLOCKER_RESOLVED"
@@ -111,6 +157,22 @@ class ExecutionEventType(str, Enum):
     OUTCOME_TARGET_ACHIEVED = "OUTCOME_TARGET_ACHIEVED"
     OUTCOME_TARGET_MISSED = "OUTCOME_TARGET_MISSED"
     ADMIN_OVERRIDE = "ADMIN_OVERRIDE"
+
+
+def calculate_timeline_risk_level(score: float) -> TimelineRiskLevel:
+    """Deterministically maps a timeline risk score (0-100) to a TimelineRiskLevel."""
+    if score >= 80.0:
+        return TimelineRiskLevel.CRITICAL
+    if score >= 60.0:
+        return TimelineRiskLevel.HIGH
+    if score >= 30.0:
+        return TimelineRiskLevel.MEDIUM
+    return TimelineRiskLevel.LOW
+
+
+PROGRESS_ENGINE_VERSION = "1.0"
+VELOCITY_ENGINE_VERSION = "1.0"
+SCHEDULE_ENGINE_VERSION = "1.0"
 
 
 class GovernanceDecision(str, Enum):

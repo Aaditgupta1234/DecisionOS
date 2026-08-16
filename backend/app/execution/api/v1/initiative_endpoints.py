@@ -21,7 +21,9 @@ from app.execution.schemas.initiative import (
     InitiativeUpdate,
 )
 from app.execution.schemas.progress import InitiativeExecutionMetrics
+from app.execution.schemas.timeline import InitiativeTimelineMetrics
 from app.execution.services.initiative_service import InitiativeService
+from app.execution.services.milestone_service import MilestoneService
 from app.models.user import User
 
 initiative_router = APIRouter(prefix="/initiatives", tags=["Strategic Initiatives (Phase 12)"])
@@ -141,6 +143,23 @@ async def get_initiative_metrics(
     org_id = _resolve_org_id(current_user, organization_id)
     service = InitiativeService(db)
     return await service.get_initiative_execution_metrics(initiative_id, org_id)
+
+
+@initiative_router.get(
+    "/{initiative_id}/timeline",
+    response_model=InitiativeTimelineMetrics,
+    status_code=status.HTTP_200_OK,
+)
+async def get_initiative_timeline(
+    initiative_id: uuid.UUID,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Retrieves unified milestone, timeline risk, and critical path intelligence for an initiative."""
+    org_id = _resolve_org_id(current_user, organization_id)
+    ms_service = MilestoneService(db)
+    return await ms_service.get_initiative_timeline_metrics(initiative_id, org_id)
 
 
 @initiative_router.patch(

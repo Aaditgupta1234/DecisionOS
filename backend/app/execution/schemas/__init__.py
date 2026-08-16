@@ -41,6 +41,21 @@ from app.execution.schemas.target_metric import (
     TargetMetricResponse,
     TargetMetricUpdate,
 )
+from app.execution.schemas.timeline import (
+    CriticalPathMetrics,
+    InitiativeTimelineMetrics,
+    MilestoneCreate,
+    MilestoneDependencyCreate,
+    MilestoneDependencyListResponse,
+    MilestoneDependencyResponse,
+    MilestoneListResponse,
+    MilestoneMetrics,
+    MilestoneResponse,
+    MilestoneStatusUpdate,
+    MilestoneUpdate,
+    ProgramTimelineMetrics,
+    TimelineRiskMetrics,
+)
 
 __all__ = [
     "ProgramCreate",
@@ -72,4 +87,17 @@ __all__ = [
     "InitiativeExecutionMetrics",
     "ProgramExecutionMetrics",
     "PortfolioExecutionSummaryResponse",
+    "MilestoneCreate",
+    "MilestoneUpdate",
+    "MilestoneStatusUpdate",
+    "MilestoneResponse",
+    "MilestoneListResponse",
+    "MilestoneDependencyCreate",
+    "MilestoneDependencyResponse",
+    "MilestoneDependencyListResponse",
+    "MilestoneMetrics",
+    "TimelineRiskMetrics",
+    "CriticalPathMetrics",
+    "InitiativeTimelineMetrics",
+    "ProgramTimelineMetrics",
 ]
