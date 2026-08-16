@@ -114,24 +114,26 @@ class ScheduleExecutionRepository:
 
     async def list_executions(
         self,
-        schedule_id: uuid.UUID,
+        schedule_id: Optional[uuid.UUID],
         organization_id: uuid.UUID,
         execution_status: Optional[str] = None,
         limit: int = DEFAULT_SCHEDULE_LIMIT,
         offset: int = 0,
     ) -> Tuple[List[ScheduleExecution], int]:
-        """List execution history for a schedule."""
+        """List execution history for a schedule or entire organization."""
         limit = min(max(1, limit), MAX_SCHEDULE_LIMIT)
         offset = max(0, offset)
 
         base_query = select(ScheduleExecution).where(
-            ScheduleExecution.schedule_id == schedule_id,
             ScheduleExecution.organization_id == organization_id,
         )
         count_query = select(func.count(ScheduleExecution.id)).where(
-            ScheduleExecution.schedule_id == schedule_id,
             ScheduleExecution.organization_id == organization_id,
         )
+
+        if schedule_id is not None:
+            base_query = base_query.where(ScheduleExecution.schedule_id == schedule_id)
+            count_query = count_query.where(ScheduleExecution.schedule_id == schedule_id)
 
         if execution_status is not None:
             base_query = base_query.where(ScheduleExecution.execution_status == execution_status)
