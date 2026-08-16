@@ -17,6 +17,7 @@ from app.audit.api import audit_router
 from app.schedules.api import schedules_router
 from app.monitoring.api import monitoring_router
 from app.admin.api import admin_router
+from app.portfolio.api import portfolio_router
 
 api_router = APIRouter()
 
@@ -45,6 +46,7 @@ api_router.include_router(audit_router, tags=["Audit Center"])
 api_router.include_router(schedules_router, tags=["Scheduled Intelligence"])
 api_router.include_router(monitoring_router, tags=["Operational Monitoring & Health Center"])
 api_router.include_router(admin_router, tags=["Platform Administration & Governance Center"])
+api_router.include_router(portfolio_router, tags=["Portfolio Intelligence Foundation"])
 
 
 
