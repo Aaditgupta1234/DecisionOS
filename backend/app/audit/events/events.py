@@ -217,6 +217,150 @@ class NotificationArchivedAuditEvent(AuditEvent):
 
 
 @dataclass
+class ScheduleCreatedAuditEvent(AuditEvent):
+    """Event emitted when a recurring intelligence schedule is configured."""
+    def __init__(
+        self,
+        schedule_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        name: str,
+        schedule_type: str,
+        cron_expression: str,
+        actor_user_id: Optional[uuid.UUID] = None,
+    ) -> None:
+        super().__init__(
+            organization_id=organization_id,
+            event_type=AuditEventType.SCHEDULE_CREATED.value,
+            severity=AuditSeverity.INFO.value,
+            entity_type="schedule",
+            entity_id=str(schedule_id),
+            title=f"Schedule Created: {name}",
+            description=f"Schedule '{name}' ({schedule_type}, '{cron_expression}') created.",
+            actor_user_id=actor_user_id,
+            metadata={
+                "source_type": "schedule",
+                "source_id": str(schedule_id),
+                "details": {
+                    "name": name,
+                    "schedule_type": schedule_type,
+                    "cron_expression": cron_expression,
+                },
+            },
+        )
+
+
+@dataclass
+class ScheduleExecutedAuditEvent(AuditEvent):
+    """Event emitted when a schedule triggers and dispatches a background job."""
+    def __init__(
+        self,
+        schedule_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        name: str,
+        job_id: uuid.UUID,
+        duration_ms: float,
+    ) -> None:
+        super().__init__(
+            organization_id=organization_id,
+            event_type=AuditEventType.SCHEDULE_EXECUTED.value,
+            severity=AuditSeverity.INFO.value,
+            entity_type="schedule",
+            entity_id=str(schedule_id),
+            title=f"Schedule Executed: {name}",
+            description=f"Schedule '{name}' triggered job {job_id} in {duration_ms:.1f}ms.",
+            metadata={
+                "source_type": "schedule",
+                "source_id": str(schedule_id),
+                "details": {
+                    "job_id": str(job_id),
+                    "duration_ms": duration_ms,
+                },
+            },
+        )
+
+
+@dataclass
+class ScheduleFailedAuditEvent(AuditEvent):
+    """Event emitted when a schedule execution fails to dispatch or encounters an error."""
+    def __init__(
+        self,
+        schedule_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        name: str,
+        error_message: str,
+    ) -> None:
+        super().__init__(
+            organization_id=organization_id,
+            event_type=AuditEventType.SCHEDULE_FAILED.value,
+            severity=AuditSeverity.ERROR.value,
+            entity_type="schedule",
+            entity_id=str(schedule_id),
+            title=f"Schedule Execution Failed: {name}",
+            description=f"Schedule '{name}' execution failed: {error_message}",
+            metadata={
+                "source_type": "schedule",
+                "source_id": str(schedule_id),
+                "details": {"error_message": error_message},
+            },
+        )
+
+
+@dataclass
+class SchedulePausedAuditEvent(AuditEvent):
+    """Event emitted when a schedule is paused/disabled."""
+    def __init__(
+        self,
+        schedule_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        name: str,
+        actor_user_id: Optional[uuid.UUID] = None,
+    ) -> None:
+        super().__init__(
+            organization_id=organization_id,
+            event_type=AuditEventType.SCHEDULE_PAUSED.value,
+            severity=AuditSeverity.INFO.value,
+            entity_type="schedule",
+            entity_id=str(schedule_id),
+            title=f"Schedule Paused: {name}",
+            description=f"Schedule '{name}' paused by user {actor_user_id}.",
+            actor_user_id=actor_user_id,
+            metadata={
+                "source_type": "schedule",
+                "source_id": str(schedule_id),
+                "details": {"name": name},
+            },
+        )
+
+
+@dataclass
+class ScheduleResumedAuditEvent(AuditEvent):
+    """Event emitted when a schedule is resumed/enabled."""
+    def __init__(
+        self,
+        schedule_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        name: str,
+        next_run_at: datetime,
+        actor_user_id: Optional[uuid.UUID] = None,
+    ) -> None:
+        super().__init__(
+            organization_id=organization_id,
+            event_type=AuditEventType.SCHEDULE_RESUMED.value,
+            severity=AuditSeverity.INFO.value,
+            entity_type="schedule",
+            entity_id=str(schedule_id),
+            title=f"Schedule Resumed: {name}",
+            description=f"Schedule '{name}' resumed by user {actor_user_id}. Next run: {next_run_at.isoformat()}.",
+            actor_user_id=actor_user_id,
+            metadata={
+                "source_type": "schedule",
+                "source_id": str(schedule_id),
+                "details": {"name": name, "next_run_at": next_run_at.isoformat()},
+            },
+        )
+
+
+@dataclass
 class SystemAuditEvent(AuditEvent):
     """Event emitted for platform administration, configuration changes, or security alerts."""
     def __init__(

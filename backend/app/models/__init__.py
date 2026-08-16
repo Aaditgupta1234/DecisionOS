@@ -52,6 +52,8 @@ from app.notifications.models import Notification
 from app.notifications.constants import NotificationStatus, NotificationType
 from app.audit.models import AuditRecord
 from app.audit.constants import AuditEventType, AuditSeverity
+from app.schedules.models import Schedule, ScheduleExecution
+from app.schedules.constants import ScheduleType, ExecutionStatus
 
 __all__ = [
     "Base",
@@ -86,6 +88,10 @@ __all__ = [
     "AuditRecord",
     "AuditEventType",
     "AuditSeverity",
+    "Schedule",
+    "ScheduleExecution",
+    "ScheduleType",
+    "ExecutionStatus",
     "StrategyPlanStatus",
     "TimeHorizon",
     "TargetDirection",

@@ -15,6 +15,8 @@ class NotificationType(str, Enum):
     """Classification type of notification."""
     JOB_COMPLETED = "JOB_COMPLETED"
     JOB_FAILED = "JOB_FAILED"
+    SCHEDULE_COMPLETED = "SCHEDULE_COMPLETED"
+    SCHEDULE_FAILED = "SCHEDULE_FAILED"
     SYSTEM = "SYSTEM"
 
 

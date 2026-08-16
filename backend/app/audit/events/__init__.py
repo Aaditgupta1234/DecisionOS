@@ -13,6 +13,11 @@ from app.audit.events.events import (
     NotificationArchivedAuditEvent,
     NotificationCreatedAuditEvent,
     NotificationReadAuditEvent,
+    ScheduleCreatedAuditEvent,
+    ScheduleExecutedAuditEvent,
+    ScheduleFailedAuditEvent,
+    SchedulePausedAuditEvent,
+    ScheduleResumedAuditEvent,
     SystemAuditEvent,
 )
 
@@ -24,6 +29,11 @@ __all__ = [
     "NotificationCreatedAuditEvent",
     "NotificationReadAuditEvent",
     "NotificationArchivedAuditEvent",
+    "ScheduleCreatedAuditEvent",
+    "ScheduleExecutedAuditEvent",
+    "ScheduleFailedAuditEvent",
+    "SchedulePausedAuditEvent",
+    "ScheduleResumedAuditEvent",
     "SystemAuditEvent",
     "AuditEventListener",
     "AuditEventDispatcher",
