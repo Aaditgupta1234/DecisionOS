@@ -20,6 +20,7 @@ from app.execution.schemas.initiative import (
     InitiativeSummaryCountsResponse,
     InitiativeUpdate,
 )
+from app.execution.schemas.progress import InitiativeExecutionMetrics
 from app.execution.services.initiative_service import InitiativeService
 from app.models.user import User
 
@@ -123,6 +124,23 @@ async def get_initiative_detail(
     service = InitiativeService(db)
     init = await service.get_initiative_by_id(initiative_id, org_id)
     return InitiativeResponse.model_validate(init)
+
+
+@initiative_router.get(
+    "/{initiative_id}/metrics",
+    response_model=InitiativeExecutionMetrics,
+    status_code=status.HTTP_200_OK,
+)
+async def get_initiative_metrics(
+    initiative_id: uuid.UUID,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Retrieves unified 4-dimensional execution metrics (Progress, Velocity, Schedule, Budget)."""
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = InitiativeService(db)
+    return await service.get_initiative_execution_metrics(initiative_id, org_id)
 
 
 @initiative_router.patch(

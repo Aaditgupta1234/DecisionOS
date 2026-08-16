@@ -433,3 +433,152 @@ class InitiativeService:
             average_completion_percentage=raw["average_completion_percentage"],
             average_health_score=raw["average_health_score"],
         )
+
+    async def get_initiative_execution_metrics(
+        self,
+        initiative_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> "InitiativeExecutionMetrics":
+        """
+        Calculates unified 4-dimensional execution metrics (Progress, Velocity, Schedule, Budget)
+        for a single strategic initiative.
+        """
+        from app.execution.schemas.progress import InitiativeExecutionMetrics
+        from app.execution.services.budget_engine import BudgetIntelligenceEngine
+        from app.execution.services.progress_engine import ProgressEngine
+        from app.execution.services.schedule_engine import ScheduleAdherenceEngine
+        from app.execution.services.velocity_engine import ExecutionVelocityEngine
+
+        now = as_of_date or datetime.now(timezone.utc)
+        init = await self.get_initiative_by_id(initiative_id, organization_id)
+        milestones = list(init.milestones or [])
+
+        progress_metrics = ProgressEngine.calculate_progress(init, milestones, as_of_date=now)
+        velocity_metrics = ExecutionVelocityEngine.calculate_velocity(init, milestones, as_of_date=now)
+        schedule_metrics = ScheduleAdherenceEngine.calculate_schedule(
+            init, progress_metrics.completion_percentage, milestones, as_of_date=now
+        )
+        budget_metrics = BudgetIntelligenceEngine.calculate_budget(
+            init, progress_metrics.completion_percentage, progress_metrics.days_elapsed
+        )
+
+        return InitiativeExecutionMetrics(
+            initiative_id=init.id,
+            organization_id=init.organization_id,
+            title=init.title,
+            status=init.status,
+            priority=init.priority,
+            progress=progress_metrics,
+            velocity=velocity_metrics,
+            schedule=schedule_metrics,
+            budget=budget_metrics,
+            calculated_at=now,
+            snapshot_compatible=True,
+        )
+
+    async def get_portfolio_execution_summary(
+        self,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> "PortfolioExecutionSummaryResponse":
+        """
+        Calculates executive organization-scoped execution summary card across all initiatives.
+        Enforces strict multi-tenant isolation.
+        """
+        from app.execution.constants import (
+            PORTFOLIO_EXECUTION_VERSION,
+            BudgetHealth,
+            ScheduleStatus,
+        )
+        from app.execution.schemas.progress import PortfolioExecutionSummaryResponse
+        from app.execution.services.budget_engine import BudgetIntelligenceEngine
+        from app.execution.services.progress_engine import ProgressEngine
+        from app.execution.services.schedule_engine import ScheduleAdherenceEngine
+        from app.execution.services.velocity_engine import ExecutionVelocityEngine
+
+        now = as_of_date or datetime.now(timezone.utc)
+        inits = await self.repo.list_all_for_organization(organization_id)
+        total_count = len(inits)
+
+        if total_count == 0:
+            return PortfolioExecutionSummaryResponse(
+                organization_id=organization_id,
+                total_initiatives=0,
+                active_initiatives=0,
+                completed_initiatives=0,
+                on_track=0,
+                at_risk=0,
+                delayed=0,
+                over_budget=0,
+                average_progress=0.0,
+                average_velocity_score=100.0,
+                average_budget_score=100.0,
+                average_schedule_variance=0.0,
+                total_budget_allocated=0.0,
+                total_budget_spent=0.0,
+                calculated_at=now,
+                portfolio_execution_version=PORTFOLIO_EXECUTION_VERSION,
+            )
+
+        active_count = sum(1 for i in inits if i.status == InitiativeStatus.ACTIVE)
+        completed_count = sum(1 for i in inits if i.status == InitiativeStatus.COMPLETED)
+
+        progress_vals = []
+        velocity_vals = []
+        budget_vals = []
+        sched_vars = []
+
+        on_track_c = 0
+        at_risk_c = 0
+        delayed_c = 0
+        over_budget_c = 0
+
+        tot_alloc = sum(float(i.budget_allocated or 0.0) for i in inits)
+        tot_spent = sum(float(i.budget_spent or 0.0) for i in inits)
+
+        for init in inits:
+            ms = list(init.milestones or [])
+            p_m = ProgressEngine.calculate_progress(init, ms, as_of_date=now)
+            v_m = ExecutionVelocityEngine.calculate_velocity(init, ms, as_of_date=now)
+            s_m = ScheduleAdherenceEngine.calculate_schedule(init, p_m.completion_percentage, ms, as_of_date=now)
+            b_m = BudgetIntelligenceEngine.calculate_budget(init, p_m.completion_percentage, p_m.days_elapsed)
+
+            progress_vals.append(p_m.completion_percentage)
+            velocity_vals.append(v_m.velocity_score)
+            budget_vals.append(b_m.budget_score)
+            sched_vars.append(s_m.schedule_variance)
+
+            if s_m.schedule_status in (ScheduleStatus.AHEAD, ScheduleStatus.ON_TRACK):
+                on_track_c += 1
+            elif s_m.schedule_status == ScheduleStatus.AT_RISK or init.status == InitiativeStatus.AT_RISK:
+                at_risk_c += 1
+            else:
+                delayed_c += 1
+
+            if b_m.budget_health == BudgetHealth.OVER_BUDGET:
+                over_budget_c += 1
+
+        avg_prog = round(sum(progress_vals) / total_count, 1)
+        avg_vel = round(sum(velocity_vals) / total_count, 1)
+        avg_bud = round(sum(budget_vals) / total_count, 1)
+        avg_var = round(sum(sched_vars) / total_count, 1)
+
+        return PortfolioExecutionSummaryResponse(
+            organization_id=organization_id,
+            total_initiatives=total_count,
+            active_initiatives=active_count,
+            completed_initiatives=completed_count,
+            on_track=on_track_c,
+            at_risk=at_risk_c,
+            delayed=delayed_c,
+            over_budget=over_budget_c,
+            average_progress=avg_prog,
+            average_velocity_score=avg_vel,
+            average_budget_score=avg_bud,
+            average_schedule_variance=avg_var,
+            total_budget_allocated=round(tot_alloc, 2),
+            total_budget_spent=round(tot_spent, 2),
+            calculated_at=now,
+            portfolio_execution_version=PORTFOLIO_EXECUTION_VERSION,
+        )

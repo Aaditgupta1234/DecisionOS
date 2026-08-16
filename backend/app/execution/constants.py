@@ -135,6 +135,39 @@ class OutcomeMeasurementConfidence(str, Enum):
     LOW = "LOW"
 
 
+PROGRESS_ENGINE_VERSION = "1.0"
+VELOCITY_ENGINE_VERSION = "1.0"
+SCHEDULE_ENGINE_VERSION = "1.0"
+BUDGET_ENGINE_VERSION = "1.0"
+PORTFOLIO_EXECUTION_VERSION = "1.0"
+
+
+class VelocityGrade(str, Enum):
+    """Execution velocity grade evaluating pace of delivery."""
+    EXCELLENT = "EXCELLENT"  # >= 85.0
+    GOOD = "GOOD"            # 70.0 - 84.9
+    STABLE = "STABLE"        # 50.0 - 69.9
+    SLOW = "SLOW"            # 30.0 - 49.9
+    CRITICAL = "CRITICAL"    # < 30.0
+
+
+class ScheduleStatus(str, Enum):
+    """Execution schedule adherence status based on planned vs actual variance."""
+    AHEAD = "AHEAD"                  # variance >= +5%
+    ON_TRACK = "ON_TRACK"            # variance -5% to +5%
+    AT_RISK = "AT_RISK"              # variance -15% to -5%
+    DELAYED = "DELAYED"              # variance -30% to -15%
+    CRITICAL_DELAY = "CRITICAL_DELAY"# variance < -30%
+
+
+class BudgetHealth(str, Enum):
+    """Execution financial budget health status."""
+    HEALTHY = "HEALTHY"      # Score >= 80, spend <= allocated
+    WATCH = "WATCH"          # Score 60-79, spend 80-95%
+    AT_RISK = "AT_RISK"      # Score 40-59, spend 95-105%
+    OVER_BUDGET = "OVER_BUDGET" # Score < 40, spend > 105%
+
+
 # Health Grade Thresholds
 HEALTH_GRADE_EXCELLENT_MIN: float = 90.0
 HEALTH_GRADE_GOOD_MIN: float = 80.0
@@ -153,3 +186,40 @@ def calculate_health_grade(health_score: float) -> ExecutionHealthGrade:
     if health_score >= HEALTH_GRADE_AT_RISK_MIN:
         return ExecutionHealthGrade.AT_RISK
     return ExecutionHealthGrade.CRITICAL
+
+
+def calculate_velocity_grade(score: float) -> VelocityGrade:
+    """Deterministically maps a velocity score (0-100) to a VelocityGrade."""
+    if score >= 85.0:
+        return VelocityGrade.EXCELLENT
+    if score >= 70.0:
+        return VelocityGrade.GOOD
+    if score >= 50.0:
+        return VelocityGrade.STABLE
+    if score >= 30.0:
+        return VelocityGrade.SLOW
+    return VelocityGrade.CRITICAL
+
+
+def calculate_schedule_status(variance: float) -> ScheduleStatus:
+    """Deterministically maps schedule progress variance (%) to a ScheduleStatus."""
+    if variance >= 5.0:
+        return ScheduleStatus.AHEAD
+    if variance >= -5.0:
+        return ScheduleStatus.ON_TRACK
+    if variance >= -15.0:
+        return ScheduleStatus.AT_RISK
+    if variance >= -30.0:
+        return ScheduleStatus.DELAYED
+    return ScheduleStatus.CRITICAL_DELAY
+
+
+def calculate_budget_health(score: float, utilization_pct: float) -> BudgetHealth:
+    """Deterministically maps budget score and utilization percentage to BudgetHealth."""
+    if utilization_pct > 105.0 or score < 40.0:
+        return BudgetHealth.OVER_BUDGET
+    if utilization_pct >= 95.0 or score < 60.0:
+        return BudgetHealth.AT_RISK
+    if utilization_pct >= 80.0 or score < 80.0:
+        return BudgetHealth.WATCH
+    return BudgetHealth.HEALTHY

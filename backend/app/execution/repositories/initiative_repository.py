@@ -156,6 +156,26 @@ class InitiativeRepository:
             self.db.flush()
         return True
 
+    async def list_all_for_organization(
+        self,
+        organization_id: uuid.UUID,
+    ) -> List[StrategicInitiative]:
+        """Lists all initiatives for an organization with milestones loaded."""
+        stmt = (
+            select(StrategicInitiative)
+            .where(StrategicInitiative.organization_id == organization_id)
+            .options(
+                selectinload(StrategicInitiative.milestones),
+                selectinload(StrategicInitiative.target_metrics),
+            )
+            .order_by(StrategicInitiative.created_at.desc())
+        )
+        if self.is_async:
+            res = await self.db.execute(stmt)
+            return list(res.scalars().all())
+        res = self.db.execute(stmt)
+        return list(res.scalars().all())
+
     async def get_summary_counts(
         self,
         organization_id: uuid.UUID,

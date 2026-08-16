@@ -13,6 +13,7 @@ from app.execution.schemas.program import (
     ProgramResponse,
     ProgramUpdate,
 )
+from app.execution.schemas.progress import ProgramExecutionMetrics
 from app.execution.services.program_rollup_engine import ProgramRollupEngine
 from app.execution.services.program_service import ProgramService
 from app.execution.templates import list_templates
@@ -186,6 +187,23 @@ async def get_program_detail(
         created_at=program.created_at,
         updated_at=program.updated_at,
     )
+
+
+@program_router.get(
+    "/{program_id}/metrics",
+    response_model=ProgramExecutionMetrics,
+    status_code=status.HTTP_200_OK,
+)
+async def get_program_metrics(
+    program_id: uuid.UUID,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Retrieves multi-dimensional execution telemetry and composite 4-factor health score for a program."""
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = ProgramService(db)
+    return await service.get_program_execution_metrics(program_id, org_id)
 
 
 @program_router.patch(

@@ -249,3 +249,19 @@ class ProgramService:
                 detail=f"Strategic program with ID '{program_id}' was not found.",
             )
         return True
+
+    async def get_program_execution_metrics(
+        self,
+        program_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> "ProgramExecutionMetrics":
+        """
+        Calculates multi-dimensional execution metrics, schedule variances,
+        and composite 4-factor health score for a program.
+        """
+        from app.execution.schemas.progress import ProgramExecutionMetrics
+        now = as_of_date or datetime.now(timezone.utc)
+        program = await self.get_program_by_id(program_id, organization_id)
+        inits = list(program.initiatives or [])
+        return ProgramRollupEngine.calculate_program_execution_metrics(program, inits, as_of_date=now)

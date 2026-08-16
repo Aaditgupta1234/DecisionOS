@@ -26,6 +26,15 @@ from app.execution.schemas.program import (
     ProgramResponse,
     ProgramUpdate,
 )
+from app.execution.schemas.progress import (
+    BudgetIntelligenceMetrics,
+    ExecutionVelocityMetrics,
+    InitiativeExecutionMetrics,
+    InitiativeProgressMetrics,
+    PortfolioExecutionSummaryResponse,
+    ProgramExecutionMetrics,
+    ScheduleAdherenceMetrics,
+)
 from app.execution.schemas.target_metric import (
     TargetMetricCreate,
     TargetMetricListResponse,
@@ -56,4 +65,11 @@ __all__ = [
     "TargetMetricUpdate",
     "TargetMetricResponse",
     "TargetMetricListResponse",
+    "InitiativeProgressMetrics",
+    "ExecutionVelocityMetrics",
+    "ScheduleAdherenceMetrics",
+    "BudgetIntelligenceMetrics",
+    "InitiativeExecutionMetrics",
+    "ProgramExecutionMetrics",
+    "PortfolioExecutionSummaryResponse",
 ]
