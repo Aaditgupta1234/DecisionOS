@@ -12,6 +12,7 @@ from app.strategy_planner.api import router as strategy_router
 from app.reporting.api import report_router
 from app.dashboard.api import dashboard_router
 from app.jobs.api import jobs_router
+from app.notifications.api import notifications_router
 
 api_router = APIRouter()
 
@@ -35,6 +36,7 @@ api_router.include_router(forecast_router, tags=["Forecasting Engine"])
 api_router.include_router(report_router, tags=["Executive Report Generation & PDF Export Engine"])
 api_router.include_router(dashboard_router, tags=["Executive Dashboard & Intelligence Workspace"])
 api_router.include_router(jobs_router, tags=["Background Job Infrastructure"])
+api_router.include_router(notifications_router, tags=["Notification Framework"])
 
 
 

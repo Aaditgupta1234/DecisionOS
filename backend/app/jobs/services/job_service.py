@@ -23,6 +23,12 @@ from app.jobs.repositories.job_repository import (
     InvalidJobStatusTransitionError,
     JobRepository,
 )
+from app.notifications.events import (
+    JobCompletedEvent,
+    JobFailedEvent,
+    notification_event_dispatcher,
+)
+from app.notifications.services import NotificationService
 
 logger = logging.getLogger("decisionos.jobs")
 
@@ -174,6 +180,21 @@ class JobService:
                 organization_id=organization_id,
             )
             job_metrics.record_failure()
+
+            # Publish failure event & generate notification
+            fail_event = JobFailedEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                recipient_user_id=job.created_by_user_id,
+                error_message=error_msg,
+                duration_seconds=0.0,
+            )
+            await notification_event_dispatcher.publish(fail_event)
+            try:
+                await NotificationService(self.db).handle_event(fail_event)
+            except Exception as notif_err:
+                logger.error(f"[JobService] Notification failed: {notif_err}")
             return
 
         handler = handler_cls()
@@ -215,6 +236,7 @@ class JobService:
 
             # Complete job
             duration_ms = (time.perf_counter() - start_time) * 1000.0
+            duration_sec = round(duration_ms / 1000.0, 2)
             await self.job_repo.complete_job(
                 job_id=job_id,
                 result_metadata=standardized_result,
@@ -222,6 +244,21 @@ class JobService:
                 organization_id=organization_id,
             )
             job_metrics.record_completion(duration_ms)
+
+            # Publish completion event & generate notification
+            comp_event = JobCompletedEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                recipient_user_id=job.created_by_user_id,
+                duration_seconds=duration_sec,
+                summary=standardized_result.get("summary", {}),
+            )
+            await notification_event_dispatcher.publish(comp_event)
+            try:
+                await NotificationService(self.db).handle_event(comp_event)
+            except Exception as notif_err:
+                logger.error(f"[JobService] Notification failed for completed job {job_id}: {notif_err}")
 
         except asyncio.CancelledError:
             logger.info(f"[JobService] Job {job_id} cancelled during execution.")
@@ -234,19 +271,52 @@ class JobService:
         except asyncio.TimeoutError:
             logger.warning(f"[JobService] Job {job_id} timed out.")
             duration_ms = (time.perf_counter() - start_time) * 1000.0
+            duration_sec = round(duration_ms / 1000.0, 2)
+            error_msg = "Job execution exceeded configured timeout limit."
             await self.job_repo.fail_job(
                 job_id=job_id,
-                error_message="Job execution exceeded configured timeout limit.",
+                error_message=error_msg,
                 organization_id=organization_id,
             )
             job_metrics.record_failure(duration_ms)
 
+            # Publish failure event & generate notification
+            fail_event = JobFailedEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                recipient_user_id=job.created_by_user_id,
+                error_message=error_msg,
+                duration_seconds=duration_sec,
+            )
+            await notification_event_dispatcher.publish(fail_event)
+            try:
+                await NotificationService(self.db).handle_event(fail_event)
+            except Exception as notif_err:
+                logger.error(f"[JobService] Notification failed for timed out job {job_id}: {notif_err}")
+
         except Exception as exc:
             logger.error(f"[JobService] Job {job_id} failed with error: {exc}", exc_info=True)
             duration_ms = (time.perf_counter() - start_time) * 1000.0
+            duration_sec = round(duration_ms / 1000.0, 2)
             await self.job_repo.fail_job(
                 job_id=job_id,
                 error_message=str(exc),
                 organization_id=organization_id,
             )
             job_metrics.record_failure(duration_ms)
+
+            # Publish failure event & generate notification
+            fail_event = JobFailedEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                recipient_user_id=job.created_by_user_id,
+                error_message=str(exc),
+                duration_seconds=duration_sec,
+            )
+            await notification_event_dispatcher.publish(fail_event)
+            try:
+                await NotificationService(self.db).handle_event(fail_event)
+            except Exception as notif_err:
+                logger.error(f"[JobService] Notification failed for failed job {job_id}: {notif_err}")

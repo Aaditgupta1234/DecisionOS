@@ -48,6 +48,8 @@ from app.reporting.models import ReportExport, ReportTemplate
 from app.dashboard.models import DashboardSnapshot, DashboardViewEvent
 from app.jobs.models import BackgroundJob
 from app.jobs.constants import JobStatus, JobType
+from app.notifications.models import Notification
+from app.notifications.constants import NotificationStatus, NotificationType
 
 __all__ = [
     "Base",
@@ -64,6 +66,10 @@ __all__ = [
     "Recommendation",
     "NarrativeReport",
     "ExecutiveInsightReport",
+    "ChatMessage",
+    "ChatMessageRole",
+    "ChatSession",
+    "StrategyPlan",
     "ReportExport",
     "ReportTemplate",
     "DashboardSnapshot",
@@ -72,11 +78,9 @@ __all__ = [
     "BackgroundJob",
     "JobStatus",
     "JobType",
-
-    "ChatSession",
-    "ChatMessage",
-    "ChatMessageRole",
-    "StrategyPlan",
+    "Notification",
+    "NotificationStatus",
+    "NotificationType",
     "StrategyPlanStatus",
     "TimeHorizon",
     "TargetDirection",
