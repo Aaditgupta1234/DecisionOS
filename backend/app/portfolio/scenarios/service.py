@@ -164,7 +164,16 @@ class ScenarioPlanningService:
         # 4. Coverage metrics
         analyzed_count = len(details)
         affected_count = sum(1 for w in ws_impacts if abs(w.score_delta) > 0.001)
+        unaffected_count = max(0, analyzed_count - affected_count)
         affected_pct = round((affected_count / max(1, analyzed_count)) * 100.0, 1)
+
+        # Coverage execution confidence (<25% LOW, 25-75% MEDIUM, >75% HIGH)
+        if affected_pct > 75.0:
+            cov_conf = "HIGH"
+        elif affected_pct >= 25.0:
+            cov_conf = "MEDIUM"
+        else:
+            cov_conf = "LOW"
 
         # 5. Baseline snapshot provenance
         snapshots = await self.repo.get_snapshots_by_org(
@@ -188,7 +197,10 @@ class ScenarioPlanningService:
             portfolio_size=total_portfolio,
             analyzed_workspaces=analyzed_count,
             affected_workspace_count=affected_count,
+            unaffected_workspace_count=unaffected_count,
             affected_percentage=affected_pct,
+            scenario_coverage_confidence=cov_conf,
+            assumption_count=len(assumptions),
             baseline_snapshot_id=baseline_snap_id,
             baseline_snapshot_generated_at=baseline_snap_gen,
             assumptions=assumptions,

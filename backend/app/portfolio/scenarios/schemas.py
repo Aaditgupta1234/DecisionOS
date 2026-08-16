@@ -96,7 +96,10 @@ class ScenarioResponse(BaseModel):
     portfolio_size: int = 0
     analyzed_workspaces: int = 0
     affected_workspace_count: int = 0
+    unaffected_workspace_count: int = 0
     affected_percentage: float = 0.0
+    scenario_coverage_confidence: str = "LOW"
+    assumption_count: int = 0
     baseline_snapshot_id: Optional[UUID] = None
     baseline_snapshot_generated_at: Optional[datetime] = None
     assumptions: List[ScenarioAssumption] = Field(default_factory=list)
@@ -111,6 +114,7 @@ class ScenarioResponse(BaseModel):
 
 class ScenarioComparisonResponse(BaseModel):
     """Comparative ranking and trade-off evaluation across multiple simulated scenarios."""
+    comparison_id: UUID = Field(default_factory=uuid.uuid4)
     organization_id: UUID
     scenarios: List[ScenarioResponse] = Field(default_factory=list)
     scenario_rankings: List[UUID] = Field(default_factory=list)

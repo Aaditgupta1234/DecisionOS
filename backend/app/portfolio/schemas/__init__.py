@@ -43,6 +43,13 @@ from app.portfolio.scenarios.schemas import (
     ScenarioTemplate,
     ScenarioWorkspaceImpact,
 )
+from app.portfolio.recommendations.schemas import (
+    ExecutiveActionPlan,
+    OpportunityCandidate,
+    OpportunitySummary,
+    PortfolioOptimizationResponse,
+    StrategicRecommendation,
+)
 
 __all__ = [
     "PortfolioQueryParams",
@@ -80,4 +87,9 @@ __all__ = [
     "ScenarioResponse",
     "ScenarioComparisonResponse",
     "ScenarioTemplate",
+    "StrategicRecommendation",
+    "OpportunityCandidate",
+    "OpportunitySummary",
+    "ExecutiveActionPlan",
+    "PortfolioOptimizationResponse",
 ]

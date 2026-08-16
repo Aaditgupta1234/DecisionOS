@@ -5,6 +5,15 @@ from enum import Enum
 SCENARIO_ENGINE_VERSION = "1.0"
 SCENARIO_SCHEMA_VERSION = "1.0"
 
+# Operational Bounds and Limits
+MAX_SCENARIOS_PER_COMPARISON: int = 10
+MAX_ADJUSTMENT_VALUE: float = 100.0
+MIN_ADJUSTMENT_VALUE: float = -100.0
+
+# Coverage Confidence Thresholds (%)
+COVERAGE_CONFIDENCE_LOW_PCT: float = 25.0    # < 25% -> LOW
+COVERAGE_CONFIDENCE_HIGH_PCT: float = 75.0   # > 75% -> HIGH, else MEDIUM
+
 # Impact Level Evaluation Thresholds
 IMPACT_CRITICAL_HEALTH_DELTA: float = 15.0      # Abs delta >= 15.0 -> CRITICAL
 IMPACT_HIGH_HEALTH_DELTA: float = 8.0          # Abs delta >= 8.0 -> HIGH
