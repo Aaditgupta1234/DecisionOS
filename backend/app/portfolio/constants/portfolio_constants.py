@@ -21,7 +21,7 @@ class PortfolioStatus(str, Enum):
 
 
 class BenchmarkTier(str, Enum):
-    """Percentile-based ranking tier for a workspace."""
+    """Percentile-based ranking tier for a workspace (Phase 11.0 Baseline)."""
     TOP = "TOP"        # >= 80th percentile
     MID = "MID"        # 40th to 79th percentile
     BOTTOM = "BOTTOM"  # < 40th percentile

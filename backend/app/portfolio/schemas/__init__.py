@@ -1,5 +1,3 @@
-"""Schemas package for Phase 11.0 Portfolio Intelligence."""
-
 from app.portfolio.schemas.portfolio import (
     PortfolioComparisonResponse,
     PortfolioHealthResponse,
@@ -10,6 +8,14 @@ from app.portfolio.schemas.portfolio import (
     PortfolioTrendResponse,
     WorkspaceBenchmarkResponse,
     WorkspacePortfolioEntry,
+)
+from app.portfolio.schemas.benchmark import (
+    PeerGroupSummaryResponse,
+    PortfolioBenchmarkOverviewResponse,
+    PortfolioDistributionResponse,
+    PortfolioInsightsResponse,
+    WorkspaceBenchmarkDetailResponse,
+    WorkspacePeerComparisonResponse,
 )
 
 __all__ = [
@@ -22,4 +28,10 @@ __all__ = [
     "PortfolioTrendPoint",
     "PortfolioTrendResponse",
     "PortfolioComparisonResponse",
+    "WorkspaceBenchmarkDetailResponse",
+    "PeerGroupSummaryResponse",
+    "PortfolioDistributionResponse",
+    "PortfolioInsightsResponse",
+    "WorkspacePeerComparisonResponse",
+    "PortfolioBenchmarkOverviewResponse",
 ]

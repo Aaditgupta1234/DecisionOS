@@ -1,14 +1,22 @@
 """REST API Endpoints for Phase 11.0: Portfolio Intelligence Foundation."""
 
 import uuid
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.api.dependencies.auth import get_current_active_user, require_admin
 from app.database.session import get_db
 from app.models.user import User
 from app.portfolio.constants import DEFAULT_LOOKBACK_DAYS, VALID_LOOKBACK_DAYS
+from app.portfolio.constants.benchmark_constants import PeerGroup
 from app.portfolio.observability.portfolio_metrics import portfolio_metrics
+from app.portfolio.schemas.benchmark import (
+    PeerGroupSummaryResponse,
+    PortfolioBenchmarkOverviewResponse,
+    PortfolioDistributionResponse,
+    PortfolioInsightsResponse,
+    WorkspacePeerComparisonResponse,
+)
 from app.portfolio.schemas.portfolio import (
     PortfolioComparisonResponse,
     PortfolioHealthResponse,
@@ -17,6 +25,7 @@ from app.portfolio.schemas.portfolio import (
     PortfolioTrendResponse,
     WorkspaceBenchmarkResponse,
 )
+from app.portfolio.services.portfolio_benchmark_service import PortfolioBenchmarkService
 from app.portfolio.services.portfolio_service import PortfolioService
 
 portfolio_router = APIRouter(prefix="/portfolio", tags=["Portfolio Intelligence"])
@@ -145,6 +154,121 @@ async def compare_workspaces(
     org_id = _resolve_org_id(current_user, organization_id)
     service = PortfolioService(db)
     return await service.compare_workspaces(org_id, workspace_a, workspace_b)
+
+
+# ==============================================================================
+# PHASE 11.1: PORTFOLIO BENCHMARKING & PEER GROUP INTELLIGENCE ENDPOINTS
+# ==============================================================================
+
+@portfolio_router.get(
+    "/benchmarks",
+    response_model=PortfolioBenchmarkOverviewResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_benchmarks(
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve executive portfolio benchmarking overview across all peer groups.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioBenchmarkService(db)
+    return await service.get_benchmark_overview(org_id)
+
+
+@portfolio_router.get(
+    "/distribution",
+    response_model=PortfolioDistributionResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_distribution(
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve performance distributions, score buckets, tier counts, and quartiles (P25, P50, P75, P90).
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioBenchmarkService(db)
+    return await service.get_portfolio_distribution(org_id)
+
+
+@portfolio_router.get(
+    "/peer-groups",
+    response_model=List[PeerGroupSummaryResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_all_peer_groups(
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve all 5 peer group cohorts with member workspaces, cohort averages, and medians.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioBenchmarkService(db)
+    return await service.get_all_peer_groups(org_id)
+
+
+@portfolio_router.get(
+    "/peer-groups/{group}",
+    response_model=PeerGroupSummaryResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_peer_group_detail(
+    group: PeerGroup,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve performance breakdown for a specific peer cohort (e.g. TOP_PERFORMERS, CRITICAL_ATTENTION).
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioBenchmarkService(db)
+    return await service.get_peer_group_detail(org_id, group)
+
+
+@portfolio_router.get(
+    "/insights",
+    response_model=PortfolioInsightsResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_insights(
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve executive benchmarking observations, top/underperforming segment counts, and key takeaways.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioBenchmarkService(db)
+    return await service.get_portfolio_insights(org_id)
+
+
+@portfolio_router.get(
+    "/workspaces/{workspace_id}/peer-comparison",
+    response_model=WorkspacePeerComparisonResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_workspace_peer_comparison(
+    workspace_id: uuid.UUID,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieve mathematical comparison and deviations of a workspace relative to its assigned peer cohort.
+    Validates tenant organization scoping (403 Forbidden on cross-tenant requests).
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = PortfolioBenchmarkService(db)
+    return await service.get_workspace_peer_comparison(org_id, workspace_id)
 
 
 @portfolio_router.get(
