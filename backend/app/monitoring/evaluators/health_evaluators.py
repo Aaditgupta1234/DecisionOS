@@ -16,11 +16,12 @@ from app.jobs.repositories.job_repository import JobRepository
 from app.monitoring.constants import (
     CONSECUTIVE_FAILURE_CRITICAL_THRESHOLD,
     CONSECUTIVE_FAILURE_WARNING_THRESHOLD,
-    ComponentStatus,
     DATABASE_HEALTH_TIMEOUT_SECONDS,
     DEFAULT_DEGRADED_SUCCESS_RATE,
     DEFAULT_HEALTHY_SUCCESS_RATE,
     MONITORING_VERSION,
+    ComponentCategory,
+    ComponentStatus,
     SystemHealthStatus,
 )
 from app.monitoring.schemas.monitoring import (
@@ -58,6 +59,7 @@ class DatabaseHealthProbe:
             latency_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
             return ComponentHealth(
                 component_name="DATABASE",
+                component_category=ComponentCategory.DATABASE.value,
                 status=ComponentStatus.UP,
                 component_version=None,
                 evaluated_at=now,
@@ -72,6 +74,7 @@ class DatabaseHealthProbe:
             latency_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
             return ComponentHealth(
                 component_name="DATABASE",
+                component_category=ComponentCategory.DATABASE.value,
                 status=ComponentStatus.DOWN,
                 component_version=None,
                 evaluated_at=now,
@@ -86,6 +89,7 @@ class DatabaseHealthProbe:
             latency_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
             return ComponentHealth(
                 component_name="DATABASE",
+                component_category=ComponentCategory.DATABASE.value,
                 status=ComponentStatus.DOWN,
                 component_version=None,
                 evaluated_at=now,
@@ -385,6 +389,7 @@ class AuditHealthEvaluator:
         latency_ms = round((time.perf_counter() - start_time) * 1000.0, 2)
         health = ComponentHealth(
             component_name="AUDIT",
+            component_category=ComponentCategory.GOVERNANCE.value,
             status=ComponentStatus.UP,
             component_version=None,
             evaluated_at=now,

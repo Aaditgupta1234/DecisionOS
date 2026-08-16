@@ -20,6 +20,15 @@ class ComponentStatus(str, Enum):
     DOWN = "DOWN"
 
 
+class ComponentCategory(str, Enum):
+    """Categorization of system components for UI grouping."""
+    DATABASE = "DATABASE"
+    OPERATIONAL = "OPERATIONAL"
+    ANALYTICS = "ANALYTICS"
+    INFRASTRUCTURE = "INFRASTRUCTURE"
+    GOVERNANCE = "GOVERNANCE"
+
+
 class AlertSeverity(str, Enum):
     """Severity tier for operational alerts."""
     INFO = "INFO"

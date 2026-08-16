@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from app.monitoring.constants import (
     AlertSeverity,
     AlertSource,
+    ComponentCategory,
     ComponentStatus,
     MONITORING_VERSION,
     SystemHealthStatus,
@@ -18,6 +19,7 @@ from app.monitoring.constants import (
 class ComponentHealth(BaseModel):
     """Health diagnostic status for an individual platform subsystem."""
     component_name: str
+    component_category: str = ComponentCategory.OPERATIONAL.value
     status: ComponentStatus
     component_version: Optional[str] = None
     evaluated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
