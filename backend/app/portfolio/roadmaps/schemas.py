@@ -73,6 +73,8 @@ class StrategicRoadmapResponse(BaseModel):
     q4_initiative_count: int = 0
     quarters: List[QuarterlyRoadmap] = Field(default_factory=list)
     total_initiatives: int = 0
+    execution_horizon_quarters: int = 4
+    roadmap_completion_horizon: str = "Q4"
     total_projected_health_gain: float = 0.0
     total_projected_risk_reduction: float = 0.0
     total_effort_weight: float = 0.0
@@ -81,6 +83,18 @@ class StrategicRoadmapResponse(BaseModel):
     source_snapshot_generated_at: Optional[datetime] = None
     roadmap_version: str = ROADMAP_VERSION
     roadmap_engine_version: str = ROADMAP_ENGINE_VERSION
+    roadmap_generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class StrategicInitiativesListResponse(BaseModel):
+    """Portfolio-level container response for ranked strategic initiatives with coverage metadata."""
+    organization_id: UUID
+    portfolio_size: int = 0
+    analyzed_workspaces: int = 0
+    total_initiatives: int = 0
+    initiatives: List[StrategicInitiative] = Field(default_factory=list)
+    decision_engine_version: str = DECISION_ENGINE_VERSION
     roadmap_generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -142,8 +156,10 @@ class DecisionPackagesListResponse(BaseModel):
     organization_id: UUID
     portfolio_size: int = 0
     analyzed_workspaces: int = 0
+    total_packages: int = 0
     packages: List[DecisionPackage] = Field(default_factory=list)
     recommended_package_id: Optional[UUID] = None
+    recommended_package_name: Optional[str] = None
     recommended_package_reason: str = "Highest projected health gain with optimal implementation ROI."
     decision_package_version: str = DECISION_PACKAGE_VERSION
     decision_engine_version: str = DECISION_ENGINE_VERSION

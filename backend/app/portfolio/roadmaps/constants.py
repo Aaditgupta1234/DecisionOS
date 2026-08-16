@@ -27,6 +27,20 @@ CONFIDENCE_LOW_WORKSPACES: int = 3    # < 3 -> LOW
 CONFIDENCE_HIGH_WORKSPACES: int = 10  # >= 10 -> HIGH, else MEDIUM
 
 
+# Pre-built Package Identifiers
+OPTION_A_PACKAGE = "RISK_REDUCTION_ONLY"
+OPTION_B_PACKAGE = "TURNAROUND_ACCELERATION"
+OPTION_C_PACKAGE = "FULL_TRANSFORMATION"
+
+# Horizon String Identifiers
+Q1_HORIZON = "Q1"
+Q2_HORIZON = "Q2"
+Q3_HORIZON = "Q3"
+Q4_HORIZON = "Q4"
+ROADMAP_COMPLETION_HORIZON = "Q4"
+EXECUTION_HORIZON_QUARTERS = 4
+
+
 class InitiativeHorizon(str, Enum):
     """Quarterly execution sequencing horizon for strategic initiatives."""
     Q1 = "Q1"

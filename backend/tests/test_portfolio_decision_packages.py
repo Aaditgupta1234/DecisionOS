@@ -227,6 +227,9 @@ def test_api_decision_package_endpoints_and_evaluation(client, analyst_headers):
     assert res_list.status_code == 200
     data_list = res_list.json()
     assert "packages" in data_list
+    assert "total_packages" in data_list
+    assert "portfolio_size" in data_list
+    assert "analyzed_workspaces" in data_list
     assert data_list["decision_engine_version"] == "1.0"
 
     # 2. POST /api/v1/portfolio/decision-packages/evaluate
@@ -239,6 +242,8 @@ def test_api_decision_package_endpoints_and_evaluation(client, analyst_headers):
     data_eval = res_eval.json()
     assert "strategic_verdict" in data_eval
     assert "projected_health_score" in data_eval
+    assert "portfolio_size" in data_eval
+    assert "analyzed_workspaces" in data_eval
     assert data_eval["decision_package_version"] == "1.0"
 
     assert client.get("/api/v1/portfolio/decision-packages").status_code == 401

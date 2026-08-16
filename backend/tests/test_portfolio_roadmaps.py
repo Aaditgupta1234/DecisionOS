@@ -239,11 +239,17 @@ def test_api_roadmap_and_initiative_endpoints(client, analyst_headers, admin_hea
     assert "quarters" in data_rm
     assert "q1_initiative_count" in data_rm
     assert data_rm["roadmap_version"] == "1.0"
+    assert data_rm["execution_horizon_quarters"] == 4
+    assert data_rm["roadmap_completion_horizon"] == "Q4"
 
     # 2. GET /api/v1/portfolio/initiatives
     res_in = client.get("/api/v1/portfolio/initiatives", headers=analyst_headers)
     assert res_in.status_code == 200
-    assert isinstance(res_in.json(), list)
+    data_in = res_in.json()
+    assert "initiatives" in data_in
+    assert "portfolio_size" in data_in
+    assert "analyzed_workspaces" in data_in
+    assert "total_initiatives" in data_in
 
     # 3. GET /api/v1/portfolio/roadmap/metrics (Admin 200, Analyst 403, Unauth 401)
     res_admin = client.get("/api/v1/portfolio/roadmap/metrics", headers=admin_headers)

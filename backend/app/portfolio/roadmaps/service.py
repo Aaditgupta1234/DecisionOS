@@ -25,6 +25,7 @@ from app.portfolio.roadmaps.schemas import (
     DecisionPackageEvaluationResponse,
     DecisionPackagesListResponse,
     StrategicInitiative,
+    StrategicInitiativesListResponse,
     StrategicRoadmapResponse,
 )
 from app.portfolio.services.portfolio_benchmark_service import PortfolioBenchmarkService
@@ -62,6 +63,27 @@ class StrategicRoadmapService:
             recommendations=recommendations,
             total_portfolio=total_portfolio,
             analyzed_count=len(details),
+        )
+
+    async def get_initiatives_list(
+        self, organization_id: uuid.UUID, window_days: int = DEFAULT_TREND_WINDOW
+    ) -> StrategicInitiativesListResponse:
+        """Retrieves ranked initiatives portfolio enclosed in full coverage metadata container."""
+        details, _, _, total_portfolio = await self.benchmark_service._build_workspace_details(
+            organization_id
+        )
+        initiatives = await self.get_initiatives(organization_id, window_days=window_days)
+        now = datetime.now(timezone.utc)
+
+        return StrategicInitiativesListResponse(
+            organization_id=organization_id,
+            portfolio_size=total_portfolio,
+            analyzed_workspaces=len(details),
+            total_initiatives=len(initiatives),
+            initiatives=initiatives,
+            decision_engine_version=DECISION_ENGINE_VERSION,
+            roadmap_generated_at=now,
+            generated_at=now,
         )
 
     async def get_initiative_by_id(
@@ -160,6 +182,7 @@ class StrategicRoadmapService:
             else None
         )
         rec_id = recommended_pkg.package_id if recommended_pkg else None
+        rec_name = recommended_pkg.name if recommended_pkg else None
         rec_reason = (
             f"Package '{recommended_pkg.name}' achieves optimal balance of +{recommended_pkg.projected_health_gain} health gain with an ROI score of {recommended_pkg.package_roi_score}."
             if recommended_pkg
@@ -171,8 +194,10 @@ class StrategicRoadmapService:
             organization_id=organization_id,
             portfolio_size=total_portfolio,
             analyzed_workspaces=len(details),
+            total_packages=len(packages),
             packages=packages,
             recommended_package_id=rec_id,
+            recommended_package_name=rec_name,
             recommended_package_reason=rec_reason,
             decision_package_version=DECISION_PACKAGE_VERSION,
             decision_engine_version=DECISION_ENGINE_VERSION,

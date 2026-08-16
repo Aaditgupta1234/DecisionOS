@@ -13,6 +13,7 @@ from app.portfolio.roadmaps.schemas import (
     DecisionPackageEvaluationResponse,
     DecisionPackagesListResponse,
     StrategicInitiative,
+    StrategicInitiativesListResponse,
     StrategicRoadmapResponse,
 )
 from app.portfolio.roadmaps.service import StrategicRoadmapService
@@ -73,7 +74,7 @@ async def get_roadmap_detail(
 
 @roadmap_router.get(
     "/initiatives",
-    response_model=List[StrategicInitiative],
+    response_model=StrategicInitiativesListResponse,
     status_code=status.HTTP_200_OK,
 )
 async def get_strategic_initiatives(
@@ -83,11 +84,11 @@ async def get_strategic_initiatives(
     current_user: User = Depends(get_current_active_user),
 ):
     """
-    Retrieve ranked strategic initiatives portfolio synthesized from recommendations.
+    Retrieve ranked strategic initiatives portfolio synthesized from recommendations with coverage metadata.
     """
     org_id = _resolve_org_id(current_user, organization_id)
     service = StrategicRoadmapService(db)
-    return await service.get_initiatives(org_id, window_days=lookback_days)
+    return await service.get_initiatives_list(org_id, window_days=lookback_days)
 
 
 @roadmap_router.get(
