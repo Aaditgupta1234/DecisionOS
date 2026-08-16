@@ -8,14 +8,28 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.execution.constants import (
+    EXECUTION_HEALTH_ENGINE_VERSION,
+    INTERVENTION_ENGINE_VERSION,
+    PORTFOLIO_RISK_ENGINE_VERSION,
     ExecutionBlocker,
     ExecutionEventType,
+    InitiativePriority,
     InitiativeStatus,
+    InterventionPriority,
     calculate_health_grade,
 )
 from app.execution.event_dispatcher import ExecutionEventDispatcher
 from app.execution.models.initiative import StrategicInitiative
 from app.execution.repositories.initiative_repository import InitiativeRepository
+from app.execution.schemas.health import (
+    EarlyWarningResponse,
+    ExecutionHealthMetrics,
+    ExecutionRiskMetrics,
+    InitiativeHealthDetailResponse,
+    InterventionQueueResponse,
+    InterventionRecommendation,
+    PortfolioExecutionHealthSummary,
+)
 from app.execution.schemas.initiative import (
     InitiativeCreate,
     InitiativeFilterParams,
@@ -25,6 +39,18 @@ from app.execution.schemas.initiative import (
     InitiativeSummaryCountsResponse,
     InitiativeUpdate,
 )
+from app.execution.services.budget_engine import BudgetIntelligenceEngine
+from app.execution.services.critical_path_engine import CriticalPathEngine
+from app.execution.services.early_warning_engine import EarlyWarningEngine
+from app.execution.services.execution_health_engine import ExecutionHealthEngine
+from app.execution.services.execution_risk_engine import ExecutionRiskEngine
+from app.execution.services.intervention_engine import InterventionPrioritizationEngine
+from app.execution.services.milestone_engine import MilestoneIntelligenceEngine
+from app.execution.services.portfolio_risk_engine import PortfolioExecutionRiskEngine
+from app.execution.services.progress_engine import ProgressEngine
+from app.execution.services.schedule_engine import ScheduleAdherenceEngine
+from app.execution.services.timeline_risk_engine import TimelineRiskEngine
+from app.execution.services.velocity_engine import ExecutionVelocityEngine
 from app.execution.state_machine import InitiativeStateMachine
 from app.models.user import User
 
@@ -581,4 +607,139 @@ class InitiativeService:
             total_budget_spent=round(tot_spent, 2),
             calculated_at=now,
             portfolio_execution_version=PORTFOLIO_EXECUTION_VERSION,
+        )
+
+    async def get_initiative_health_detail(
+        self,
+        initiative_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> InitiativeHealthDetailResponse:
+        """
+        Retrieves unified health condition, failure risk, early warning alerts, and intervention priority for an initiative.
+        """
+        now = as_of_date or datetime.now(timezone.utc)
+        init = await self.get_initiative_by_id(initiative_id, organization_id)
+        ms_list = list(init.milestones or [])
+
+        # Telemetry calculations
+        p_m = ProgressEngine.calculate_progress(init, ms_list, as_of_date=now)
+        v_m = ExecutionVelocityEngine.calculate_velocity(init, ms_list, as_of_date=now)
+        s_m = ScheduleAdherenceEngine.calculate_schedule_adherence(init, ms_list, as_of_date=now)
+        b_m = BudgetIntelligenceEngine.calculate_budget_health(init, as_of_date=now)
+        ms_m = MilestoneIntelligenceEngine.calculate_milestone_metrics(ms_list, as_of_date=now)
+        deps = getattr(init, "dependencies", []) or []
+        cp_m = CriticalPathEngine.calculate_critical_path(ms_list, [], as_of_date=now)
+        tr_m = TimelineRiskEngine.calculate_timeline_risk(ms_list, [], ms_m, cp_m, as_of_date=now)
+
+        health_metrics = ExecutionHealthEngine.calculate_health(
+            init, ms_list, p_m, v_m, s_m, b_m, ms_m, as_of_date=now
+        )
+        risk_metrics = ExecutionRiskEngine.calculate_risk(
+            init, ms_list, [], tr_m, cp_m, s_m, v_m, b_m, health_metrics, as_of_date=now
+        )
+        warnings = EarlyWarningEngine.evaluate_warnings(
+            init, ms_list, health_metrics, risk_metrics, tr_m, cp_m, b_m, v_m, s_m, as_of_date=now
+        )
+        intervention = InterventionPrioritizationEngine.evaluate_intervention(
+            init, ms_list, health_metrics, risk_metrics, tr_m, cp_m, b_m, as_of_date=now
+        )
+
+        return InitiativeHealthDetailResponse(
+            initiative_id=init.id,
+            organization_id=organization_id,
+            title=init.title,
+            health=health_metrics,
+            risk=risk_metrics,
+            early_warnings=warnings,
+            intervention=intervention,
+            calculated_at=now,
+            snapshot_compatible=True,
+        )
+
+    async def get_portfolio_execution_health(
+        self,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> PortfolioExecutionHealthSummary:
+        """
+        Aggregates portfolio-wide health, risk, 4-tier risk distribution, and Pareto risk concentration.
+        """
+        now = as_of_date or datetime.now(timezone.utc)
+        inits = await self.repo.list_all_for_organization(organization_id=organization_id)
+
+        health_map: Dict[uuid.UUID, ExecutionHealthMetrics] = {}
+        risk_map: Dict[uuid.UUID, ExecutionRiskMetrics] = {}
+        interventions: List[InterventionRecommendation] = []
+
+        for init in inits:
+            ms_list = list(init.milestones or [])
+            p_m = ProgressEngine.calculate_progress(init, ms_list, as_of_date=now)
+            v_m = ExecutionVelocityEngine.calculate_velocity(init, ms_list, as_of_date=now)
+            s_m = ScheduleAdherenceEngine.calculate_schedule_adherence(init, ms_list, as_of_date=now)
+            b_m = BudgetIntelligenceEngine.calculate_budget_health(init, as_of_date=now)
+            ms_m = MilestoneIntelligenceEngine.calculate_milestone_metrics(ms_list, as_of_date=now)
+            cp_m = CriticalPathEngine.calculate_critical_path(ms_list, [], as_of_date=now)
+            tr_m = TimelineRiskEngine.calculate_timeline_risk(ms_list, [], ms_m, cp_m, as_of_date=now)
+
+            h_m = ExecutionHealthEngine.calculate_health(init, ms_list, p_m, v_m, s_m, b_m, ms_m, as_of_date=now)
+            r_m = ExecutionRiskEngine.calculate_risk(init, ms_list, [], tr_m, cp_m, s_m, v_m, b_m, h_m, as_of_date=now)
+            inv = InterventionPrioritizationEngine.evaluate_intervention(init, ms_list, h_m, r_m, tr_m, cp_m, b_m, as_of_date=now)
+
+            health_map[init.id] = h_m
+            risk_map[init.id] = r_m
+            interventions.append(inv)
+
+        return PortfolioExecutionRiskEngine.calculate_portfolio_health_summary(
+            organization_id=organization_id,
+            initiative_health_map=health_map,
+            initiative_risk_map=risk_map,
+            interventions=interventions,
+            as_of_date=now,
+        )
+
+    async def get_intervention_queue(
+        self,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> InterventionQueueResponse:
+        """
+        Returns ranked executive intervention queue prioritized by urgency and business impact.
+        """
+        now = as_of_date or datetime.now(timezone.utc)
+        inits = await self.repo.list_all_for_organization(organization_id=organization_id)
+
+        interventions: List[InterventionRecommendation] = []
+        for init in inits:
+            ms_list = list(init.milestones or [])
+            p_m = ProgressEngine.calculate_progress(init, ms_list, as_of_date=now)
+            v_m = ExecutionVelocityEngine.calculate_velocity(init, ms_list, as_of_date=now)
+            s_m = ScheduleAdherenceEngine.calculate_schedule_adherence(init, ms_list, as_of_date=now)
+            b_m = BudgetIntelligenceEngine.calculate_budget_health(init, as_of_date=now)
+            ms_m = MilestoneIntelligenceEngine.calculate_milestone_metrics(ms_list, as_of_date=now)
+            cp_m = CriticalPathEngine.calculate_critical_path(ms_list, [], as_of_date=now)
+            tr_m = TimelineRiskEngine.calculate_timeline_risk(ms_list, [], ms_m, cp_m, as_of_date=now)
+
+            h_m = ExecutionHealthEngine.calculate_health(init, ms_list, p_m, v_m, s_m, b_m, ms_m, as_of_date=now)
+            r_m = ExecutionRiskEngine.calculate_risk(init, ms_list, [], tr_m, cp_m, s_m, v_m, b_m, h_m, as_of_date=now)
+            inv = InterventionPrioritizationEngine.evaluate_intervention(init, ms_list, h_m, r_m, tr_m, cp_m, b_m, as_of_date=now)
+            interventions.append(inv)
+
+        ranked = InterventionPrioritizationEngine.rank_interventions(interventions)
+        p1 = sum(1 for i in ranked if i.priority_level == InterventionPriority.P1)
+        p2 = sum(1 for i in ranked if i.priority_level == InterventionPriority.P2)
+        p3 = sum(1 for i in ranked if i.priority_level == InterventionPriority.P3)
+        p4 = sum(1 for i in ranked if i.priority_level == InterventionPriority.P4)
+
+        return InterventionQueueResponse(
+            organization_id=organization_id,
+            total_interventions=len(ranked),
+            p1_count=p1,
+            p2_count=p2,
+            p3_count=p3,
+            p4_count=p4,
+            interventions=ranked,
+            calculated_at=now,
+            engine_version=INTERVENTION_ENGINE_VERSION,
+            snapshot_compatible=True,
         )

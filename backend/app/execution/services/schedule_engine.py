@@ -21,6 +21,23 @@ from app.execution.schemas.progress import ScheduleAdherenceMetrics
 class ScheduleAdherenceEngine:
     """Deterministic mathematical engine for tracking execution schedule adherence."""
 
+    @classmethod
+    def calculate_schedule_adherence(
+        cls,
+        initiative: StrategicInitiative,
+        milestones: Optional[List[InitiativeMilestone]] = None,
+        actual_progress: Optional[float] = None,
+        as_of_date: Optional[datetime] = None,
+    ) -> ScheduleAdherenceMetrics:
+        """Alias for calculate_schedule computing progress automatically if not provided."""
+        if actual_progress is None:
+            from app.execution.services.progress_engine import ProgressEngine
+            p_m = ProgressEngine.calculate_progress(initiative, milestones or [], as_of_date=as_of_date)
+            prog_val = p_m.completion_percentage
+        else:
+            prog_val = actual_progress
+        return cls.calculate_schedule(initiative, prog_val, milestones, as_of_date)
+
     @staticmethod
     def calculate_schedule(
         initiative: StrategicInitiative,

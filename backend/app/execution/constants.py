@@ -250,6 +250,124 @@ def calculate_health_grade(health_score: float) -> ExecutionHealthGrade:
     return ExecutionHealthGrade.CRITICAL
 
 
+EXECUTION_HEALTH_ENGINE_VERSION = "1.0"
+EXECUTION_RISK_ENGINE_VERSION = "1.0"
+EARLY_WARNING_ENGINE_VERSION = "1.0"
+INTERVENTION_ENGINE_VERSION = "1.0"
+BUSINESS_IMPACT_ENGINE_VERSION = "1.0"
+PORTFOLIO_RISK_ENGINE_VERSION = "1.0"
+
+
+class ExecutionRiskSeverity(str, Enum):
+    """Risk severity classification based on probability and impact of failure."""
+    LOW = "LOW"          # Risk Score < 30.0
+    MEDIUM = "MEDIUM"    # 30.0 - 59.9
+    HIGH = "HIGH"        # 60.0 - 79.9
+    CRITICAL = "CRITICAL"# >= 80.0
+
+
+class PortfolioRiskGrade(str, Enum):
+    """Executive portfolio-wide risk rating."""
+    LOW = "LOW"          # Avg Risk < 30.0
+    MODERATE = "MODERATE"# 30.0 - 59.9
+    HIGH = "HIGH"        # 60.0 - 79.9
+    CRITICAL = "CRITICAL"# >= 80.0
+
+
+class HealthTrend(str, Enum):
+    """Directional trend of initiative/program execution health."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DETERIORATING = "DETERIORATING"
+
+
+class RiskTrend(str, Enum):
+    """Directional trend of initiative/program execution risk."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DETERIORATING = "DETERIORATING"
+
+
+class ExecutionRiskFactor(str, Enum):
+    """Categorical risk factors driving execution vulnerability."""
+    TIMELINE_DELAY = "TIMELINE_DELAY"
+    CRITICAL_PATH_EXPOSURE = "CRITICAL_PATH_EXPOSURE"
+    BLOCKED_MILESTONE = "BLOCKED_MILESTONE"
+    DEPENDENCY_RISK = "DEPENDENCY_RISK"
+    VELOCITY_DECLINE = "VELOCITY_DECLINE"
+    BUDGET_OVERRUN = "BUDGET_OVERRUN"
+    HEALTH_DETERIORATION = "HEALTH_DETERIORATION"
+
+
+class WarningSeverity(str, Enum):
+    """Severity tier for early warning alert signals."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class EarlyWarningType(str, Enum):
+    """Proactive early warning triggers detecting delivery threats."""
+    HEALTH_DETERIORATION = "HEALTH_DETERIORATION"
+    TIMELINE_RISK = "TIMELINE_RISK"
+    BUDGET_RISK = "BUDGET_RISK"
+    VELOCITY_COLLAPSE = "VELOCITY_COLLAPSE"
+    CRITICAL_BLOCKER = "CRITICAL_BLOCKER"
+    CRITICAL_PATH_INSTABILITY = "CRITICAL_PATH_INSTABILITY"
+
+
+class InterventionPriority(str, Enum):
+    """Action priority tier for executive intervention."""
+    P1 = "P1"  # Score >= 90.0 (Immediate Executive Action)
+    P2 = "P2"  # Score 75.0 - 89.9 (Escalated Operational Triage)
+    P3 = "P3"  # Score 50.0 - 74.9 (Routine Monitoring / Minor Adjustments)
+    P4 = "P4"  # Score < 50.0 (Healthy / Low Urgency)
+
+
+class InterventionCategory(str, Enum):
+    """Functional remediation category for strategic interventions."""
+    TIMELINE_RECOVERY = "TIMELINE_RECOVERY"
+    BLOCKER_RESOLUTION = "BLOCKER_RESOLUTION"
+    BUDGET_CORRECTION = "BUDGET_CORRECTION"
+    GOVERNANCE_ESCALATION = "GOVERNANCE_ESCALATION"
+    RESOURCE_REALLOCATION = "RESOURCE_REALLOCATION"
+    EXECUTIVE_ATTENTION = "EXECUTIVE_ATTENTION"
+
+
+def calculate_risk_severity(risk_score: float) -> ExecutionRiskSeverity:
+    """Deterministically maps an execution risk score (0-100) to an ExecutionRiskSeverity."""
+    if risk_score >= 80.0:
+        return ExecutionRiskSeverity.CRITICAL
+    if risk_score >= 60.0:
+        return ExecutionRiskSeverity.HIGH
+    if risk_score >= 30.0:
+        return ExecutionRiskSeverity.MEDIUM
+    return ExecutionRiskSeverity.LOW
+
+
+def calculate_portfolio_risk_grade(avg_risk_score: float) -> PortfolioRiskGrade:
+    """Deterministically maps an average portfolio risk score to a PortfolioRiskGrade."""
+    if avg_risk_score >= 80.0:
+        return PortfolioRiskGrade.CRITICAL
+    if avg_risk_score >= 60.0:
+        return PortfolioRiskGrade.HIGH
+    if avg_risk_score >= 30.0:
+        return PortfolioRiskGrade.MODERATE
+    return PortfolioRiskGrade.LOW
+
+
+def calculate_intervention_priority(priority_score: float) -> InterventionPriority:
+    """Deterministically maps a priority urgency score (0-100) to an InterventionPriority tier."""
+    if priority_score >= 90.0:
+        return InterventionPriority.P1
+    if priority_score >= 75.0:
+        return InterventionPriority.P2
+    if priority_score >= 50.0:
+        return InterventionPriority.P3
+    return InterventionPriority.P4
+
+
 def calculate_velocity_grade(score: float) -> VelocityGrade:
     """Deterministically maps a velocity score (0-100) to a VelocityGrade."""
     if score >= 85.0:

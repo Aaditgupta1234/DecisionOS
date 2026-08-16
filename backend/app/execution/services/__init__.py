@@ -14,6 +14,12 @@ from app.execution.services.schedule_engine import ScheduleAdherenceEngine
 from app.execution.services.timeline_risk_engine import TimelineRiskEngine
 from app.execution.services.velocity_engine import ExecutionVelocityEngine
 
+from app.execution.services.early_warning_engine import EarlyWarningEngine
+from app.execution.services.execution_health_engine import ExecutionHealthEngine
+from app.execution.services.execution_risk_engine import ExecutionRiskEngine
+from app.execution.services.intervention_engine import InterventionPrioritizationEngine
+from app.execution.services.portfolio_risk_engine import PortfolioExecutionRiskEngine
+
 __all__ = [
     "ProgramRollupEngine",
     "ProgramService",
@@ -28,4 +34,9 @@ __all__ = [
     "TimelineRiskEngine",
     "CriticalPathEngine",
     "MilestoneService",
+    "ExecutionHealthEngine",
+    "ExecutionRiskEngine",
+    "EarlyWarningEngine",
+    "InterventionPrioritizationEngine",
+    "PortfolioExecutionRiskEngine",
 ]

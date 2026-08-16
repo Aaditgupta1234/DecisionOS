@@ -13,6 +13,7 @@ from app.execution.schemas.program import (
     ProgramResponse,
     ProgramUpdate,
 )
+from app.execution.schemas.health import ProgramHealthDetailResponse
 from app.execution.schemas.progress import ProgramExecutionMetrics
 from app.execution.schemas.timeline import ProgramTimelineMetrics
 from app.execution.services.milestone_service import MilestoneService
@@ -223,6 +224,23 @@ async def get_program_timeline(
     org_id = _resolve_org_id(current_user, organization_id)
     ms_service = MilestoneService(db)
     return await ms_service.get_program_timeline_metrics(program_id, org_id)
+
+
+@program_router.get(
+    "/{program_id}/health",
+    response_model=ProgramHealthDetailResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_program_health(
+    program_id: uuid.UUID,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Retrieves aggregated health condition, failure risk, and early warning totals for a program."""
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = ProgramService(db)
+    return await service.get_program_health_detail(program_id, org_id)
 
 
 @program_router.patch(

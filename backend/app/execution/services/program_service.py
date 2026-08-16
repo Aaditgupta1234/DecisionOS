@@ -265,3 +265,89 @@ class ProgramService:
         program = await self.get_program_by_id(program_id, organization_id)
         inits = list(program.initiatives or [])
         return ProgramRollupEngine.calculate_program_execution_metrics(program, inits, as_of_date=now)
+
+    async def get_program_health_detail(
+        self,
+        program_id: uuid.UUID,
+        organization_id: uuid.UUID,
+        as_of_date: Optional[datetime] = None,
+    ) -> "ProgramHealthDetailResponse":
+        """
+        Aggregates health, risk, early warnings, and critical initiative counts for a strategic program.
+        """
+        from app.execution.constants import (
+            EXECUTION_HEALTH_ENGINE_VERSION,
+            ExecutionHealthGrade,
+            ExecutionRiskSeverity,
+            InterventionPriority,
+            calculate_health_grade,
+            calculate_risk_severity,
+        )
+        from app.execution.schemas.health import ProgramHealthDetailResponse
+        from app.execution.services.early_warning_engine import EarlyWarningEngine
+        from app.execution.services.execution_health_engine import ExecutionHealthEngine
+        from app.execution.services.execution_risk_engine import ExecutionRiskEngine
+        from app.execution.services.intervention_engine import InterventionPrioritizationEngine
+
+        now = as_of_date or datetime.now(timezone.utc)
+        program = await self.get_program_by_id(program_id, organization_id)
+        inits = list(program.initiatives or [])
+
+        if not inits:
+            return ProgramHealthDetailResponse(
+                program_id=program.id,
+                organization_id=organization_id,
+                title=program.title,
+                total_initiatives=0,
+                average_health_score=100.0,
+                program_health_grade=ExecutionHealthGrade.EXCELLENT,
+                average_risk_score=0.0,
+                program_risk_severity=ExecutionRiskSeverity.LOW,
+                critical_initiatives_count=0,
+                p1_interventions_count=0,
+                total_early_warnings=0,
+                calculated_at=now,
+                engine_version=EXECUTION_HEALTH_ENGINE_VERSION,
+                snapshot_compatible=True,
+            )
+
+        health_scores = []
+        risk_scores = []
+        crit_count = 0
+        p1_count = 0
+        total_warnings = 0
+
+        for init in inits:
+            ms_list = list(init.milestones or [])
+            h_m = ExecutionHealthEngine.calculate_health(init, ms_list, as_of_date=now)
+            r_m = ExecutionRiskEngine.calculate_risk(init, ms_list, [], None, None, None, None, None, h_m, as_of_date=now)
+            warns = EarlyWarningEngine.evaluate_warnings(init, ms_list, h_m, r_m, as_of_date=now)
+            inv = InterventionPrioritizationEngine.evaluate_intervention(init, ms_list, h_m, r_m, as_of_date=now)
+
+            health_scores.append(h_m.health_score)
+            risk_scores.append(r_m.risk_score)
+            total_warnings += len(warns)
+            if h_m.health_score < 40.0:
+                crit_count += 1
+            if inv.priority_level == InterventionPriority.P1:
+                p1_count += 1
+
+        avg_h = round(sum(health_scores) / len(inits), 1)
+        avg_r = round(sum(risk_scores) / len(inits), 1)
+
+        return ProgramHealthDetailResponse(
+            program_id=program.id,
+            organization_id=organization_id,
+            title=program.title,
+            total_initiatives=len(inits),
+            average_health_score=avg_h,
+            program_health_grade=calculate_health_grade(avg_h),
+            average_risk_score=avg_r,
+            program_risk_severity=calculate_risk_severity(avg_r),
+            critical_initiatives_count=crit_count,
+            p1_interventions_count=p1_count,
+            total_early_warnings=total_warnings,
+            calculated_at=now,
+            engine_version=EXECUTION_HEALTH_ENGINE_VERSION,
+            snapshot_compatible=True,
+        )

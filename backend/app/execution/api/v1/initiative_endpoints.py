@@ -20,6 +20,7 @@ from app.execution.schemas.initiative import (
     InitiativeSummaryCountsResponse,
     InitiativeUpdate,
 )
+from app.execution.schemas.health import InitiativeHealthDetailResponse
 from app.execution.schemas.progress import InitiativeExecutionMetrics
 from app.execution.schemas.timeline import InitiativeTimelineMetrics
 from app.execution.services.initiative_service import InitiativeService
@@ -160,6 +161,23 @@ async def get_initiative_timeline(
     org_id = _resolve_org_id(current_user, organization_id)
     ms_service = MilestoneService(db)
     return await ms_service.get_initiative_timeline_metrics(initiative_id, org_id)
+
+
+@initiative_router.get(
+    "/{initiative_id}/health",
+    response_model=InitiativeHealthDetailResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_initiative_health(
+    initiative_id: uuid.UUID,
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Retrieves unified execution health condition, failure risk, early warnings, and intervention priority."""
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = InitiativeService(db)
+    return await service.get_initiative_health_detail(initiative_id, org_id)
 
 
 @initiative_router.patch(

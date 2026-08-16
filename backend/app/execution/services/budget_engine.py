@@ -4,6 +4,7 @@ Tracks initiative financial execution, utilization %, daily burn rate,
 projected final spend, projection confidence, and assigns deterministic BudgetScore and BudgetHealth.
 """
 
+from datetime import datetime
 from typing import Optional
 
 from app.execution.constants import (
@@ -18,6 +19,25 @@ from app.execution.schemas.progress import BudgetIntelligenceMetrics
 
 class BudgetIntelligenceEngine:
     """Deterministic mathematical engine for tracking financial execution health."""
+
+    @classmethod
+    def calculate_budget_health(
+        cls,
+        initiative: StrategicInitiative,
+        actual_progress: Optional[float] = None,
+        days_elapsed: Optional[int] = None,
+        as_of_date: Optional[datetime] = None,
+    ) -> BudgetIntelligenceMetrics:
+        """Alias for calculate_budget computing elapsed and progress if omitted."""
+        if actual_progress is None or days_elapsed is None:
+            from app.execution.services.progress_engine import ProgressEngine
+            p_m = ProgressEngine.calculate_progress(initiative, [], as_of_date=as_of_date)
+            prog_val = actual_progress if actual_progress is not None else p_m.completion_percentage
+            days_val = days_elapsed if days_elapsed is not None else p_m.days_elapsed
+        else:
+            prog_val = actual_progress
+            days_val = days_elapsed
+        return cls.calculate_budget(initiative, prog_val, days_val)
 
     @staticmethod
     def calculate_budget(

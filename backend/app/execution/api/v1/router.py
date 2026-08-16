@@ -1,4 +1,4 @@
-"""Execution APIRouter aggregating all Phase 12 sub-routers and portfolio summary endpoint."""
+"""Execution APIRouter aggregating all Phase 12 sub-routers and portfolio summary endpoints."""
 
 import uuid
 from typing import Optional
@@ -11,6 +11,10 @@ from app.execution.api.v1.event_endpoints import event_router
 from app.execution.api.v1.initiative_endpoints import initiative_router
 from app.execution.api.v1.milestone_endpoints import milestone_router
 from app.execution.api.v1.program_endpoints import program_router
+from app.execution.schemas.health import (
+    InterventionQueueResponse,
+    PortfolioExecutionHealthSummary,
+)
 from app.execution.schemas.progress import PortfolioExecutionSummaryResponse
 from app.execution.services.initiative_service import InitiativeService
 from app.models.user import User
@@ -46,6 +50,42 @@ async def get_portfolio_execution_summary(
     org_id = _resolve_org_id(current_user, organization_id)
     service = InitiativeService(db)
     return await service.get_portfolio_execution_summary(org_id)
+
+
+@execution_router.get(
+    "/portfolio/health",
+    response_model=PortfolioExecutionHealthSummary,
+    status_code=status.HTTP_200_OK,
+)
+async def get_portfolio_health(
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieves portfolio-wide execution health, 4-tier risk distribution, and Pareto risk concentration.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = InitiativeService(db)
+    return await service.get_portfolio_execution_health(org_id)
+
+
+@execution_router.get(
+    "/interventions",
+    response_model=InterventionQueueResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_interventions(
+    organization_id: Optional[uuid.UUID] = Query(None, description="Optional organization ID override"),
+    db=Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """
+    Retrieves prioritized executive intervention queue ranked by urgency and estimated business impact.
+    """
+    org_id = _resolve_org_id(current_user, organization_id)
+    service = InitiativeService(db)
+    return await service.get_intervention_queue(org_id)
 
 
 execution_router.include_router(program_router)

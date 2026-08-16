@@ -57,6 +57,17 @@ from app.execution.schemas.timeline import (
     TimelineRiskMetrics,
 )
 
+from app.execution.schemas.health import (
+    EarlyWarningResponse,
+    ExecutionHealthMetrics,
+    ExecutionRiskMetrics,
+    InitiativeHealthDetailResponse,
+    InterventionQueueResponse,
+    InterventionRecommendation,
+    PortfolioExecutionHealthSummary,
+    ProgramHealthDetailResponse,
+)
+
 __all__ = [
     "ProgramCreate",
     "ProgramUpdate",
@@ -100,4 +111,12 @@ __all__ = [
     "CriticalPathMetrics",
     "InitiativeTimelineMetrics",
     "ProgramTimelineMetrics",
+    "ExecutionHealthMetrics",
+    "ExecutionRiskMetrics",
+    "EarlyWarningResponse",
+    "InterventionRecommendation",
+    "InterventionQueueResponse",
+    "InitiativeHealthDetailResponse",
+    "ProgramHealthDetailResponse",
+    "PortfolioExecutionHealthSummary",
 ]
