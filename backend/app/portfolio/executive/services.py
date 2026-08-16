@@ -165,6 +165,12 @@ class PortfolioExecutiveService:
         )
         interventions = InterventionEngine.evaluate_interventions(details, migrations)
 
+        # Count interventions by priority
+        p1 = sum(1 for item in interventions if item.priority.value == "P1")
+        p2 = sum(1 for item in interventions if item.priority.value == "P2")
+        p3 = sum(1 for item in interventions if item.priority.value == "P3")
+        p4 = sum(1 for item in interventions if item.priority.value == "P4")
+
         # Baseline snapshot provenance
         snapshots = await self.repo.get_snapshots_by_org(organization_id, limit=365, lookback_days=window_days)
         baseline_snap = snapshots[-1] if snapshots else None
@@ -173,8 +179,15 @@ class PortfolioExecutiveService:
         if baseline_snap:
             baseline_snap_gen = getattr(baseline_snap, "snapshot_date", None) or getattr(baseline_snap, "created_at", None)
 
+        now = datetime.now(timezone.utc)
         return ExecutiveDecisionCenterResponse(
             organization_id=organization_id,
+            portfolio_size=total_portfolio,
+            analyzed_workspaces=len(details),
+            p1_count=p1,
+            p2_count=p2,
+            p3_count=p3,
+            p4_count=p4,
             risk_summary=risk_summary,
             performance_summary=perf_summary,
             executive_insights=insights,
@@ -182,5 +195,6 @@ class PortfolioExecutiveService:
             baseline_snapshot_id=baseline_snap_id,
             baseline_snapshot_generated_at=baseline_snap_gen,
             intelligence_version=EXECUTIVE_INTELLIGENCE_VERSION,
-            generated_at=datetime.now(timezone.utc),
+            executive_generated_at=now,
+            generated_at=now,
         )

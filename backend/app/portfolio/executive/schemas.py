@@ -23,6 +23,7 @@ class ExecutiveInsight(BaseModel):
     title: str
     summary: str
     evidence: List[str] = Field(default_factory=list)
+    supporting_workspace_count: int = 0
     supporting_metrics: Dict[str, Any] = Field(default_factory=dict)
     risk_level: RiskLevel = RiskLevel.LOW
     priority: PriorityLevel = PriorityLevel.P4
@@ -73,6 +74,12 @@ class PortfolioPerformanceSummary(BaseModel):
 class ExecutiveDecisionCenterResponse(BaseModel):
     """Comprehensive executive decision center payload integrating risk, performance, insights, and priorities."""
     organization_id: UUID
+    portfolio_size: int = 0
+    analyzed_workspaces: int = 0
+    p1_count: int = 0
+    p2_count: int = 0
+    p3_count: int = 0
+    p4_count: int = 0
     risk_summary: PortfolioRiskSummary
     performance_summary: PortfolioPerformanceSummary
     executive_insights: List[ExecutiveInsight] = Field(default_factory=list)
@@ -80,12 +87,15 @@ class ExecutiveDecisionCenterResponse(BaseModel):
     baseline_snapshot_id: Optional[UUID] = None
     baseline_snapshot_generated_at: Optional[datetime] = None
     intelligence_version: str = EXECUTIVE_INTELLIGENCE_VERSION
+    executive_generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class ExecutiveBriefResponse(BaseModel):
     """Board-level executive briefing summarizing key strategic takeaways and urgent decisions."""
     organization_id: UUID
+    portfolio_size: int = 0
+    analyzed_workspaces: int = 0
     executive_headline: str
     key_strategic_takeaways: List[str] = Field(default_factory=list)
     urgent_actions: List[str] = Field(default_factory=list)
@@ -93,4 +103,5 @@ class ExecutiveBriefResponse(BaseModel):
     momentum_direction: str = "STABLE"
     lookback_window_days: int = 30
     intelligence_version: str = EXECUTIVE_INTELLIGENCE_VERSION
+    executive_generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

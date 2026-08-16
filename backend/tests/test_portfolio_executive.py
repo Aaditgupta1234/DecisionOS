@@ -86,6 +86,25 @@ def test_executive_constants_and_enums():
     assert INTERVENTION_P1_DELTA_THRESHOLD == -10.0
     assert INTERVENTION_P2_DELTA_THRESHOLD == -5.0
 
+    from app.portfolio.executive.constants import (
+        CRITICAL_RISK_THRESHOLD,
+        HIGH_RISK_THRESHOLD,
+        LOW_RISK_THRESHOLD,
+        MODERATE_RISK_THRESHOLD,
+        P1_THRESHOLD,
+        P2_THRESHOLD,
+        P3_THRESHOLD,
+        P4_THRESHOLD,
+    )
+    assert P1_THRESHOLD == 60.0
+    assert P2_THRESHOLD == 70.0
+    assert P3_THRESHOLD == 80.0
+    assert P4_THRESHOLD == 80.0
+    assert LOW_RISK_THRESHOLD == 0.0
+    assert MODERATE_RISK_THRESHOLD == 5.0
+    assert HIGH_RISK_THRESHOLD == 15.0
+    assert CRITICAL_RISK_THRESHOLD == 25.0
+
 
 # ==============================================================================
 # 2. INTELLIGENCE ENGINE & RISK EVALUATION TESTS
@@ -226,6 +245,8 @@ def test_executive_insights_and_brief():
     )
 
     assert len(insights) >= 3
+    for ins in insights:
+        assert ins.supporting_workspace_count >= 1
     insight_types = {i.insight_type for i in insights}
     assert ExecutiveInsightType.PORTFOLIO_STRENGTH in insight_types
     assert ExecutiveInsightType.PORTFOLIO_RISK in insight_types
@@ -329,10 +350,15 @@ async def test_portfolio_executive_service_multi_workspaces(db_session):
 
     # 1. Dashboard
     dash = await service.get_executive_dashboard(org_id, window_days=30)
+    assert dash.portfolio_size == 2
+    assert dash.analyzed_workspaces == 2
+    assert dash.p1_count == 1
+    assert dash.p4_count == 1
     assert dash.risk_summary.portfolio_size == 2
     assert dash.risk_summary.total_critical_workspaces == 1
     assert dash.risk_summary.risk_level == RiskLevel.CRITICAL
     assert dash.baseline_snapshot_id == ps.id
+    assert dash.executive_generated_at is not None
 
     # 2. Interventions
     assert len(dash.intervention_priorities) == 2

@@ -187,6 +187,7 @@ class ExecutiveIntelligenceEngine:
                     title="High-Performing Business Unit Concentration",
                     summary=f"Strong leadership standard anchored by {top_count} top-performing business unit(s).",
                     evidence=evidence,
+                    supporting_workspace_count=top_count,
                     supporting_metrics={"top_count": top_count, "top_percentage": top_pct, "strongest_unit": top_performers[0].workspace_name},
                     risk_level=RiskLevel.LOW,
                     priority=PriorityLevel.P4,
@@ -211,6 +212,7 @@ class ExecutiveIntelligenceEngine:
                     title="Concentrated Underperformance Exposure",
                     summary=f"Risk exposure concentrated in {crit_count + at_risk_count} unit(s) ({risk_pct}% of portfolio).",
                     evidence=evidence,
+                    supporting_workspace_count=crit_count + at_risk_count,
                     supporting_metrics={"critical_count": crit_count, "at_risk_count": at_risk_count, "risk_concentration_pct": risk_pct},
                     risk_level=risk_summary.risk_level,
                     priority=p_level,
@@ -230,6 +232,7 @@ class ExecutiveIntelligenceEngine:
                     title="Portfolio Variance & Performance Dispersion",
                     summary=f"Operational variance between highest and lowest performing units is {spread} points.",
                     evidence=evidence,
+                    supporting_workspace_count=ranked_count,
                     supporting_metrics={"performance_spread": spread, "top_score": details[0].health_score, "lowest_score": details[-1].health_score},
                     risk_level=RiskLevel.MODERATE if spread >= 30.0 else RiskLevel.LOW,
                     priority=PriorityLevel.P3 if spread >= 30.0 else PriorityLevel.P4,
@@ -251,6 +254,7 @@ class ExecutiveIntelligenceEngine:
                     title="Longitudinal Cohort Migration Velocity",
                     summary=f"Active tier mobility with {upgrades} upgrade(s) and {downgrades} downgrade(s).",
                     evidence=evidence,
+                    supporting_workspace_count=upgrades + downgrades,
                     supporting_metrics={"upgrades": upgrades, "downgrades": downgrades, "transitions": migrations.migration_matrix},
                     risk_level=RiskLevel.HIGH if downgrades > upgrades else RiskLevel.LOW,
                     priority=PriorityLevel.P2 if downgrades > 0 else PriorityLevel.P4,
@@ -269,6 +273,7 @@ class ExecutiveIntelligenceEngine:
                 title="Portfolio Strategic Momentum",
                 summary=f"Net portfolio forward velocity is {mom_score:+0.1f}.",
                 evidence=evidence,
+                supporting_workspace_count=momentum.ranked_workspace_count or ranked_count,
                 supporting_metrics={"momentum_score": mom_score, "improving_ratio": momentum.improving_ratio, "declining_ratio": momentum.declining_ratio},
                 risk_level=RiskLevel.HIGH if mom_score <= -10.0 else RiskLevel.LOW,
                 priority=PriorityLevel.P2 if mom_score <= -10.0 else PriorityLevel.P4,
@@ -293,6 +298,8 @@ class ExecutiveIntelligenceEngine:
         if risk_summary.ranked_workspace_count == 0:
             return ExecutiveBriefResponse(
                 organization_id=organization_id,
+                portfolio_size=risk_summary.portfolio_size,
+                analyzed_workspaces=0,
                 executive_headline="No active workspaces available in organization portfolio.",
                 key_strategic_takeaways=["Portfolio is currently empty or accumulating baseline analytics."],
                 urgent_actions=["Onboard business unit datasets to begin executive intelligence monitoring."],
@@ -336,6 +343,8 @@ class ExecutiveIntelligenceEngine:
 
         return ExecutiveBriefResponse(
             organization_id=organization_id,
+            portfolio_size=risk_summary.portfolio_size,
+            analyzed_workspaces=risk_summary.ranked_workspace_count,
             executive_headline=headline,
             key_strategic_takeaways=takeaways,
             urgent_actions=actions,
