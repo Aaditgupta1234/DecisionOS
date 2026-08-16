@@ -50,6 +50,8 @@ from app.jobs.models import BackgroundJob
 from app.jobs.constants import JobStatus, JobType
 from app.notifications.models import Notification
 from app.notifications.constants import NotificationStatus, NotificationType
+from app.audit.models import AuditRecord
+from app.audit.constants import AuditEventType, AuditSeverity
 
 __all__ = [
     "Base",
@@ -81,6 +83,9 @@ __all__ = [
     "Notification",
     "NotificationStatus",
     "NotificationType",
+    "AuditRecord",
+    "AuditEventType",
+    "AuditSeverity",
     "StrategyPlanStatus",
     "TimeHorizon",
     "TargetDirection",

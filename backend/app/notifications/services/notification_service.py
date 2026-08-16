@@ -23,6 +23,13 @@ from app.notifications.repositories.notification_repository import (
     InvalidNotificationStatusTransitionError,
     NotificationRepository,
 )
+from app.audit.events import (
+    NotificationArchivedAuditEvent,
+    NotificationCreatedAuditEvent,
+    NotificationReadAuditEvent,
+    audit_dispatcher,
+)
+from app.audit.services import AuditService
 
 logger = logging.getLogger("decisionos.notifications")
 
@@ -70,6 +77,21 @@ class NotificationService:
             notification_type=type_str,
             source_type=meta.get("source_type", "system"),
         )
+
+        # Publish and persist audit record
+        audit_event = NotificationCreatedAuditEvent(
+            notification_id=notification.id,
+            organization_id=organization_id,
+            notification_type=type_str,
+            title=title,
+            recipient_user_id=recipient_user_id,
+        )
+        await audit_dispatcher.publish(audit_event)
+        try:
+            await AuditService(self.db).record_event(audit_event)
+        except Exception as audit_err:
+            logger.error(f"[NotificationService] Audit recording failed for notification {notification.id}: {audit_err}")
+
         return notification
 
     async def handle_event(self, event: NotificationEvent) -> Optional[Notification]:
@@ -181,6 +203,17 @@ class NotificationService:
         )
         if notification:
             notification_metrics.record_read(1)
+            audit_event = NotificationReadAuditEvent(
+                notification_id=notification_id,
+                organization_id=organization_id,
+                actor_user_id=user_id,
+                count=1,
+            )
+            await audit_dispatcher.publish(audit_event)
+            try:
+                await AuditService(self.db).record_event(audit_event)
+            except Exception as audit_err:
+                logger.error(f"[NotificationService] Audit recording failed for read notification {notification_id}: {audit_err}")
         return notification
 
     async def mark_all_as_read(
@@ -195,6 +228,17 @@ class NotificationService:
         )
         if count > 0:
             notification_metrics.record_read(count)
+            audit_event = NotificationReadAuditEvent(
+                notification_id=None,
+                organization_id=organization_id,
+                actor_user_id=user_id,
+                count=count,
+            )
+            await audit_dispatcher.publish(audit_event)
+            try:
+                await AuditService(self.db).record_event(audit_event)
+            except Exception as audit_err:
+                logger.error(f"[NotificationService] Audit recording failed for bulk read notifications: {audit_err}")
         return count
 
     async def archive_notification(
@@ -211,6 +255,16 @@ class NotificationService:
         )
         if notification:
             notification_metrics.record_archived(1)
+            audit_event = NotificationArchivedAuditEvent(
+                notification_id=notification_id,
+                organization_id=organization_id,
+                actor_user_id=user_id,
+            )
+            await audit_dispatcher.publish(audit_event)
+            try:
+                await AuditService(self.db).record_event(audit_event)
+            except Exception as audit_err:
+                logger.error(f"[NotificationService] Audit recording failed for archived notification {notification_id}: {audit_err}")
         return notification
 
     async def count_unread(

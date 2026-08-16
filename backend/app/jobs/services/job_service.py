@@ -29,6 +29,13 @@ from app.notifications.events import (
     notification_event_dispatcher,
 )
 from app.notifications.services import NotificationService
+from app.audit.events import (
+    JobCompletedAuditEvent,
+    JobCreatedAuditEvent,
+    JobFailedAuditEvent,
+    audit_dispatcher,
+)
+from app.audit.services import AuditService
 
 logger = logging.getLogger("decisionos.jobs")
 
@@ -77,7 +84,21 @@ class JobService:
         # 2. Record telemetry submission counter
         job_metrics.record_submission(job_type)
 
-        # 3. Submit for background asynchronous execution
+        # 3. Publish JobCreatedAuditEvent
+        created_audit_event = JobCreatedAuditEvent(
+            job_id=job.id,
+            organization_id=organization_id,
+            job_type=job_type,
+            actor_user_id=created_by_user_id,
+            payload=payload,
+        )
+        await audit_dispatcher.publish(created_audit_event)
+        try:
+            await AuditService(self.db).record_event(created_audit_event)
+        except Exception as audit_err:
+            logger.error(f"[JobService] Audit record creation failed for created job {job.id}: {audit_err}")
+
+        # 4. Submit for background asynchronous execution
         job_id = job.id
         effective_timeout = timeout_seconds or DEFAULT_JOB_TIMEOUT_SECONDS
 
@@ -260,6 +281,21 @@ class JobService:
             except Exception as notif_err:
                 logger.error(f"[JobService] Notification failed for completed job {job_id}: {notif_err}")
 
+            # Publish & persist completion audit event
+            comp_audit_event = JobCompletedAuditEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                duration_seconds=duration_sec,
+                actor_user_id=job.created_by_user_id,
+                summary=standardized_result.get("summary", {}),
+            )
+            await audit_dispatcher.publish(comp_audit_event)
+            try:
+                await AuditService(self.db).record_event(comp_audit_event)
+            except Exception as audit_err:
+                logger.error(f"[JobService] Audit record creation failed for completed job {job_id}: {audit_err}")
+
         except asyncio.CancelledError:
             logger.info(f"[JobService] Job {job_id} cancelled during execution.")
             # Set to cancelled if not already in terminal status
@@ -295,6 +331,21 @@ class JobService:
             except Exception as notif_err:
                 logger.error(f"[JobService] Notification failed for timed out job {job_id}: {notif_err}")
 
+            # Publish & persist failure audit event
+            fail_audit_event = JobFailedAuditEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                error_message=error_msg,
+                duration_seconds=duration_sec,
+                actor_user_id=job.created_by_user_id,
+            )
+            await audit_dispatcher.publish(fail_audit_event)
+            try:
+                await AuditService(self.db).record_event(fail_audit_event)
+            except Exception as audit_err:
+                logger.error(f"[JobService] Audit record creation failed for timed out job {job_id}: {audit_err}")
+
         except Exception as exc:
             logger.error(f"[JobService] Job {job_id} failed with error: {exc}", exc_info=True)
             duration_ms = (time.perf_counter() - start_time) * 1000.0
@@ -320,3 +371,18 @@ class JobService:
                 await NotificationService(self.db).handle_event(fail_event)
             except Exception as notif_err:
                 logger.error(f"[JobService] Notification failed for failed job {job_id}: {notif_err}")
+
+            # Publish & persist failure audit event
+            fail_audit_event = JobFailedAuditEvent(
+                job_id=job_id,
+                organization_id=organization_id,
+                job_type=job.job_type,
+                error_message=str(exc),
+                duration_seconds=duration_sec,
+                actor_user_id=job.created_by_user_id,
+            )
+            await audit_dispatcher.publish(fail_audit_event)
+            try:
+                await AuditService(self.db).record_event(fail_audit_event)
+            except Exception as audit_err:
+                logger.error(f"[JobService] Audit record creation failed for failed job {job_id}: {audit_err}")

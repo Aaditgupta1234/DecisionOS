@@ -13,6 +13,7 @@ from app.reporting.api import report_router
 from app.dashboard.api import dashboard_router
 from app.jobs.api import jobs_router
 from app.notifications.api import notifications_router
+from app.audit.api import audit_router
 
 api_router = APIRouter()
 
@@ -37,6 +38,7 @@ api_router.include_router(report_router, tags=["Executive Report Generation & PD
 api_router.include_router(dashboard_router, tags=["Executive Dashboard & Intelligence Workspace"])
 api_router.include_router(jobs_router, tags=["Background Job Infrastructure"])
 api_router.include_router(notifications_router, tags=["Notification Framework"])
+api_router.include_router(audit_router, tags=["Audit Center"])
 
 
 
