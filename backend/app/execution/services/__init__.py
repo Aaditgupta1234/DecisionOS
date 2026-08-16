@@ -25,6 +25,17 @@ from app.execution.services.governance_engine import GovernanceIntelligenceEngin
 from app.execution.services.governance_service import GovernanceService
 from app.execution.services.review_compliance_engine import ReviewComplianceEngine
 
+from app.execution.services.benefits_engine import BenefitsRealizationEngine
+from app.execution.services.governance_outcome_engine import (
+    GovernanceOutcomeAlignmentEngine,
+)
+from app.execution.services.outcome_engine import OutcomeAchievementEngine
+from app.execution.services.outcome_service import OutcomeService
+from app.execution.services.portfolio_benefits_engine import (
+    PortfolioBenefitsEngine,
+)
+from app.execution.services.roi_engine import ROIIntelligenceEngine
+
 __all__ = [
     "ProgramRollupEngine",
     "ProgramService",
@@ -48,4 +59,10 @@ __all__ = [
     "ReviewComplianceEngine",
     "GovernanceActionTrackingEngine",
     "GovernanceService",
+    "OutcomeAchievementEngine",
+    "BenefitsRealizationEngine",
+    "ROIIntelligenceEngine",
+    "GovernanceOutcomeAlignmentEngine",
+    "PortfolioBenefitsEngine",
+    "OutcomeService",
 ]

@@ -31,7 +31,11 @@ if TYPE_CHECKING:
     from app.execution.models.event import InitiativeExecutionEvent
     from app.execution.models.governance import GovernanceReview
     from app.execution.models.milestone import InitiativeMilestone
-    from app.execution.models.outcome import InitiativeOutcome
+    from app.execution.models.outcome import (
+        InitiativeBenefitRealization,
+        InitiativeOutcome,
+        InitiativeOutcomeMeasurement,
+    )
     from app.execution.models.program import StrategicProgram
     from app.execution.models.target_metric import InitiativeTargetMetric
     from app.models.organization import Organization
@@ -264,8 +268,14 @@ class StrategicInitiative(TimestampMixin, Base):
         cascade="all, delete-orphan",
     )
 
-    outcomes: Mapped[List["InitiativeOutcome"]] = relationship(
-        "InitiativeOutcome",
+    outcomes: Mapped[List["InitiativeOutcomeMeasurement"]] = relationship(
+        "InitiativeOutcomeMeasurement",
+        back_populates="initiative",
+        cascade="all, delete-orphan",
+    )
+
+    benefits: Mapped[List["InitiativeBenefitRealization"]] = relationship(
+        "InitiativeBenefitRealization",
         back_populates="initiative",
         cascade="all, delete-orphan",
     )

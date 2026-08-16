@@ -11,7 +11,11 @@ from app.execution.models.governance import (
 from app.execution.models.initiative import StrategicInitiative
 from app.execution.models.milestone import InitiativeMilestone
 from app.execution.models.milestone_dependency import MilestoneDependency
-from app.execution.models.outcome import InitiativeOutcome
+from app.execution.models.outcome import (
+    InitiativeBenefitRealization,
+    InitiativeOutcome,
+    InitiativeOutcomeMeasurement,
+)
 from app.execution.models.program import StrategicProgram
 from app.execution.models.snapshot import ExecutionSnapshot
 from app.execution.models.target_metric import InitiativeTargetMetric
@@ -29,5 +33,7 @@ __all__ = [
     "ReviewAction",
     "GovernanceAction",
     "InitiativeOutcome",
+    "InitiativeOutcomeMeasurement",
+    "InitiativeBenefitRealization",
     "ExecutionSnapshot",
 ]

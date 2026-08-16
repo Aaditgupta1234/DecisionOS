@@ -57,16 +57,21 @@ from app.governance.models import GovernancePolicy
 from app.admin.models import OrganizationSettings
 from app.portfolio.models import PortfolioSnapshot, WorkspaceBenchmark
 from app.execution.models import (
-    StrategicProgram,
-    StrategicInitiative,
-    InitiativeExecutionEvent,
-    InitiativeDependency,
-    InitiativeTargetMetric,
-    InitiativeMilestone,
-    MilestoneDependency,
-    InitiativeReview,
-    InitiativeOutcome,
     ExecutionSnapshot,
+    GovernanceAction,
+    GovernanceReview,
+    InitiativeBenefitRealization,
+    InitiativeDependency,
+    InitiativeExecutionEvent,
+    InitiativeMilestone,
+    InitiativeOutcome,
+    InitiativeOutcomeMeasurement,
+    InitiativeReview,
+    InitiativeTargetMetric,
+    MilestoneDependency,
+    ReviewAction,
+    StrategicInitiative,
+    StrategicProgram,
 )
 
 __all__ = [
@@ -136,7 +141,12 @@ __all__ = [
     "InitiativeTargetMetric",
     "InitiativeMilestone",
     "MilestoneDependency",
+    "GovernanceReview",
     "InitiativeReview",
+    "ReviewAction",
+    "GovernanceAction",
     "InitiativeOutcome",
+    "InitiativeOutcomeMeasurement",
+    "InitiativeBenefitRealization",
     "ExecutionSnapshot",
 ]

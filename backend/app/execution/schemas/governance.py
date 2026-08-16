@@ -148,6 +148,7 @@ class GovernanceReviewResponse(BaseModel):
     review_notes: str
     evidence_notes: Optional[str] = None
     evidence_links: List[str] = Field(default_factory=list)
+    review_cycle_time_days: Optional[float] = Field(default=None, description="Review cycle turnaround time in calendar days")
     actions: List[ReviewActionResponse] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
@@ -251,8 +252,14 @@ class GovernanceSummaryResponse(BaseModel):
     completed_actions: int
     overdue_actions: int
     action_closure_rate: float
+    average_review_cycle_time_days: float = Field(default=0.0, description="Average review cycle turnaround time in calendar days")
+    overdue_action_exposure_score: float = Field(default=0.0, description="Severity-weighted overdue action exposure score (0-100)")
     average_escalation_age_days: float
     oldest_open_escalation_days: int
+    compliance_trend: GovernanceTrend = Field(default=GovernanceTrend.STABLE)
+    effectiveness_trend: GovernanceTrend = Field(default=GovernanceTrend.STABLE)
+    maturity_trend: GovernanceTrend = Field(default=GovernanceTrend.STABLE)
+    governance_trend: GovernanceTrend = Field(default=GovernanceTrend.STABLE)
     calculated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     engine_version: str = GOVERNANCE_ENGINE_VERSION
     snapshot_compatible: bool = True

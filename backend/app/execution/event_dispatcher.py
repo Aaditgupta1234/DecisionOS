@@ -14,6 +14,21 @@ from app.execution.constants import ExecutionEventType
 from app.execution.models.event import InitiativeExecutionEvent
 
 
+def _sanitize_metadata(val: Any) -> Any:
+    """Recursively converts non-JSON serializable types (enums, datetimes, UUIDs) to primitive types."""
+    if isinstance(val, dict):
+        return {k: _sanitize_metadata(v) for k, v in val.items()}
+    elif isinstance(val, (list, tuple, set)):
+        return [_sanitize_metadata(v) for v in val]
+    elif isinstance(val, datetime):
+        return val.isoformat()
+    elif isinstance(val, uuid.UUID):
+        return str(val)
+    elif hasattr(val, "value"):
+        return val.value
+    return val
+
+
 class ExecutionEventDispatcher:
     """
     Centralized event dispatcher responsible for recording execution timeline events,
@@ -26,6 +41,13 @@ class ExecutionEventDispatcher:
         ExecutionEventType.MILESTONE_DELAYED,
         ExecutionEventType.OUTCOME_TARGET_MISSED,
         ExecutionEventType.OUTCOME_TARGET_ACHIEVED,
+        ExecutionEventType.OUTCOME_CREATED,
+        ExecutionEventType.OUTCOME_UPDATED,
+        ExecutionEventType.OUTCOME_ACHIEVED,
+        ExecutionEventType.OUTCOME_PARTIALLY_ACHIEVED,
+        ExecutionEventType.OUTCOME_MISSED,
+        ExecutionEventType.BENEFIT_REALIZED,
+        ExecutionEventType.ROI_RECALCULATED,
         ExecutionEventType.ADMIN_OVERRIDE,
         ExecutionEventType.GOVERNANCE_REVIEW_COMPLETED,
         ExecutionEventType.REVIEW_SCHEDULED,
@@ -63,6 +85,8 @@ class ExecutionEventDispatcher:
 
         trigger_type = f"AUTO_TRIGGER_{event_type.value}" if is_auto_eligible else None
 
+        sanitized_payload = _sanitize_metadata(metadata_payload or {})
+
         event = InitiativeExecutionEvent(
             id=uuid.uuid4(),
             organization_id=organization_id,
@@ -74,7 +98,7 @@ class ExecutionEventDispatcher:
             actor_id=actor_id,
             previous_value=previous_value,
             new_value=new_value,
-            metadata_payload=metadata_payload or {},
+            metadata_payload=sanitized_payload,
             automation_eligible=is_auto_eligible,
             automation_trigger_type=trigger_type,
             created_at=datetime.now(timezone.utc),
@@ -112,6 +136,8 @@ class ExecutionEventDispatcher:
 
         trigger_type = f"AUTO_TRIGGER_{event_type.value}" if is_auto_eligible else None
 
+        sanitized_payload = _sanitize_metadata(metadata_payload or {})
+
         event = InitiativeExecutionEvent(
             id=uuid.uuid4(),
             organization_id=organization_id,
@@ -123,7 +149,7 @@ class ExecutionEventDispatcher:
             actor_id=actor_id,
             previous_value=previous_value,
             new_value=new_value,
-            metadata_payload=metadata_payload or {},
+            metadata_payload=sanitized_payload,
             automation_eligible=is_auto_eligible,
             automation_trigger_type=trigger_type,
             created_at=datetime.now(timezone.utc),

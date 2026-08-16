@@ -10,6 +10,11 @@ PROGRAM_ROLLUP_VERSION = "1.0"
 EXECUTION_HEALTH_SCORE_VERSION = "1.0"
 EXECUTION_RISK_ENGINE_VERSION = "1.0"
 OUTCOME_ENGINE_VERSION = "1.0"
+BENEFITS_ENGINE_VERSION = "1.0"
+REALIZATION_ENGINE_VERSION = "1.0"
+ROI_ENGINE_VERSION = "1.0"
+ALIGNMENT_ENGINE_VERSION = "1.0"
+OUTCOME_SNAPSHOT_METRIC_VERSION = "1.0"
 LINEAGE_GRAPH_VERSION = "1.0"
 
 
@@ -164,8 +169,15 @@ class ExecutionEventType(str, Enum):
     ESCALATION_TRIGGERED = "ESCALATION_TRIGGERED"
     ESCALATION_RESOLVED = "ESCALATION_RESOLVED"
     OUTCOME_RECORDED = "OUTCOME_RECORDED"
+    OUTCOME_CREATED = "OUTCOME_CREATED"
+    OUTCOME_UPDATED = "OUTCOME_UPDATED"
+    OUTCOME_ACHIEVED = "OUTCOME_ACHIEVED"
+    OUTCOME_PARTIALLY_ACHIEVED = "OUTCOME_PARTIALLY_ACHIEVED"
+    OUTCOME_MISSED = "OUTCOME_MISSED"
     OUTCOME_TARGET_ACHIEVED = "OUTCOME_TARGET_ACHIEVED"
     OUTCOME_TARGET_MISSED = "OUTCOME_TARGET_MISSED"
+    BENEFIT_REALIZED = "BENEFIT_REALIZED"
+    ROI_RECALCULATED = "ROI_RECALCULATED"
     ADMIN_OVERRIDE = "ADMIN_OVERRIDE"
 
 
@@ -291,11 +303,169 @@ class TargetDirection(str, Enum):
     MAINTAIN = "MAINTAIN"
 
 
-class OutcomeMeasurementConfidence(str, Enum):
+class OutcomeStatus(str, Enum):
+    """Execution outcome realization status."""
+    NOT_STARTED = "NOT_STARTED"
+    IN_PROGRESS = "IN_PROGRESS"
+    ACHIEVED = "ACHIEVED"
+    PARTIALLY_ACHIEVED = "PARTIALLY_ACHIEVED"
+    MISSED = "MISSED"
+
+
+class OutcomeMetricType(str, Enum):
+    """Categorical type classification for outcome metrics."""
+    FINANCIAL = "FINANCIAL"
+    OPERATIONAL = "OPERATIONAL"
+    CUSTOMER = "CUSTOMER"
+    PRODUCT = "PRODUCT"
+    STRATEGIC = "STRATEGIC"
+
+
+class OutcomeCriticality(str, Enum):
+    """Strategic criticality rating for outcome measurements."""
+    CRITICAL = "CRITICAL"
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class OutcomeHealth(str, Enum):
+    """Synthesized health classification for an individual outcome."""
+    HEALTHY = "HEALTHY"
+    WATCH = "WATCH"
+    AT_RISK = "AT_RISK"
+    CRITICAL = "CRITICAL"
+
+
+class PortfolioOutcomeHealthGrade(str, Enum):
+    """Executive portfolio-wide outcome health grading."""
+    HEALTHY = "HEALTHY"
+    WATCH = "WATCH"
+    AT_RISK = "AT_RISK"
+    CRITICAL = "CRITICAL"
+
+
+class OutcomeExecutionStatus(str, Enum):
+    """Operational pace and schedule execution status for an outcome."""
+    ON_TRACK = "ON_TRACK"
+    AT_RISK = "AT_RISK"
+    OFF_TRACK = "OFF_TRACK"
+    COMPLETED = "COMPLETED"
+
+
+class TargetDateStatus(str, Enum):
+    """Calendar timeline status relative to the target achievement date."""
+    ON_TIME = "ON_TIME"
+    APPROACHING = "APPROACHING"
+    OVERDUE = "OVERDUE"
+
+
+class OutcomeConfidenceLevel(str, Enum):
     """Confidence classification for post-execution outcome measurements."""
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
     LOW = "LOW"
+
+
+# Backward compatibility alias
+OutcomeMeasurementConfidence = OutcomeConfidenceLevel
+
+
+class MeasurementStability(str, Enum):
+    """Deterministic stability rating derived from measurement variance / volatility."""
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class MeasurementQuality(str, Enum):
+    """Deterministic measurement quality rating derived from confidence, stability, and freshness."""
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class MeasurementRecency(str, Enum):
+    """Data freshness category based on elapsed days since latest measurement."""
+    CURRENT = "CURRENT"      # 0 - 30 days
+    RECENT = "RECENT"        # 31 - 90 days
+    STALE = "STALE"          # 91 - 180 days
+    OUTDATED = "OUTDATED"    # > 180 days
+
+
+class OutcomeValueClassification(str, Enum):
+    """Strategic monetary value tier classification for delivered benefits."""
+    TRANSFORMATIONAL = "TRANSFORMATIONAL"
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class ConfidenceTrend(str, Enum):
+    """Longitudinal trajectory of outcome/benefit confidence scores."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DECLINING = "DECLINING"
+
+
+class MeasurementFrequency(str, Enum):
+    """Cadence for tracking and sampling outcome metrics."""
+    DAILY = "DAILY"
+    WEEKLY = "WEEKLY"
+    MONTHLY = "MONTHLY"
+    QUARTERLY = "QUARTERLY"
+    ANNUALLY = "ANNUALLY"
+    AD_HOC = "AD_HOC"
+
+
+class BenefitType(str, Enum):
+    """Structured categories of strategic business benefits."""
+    REVENUE_GROWTH = "REVENUE_GROWTH"
+    COST_REDUCTION = "COST_REDUCTION"
+    RISK_REDUCTION = "RISK_REDUCTION"
+    PRODUCTIVITY_GAIN = "PRODUCTIVITY_GAIN"
+    CUSTOMER_IMPROVEMENT = "CUSTOMER_IMPROVEMENT"
+    OPERATIONAL_EFFICIENCY = "OPERATIONAL_EFFICIENCY"
+    STRATEGIC_VALUE = "STRATEGIC_VALUE"
+
+
+class BenefitRealizationStatus(str, Enum):
+    """Executive categorical realization status for expected benefits."""
+    EXCEEDED = "EXCEEDED"
+    ACHIEVED = "ACHIEVED"
+    PARTIAL = "PARTIAL"
+    MISSED = "MISSED"
+
+
+class BenefitConcentrationRisk(str, Enum):
+    """Pareto concentration risk level assessing dependence on top 20% initiatives."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class BenefitTrend(str, Enum):
+    """Longitudinal trajectory of realized benefit value delivery."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DECLINING = "DECLINING"
+
+
+class ROITrend(str, Enum):
+    """Longitudinal trajectory of financial return on investment."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DECLINING = "DECLINING"
+
+
+class ROIClassification(str, Enum):
+    """Categorical financial ROI tier classification."""
+    EXCEPTIONAL = "EXCEPTIONAL"  # ROI >= 200%
+    STRONG = "STRONG"            # ROI 100% - 199.9%
+    ACCEPTABLE = "ACCEPTABLE"    # ROI 0% - 99.9%
+    POOR = "POOR"                # ROI -50% - -0.1%
+    NEGATIVE = "NEGATIVE"        # ROI < -50%
 
 
 PROGRESS_ENGINE_VERSION = "1.0"
@@ -550,4 +720,297 @@ def calculate_governance_maturity_level(
     if composite >= 60.0:
         return GovernanceMaturityLevel.DEVELOPING
     return GovernanceMaturityLevel.AD_HOC
+
+
+def calculate_outcome_status(achievement_percentage: float) -> OutcomeStatus:
+    """Deterministically maps achievement percentage to an OutcomeStatus."""
+    if achievement_percentage >= 100.0:
+        return OutcomeStatus.ACHIEVED
+    if achievement_percentage >= 70.0:
+        return OutcomeStatus.PARTIALLY_ACHIEVED
+    if achievement_percentage > 0.0:
+        return OutcomeStatus.MISSED
+    return OutcomeStatus.NOT_STARTED
+
+
+def calculate_outcome_confidence_level(score: float) -> OutcomeConfidenceLevel:
+    """Deterministically maps confidence score (0-100) to OutcomeConfidenceLevel."""
+    if score >= 80.0:
+        return OutcomeConfidenceLevel.HIGH
+    if score >= 60.0:
+        return OutcomeConfidenceLevel.MEDIUM
+    return OutcomeConfidenceLevel.LOW
+
+
+def calculate_measurement_stability(stability_score: float) -> MeasurementStability:
+    """Deterministically maps measurement stability score (0-100) to MeasurementStability."""
+    if stability_score >= 80.0:
+        return MeasurementStability.HIGH
+    if stability_score >= 60.0:
+        return MeasurementStability.MEDIUM
+    return MeasurementStability.LOW
+
+
+def calculate_measurement_recency(age_days: Optional[int]) -> MeasurementRecency:
+    """Deterministically maps elapsed age in days to a MeasurementRecency classification."""
+    if age_days is None or age_days <= 30:
+        return MeasurementRecency.CURRENT
+    if age_days <= 90:
+        return MeasurementRecency.RECENT
+    if age_days <= 180:
+        return MeasurementRecency.STALE
+    return MeasurementRecency.OUTDATED
+
+
+def calculate_target_date_status(days_until_target: Optional[int], is_achieved: bool = False) -> TargetDateStatus:
+    """Deterministically maps calendar days remaining until target achievement date."""
+    if is_achieved:
+        return TargetDateStatus.ON_TIME
+    if days_until_target is None:
+        return TargetDateStatus.ON_TIME
+    if days_until_target < 0:
+        return TargetDateStatus.OVERDUE
+    if days_until_target <= 30:
+        return TargetDateStatus.APPROACHING
+    return TargetDateStatus.ON_TIME
+
+
+def calculate_measurement_quality(
+    confidence_score: float,
+    stability_score: float,
+    age_days: Optional[int] = None,
+) -> MeasurementQuality:
+    """Deterministically evaluates measurement quality from confidence, stability, and recency."""
+    effective_age = age_days if age_days is not None else 0
+    recency_factor = max(0.0, 100.0 - (effective_age * 1.5))
+    quality_score = (0.45 * confidence_score) + (0.35 * stability_score) + (0.20 * recency_factor)
+    if quality_score >= 80.0:
+        return MeasurementQuality.HIGH
+    if quality_score >= 60.0:
+        return MeasurementQuality.MEDIUM
+    return MeasurementQuality.LOW
+
+
+def calculate_measurement_reliability_score(
+    quality_score: float,
+    stability_score: float,
+    confidence_score: float,
+) -> float:
+    """Deterministically synthesizes a single executive measurement reliability score (0-100)."""
+    score = (0.40 * quality_score) + (0.35 * stability_score) + (0.25 * confidence_score)
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def calculate_outcome_data_reliability_score(
+    confidence_score: float,
+    stability_score: float,
+    quality_score: float,
+    completeness_score: float,
+) -> float:
+    """Synthesizes comprehensive outcome data reliability from 4 core metadata dimensions."""
+    score = (
+        (0.35 * confidence_score)
+        + (0.25 * stability_score)
+        + (0.25 * quality_score)
+        + (0.15 * completeness_score)
+    )
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def calculate_outcome_predictability_score(
+    stability_score: float,
+    quality_score: float,
+    confidence_score: float,
+    age_days: Optional[int] = None,
+) -> float:
+    """Deterministically calculates outcome predictability score (0-100) without forecasting."""
+    effective_age = age_days if age_days is not None else 0
+    recency_factor = max(0.0, 100.0 - (effective_age * 1.5))
+    score = (
+        (0.35 * stability_score)
+        + (0.30 * quality_score)
+        + (0.20 * confidence_score)
+        + (0.15 * recency_factor)
+    )
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def calculate_outcome_health(
+    achievement_pct: float,
+    confidence_score: float,
+    stability_score: float,
+    age_days: Optional[int] = None,
+) -> OutcomeHealth:
+    """Deterministically derives outcome health classification from achievement, confidence, stability, and freshness."""
+    effective_age = age_days if age_days is not None else 0
+    recency_factor = max(0.0, 100.0 - (effective_age * 1.5))
+    bounded_achievement = min(100.0, max(0.0, achievement_pct))
+    score = (
+        (0.40 * bounded_achievement)
+        + (0.25 * confidence_score)
+        + (0.20 * stability_score)
+        + (0.15 * recency_factor)
+    )
+    if score >= 85.0:
+        return OutcomeHealth.HEALTHY
+    if score >= 70.0:
+        return OutcomeHealth.WATCH
+    if score >= 50.0:
+        return OutcomeHealth.AT_RISK
+    return OutcomeHealth.CRITICAL
+
+
+def calculate_portfolio_outcome_health_grade(
+    healthy: int,
+    watch: int,
+    at_risk: int,
+    critical: int,
+) -> PortfolioOutcomeHealthGrade:
+    """Deterministically calculates portfolio outcome health grade from weighted distribution."""
+    total = healthy + watch + at_risk + critical
+    if total == 0:
+        return PortfolioOutcomeHealthGrade.HEALTHY
+    score = (
+        (healthy * 100.0)
+        + (watch * 75.0)
+        + (at_risk * 50.0)
+        + (critical * 20.0)
+    ) / total
+    if score >= 85.0:
+        return PortfolioOutcomeHealthGrade.HEALTHY
+    if score >= 70.0:
+        return PortfolioOutcomeHealthGrade.WATCH
+    if score >= 50.0:
+        return PortfolioOutcomeHealthGrade.AT_RISK
+    return PortfolioOutcomeHealthGrade.CRITICAL
+
+
+def calculate_outcome_execution_status(
+    achievement_pct: float,
+    outcome_health: OutcomeHealth,
+    recency: MeasurementRecency,
+    velocity: float,
+) -> OutcomeExecutionStatus:
+    """Deterministically synthesizes operational pace and execution status for an outcome."""
+    if achievement_pct >= 100.0:
+        return OutcomeExecutionStatus.COMPLETED
+    if outcome_health == OutcomeHealth.HEALTHY and recency in (MeasurementRecency.CURRENT, MeasurementRecency.RECENT):
+        return OutcomeExecutionStatus.ON_TRACK
+    if outcome_health in (OutcomeHealth.HEALTHY, OutcomeHealth.WATCH) and achievement_pct >= 50.0:
+        return OutcomeExecutionStatus.AT_RISK
+    return OutcomeExecutionStatus.OFF_TRACK
+
+
+def calculate_outcome_value_classification(
+    realized_value: float,
+    benefit_score: Optional[float] = None,
+) -> OutcomeValueClassification:
+    """Deterministically classifies monetary/strategic importance of delivered benefits."""
+    if realized_value >= 1_000_000.0 or (benefit_score is not None and benefit_score >= 90.0):
+        return OutcomeValueClassification.TRANSFORMATIONAL
+    if realized_value >= 500_000.0 or (benefit_score is not None and benefit_score >= 75.0):
+        return OutcomeValueClassification.HIGH
+    if realized_value >= 100_000.0 or (benefit_score is not None and benefit_score >= 50.0):
+        return OutcomeValueClassification.MEDIUM
+    return OutcomeValueClassification.LOW
+
+
+def calculate_benefit_realization_status(realization_percentage: float) -> BenefitRealizationStatus:
+    """Deterministically maps realization percentage to BenefitRealizationStatus."""
+    if realization_percentage >= 120.0:
+        return BenefitRealizationStatus.EXCEEDED
+    if realization_percentage >= 90.0:
+        return BenefitRealizationStatus.ACHIEVED
+    if realization_percentage >= 60.0:
+        return BenefitRealizationStatus.PARTIAL
+    return BenefitRealizationStatus.MISSED
+
+
+def calculate_benefit_concentration_risk(top_20_concentration_pct: float) -> BenefitConcentrationRisk:
+    """Deterministically classifies Pareto top-20% value concentration risk."""
+    if top_20_concentration_pct < 40.0:
+        return BenefitConcentrationRisk.LOW
+    if top_20_concentration_pct < 60.0:
+        return BenefitConcentrationRisk.MEDIUM
+    if top_20_concentration_pct < 80.0:
+        return BenefitConcentrationRisk.HIGH
+    return BenefitConcentrationRisk.CRITICAL
+
+
+def calculate_roi_classification(roi_percentage: float) -> ROIClassification:
+    """Deterministically classifies ROI percentage into standard financial tiers."""
+    if roi_percentage >= 200.0:
+        return ROIClassification.EXCEPTIONAL
+    if roi_percentage >= 100.0:
+        return ROIClassification.STRONG
+    if roi_percentage >= 0.0:
+        return ROIClassification.ACCEPTABLE
+    if roi_percentage >= -50.0:
+        return ROIClassification.POOR
+    return ROIClassification.NEGATIVE
+
+
+def calculate_confidence_trend(
+    current_val: float,
+    previous_val: Optional[float] = None,
+    threshold: float = 5.0,
+) -> ConfidenceTrend:
+    """Deterministically calculates confidence trend from historical delta."""
+    if previous_val is None:
+        return ConfidenceTrend.STABLE
+    delta = current_val - previous_val
+    if delta >= threshold:
+        return ConfidenceTrend.IMPROVING
+    if delta <= -threshold:
+        return ConfidenceTrend.DECLINING
+    return ConfidenceTrend.STABLE
+
+
+def calculate_benefit_trend(
+    current_val: float,
+    previous_val: Optional[float] = None,
+    threshold: float = 5.0,
+) -> BenefitTrend:
+    """Deterministically calculates benefit realization trend from historical delta."""
+    if previous_val is None:
+        return BenefitTrend.STABLE
+    delta = current_val - previous_val
+    if delta >= threshold:
+        return BenefitTrend.IMPROVING
+    if delta <= -threshold:
+        return BenefitTrend.DECLINING
+    return BenefitTrend.STABLE
+
+
+def calculate_roi_trend(
+    current_val: float,
+    previous_val: Optional[float] = None,
+    threshold: float = 5.0,
+) -> ROITrend:
+    """Deterministically calculates ROI trend from historical delta."""
+    if previous_val is None:
+        return ROITrend.STABLE
+    delta = current_val - previous_val
+    if delta >= threshold:
+        return ROITrend.IMPROVING
+    if delta <= -threshold:
+        return ROITrend.DECLINING
+    return ROITrend.STABLE
+
+
+def calculate_governance_trend(
+    current_val: float,
+    previous_val: Optional[float] = None,
+    threshold: float = 5.0,
+) -> GovernanceTrend:
+    """Deterministically calculates governance compliance trend from historical delta."""
+    if previous_val is None:
+        return GovernanceTrend.STABLE
+    delta = current_val - previous_val
+    if delta >= threshold:
+        return GovernanceTrend.IMPROVING
+    if delta <= -threshold:
+        return GovernanceTrend.DETERIORATING
+    return GovernanceTrend.STABLE
+
 

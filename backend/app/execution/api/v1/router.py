@@ -11,6 +11,7 @@ from app.execution.api.v1.event_endpoints import event_router
 from app.execution.api.v1.governance_endpoints import governance_router
 from app.execution.api.v1.initiative_endpoints import initiative_router
 from app.execution.api.v1.milestone_endpoints import milestone_router
+from app.execution.api.v1.outcome_endpoints import outcome_router
 from app.execution.api.v1.program_endpoints import program_router
 from app.execution.schemas.health import (
     InterventionQueueResponse,
@@ -95,3 +96,5 @@ execution_router.include_router(milestone_router)
 execution_router.include_router(event_router)
 execution_router.include_router(dependency_router)
 execution_router.include_router(governance_router)
+execution_router.include_router(outcome_router)
+

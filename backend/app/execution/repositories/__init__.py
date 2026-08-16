@@ -1,5 +1,8 @@
 """Execution repositories package for Phase 12."""
 
+from app.execution.repositories.benefit_repository import (
+    BenefitRealizationRepository,
+)
 from app.execution.repositories.dependency_repository import DependencyRepository
 from app.execution.repositories.event_repository import EventRepository
 from app.execution.repositories.governance_action_repository import (
@@ -13,6 +16,9 @@ from app.execution.repositories.milestone_dependency_repository import (
     MilestoneDependencyRepository,
 )
 from app.execution.repositories.milestone_repository import MilestoneRepository
+from app.execution.repositories.outcome_repository import (
+    OutcomeMeasurementRepository,
+)
 from app.execution.repositories.program_repository import ProgramRepository
 from app.execution.repositories.target_metric_repository import TargetMetricRepository
 
@@ -26,4 +32,6 @@ __all__ = [
     "MilestoneDependencyRepository",
     "GovernanceReviewRepository",
     "GovernanceActionRepository",
+    "OutcomeMeasurementRepository",
+    "BenefitRealizationRepository",
 ]
