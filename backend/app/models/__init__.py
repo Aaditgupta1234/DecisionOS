@@ -56,6 +56,17 @@ from app.schedules.constants import ScheduleType, ExecutionStatus
 from app.governance.models import GovernancePolicy
 from app.admin.models import OrganizationSettings
 from app.portfolio.models import PortfolioSnapshot, WorkspaceBenchmark
+from app.execution.models import (
+    StrategicProgram,
+    StrategicInitiative,
+    InitiativeExecutionEvent,
+    InitiativeDependency,
+    InitiativeTargetMetric,
+    InitiativeMilestone,
+    InitiativeReview,
+    InitiativeOutcome,
+    ExecutionSnapshot,
+)
 
 __all__ = [
     "Base",
@@ -117,4 +128,15 @@ __all__ = [
     "DiagnosticGenerationStatus",
     "MetricCategory",
     "MetricsGenerationStatus",
+    "PortfolioSnapshot",
+    "WorkspaceBenchmark",
+    "StrategicProgram",
+    "StrategicInitiative",
+    "InitiativeExecutionEvent",
+    "InitiativeDependency",
+    "InitiativeTargetMetric",
+    "InitiativeMilestone",
+    "InitiativeReview",
+    "InitiativeOutcome",
+    "ExecutionSnapshot",
 ]
