@@ -50,6 +50,15 @@ from app.portfolio.recommendations.schemas import (
     PortfolioOptimizationResponse,
     StrategicRecommendation,
 )
+from app.portfolio.roadmaps.schemas import (
+    DecisionPackage,
+    DecisionPackageEvaluationRequest,
+    DecisionPackageEvaluationResponse,
+    DecisionPackagesListResponse,
+    QuarterlyRoadmap,
+    StrategicInitiative,
+    StrategicRoadmapResponse,
+)
 
 __all__ = [
     "PortfolioQueryParams",
@@ -92,4 +101,11 @@ __all__ = [
     "OpportunitySummary",
     "ExecutiveActionPlan",
     "PortfolioOptimizationResponse",
+    "StrategicInitiative",
+    "QuarterlyRoadmap",
+    "StrategicRoadmapResponse",
+    "DecisionPackage",
+    "DecisionPackageEvaluationRequest",
+    "DecisionPackageEvaluationResponse",
+    "DecisionPackagesListResponse",
 ]
