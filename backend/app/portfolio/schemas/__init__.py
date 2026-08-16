@@ -25,6 +25,14 @@ from app.portfolio.trends.schemas import (
     WorkspaceTrendPoint,
     WorkspaceTrendResponse,
 )
+from app.portfolio.executive.schemas import (
+    ExecutiveBriefResponse,
+    ExecutiveDecisionCenterResponse,
+    ExecutiveInsight,
+    InterventionItem,
+    PortfolioPerformanceSummary,
+    PortfolioRiskSummary,
+)
 
 __all__ = [
     "PortfolioQueryParams",
@@ -48,4 +56,10 @@ __all__ = [
     "StrategicInsightsResponse",
     "WorkspaceTrendPoint",
     "WorkspaceTrendResponse",
+    "ExecutiveInsight",
+    "InterventionItem",
+    "PortfolioRiskSummary",
+    "PortfolioPerformanceSummary",
+    "ExecutiveDecisionCenterResponse",
+    "ExecutiveBriefResponse",
 ]

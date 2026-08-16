@@ -35,8 +35,10 @@ from app.portfolio.trends.schemas import (
     WorkspaceTrendResponse,
 )
 from app.portfolio.trends.services.portfolio_trends_service import PortfolioTrendsService
+from app.portfolio.api.executive_endpoints import executive_router
 
 portfolio_router = APIRouter(prefix="/portfolio", tags=["Portfolio Intelligence"])
+portfolio_router.include_router(executive_router)
 
 
 def _resolve_org_id(current_user: User, organization_id: Optional[uuid.UUID] = None) -> uuid.UUID:
