@@ -46,6 +46,8 @@ from app.models.strategy_plan import StrategyPlan
 from app.models.user import User
 from app.reporting.models import ReportExport, ReportTemplate
 from app.dashboard.models import DashboardSnapshot, DashboardViewEvent
+from app.jobs.models import BackgroundJob
+from app.jobs.constants import JobStatus, JobType
 
 __all__ = [
     "Base",
@@ -67,6 +69,9 @@ __all__ = [
     "DashboardSnapshot",
     "DashboardViewEvent",
     "AIInsight",
+    "BackgroundJob",
+    "JobStatus",
+    "JobType",
 
     "ChatSession",
     "ChatMessage",

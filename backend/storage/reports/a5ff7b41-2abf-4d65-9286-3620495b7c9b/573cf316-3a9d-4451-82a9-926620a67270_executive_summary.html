@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Summary Briefing — DecisionOS</title>
+  <style>
+    :root {
+      --primary: #0F172A;
+      --secondary: #3B82F6;
+      --text: #1E293B;
+      --muted: #64748B;
+      --bg-light: #F8FAFC;
+      --border: #E2E8F0;
+      --status: #F59E0B;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background-color: #F1F5F9;
+      margin: 0;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    .document-container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 48px;
+    }
+    .cover-header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .company-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--secondary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .document-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 8px 0;
+      line-height: 1.25;
+    }
+    .document-subtitle {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .meta-item label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      display: block;
+    }
+    .meta-item span {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #FFFFFF;
+      background-color: var(--status);
+      font-size: 0.85rem;
+    }
+    .section-block {
+      margin-top: 36px;
+      page-break-inside: avoid;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .callout-box {
+      background: var(--bg-light);
+      border-left: 4px solid var(--secondary);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--primary);
+    }
+    .table-container {
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th {
+      background: var(--primary);
+      color: #FFFFFF;
+      text-align: left;
+      padding: 10px 12px;
+      font-weight: 600;
+    }
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    tr:nth-child(even) td {
+      background: var(--bg-light);
+    }
+    .footer-note {
+      margin-top: 48px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+    }
+    @media print {
+      body {
+        background: transparent;
+        padding: 0;
+      }
+      .document-container {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="document-container">
+    <div class="cover-header">
+      <div class="company-name">Enterprise Organization</div>
+      <h1 class="document-title">API Summary Briefing</h1>
+      <div class="document-subtitle">Comprehensive Business Analytics & Decision Telemetry for Boardroom Test Dataset</div>
+      
+      <div class="meta-grid">
+        <div class="meta-item">
+          <label>Dataset</label>
+          <span>Boardroom Test Dataset</span>
+        </div>
+        <div class="meta-item">
+          <label>Business Health</label>
+          <span class="status-badge">66/100 (WATCH_LIST)</span>
+        </div>
+        <div class="meta-item">
+          <label>Generated Date</label>
+          <span>August 15, 2026 - 13:52 UTC</span>
+        </div>
+        <div class="meta-item">
+          <label>Platform Engine</label>
+          <span>DecisionOS v1.0 (Enterprise)</span>
+        </div>
+      </div>
+    </div>
+
+    
+        <div class="section-block">
+          <h2 class="section-title">Executive Briefing & Business Health</h2>
+          <div class="callout-box">💡 <b>Key Takeaway:</b> Business Health: 66/100 (WATCH_LIST) — 2 anomalies diagnosed; 1 strategic actions pending.</div>
+          <p>Operational telemetry reflects resilient top-line fundamentals with targeted mitigation required.</p>
+          
+        </div>
+        
+
+    
+        <div class="section-block">
+          <h2 class="section-title">Appendix: Evidence References & Verification Traceability</h2>
+          <p>All statements trace to verified platform artifacts and deterministic analytical engine outputs.</p>
+          <div class="table-container"><table>
+            <thead><tr><th>Artifact UUID</th><th>Type</th><th>Title / Key</th></tr></thead>
+            <tbody><tr><td><code>fd08a05f-dafa-4cdd-8f03-62d9852f474f</code></td><td>DIAGNOSTIC_FINDING</td><td>Enterprise Customer Churn Spike</td></tr><tr><td><code>b3a8c8aa-4334-4eaf-a6b9-f825111d904b</code></td><td>DIAGNOSTIC_FINDING</td><td>Enterprise Segment Revenue Contraction</td></tr><tr><td><code>6d3e594a-f0da-4997-a40b-e6a4fb745b82</code></td><td>ROOT_CAUSE</td><td>Onboarding delays and lack of executive reviews caused churn.</td></tr><tr><td><code>e466261d-2681-46ba-80e1-becf414d2a5f</code></td><td>RECOMMENDATION</td><td>Deploy Executive Success Pods</td></tr><tr><td><code>6e690b10-073c-4bdf-8e66-4a0f7b6699e6</code></td><td>FORECAST</td><td>net_revenue</td></tr><tr><td><code>984bef0f-644c-436a-bc05-9e1100e6e464</code></td><td>SCENARIO</td><td>Aggressive Pod Rollout</td></tr></tbody>
+          </table></div>
+        </div>
+        
+
+    <div class="footer-note">
+      <span>DecisionOS Explainable AI SaaS Platform — Boardroom Confidential</span>
+      <span>Document Template v1.0</span>
+    </div>
+  </div>
+</body>
+</html>
