@@ -33,6 +33,16 @@ from app.portfolio.executive.schemas import (
     PortfolioPerformanceSummary,
     PortfolioRiskSummary,
 )
+from app.portfolio.scenarios.schemas import (
+    ScenarioAdjustment,
+    ScenarioAssumption,
+    ScenarioComparisonResponse,
+    ScenarioInput,
+    ScenarioPortfolioImpact,
+    ScenarioResponse,
+    ScenarioTemplate,
+    ScenarioWorkspaceImpact,
+)
 
 __all__ = [
     "PortfolioQueryParams",
@@ -62,4 +72,12 @@ __all__ = [
     "PortfolioPerformanceSummary",
     "ExecutiveDecisionCenterResponse",
     "ExecutiveBriefResponse",
+    "ScenarioAdjustment",
+    "ScenarioInput",
+    "ScenarioAssumption",
+    "ScenarioWorkspaceImpact",
+    "ScenarioPortfolioImpact",
+    "ScenarioResponse",
+    "ScenarioComparisonResponse",
+    "ScenarioTemplate",
 ]
