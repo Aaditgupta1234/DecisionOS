@@ -162,33 +162,13 @@ export const HomeView: React.FC = () => {
                 </div>
               </div>
 
-              {/* CENTERPIECE: Visually Dominant DEX Intelligence Partner */}
-              <div className="card-dex-center">
-                {/* Interactive 3D Spline Robot */}
-                <div className="dex-spline-container">
-                  <iframe 
-                    src="https://my.spline.design/genkubgreetingrobot-5exzcKZ24el7lb1Perqf1bkP/" 
-                    className="dex-spline-iframe"
-                    title="DEX 3D Interactive Robot"
-                  />
-                </div>
-
-                <div style={{ fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.12em', color: '#60a5fa', textTransform: 'uppercase', fontWeight: '700', marginBottom: '3px' }}>
-                  Executive Intelligence Core
-                </div>
-                <div style={{ fontSize: '26px', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.03em', marginBottom: '2px' }}>
-                  DEX
-                </div>
-                <div style={{ fontSize: '12px', color: '#e5e7eb', fontWeight: '600' }}>
-                  DecisionOS Executive Analyst
-                </div>
-                <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '3px' }}>
-                  Your Executive Intelligence Partner
-                </div>
-                <div style={{ marginTop: '14px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', fontFamily: 'monospace', color: '#34d399' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#34d399', boxShadow: '0 0 6px #34d399' }} />
-                  <span>Interactive 3D Core Active</span>
-                </div>
+              {/* CENTERPIECE: Standalone Interactive 3D Spline Robot atop Pedestal */}
+              <div className="dex-bot-standalone">
+                <iframe 
+                  src="https://my.spline.design/genkubgreetingrobot-5exzcKZ24el7lb1Perqf1bkP/" 
+                  className="dex-spline-iframe"
+                  title="DEX 3D Interactive Robot"
+                />
               </div>
 
               {/* BOTTOM-LEFT: Top Operational Risk */}
