@@ -12,10 +12,11 @@ import {
   FileText, 
   Cpu, 
   AlertTriangle, 
-  Sparkles,
+  Sparkles, 
   ArrowUpRight,
   ShieldCheck,
   CheckCircle2,
+  Server,
   Layers
 } from 'lucide-react';
 import '../../styles/home.css';
@@ -25,22 +26,22 @@ export const HomeView: React.FC = () => {
     <div className="page-root">
       
       {/* ======================================================================
-          1. Top Navigation Bar (Linear / Palantir / Stripe aesthetic)
+          1. Top Navigation Bar (Command Center Navigation)
           ====================================================================== */}
       <nav className="top-nav">
         <div className="page-container top-nav-inner">
           <Link to="/" className="nav-brand">
             <div className="nav-brand-emblem">
-              <Cpu size={15} color="#030406" />
+              <Cpu size={14} color="#FFFFFF" />
             </div>
             <span>DecisionOS</span>
           </Link>
 
           <div className="nav-links">
-            <a href="#why-fail" className="nav-link">Platform</a>
+            <a href="#why-exists" className="nav-link">Platform</a>
             <a href="#pipeline" className="nav-link">Intelligence</a>
-            <a href="#overview" className="nav-link">Solutions</a>
-            <a href="#resources" className="nav-link">Resources</a>
+            <a href="#overview" className="nav-link">Capabilities</a>
+            <a href="#scale" className="nav-link">Architecture</a>
             <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="nav-link">Docs</a>
           </div>
 
@@ -63,32 +64,30 @@ export const HomeView: React.FC = () => {
             </div>
 
             <h1 className="hero-title">
-              Know What’s<br />
-              Happening.<br />
+              Know What’s Happening.<br />
               Understand Why.<br />
-              Decide What Comes<br />
-              Next.
+              Decide What Comes Next.
             </h1>
 
-            {/* Differentiator Value Proposition */}
+            {/* Differentiator Value Proposition Block */}
             <div className="hero-value-prop">
-              Most platforms tell you what happened.<br />
+              Most platforms tell you what happened.
               <strong>DecisionOS determines why it happened and calculates what to do next.</strong>
             </div>
 
             <p className="hero-desc">
-              DecisionOS transforms business data into explainable intelligence through KPI evaluation, causal root-cause discovery, forecasting, and prioritized executive interventions.
+              DecisionOS transforms business data into explainable intelligence through deterministic KPI evaluation, causal root-cause discovery, forecasting, and prioritized executive interventions.
             </p>
 
             <div className="hero-btn-group">
               <Link to="/dashboard" className="btn-start-analysis">
                 <span>Start Analysis</span>
-                <ArrowRight size={16} />
+                <ArrowRight size={15} />
               </Link>
-              <a href="#why-fail" className="btn-explore-flow">
+              <a href="#why-exists" className="btn-explore-flow">
                 <span>Explore Decision Flow</span>
-                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Play size={10} style={{ fill: '#030406', color: '#030406', marginLeft: '1px' }} />
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Play size={10} style={{ fill: '#060709', color: '#060709', marginLeft: '1px' }} />
                 </div>
               </a>
             </div>
@@ -99,20 +98,20 @@ export const HomeView: React.FC = () => {
               </div>
               <div className="trust-items">
                 <div className="trust-item">
-                  <BarChart2 size={13} style={{ color: '#8e8e93' }} />
+                  <BarChart2 size={13} style={{ color: '#B5BAC4' }} />
                   <span>KPI Intelligence</span>
                 </div>
                 <div className="trust-item">
-                  <GitMerge size={13} style={{ color: '#8e8e93' }} />
+                  <GitMerge size={13} style={{ color: '#B5BAC4' }} />
                   <span>Root Cause Analysis</span>
                 </div>
                 <div className="trust-item">
-                  <TrendingUp size={13} style={{ color: '#8e8e93' }} />
+                  <TrendingUp size={13} style={{ color: '#B5BAC4' }} />
                   <span>Forecasting Engine</span>
                 </div>
                 <div className="trust-item">
-                  <Cpu size={13} style={{ color: '#8e8e93' }} />
-                  <span>DEX Partner</span>
+                  <Cpu size={13} style={{ color: '#B5BAC4' }} />
+                  <span>DEX Core</span>
                 </div>
               </div>
             </div>
@@ -121,44 +120,44 @@ export const HomeView: React.FC = () => {
           {/* RIGHT COLUMN (55%): Vertical Axis (Spotlight -> DEX -> Pedestal) */}
           <div className="hero-stage">
             
-            {/* 1. Overhead Spotlight Beam */}
+            {/* 1. Overhead White-Gray Spotlight Beam (12% Opacity) */}
             <div className="hero-spotlight" />
 
-            {/* 2. 3D Illuminated Circular Pedestal Platform Beneath DEX */}
+            {/* 2. 3D Metallic Graphite Pedestal Platform Beneath DEX */}
             <div className="stage-pedestal">
               <div className="pedestal-disc" />
             </div>
 
-            {/* 3. Central Dominant DEX + 4 Symmetrical Telemetry Cards */}
+            {/* 3. Central Standalone 3D Spline Robot + 4 Symmetrical Telemetry Cards */}
             <div className="stage-cards-layout">
               
               {/* TOP-LEFT: Business Health Score */}
               <div className="stage-card card-business-health">
-                <div style={{ fontSize: '11px', color: '#8e8e93', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '4px' }}>
                   Business Health Score
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-                  <span style={{ fontSize: '22px', fontWeight: '800', color: '#ffffff' }}>82</span>
-                  <span style={{ fontSize: '11px', color: '#52525b' }}>/ 100</span>
+                  <span style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>82</span>
+                  <span style={{ fontSize: '11px', color: '#727A86' }}>/ 100</span>
                 </div>
                 <div style={{ marginTop: '8px', height: '14px', width: '100%' }}>
                   <svg width="100%" height="100%" viewBox="0 0 80 14" preserveAspectRatio="none">
-                    <path d="M0,10 Q20,12 40,6 T80,4" fill="none" stroke="#34d399" strokeWidth="1.5" />
+                    <path d="M0,10 Q20,12 40,6 T80,4" fill="none" stroke="#B5BAC4" strokeWidth="1.5" />
                   </svg>
                 </div>
               </div>
 
               {/* TOP-RIGHT: Forecast Confidence */}
               <div className="stage-card card-forecast-conf">
-                <div style={{ fontSize: '11px', color: '#8e8e93', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '4px' }}>
                   Forecast Confidence
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontSize: '22px', fontWeight: '800', color: '#ffffff' }}>92%</div>
-                    <div style={{ fontSize: '10px', color: '#38bdf8', marginTop: '2px' }}>High Confidence</div>
+                    <div style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>92%</div>
+                    <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '2px' }}>High Confidence</div>
                   </div>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: '#38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
+                  <div style={{ width: '26px', height: '26px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
                 </div>
               </div>
 
@@ -173,30 +172,30 @@ export const HomeView: React.FC = () => {
 
               {/* BOTTOM-LEFT: Top Operational Risk */}
               <div className="stage-card card-top-risk">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#8e8e93', marginBottom: '2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
                   <span>Top Operational Risk</span>
-                  <AlertTriangle size={12} style={{ color: '#fbbf24' }} />
+                  <AlertTriangle size={12} style={{ color: '#E8E8E8' }} />
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: '700', color: '#ffffff', marginTop: '2px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF', marginTop: '2px' }}>
                   Customer Retention
                 </div>
-                <div style={{ fontSize: '10px', color: '#fbbf24', marginTop: '3px' }}>
+                <div style={{ fontSize: '10px', color: '#727A86', marginTop: '3px' }}>
                   ● High Revenue Exposure
                 </div>
               </div>
 
               {/* BOTTOM-RIGHT: Recommended Action */}
               <div className="stage-card card-recommended-action">
-                <div style={{ fontSize: '11px', color: '#8e8e93', marginBottom: '2px' }}>
+                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
                   Recommended Action
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#ffffff' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF' }}>
                     Win-Back Campaign
                   </div>
-                  <ArrowUpRight size={14} style={{ color: '#34d399' }} />
+                  <ArrowUpRight size={14} style={{ color: '#FFFFFF' }} />
                 </div>
-                <div style={{ fontSize: '10px', color: '#34d399', marginTop: '3px' }}>
+                <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '3px' }}>
                   Priority: High Intervention
                 </div>
               </div>
@@ -209,23 +208,32 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          3. Section: Why Traditional Dashboards Fail (The 3-Way Differentiator)
+          3. Section: Why DecisionOS Exists (The Core Identity)
           ====================================================================== */}
-      <section id="why-fail" className="section-differentiator">
+      <section id="why-exists" className="section-identity">
         <div className="page-container">
           
-          <div className="section-header-center">
-            <h2 className="section-title-lg">
-              Why Traditional Dashboards Fail
+          <div className="identity-header-block">
+            <h2 className="identity-section-title">
+              Why DecisionOS Exists
             </h2>
-            <p className="section-subtitle-sm">
-              Most platforms report metrics. DecisionOS determines why things happen and calculates what to do next.
+            <p className="identity-lead-text">
+              Most business platforms stop at reporting. They tell executives what happened.<br />
+              DecisionOS was built to answer the questions that matter:
+            </p>
+            <div className="identity-three-questions">
+              <span>• What changed?</span>
+              <span>• Why did it change?</span>
+              <span>• What should we do next?</span>
+            </div>
+            <p className="identity-sub-statement">
+              Every score, recommendation, forecast, and intervention is fully traceable through deterministic business logic.
             </p>
           </div>
 
           <div className="differentiator-grid">
             
-            {/* Card 1: Traditional Dashboard */}
+            {/* Pillar 1: Traditional Dashboard */}
             <div className="diff-card">
               <div>
                 <div className="diff-tag">Legacy Approach</div>
@@ -234,12 +242,12 @@ export const HomeView: React.FC = () => {
                   Displays raw metrics and retroactive charts. Forces executives to manually guess what is happening across disparate data silos.
                 </p>
               </div>
-              <div className="diff-outcome" style={{ color: '#71717a' }}>
-                → Reports Metrics: <span style={{ color: '#ffffff' }}>"Revenue dropped 18%"</span>
+              <div className="diff-outcome" style={{ color: '#727A86' }}>
+                → Reports Metrics: <span style={{ color: '#FFFFFF' }}>"Revenue dropped 18%"</span>
               </div>
             </div>
 
-            {/* Card 2: BI Platform */}
+            {/* Pillar 2: BI Platform */}
             <div className="diff-card">
               <div>
                 <div className="diff-tag">Analytical Approach</div>
@@ -248,22 +256,22 @@ export const HomeView: React.FC = () => {
                   Visualizes longitudinal trends and multi-dimensional slices, but leaves causality and root-cause analysis completely unresolved.
                 </p>
               </div>
-              <div className="diff-outcome" style={{ color: '#9ca3af' }}>
-                → Reports Trends: <span style={{ color: '#ffffff' }}>"4-Quarter Decline Pattern"</span>
+              <div className="diff-outcome" style={{ color: '#B5BAC4' }}>
+                → Reports Trends: <span style={{ color: '#FFFFFF' }}>"4-Quarter Decline Pattern"</span>
               </div>
             </div>
 
-            {/* Card 3: DecisionOS */}
+            {/* Pillar 3: DecisionOS */}
             <div className="diff-card active-diff">
               <div>
-                <div className="diff-tag" style={{ color: '#60a5fa' }}>Executive Business Assistant</div>
+                <div className="diff-tag" style={{ color: '#FFFFFF' }}>Executive Operating System</div>
                 <h3 className="diff-title">DecisionOS</h3>
                 <p className="diff-desc">
                   Continuously traces causal DAGs, isolates root causes from symptom noise, and calculates prioritized, risk-discounted executive interventions.
                 </p>
               </div>
-              <div className="diff-outcome" style={{ color: '#34d399' }}>
-                → Drives Decisions: <span style={{ color: '#ffffff' }}>"Root Cause: ERP Sync $\to$ Deploy Fleet Pods (P1)"</span>
+              <div className="diff-outcome" style={{ color: '#FFFFFF' }}>
+                → Guides Decisions: <span style={{ color: '#E8E8E8' }}>"Root Cause: ERP Sync $\to$ Deploy Fleet Pods (P1)"</span>
               </div>
             </div>
 
@@ -368,11 +376,11 @@ export const HomeView: React.FC = () => {
 
             {/* Step 8 (DEX Core Highlight) */}
             <div className="pipeline-step-card dex-highlight">
-              <div className="pipeline-icon-box" style={{ background: 'rgba(46, 144, 255, 0.2)' }}>
-                <Cpu size={18} style={{ color: '#2e90ff' }} />
+              <div className="pipeline-icon-box" style={{ background: '#1A1E26' }}>
+                <Cpu size={18} style={{ color: '#FFFFFF' }} />
               </div>
-              <div className="pipeline-step-name" style={{ color: '#60a5fa' }}>DEX Core</div>
-              <div className="pipeline-step-sub" style={{ color: '#ffffff', fontWeight: '600' }}>Executive Partner</div>
+              <div className="pipeline-step-name" style={{ color: '#FFFFFF' }}>DEX Core</div>
+              <div className="pipeline-step-sub" style={{ color: '#E8E8E8', fontWeight: '600' }}>Executive Partner</div>
             </div>
 
           </div>
@@ -422,10 +430,10 @@ export const HomeView: React.FC = () => {
                 <div className="kpi-stat-header">Business Health Score</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div className="kpi-stat-value">82 <span style={{ fontSize: '13px', color: '#71717a' }}>/ 100</span></div>
-                    <div style={{ fontSize: '11px', color: '#8e8e93', marginTop: '4px' }}>Good Performance</div>
+                    <div className="kpi-stat-value">82 <span style={{ fontSize: '13px', color: '#727A86' }}>/ 100</span></div>
+                    <div style={{ fontSize: '11px', color: '#B5BAC4', marginTop: '4px' }}>Good Performance</div>
                   </div>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '3px solid rgba(255,255,255,0.15)', borderTopColor: '#34d399' }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF' }} />
                 </div>
               </div>
 
@@ -441,7 +449,7 @@ export const HomeView: React.FC = () => {
                     <div className="chart-title">Revenue Trend</div>
                     <div className="chart-subtitle">✓ Last 12 Months</div>
                   </div>
-                  <div className="chart-value-tag">$4.2M <span style={{ fontSize: '10px', color: '#71717a' }}>Dec 2024</span></div>
+                  <div className="chart-value-tag">$4.2M <span style={{ fontSize: '10px', color: '#727A86' }}>Dec 2024</span></div>
                 </div>
 
                 <div style={{ height: '140px', width: '100%', paddingTop: '10px' }}>
@@ -449,13 +457,13 @@ export const HomeView: React.FC = () => {
                     <path 
                       d="M0,75 Q30,70 60,65 T120,55 T180,45 T240,30 T320,15" 
                       fill="none" 
-                      stroke="#2e90ff" 
+                      stroke="#FFFFFF" 
                       strokeWidth="2" 
                     />
-                    <circle cx="320" cy="15" r="3.5" fill="#2e90ff" />
+                    <circle cx="320" cy="15" r="3.5" fill="#FFFFFF" />
                   </svg>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#52525b', fontFamily: 'monospace', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#727A86', fontFamily: 'monospace', marginTop: '8px', borderTop: '1px solid #22262E', paddingTop: '6px' }}>
                   <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
                 </div>
               </div>
@@ -469,10 +477,10 @@ export const HomeView: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ fontSize: '26px', fontWeight: '800', color: '#ffffff', marginBottom: '2px' }}>
+                <div style={{ fontSize: '26px', fontWeight: '800', color: '#FFFFFF', marginBottom: '2px' }}>
                   $4.8M
                 </div>
-                <div style={{ fontSize: '11px', color: '#34d399', marginBottom: '10px' }}>
+                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '10px' }}>
                   +9.6% forward growth
                 </div>
 
@@ -481,16 +489,16 @@ export const HomeView: React.FC = () => {
                     <path 
                       d="M0,50 Q80,40 160,25 T320,10" 
                       fill="none" 
-                      stroke="#34d399" 
+                      stroke="#FFFFFF" 
                       strokeWidth="2" 
                     />
-                    <circle cx="0" cy="50" r="3" fill="#34d399" />
-                    <circle cx="106" cy="35" r="3" fill="#34d399" />
-                    <circle cx="213" cy="20" r="3" fill="#34d399" />
-                    <circle cx="320" cy="10" r="3" fill="#34d399" />
+                    <circle cx="0" cy="50" r="3" fill="#FFFFFF" />
+                    <circle cx="106" cy="35" r="3" fill="#FFFFFF" />
+                    <circle cx="213" cy="20" r="3" fill="#FFFFFF" />
+                    <circle cx="320" cy="10" r="3" fill="#FFFFFF" />
                   </svg>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#52525b', fontFamily: 'monospace', marginTop: '6px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#727A86', fontFamily: 'monospace', marginTop: '6px', borderTop: '1px solid #22262E', paddingTop: '6px' }}>
                   <span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
                 </div>
               </div>
@@ -511,9 +519,9 @@ export const HomeView: React.FC = () => {
 
                 {/* Top Root Cause */}
                 <div className="side-info-card">
-                  <div style={{ fontSize: '10px', color: '#71717a', textTransform: 'uppercase', marginBottom: '2px' }}>Top Root Cause</div>
-                  <div style={{ fontSize: '13px', fontWeight: '700', color: '#ffffff', marginBottom: '2px' }}>Customer Retention Decline</div>
-                  <div style={{ fontSize: '10px', color: '#fbbf24', marginBottom: '6px' }}>Impact: High Exposure</div>
+                  <div style={{ fontSize: '10px', color: '#727A86', textTransform: 'uppercase', marginBottom: '2px' }}>Top Root Cause</div>
+                  <div style={{ fontSize: '13px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>Customer Retention Decline</div>
+                  <div style={{ fontSize: '10px', color: '#B5BAC4', marginBottom: '6px' }}>Impact: High Exposure</div>
                   <p className="side-info-text">
                     Analysis shows churn increased due to late deliveries and reduced engagement in the last 30 days.
                   </p>
@@ -532,7 +540,65 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          6. Section: Turn Data Into Decisions (CTA Card)
+          6. Section: Enterprise System Scale (Recruiter Metrics Grid)
+          ====================================================================== */}
+      <section id="scale" className="section-scale">
+        <div className="page-container">
+          
+          <div className="section-header-center">
+            <h2 className="section-title-lg">
+              Enterprise System Scale
+            </h2>
+            <p className="section-subtitle-sm">
+              Engineered with enterprise rigor, multi-tenant isolation, and complete deterministic auditability.
+            </p>
+          </div>
+
+          <div className="scale-metric-grid">
+            
+            <div className="scale-card">
+              <div className="scale-value-huge">783+</div>
+              <div className="scale-label-title">Automated Tests</div>
+              <div className="scale-sub-desc">100% Pass Rate (Unit, Integration & API)</div>
+            </div>
+
+            <div className="scale-card">
+              <div className="scale-value-huge">100+</div>
+              <div className="scale-label-title">REST APIs</div>
+              <div className="scale-sub-desc">High-Concurrency Asynchronous FastAPI</div>
+            </div>
+
+            <div className="scale-card">
+              <div className="scale-value-huge">25+</div>
+              <div className="scale-label-title">Intelligence Engines</div>
+              <div className="scale-sub-desc">Deterministic Mathematical Analytics</div>
+            </div>
+
+            <div className="scale-card">
+              <div className="scale-value-huge">40+</div>
+              <div className="scale-label-title">Domain Models</div>
+              <div className="scale-sub-desc">SQLAlchemy 2.0 Normalized Architecture</div>
+            </div>
+
+            <div className="scale-card">
+              <div className="scale-value-huge">Phases 0–13</div>
+              <div className="scale-label-title">Delivered Architecture</div>
+              <div className="scale-sub-desc">Production Governance & Operational Monitoring</div>
+            </div>
+
+            <div className="scale-card">
+              <div className="scale-value-huge">100%</div>
+              <div className="scale-label-title">Deterministic Intelligence</div>
+              <div className="scale-sub-desc">Zero AI Hallucination or Calculation Drift</div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================================
+          7. Section: Turn Data Into Decisions (CTA Banner)
           ====================================================================== */}
       <section className="section-cta">
         <div className="page-container">
@@ -569,7 +635,7 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          7. Footer
+          8. Footer
           ====================================================================== */}
       <footer className="site-footer">
         <div className="page-container footer-inner">
