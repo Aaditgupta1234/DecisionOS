@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, Query, status
 
 from app.api.dependencies.auth import get_current_active_user
 from app.database.session import get_db
+from app.execution.api.v1.decision_support_endpoints import decision_support_router
 from app.execution.api.v1.dependency_endpoints import dependency_router
 from app.execution.api.v1.event_endpoints import event_router
 from app.execution.api.v1.governance_endpoints import governance_router
@@ -103,4 +104,5 @@ execution_router.include_router(governance_router)
 execution_router.include_router(outcome_router)
 execution_router.include_router(strategic_analytics_router)
 execution_router.include_router(snapshot_router)
+execution_router.include_router(decision_support_router)
 

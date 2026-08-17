@@ -1,5 +1,4 @@
-"""Domain Constants and Enums for Phase 12: Strategic Execution Layer."""
-
+from datetime import date, datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -1503,3 +1502,305 @@ def calculate_rolling_stats(values: List[float]) -> Dict[str, float]:
         "volatility": volatility_val,
         "growth_rate": growth_rate,
     }
+
+
+# ==============================================================================
+# Phase 12.9: Executive Decision Support & Portfolio Optimization
+# ==============================================================================
+
+DECISION_SUPPORT_ENGINE_VERSION = "1.0"
+PORTFOLIO_BALANCING_ENGINE_VERSION = "1.0"
+EXECUTIVE_INTERVENTION_ENGINE_VERSION = "1.0"
+INVESTMENT_PRIORITY_ENGINE_VERSION = "1.0"
+DECISION_INTELLIGENCE_ENGINE_VERSION = "1.0"
+
+
+class ExecutiveActionPriority(str, Enum):
+    """Deterministic priority classification for executive action items."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class ExecutiveImpactTier(str, Enum):
+    """Business impact magnitude tier for strategic decisions."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    TRANSFORMATIONAL = "TRANSFORMATIONAL"
+
+
+class InterventionRecommendation(str, Enum):
+    """Prescriptive execution intervention recommended by deterministic rules."""
+    ACCELERATE = "ACCELERATE"
+    STABILIZE = "STABILIZE"
+    RESTRUCTURE = "RESTRUCTURE"
+    ESCALATE = "ESCALATE"
+    MONITOR = "MONITOR"
+
+
+class InvestmentPriority(str, Enum):
+    """Ranked strategic investment priority tiers."""
+    STRATEGIC = "STRATEGIC"
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+class PortfolioBalanceStatus(str, Enum):
+    """Portfolio structural balance and concentration risk status."""
+    BALANCED = "BALANCED"
+    MODERATELY_IMBALANCED = "MODERATELY_IMBALANCED"
+    HIGHLY_IMBALANCED = "HIGHLY_IMBALANCED"
+
+
+class DecisionReadinessLevel(str, Enum):
+    """Confidence and completeness level of the decision queue data foundation."""
+    EXCELLENT = "EXCELLENT"
+    GOOD = "GOOD"
+    ADEQUATE = "ADEQUATE"
+    LIMITED = "LIMITED"
+
+
+class PortfolioActionabilityLevel(str, Enum):
+    """Level of confidence with which leadership can act on portfolio intelligence."""
+    EXCELLENT = "EXCELLENT"
+    HIGH = "HIGH"
+    MODERATE = "MODERATE"
+    LOW = "LOW"
+
+
+class PortfolioExecutionPressureGrade(str, Enum):
+    """Executive composite intervention pressure rating across the portfolio."""
+    LOW = "LOW"
+    MODERATE = "MODERATE"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+# Standard Reason Codes
+REASON_LOW_EXECUTION_HEALTH = "LOW_EXECUTION_HEALTH"
+REASON_CRITICAL_BLOCKER_PRESENT = "CRITICAL_BLOCKER_PRESENT"
+REASON_HIGH_STRATEGIC_VALUE = "HIGH_STRATEGIC_VALUE"
+REASON_POSITIVE_VELOCITY = "POSITIVE_VELOCITY"
+REASON_LOW_RISK_ADJUSTED_ROI = "LOW_RISK_ADJUSTED_ROI"
+REASON_GOVERNANCE_NON_COMPLIANT = "GOVERNANCE_NON_COMPLIANT"
+REASON_BENEFIT_REALIZATION_LAG = "BENEFIT_REALIZATION_LAG"
+
+# Standard Data Quality Warnings
+WARN_LOW_SNAPSHOT_HISTORY = "LOW_SNAPSHOT_HISTORY: Insufficient snapshots for longitudinal trend analysis."
+WARN_LOW_METRIC_COVERAGE = "LOW_METRIC_COVERAGE: Snapshot covers less than 80% of expected portfolio entities."
+WARN_INCOMPLETE_OUTCOME_DATA = "INCOMPLETE_OUTCOME_DATA: Initiatives missing formal outcome target metrics."
+WARN_SPARSE_GOVERNANCE_DATA = "SPARSE_GOVERNANCE_DATA: No formal governance reviews conducted in active quarter."
+WARN_INSUFFICIENT_BENEFIT_DATA = "INSUFFICIENT_BENEFIT_DATA: Benefit realization metrics unpopulated."
+
+
+def calculate_decision_priority(score: float) -> ExecutiveActionPriority:
+    """Classifies numerical decision score into discrete priority tiers."""
+    if score >= 80.0:
+        return ExecutiveActionPriority.CRITICAL
+    if score >= 65.0:
+        return ExecutiveActionPriority.HIGH
+    if score >= 45.0:
+        return ExecutiveActionPriority.MEDIUM
+    return ExecutiveActionPriority.LOW
+
+
+def calculate_decision_confidence(
+    strategic_confidence: float,
+    snapshot_completeness: float,
+    coverage_rate: float,
+) -> Tuple[float, StrategicConfidenceLevel]:
+    """Calculates deterministic decision confidence score and tier."""
+    conf_score = round(
+        0.50 * max(0.0, min(100.0, strategic_confidence))
+        + 0.30 * max(0.0, min(100.0, snapshot_completeness))
+        + 0.20 * max(0.0, min(100.0, coverage_rate)),
+        2,
+    )
+    if conf_score >= 80.0:
+        lvl = StrategicConfidenceLevel.HIGH
+    elif conf_score >= 60.0:
+        lvl = StrategicConfidenceLevel.MEDIUM
+    else:
+        lvl = StrategicConfidenceLevel.LOW
+    return conf_score, lvl
+
+
+def calculate_decision_readiness(
+    portfolio_confidence: float,
+    snapshot_completeness: float,
+    coverage_rate: float,
+    historical_available: bool = True,
+) -> Tuple[float, DecisionReadinessLevel]:
+    """Calculates portfolio decision readiness score and level."""
+    hist_score = 100.0 if historical_available else 0.0
+    readiness_score = round(
+        0.40 * max(0.0, min(100.0, portfolio_confidence))
+        + 0.30 * max(0.0, min(100.0, snapshot_completeness))
+        + 0.20 * max(0.0, min(100.0, coverage_rate))
+        + 0.10 * hist_score,
+        2,
+    )
+    if readiness_score >= 85.0:
+        lvl = DecisionReadinessLevel.EXCELLENT
+    elif readiness_score >= 70.0:
+        lvl = DecisionReadinessLevel.GOOD
+    elif readiness_score >= 50.0:
+        lvl = DecisionReadinessLevel.ADEQUATE
+    else:
+        lvl = DecisionReadinessLevel.LIMITED
+    return readiness_score, lvl
+
+
+def calculate_decision_freshness(snapshot_date: Optional[date]) -> float:
+    """Calculates deterministic decision freshness score based on snapshot age."""
+    if snapshot_date is None:
+        return 50.0
+    age_days = max(0, (date.today() - snapshot_date).days)
+    if age_days <= 7:
+        return 100.0
+    return round(max(20.0, 100.0 - (age_days * 0.5)), 2)
+
+
+def calculate_portfolio_actionability(
+    readiness_score: float,
+    governance_score: float,
+    coverage_rate: float,
+    historical_available: bool = True,
+) -> Tuple[float, PortfolioActionabilityLevel]:
+    """Calculates portfolio actionability index answering if leadership can act on data."""
+    hist_score = 100.0 if historical_available else 0.0
+    act_score = round(
+        0.35 * max(0.0, min(100.0, readiness_score))
+        + 0.25 * max(0.0, min(100.0, governance_score))
+        + 0.20 * max(0.0, min(100.0, coverage_rate))
+        + 0.20 * hist_score,
+        2,
+    )
+    if act_score >= 85.0:
+        lvl = PortfolioActionabilityLevel.EXCELLENT
+    elif act_score >= 70.0:
+        lvl = PortfolioActionabilityLevel.HIGH
+    elif act_score >= 50.0:
+        lvl = PortfolioActionabilityLevel.MODERATE
+    else:
+        lvl = PortfolioActionabilityLevel.LOW
+    return act_score, lvl
+
+
+def calculate_portfolio_strategic_exposure(
+    risk_exposure: float,
+    dependency_exposure: float,
+    concentration_exposure: float,
+) -> float:
+    """Calculates single headline portfolio strategic exposure score (0-100)."""
+    return round(
+        0.40 * max(0.0, min(100.0, risk_exposure))
+        + 0.35 * max(0.0, min(100.0, dependency_exposure))
+        + 0.25 * max(0.0, min(100.0, concentration_exposure)),
+        2,
+    )
+
+
+def calculate_executive_impact_tier(
+    strategic_value: float,
+    budget: float,
+    roi_score: float,
+) -> ExecutiveImpactTier:
+    """Assigns discrete executive impact magnitude tier."""
+    if strategic_value >= 85.0 and (budget >= 500000.0 or roi_score >= 80.0):
+        return ExecutiveImpactTier.TRANSFORMATIONAL
+    if strategic_value >= 70.0 or budget >= 200000.0:
+        return ExecutiveImpactTier.HIGH
+    if strategic_value >= 50.0:
+        return ExecutiveImpactTier.MEDIUM
+    return ExecutiveImpactTier.LOW
+
+
+def calculate_investment_priority(score: float) -> InvestmentPriority:
+    """Maps investment priority score to discrete tier."""
+    if score >= 80.0:
+        return InvestmentPriority.STRATEGIC
+    if score >= 65.0:
+        return InvestmentPriority.HIGH
+    if score >= 45.0:
+        return InvestmentPriority.MEDIUM
+    return InvestmentPriority.LOW
+
+
+def calculate_portfolio_balance_status(balance_score: float) -> PortfolioBalanceStatus:
+    """Categorizes portfolio balance status based on composite score."""
+    if balance_score >= 75.0:
+        return PortfolioBalanceStatus.BALANCED
+    if balance_score >= 50.0:
+        return PortfolioBalanceStatus.MODERATELY_IMBALANCED
+    return PortfolioBalanceStatus.HIGHLY_IMBALANCED
+
+
+def calculate_intervention_pressure(
+    critical_count: int,
+    restructure_count: int,
+    stabilize_count: int,
+    monitor_count: int,
+    total_initiatives: int,
+) -> Tuple[float, PortfolioExecutionPressureGrade]:
+    """Calculates portfolio-wide intervention pressure score and grade."""
+    total = max(1, total_initiatives)
+    raw_pressure = (
+        0.40 * critical_count
+        + 0.25 * restructure_count
+        + 0.20 * stabilize_count
+        + 0.15 * monitor_count
+    )
+    pressure_score = round(max(0.0, min(100.0, (raw_pressure / total) * 100.0)), 2)
+    if pressure_score >= 80.0:
+        grade = PortfolioExecutionPressureGrade.CRITICAL
+    elif pressure_score >= 60.0:
+        grade = PortfolioExecutionPressureGrade.HIGH
+    elif pressure_score >= 30.0:
+        grade = PortfolioExecutionPressureGrade.MODERATE
+    else:
+        grade = PortfolioExecutionPressureGrade.LOW
+    return pressure_score, grade
+
+
+def classify_intervention_recommendation(
+    health_score: float,
+    risk_score: float,
+    roi_score: float,
+    strategic_value: float,
+    has_critical_blockers: bool = False,
+) -> Tuple[InterventionRecommendation, List[str]]:
+    """Classifies deterministic intervention recommendation with machine-readable reason codes."""
+    reasons: List[str] = []
+
+    if has_critical_blockers:
+        reasons.append(REASON_CRITICAL_BLOCKER_PRESENT)
+    if health_score < 50.0:
+        reasons.append(REASON_LOW_EXECUTION_HEALTH)
+    if strategic_value >= 75.0:
+        reasons.append(REASON_HIGH_STRATEGIC_VALUE)
+    if roi_score < 40.0:
+        reasons.append(REASON_LOW_RISK_ADJUSTED_ROI)
+
+    # 1. ESCALATE
+    if health_score < 45.0 or has_critical_blockers or risk_score > 75.0:
+        return InterventionRecommendation.ESCALATE, reasons or [REASON_LOW_EXECUTION_HEALTH]
+
+    # 2. RESTRUCTURE
+    if roi_score < 40.0 and strategic_value < 50.0 and health_score < 60.0:
+        return InterventionRecommendation.RESTRUCTURE, reasons or [REASON_LOW_RISK_ADJUSTED_ROI]
+
+    # 3. STABILIZE
+    if health_score < 65.0 or risk_score > 50.0:
+        return InterventionRecommendation.STABILIZE, reasons or [REASON_LOW_EXECUTION_HEALTH]
+
+    # 4. ACCELERATE
+    if health_score >= 80.0 and roi_score >= 70.0 and risk_score < 35.0 and strategic_value >= 70.0:
+        reasons.append(REASON_POSITIVE_VELOCITY)
+        return InterventionRecommendation.ACCELERATE, reasons
+
+    # 5. MONITOR
+    return InterventionRecommendation.MONITOR, reasons or ["STABLE_EXECUTION_TRAJECTORY"]

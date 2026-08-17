@@ -59,6 +59,12 @@ from app.execution.services.snapshot_replay_engine import SnapshotReplayEngine
 from app.execution.services.snapshot_service import SnapshotService
 from app.execution.services.timeseries_analytics_engine import TimeseriesAnalyticsEngine
 
+from app.execution.services.decision_support_engine import DecisionSupportEngine
+from app.execution.services.decision_support_service import DecisionSupportService
+from app.execution.services.executive_intervention_engine import ExecutiveInterventionEngine
+from app.execution.services.investment_priority_engine import InvestmentPriorityEngine
+from app.execution.services.portfolio_balancing_engine import PortfolioBalancingEngine
+
 __all__ = [
     "ProgramRollupEngine",
     "ProgramService",
@@ -101,4 +107,9 @@ __all__ = [
     "SnapshotReplayEngine",
     "PortfolioEvolutionEngine",
     "SnapshotService",
+    "DecisionSupportEngine",
+    "InvestmentPriorityEngine",
+    "PortfolioBalancingEngine",
+    "ExecutiveInterventionEngine",
+    "DecisionSupportService",
 ]

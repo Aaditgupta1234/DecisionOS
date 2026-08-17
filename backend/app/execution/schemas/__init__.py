@@ -146,6 +146,14 @@ from app.execution.schemas.snapshot import (
     TimeseriesAnalyticsMetrics,
     TimeseriesDomainMetrics,
 )
+from app.execution.schemas.decision_support import (
+    DecisionDriverItem,
+    ExecutiveDecisionItem,
+    ExecutiveDecisionSupportResponse,
+    ExecutiveInterventionQueueResponse,
+    InvestmentPriorityItem,
+    PortfolioBalanceMetrics,
+)
 
 __all__ = [
     "ProgramCreate",
@@ -270,4 +278,10 @@ __all__ = [
     "HistoricalConcentrationMetrics",
     "HistoricalAttentionMetrics",
     "PortfolioEvolutionMetrics",
+    "DecisionDriverItem",
+    "ExecutiveDecisionItem",
+    "InvestmentPriorityItem",
+    "PortfolioBalanceMetrics",
+    "ExecutiveInterventionQueueResponse",
+    "ExecutiveDecisionSupportResponse",
 ]
