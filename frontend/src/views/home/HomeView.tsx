@@ -57,12 +57,12 @@ export const HomeView: React.FC = () => {
         <div className="page-container hero-grid">
           
           {/* LEFT COLUMN (46%): Executive Positioning & Story */}
-          <div>
+          <div className="hero-left-column">
             <div className="hero-badge">
               EXECUTIVE BUSINESS ASSISTANT
             </div>
 
-            <h1 className="hero-title">
+            <h1 className="hero-headline">
               Know What’s Happening.<br />
               Understand Why.<br />
               Decide What Comes Next.
@@ -95,20 +95,20 @@ export const HomeView: React.FC = () => {
             <div className="hero-trust-bar">
               <div className="trust-items-row">
                 <div className="trust-item">
-                  <Check size={14} style={{ color: '#FFFFFF' }} />
-                  <span>783+ Automated Tests</span>
+                  <span className="trust-dot">●</span>
+                  <span>783+ Tests</span>
                 </div>
                 <div className="trust-item">
-                  <Check size={14} style={{ color: '#FFFFFF' }} />
-                  <span>100+ API Endpoints</span>
+                  <span className="trust-dot">●</span>
+                  <span>100+ APIs</span>
                 </div>
                 <div className="trust-item">
-                  <Check size={14} style={{ color: '#FFFFFF' }} />
-                  <span>25+ Intelligence Engines</span>
+                  <span className="trust-dot">●</span>
+                  <span>25+ Engines</span>
                 </div>
                 <div className="trust-item">
-                  <Check size={14} style={{ color: '#FFFFFF' }} />
-                  <span>100% Deterministic</span>
+                  <span className="trust-dot">●</span>
+                  <span>Deterministic</span>
                 </div>
               </div>
             </div>
