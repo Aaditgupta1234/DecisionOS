@@ -67,7 +67,7 @@ export const HeroCommandStage: React.FC = () => {
         <div className="command-center-stage-grid">
           
           {/* 1. Top-Left Pod: Business Health */}
-          <div className="pod-top-left glass-panel p-4 text-left border-white/10 hover:border-emerald-500/40 transition-all">
+          <div className="pod-top-left glass-panel p-4 text-left border-white/10 hover:border-emerald-500/40 transition-all animate-float-slow">
             <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
               <span>Business Health</span>
               <Activity className="w-3.5 h-3.5 text-emerald-400" />
@@ -83,7 +83,7 @@ export const HeroCommandStage: React.FC = () => {
           </div>
 
           {/* 2. Top-Right Pod: Forecast Confidence */}
-          <div className="pod-top-right glass-panel p-4 text-left border-white/10 hover:border-blue-500/40 transition-all">
+          <div className="pod-top-right glass-panel p-4 text-left border-white/10 hover:border-blue-500/40 transition-all animate-float-slower">
             <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
               <span>Forecast Confidence</span>
               <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
@@ -120,7 +120,7 @@ export const HeroCommandStage: React.FC = () => {
           </div>
 
           {/* 4. Bottom-Left Pod: Top Operational Risk */}
-          <div className="pod-bottom-left glass-panel p-4 text-left border-white/10 hover:border-amber-500/40 transition-all">
+          <div className="pod-bottom-left glass-panel p-4 text-left border-white/10 hover:border-amber-500/40 transition-all animate-float-slower">
             <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
               <span>Top Operational Risk</span>
               <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
@@ -135,7 +135,7 @@ export const HeroCommandStage: React.FC = () => {
           </div>
 
           {/* 5. Bottom-Right Pod: Recommended Executive Action */}
-          <div className="pod-bottom-right glass-panel p-4 text-left border-white/10 hover:border-cyan-500/40 transition-all">
+          <div className="pod-bottom-right glass-panel p-4 text-left border-white/10 hover:border-cyan-500/40 transition-all animate-float-slow">
             <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
               <span>Recommended Action</span>
               <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
