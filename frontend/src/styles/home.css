@@ -110,8 +110,8 @@
 /* 3. Hero Section (Strict 2-Column Composition) */
 .hero-wrapper {
   position: relative;
-  padding: 60px 0 90px 0;
-  min-height: 880px;
+  padding: 16px 0 60px 0;
+  min-height: 760px;
   display: flex;
   align-items: center;
 }
@@ -120,7 +120,7 @@
   display: grid;
   grid-template-columns: 45% 55%;
   gap: 40px;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
 }
 
@@ -129,7 +129,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 14px;
+  padding: 4px 12px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -138,16 +138,16 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .hero-title {
-  font-size: 54px;
+  font-size: 52px;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.035em;
   color: #ffffff;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
   max-width: 540px;
 }
 
@@ -253,10 +253,11 @@
 .hero-stage {
   position: relative;
   width: 100%;
-  height: 720px;
+  height: 620px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-20px);
 }
 
 /* Overhead Spotlight Beam Focused Directly on DEX */
@@ -266,9 +267,9 @@
   left: 50%;
   transform: translateX(-50%);
   width: 480px;
-  height: 700px;
+  height: 620px;
   background: radial-gradient(
-    ellipse 280px 450px at 50% 0%,
+    ellipse 280px 420px at 50% 0%,
     rgba(255, 255, 255, 0.22) 0%,
     rgba(46, 144, 255, 0.08) 45%,
     transparent 80%
@@ -281,11 +282,11 @@
 /* 3D Glowing Circular Pedestal Platform */
 .stage-pedestal {
   position: absolute;
-  bottom: 50px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px;
-  height: 90px;
+  width: 390px;
+  height: 85px;
   z-index: 2;
   perspective: 500px;
   pointer-events: none;
@@ -314,11 +315,11 @@
 /* Central Dominant DEX Card */
 .card-dex-center {
   position: absolute;
-  top: 190px;
+  top: 140px;
   left: 50%;
   transform: translateX(-50%);
   width: 290px;
-  padding: 30px 22px;
+  padding: 26px 20px;
   text-align: center;
   background: radial-gradient(circle at 50% 15%, rgba(46, 144, 255, 0.18) 0%, rgba(12, 14, 18, 0.95) 80%);
   border: 1.5px solid rgba(255, 255, 255, 0.22);
@@ -343,21 +344,21 @@
 
 /* Abstract Intelligence Core Glyph (No generic chatbot/robot) */
 .dex-glyph-emblem {
-  width: 58px;
-  height: 58px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(46, 144, 255, 0.35) 0%, rgba(46, 144, 255, 0.05) 75%);
   border: 1.5px solid rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 14px;
+  margin: 0 auto 12px;
   box-shadow: 0 0 20px rgba(46, 144, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .dex-glyph-inner {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border: 2px solid #ffffff;
   transform: rotate(45deg);
   display: flex;
@@ -366,8 +367,8 @@
 }
 
 .dex-glyph-core {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background: #2e90ff;
   box-shadow: 0 0 8px #2e90ff;
 }
@@ -378,7 +379,7 @@
   background: rgba(14, 16, 20, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  padding: 16px 18px;
+  padding: 15px 16px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
@@ -391,25 +392,25 @@
 }
 
 .card-business-health {
-  top: 70px;
+  top: 30px;
   left: 20px;
   width: 195px;
 }
 
 .card-forecast-conf {
-  top: 70px;
+  top: 30px;
   right: 20px;
   width: 195px;
 }
 
 .card-top-risk {
-  bottom: 160px;
+  bottom: 100px;
   left: 20px;
   width: 195px;
 }
 
 .card-recommended-action {
-  bottom: 160px;
+  bottom: 100px;
   right: 20px;
   width: 205px;
 }
