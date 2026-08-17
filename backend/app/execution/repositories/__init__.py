@@ -20,6 +20,7 @@ from app.execution.repositories.outcome_repository import (
     OutcomeMeasurementRepository,
 )
 from app.execution.repositories.program_repository import ProgramRepository
+from app.execution.repositories.snapshot_repository import SnapshotRepository
 from app.execution.repositories.target_metric_repository import TargetMetricRepository
 
 __all__ = [
@@ -34,4 +35,5 @@ __all__ = [
     "GovernanceActionRepository",
     "OutcomeMeasurementRepository",
     "BenefitRealizationRepository",
+    "SnapshotRepository",
 ]

@@ -53,6 +53,12 @@ from app.execution.services.strategic_analytics_service import (
 )
 from app.execution.services.value_diagnostics_engine import ValueDiagnosticsEngine
 
+from app.execution.services.historical_trend_engine import HistoricalTrendEngine
+from app.execution.services.portfolio_evolution_engine import PortfolioEvolutionEngine
+from app.execution.services.snapshot_replay_engine import SnapshotReplayEngine
+from app.execution.services.snapshot_service import SnapshotService
+from app.execution.services.timeseries_analytics_engine import TimeseriesAnalyticsEngine
+
 __all__ = [
     "ProgramRollupEngine",
     "ProgramService",
@@ -90,4 +96,9 @@ __all__ = [
     "PortfolioRankingEngine",
     "ExecutiveAttentionEngine",
     "StrategicAnalyticsService",
+    "HistoricalTrendEngine",
+    "TimeseriesAnalyticsEngine",
+    "SnapshotReplayEngine",
+    "PortfolioEvolutionEngine",
+    "SnapshotService",
 ]

@@ -17,7 +17,12 @@ from app.execution.models.outcome import (
     InitiativeOutcomeMeasurement,
 )
 from app.execution.models.program import StrategicProgram
-from app.execution.models.snapshot import ExecutionSnapshot
+from app.execution.models.snapshot import (
+    ExecutionSnapshot,
+    InitiativeSnapshot,
+    PortfolioSnapshot,
+    ProgramSnapshot,
+)
 from app.execution.models.target_metric import InitiativeTargetMetric
 
 __all__ = [
@@ -36,4 +41,7 @@ __all__ = [
     "InitiativeOutcomeMeasurement",
     "InitiativeBenefitRealization",
     "ExecutionSnapshot",
+    "PortfolioSnapshot",
+    "ProgramSnapshot",
+    "InitiativeSnapshot",
 ]

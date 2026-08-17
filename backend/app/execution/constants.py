@@ -1,7 +1,7 @@
 """Domain Constants and Enums for Phase 12: Strategic Execution Layer."""
 
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 EXECUTION_ENGINE_VERSION = "1.0"
 EXECUTION_SCHEMA_VERSION = "1.0"
@@ -1273,3 +1273,233 @@ def calculate_ranking_percentile(rank: int, total_items: int) -> float:
         return 100.0
     val = 100.0 * (1.0 - ((max(1, rank) - 1) / float(total_items)))
     return round(max(0.0, min(100.0, val)), 2)
+
+
+# ==============================================================================
+# Phase 12.8: Historical Snapshots & Portfolio Time-Series Intelligence Engine
+# ==============================================================================
+
+SNAPSHOT_ENGINE_VERSION = "1.0"
+SNAPSHOT_SCHEMA_VERSION = "1.0"
+HISTORICAL_TREND_ENGINE_VERSION = "1.0"
+TIMESERIES_ANALYTICS_ENGINE_VERSION = "1.0"
+SNAPSHOT_REPLAY_ENGINE_VERSION = "1.0"
+PORTFOLIO_EVOLUTION_ENGINE_VERSION = "1.0"
+
+
+class TrendDirection(str, Enum):
+    """Directional velocity trajectory over longitudinal time windows."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DECLINING = "DECLINING"
+
+
+class SnapshotTriggerSource(str, Enum):
+    """Attribution source for snapshot capture triggers."""
+    MANUAL = "MANUAL"
+    SCHEDULED = "SCHEDULED"
+    SYSTEM = "SYSTEM"
+
+
+class SnapshotGenerationStatus(str, Enum):
+    """Operational generation state of a persisted snapshot."""
+    SUCCESS = "SUCCESS"
+    PARTIAL = "PARTIAL"
+    FAILED = "FAILED"
+
+
+class SnapshotIntegrityStatus(str, Enum):
+    """Cryptographic audit verification status of stored snapshot payloads."""
+    VALID = "VALID"
+    INVALID = "INVALID"
+    NOT_VERIFIED = "NOT_VERIFIED"
+
+
+class SnapshotRetentionCategory(str, Enum):
+    """Archival lifecycle tier for snapshot retention management."""
+    SHORT_TERM = "SHORT_TERM"
+    STANDARD = "STANDARD"
+    LONG_TERM = "LONG_TERM"
+    AUDIT = "AUDIT"
+
+
+class SnapshotQualityLevel(str, Enum):
+    """Data completeness classification for historical snapshot capture."""
+    EXCELLENT = "EXCELLENT"  # Completeness >= 90.0%
+    GOOD = "GOOD"            # Completeness 75.0% - 89.9%
+    PARTIAL = "PARTIAL"      # Completeness 50.0% - 74.9%
+    LIMITED = "LIMITED"      # Completeness < 50.0%
+
+
+class SnapshotChangeSeverity(str, Enum):
+    """Differential impact severity classification between two snapshot states."""
+    MINOR = "MINOR"          # |Delta| < 5.0%
+    MODERATE = "MODERATE"    # 5.0% <= |Delta| < 15.0%
+    MAJOR = "MAJOR"          # 15.0% <= |Delta| < 30.0%
+    CRITICAL = "CRITICAL"    # |Delta| >= 30.0% or critical breach
+
+
+class PortfolioMomentumGrade(str, Enum):
+    """Compound portfolio acceleration grade across health, outcomes, ROI, and governance."""
+    ACCELERATING = "ACCELERATING"  # Momentum score >= 85.0
+    POSITIVE = "POSITIVE"          # Momentum score 70.0 - 84.9
+    NEUTRAL = "NEUTRAL"            # Momentum score 50.0 - 69.9
+    NEGATIVE = "NEGATIVE"          # Momentum score 30.0 - 49.9
+    COLLAPSING = "COLLAPSING"      # Momentum score < 30.0
+
+
+class TimeWindowDays(int, Enum):
+    """Standardized temporal windows for rolling analytics."""
+    WINDOW_7D = 7
+    WINDOW_30D = 30
+    WINDOW_90D = 90
+    WINDOW_180D = 180
+    WINDOW_365D = 365
+
+
+def calculate_trend_direction(
+    delta_pct: float,
+    higher_is_better: bool = True,
+    threshold: float = 2.0,
+) -> TrendDirection:
+    """
+    Deterministically maps percentage movement to TrendDirection.
+    delta > +threshold -> IMPROVING (or DECLINING if inverted)
+    delta < -threshold -> DECLINING (or IMPROVING if inverted)
+    otherwise -> STABLE
+    """
+    if higher_is_better:
+        if delta_pct > threshold:
+            return TrendDirection.IMPROVING
+        if delta_pct < -threshold:
+            return TrendDirection.DECLINING
+        return TrendDirection.STABLE
+    else:
+        if delta_pct > threshold:
+            return TrendDirection.DECLINING
+        if delta_pct < -threshold:
+            return TrendDirection.IMPROVING
+        return TrendDirection.STABLE
+
+
+def calculate_snapshot_completeness(populated_metrics: int, expected_metrics: int) -> float:
+    """Deterministically computes (populated / max(1, expected)) * 100."""
+    if expected_metrics <= 0:
+        return 100.0
+    ratio = (float(populated_metrics) / float(expected_metrics)) * 100.0
+    return round(max(0.0, min(100.0, ratio)), 2)
+
+
+def calculate_snapshot_coverage_rate(captured_entities: int, expected_entities: int) -> float:
+    """Deterministically computes entity coverage rate (captured / max(1, expected)) * 100."""
+    if expected_entities <= 0:
+        return 100.0
+    ratio = (float(captured_entities) / float(expected_entities)) * 100.0
+    return round(max(0.0, min(100.0, ratio)), 2)
+
+
+def calculate_snapshot_quality_level(completeness_score: float) -> SnapshotQualityLevel:
+    """Deterministically maps completeness score to SnapshotQualityLevel."""
+    if completeness_score >= 90.0:
+        return SnapshotQualityLevel.EXCELLENT
+    if completeness_score >= 75.0:
+        return SnapshotQualityLevel.GOOD
+    if completeness_score >= 50.0:
+        return SnapshotQualityLevel.PARTIAL
+    return SnapshotQualityLevel.LIMITED
+
+
+def calculate_change_severity(delta_pct: float, is_critical_metric: bool = False) -> SnapshotChangeSeverity:
+    """Deterministically classifies differential magnitude into SnapshotChangeSeverity."""
+    abs_delta = abs(delta_pct)
+    if is_critical_metric and abs_delta >= 20.0:
+        return SnapshotChangeSeverity.CRITICAL
+    if abs_delta >= 30.0:
+        return SnapshotChangeSeverity.CRITICAL
+    if abs_delta >= 15.0:
+        return SnapshotChangeSeverity.MAJOR
+    if abs_delta >= 5.0:
+        return SnapshotChangeSeverity.MODERATE
+    return SnapshotChangeSeverity.MINOR
+
+
+def calculate_portfolio_momentum_grade(momentum_score: float) -> PortfolioMomentumGrade:
+    """Deterministically maps 0-100 compound momentum score to PortfolioMomentumGrade."""
+    if momentum_score >= 85.0:
+        return PortfolioMomentumGrade.ACCELERATING
+    if momentum_score >= 70.0:
+        return PortfolioMomentumGrade.POSITIVE
+    if momentum_score >= 50.0:
+        return PortfolioMomentumGrade.NEUTRAL
+    if momentum_score >= 30.0:
+        return PortfolioMomentumGrade.NEGATIVE
+    return PortfolioMomentumGrade.COLLAPSING
+
+
+def calculate_snapshot_checksum(payload: Dict[str, Any]) -> str:
+    """Deterministically computes SHA-256 hash of canonical JSON-serialized payload."""
+    import hashlib
+    import json
+    serialized = json.dumps(payload, sort_keys=True, default=str)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def verify_snapshot_checksum(payload: Dict[str, Any], expected_checksum: str) -> SnapshotIntegrityStatus:
+    """Verifies that the recalculated checksum matches the expected stored checksum."""
+    if not expected_checksum:
+        return SnapshotIntegrityStatus.NOT_VERIFIED
+    recalculated = calculate_snapshot_checksum(payload)
+    if recalculated == expected_checksum:
+        return SnapshotIntegrityStatus.VALID
+    return SnapshotIntegrityStatus.INVALID
+
+
+def calculate_rolling_stats(values: List[float]) -> Dict[str, float]:
+    """
+    Deterministically computes rolling window statistical metrics:
+    average, median, minimum, maximum, variance, volatility (CV), growth_rate.
+    """
+    import statistics
+
+    if not values:
+        return {
+            "average": 0.0,
+            "median": 0.0,
+            "minimum": 0.0,
+            "maximum": 0.0,
+            "variance": 0.0,
+            "volatility": 0.0,
+            "growth_rate": 0.0,
+        }
+
+    n = len(values)
+    avg_val = round(sum(values) / n, 2)
+    med_val = round(statistics.median(values), 2)
+    min_val = round(min(values), 2)
+    max_val = round(max(values), 2)
+
+    if n > 1:
+        var_val = round(statistics.variance(values), 2)
+        stdev_val = statistics.stdev(values)
+        volatility_val = round((stdev_val / max(1.0, abs(avg_val))) * 100.0, 2)
+    else:
+        var_val = 0.0
+        volatility_val = 0.0
+
+    # Growth rate from first to last in window
+    first_val = values[0]
+    last_val = values[-1]
+    if abs(first_val) > 1e-6:
+        growth_rate = round(((last_val - first_val) / abs(first_val)) * 100.0, 2)
+    else:
+        growth_rate = 100.0 if last_val > 0 else 0.0
+
+    return {
+        "average": avg_val,
+        "median": med_val,
+        "minimum": min_val,
+        "maximum": max_val,
+        "variance": var_val,
+        "volatility": volatility_val,
+        "growth_rate": growth_rate,
+    }
