@@ -18,6 +18,7 @@ import { ChatView } from './views/chat/ChatView';
 import { ReportsView } from './views/reports/ReportsView';
 import { OrganizationSettingsView } from './views/settings/OrganizationSettingsView';
 import { DatasetsView } from './views/datasets/DatasetsView';
+import { HomeView } from './views/home/HomeView';
 
 import './styles/globals.css';
 
@@ -28,8 +29,12 @@ export function App() {
         <DatasetProvider>
           <BrowserRouter>
             <Routes>
+              {/* Executive Landing Page & Command Center Showcase */}
+              <Route path="/" element={<HomeView />} />
+
+              {/* In-App Command Center Views */}
               <Route element={<AppShell />}>
-                <Route path="/" element={<DashboardView />} />
+                <Route path="/dashboard" element={<DashboardView />} />
                 <Route path="/metrics" element={<MetricsView />} />
                 <Route path="/diagnostics" element={<DiagnosticsView />} />
                 <Route path="/root-causes" element={<RootCausesView />} />
