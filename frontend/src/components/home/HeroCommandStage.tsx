@@ -3,180 +3,226 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
   Play, 
-  ShieldCheck, 
-  Cpu, 
   Activity, 
   TrendingUp, 
   AlertTriangle, 
   CheckCircle2, 
-  Layers,
-  Sparkles
+  Cpu, 
+  BarChart3, 
+  GitMerge, 
+  ShieldCheck
 } from 'lucide-react';
 
 export const HeroCommandStage: React.FC = () => {
   return (
-    <section className="relative pt-12 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center z-10">
+    <section className="hero-section-wrapper">
       
-      {/* Overhead Cinematic Spotlight and Lighting Cone */}
-      <div className="cinematic-spotlight" />
-      <div className="cinematic-beam" />
-
-      {/* Pill Badge */}
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/25 text-blue-400 text-xs font-semibold tracking-wider uppercase mb-6 z-10 shadow-sm backdrop-blur-md">
-        <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-        <span>Deterministic Executive Intelligence</span>
-      </div>
-
-      {/* Tagline Headline */}
-      <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-5xl leading-[1.1] mb-5 z-10">
-        Know What’s Happening.<br />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400">
-          Understand Why.
-        </span><br />
-        Decide What Comes Next.
-      </h1>
-
-      {/* High-Impact Executive Statement */}
-      <p className="text-lg sm:text-2xl font-medium text-gray-200 max-w-3xl mb-4 z-10">
-        Most platforms tell you what happened.<br className="hidden sm:inline" />
-        <span className="text-blue-300 font-semibold"> DecisionOS determines why it happened and calculates what to do next.</span>
-      </p>
-
-      {/* Description Subtext */}
-      <p className="text-sm sm:text-base text-gray-400 max-w-2xl mb-8 leading-relaxed z-10">
-        DecisionOS transforms business telemetry into explainable intelligence through deterministic KPI evaluation, causal root-cause discovery, and prioritized executive interventions — powered by DEX.
-      </p>
-
-      {/* Primary CTAs */}
-      <div className="flex flex-wrap items-center justify-center gap-4 mb-16 z-10">
-        <Link to="/dashboard" className="btn-primary-command">
-          <span>Launch Command Center</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-        <a href="#pipeline" className="btn-secondary-command">
-          <Play className="w-4 h-4 text-blue-400 fill-blue-400/30" />
-          <span>Explore Decision Flow</span>
-        </a>
-      </div>
-
-      {/* ======================================================================
-          Command Center Stage: DEX at Center + 4 Structured Telemetry Pods
-          ====================================================================== */}
-      <div className="pedestal-stage w-full">
+      <div className="hero-2col-layout">
         
-        <div className="command-center-stage-grid">
+        {/* ====================================================================
+            LEFT COLUMN (44%): Messaging, Tagline & Action CTAs
+            ==================================================================== */}
+        <div className="hero-left-column">
           
-          {/* 1. Top-Left Pod: Business Health */}
-          <div className="pod-top-left glass-panel p-4 text-left border-white/10 hover:border-emerald-500/40 transition-all animate-float-slow">
-            <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
-              <span>Business Health</span>
-              <Activity className="w-3.5 h-3.5 text-emerald-400" />
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold text-white tracking-tight">84</span>
-              <span className="text-xs text-gray-400">/ 100</span>
-            </div>
-            <div className="mt-2 text-[11px] text-emerald-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>Good Execution Status</span>
-            </div>
+          {/* Pill Badge */}
+          <div className="hero-badge-pill">
+            <Cpu className="w-3.5 h-3.5" style={{ color: '#2e90ff' }} />
+            <span>Executive Business Assistant</span>
           </div>
 
-          {/* 2. Top-Right Pod: Forecast Confidence */}
-          <div className="pod-top-right glass-panel p-4 text-left border-white/10 hover:border-blue-500/40 transition-all animate-float-slower">
-            <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
-              <span>Forecast Confidence</span>
-              <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-bold text-white tracking-tight">94%</span>
-            </div>
-            <div className="mt-2 text-[11px] text-blue-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-              <span>High Stability Index</span>
-            </div>
+          {/* Tagline Headline */}
+          <h1 className="hero-headline">
+            Know What’s Happening.<br />
+            Understand Why.<br />
+            Decide What Comes Next.
+          </h1>
+
+          {/* Description Paragraph */}
+          <p className="hero-description">
+            DecisionOS transforms business data into deterministic intelligence through KPI analysis, diagnostics, causal root cause discovery, forecasting, and explainable executive insights.
+          </p>
+
+          {/* Primary Action Buttons */}
+          <div className="hero-cta-group">
+            <Link to="/dashboard" className="btn-primary-hero">
+              <span>Start Analysis</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a href="#pipeline" className="btn-secondary-hero">
+              <Play className="w-3.5 h-3.5" style={{ fill: '#ffffff' }} />
+              <span>Watch Demo</span>
+            </a>
           </div>
 
-          {/* 3. Central Epistemic Pod: DEX Intelligence Core */}
-          <div className="pod-center-dex">
-            <div className="dex-core-card">
-              <div className="dex-avatar-halo">
-                <Cpu className="w-9 h-9 text-blue-400" />
+          {/* Trust Strip */}
+          <div className="hero-trust-strip">
+            <div className="trust-label">
+              Trusted by Analytical Leaders
+            </div>
+            <div className="trust-badges-grid">
+              <div className="trust-badge-item">
+                <BarChart3 className="w-3.5 h-3.5" style={{ color: '#2e90ff' }} />
+                <span>KPI Intelligence</span>
               </div>
-              <div className="text-xs font-semibold tracking-widest text-blue-400 uppercase mb-0.5">
-                Intelligence Core
+              <div className="trust-badge-item">
+                <GitMerge className="w-3.5 h-3.5" style={{ color: '#4edea3' }} />
+                <span>Root Cause Analysis</span>
               </div>
-              <div className="text-lg font-bold text-white tracking-tight">
-                DEX
+              <div className="trust-badge-item">
+                <TrendingUp className="w-3.5 h-3.5" style={{ color: '#c084fc' }} />
+                <span>Forecasting</span>
               </div>
-              <div className="text-xs text-gray-300 font-medium mt-1">
-                Executive Intelligence Partner
+              <div className="trust-badge-item">
+                <Cpu className="w-3.5 h-3.5" style={{ color: '#38bdf8' }} />
+                <span>DEX Partner</span>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-center gap-2 text-[11px] text-emerald-400 font-mono">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Deterministic DAG Active</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Bottom-Left Pod: Top Operational Risk */}
-          <div className="pod-bottom-left glass-panel p-4 text-left border-white/10 hover:border-amber-500/40 transition-all animate-float-slower">
-            <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
-              <span>Top Operational Risk</span>
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-            </div>
-            <div className="text-sm font-bold text-white truncate">
-              Retention Drag
-            </div>
-            <div className="mt-2 text-[11px] text-amber-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              <span>High Revenue Exposure</span>
-            </div>
-          </div>
-
-          {/* 5. Bottom-Right Pod: Recommended Executive Action */}
-          <div className="pod-bottom-right glass-panel p-4 text-left border-white/10 hover:border-cyan-500/40 transition-all animate-float-slow">
-            <div className="flex items-center justify-between text-xs text-gray-400 mb-1 font-medium">
-              <span>Recommended Action</span>
-              <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
-            </div>
-            <div className="text-sm font-bold text-white truncate">
-              Reallocation Plan
-            </div>
-            <div className="mt-2 text-[11px] text-cyan-400 font-medium flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-              <span>P1 Critical Intervention</span>
             </div>
           </div>
 
         </div>
 
-        {/* 3D Luminescent Pedestal Stage */}
-        <div className="stage-pedestal-platform hidden sm:block">
-          <div className="pedestal-top" />
-          <div className="pedestal-ring-glow" />
+        {/* ====================================================================
+            RIGHT COLUMN (56%): Dedicated Cinematic DEX Command Center Scene
+            ==================================================================== */}
+        <div className="hero-right-scene">
+          
+          <div className="dex-stage-wrapper">
+            
+            {/* 1. Single Overhead Spotlight Beam Centered on DEX */}
+            <div className="stage-spotlight-beam" />
+
+            {/* 2. Large Illuminated Circular Command Platform Beneath DEX */}
+            <div className="stage-circular-platform">
+              <div className="platform-outer-ring" />
+              <div className="platform-core-glow" />
+            </div>
+
+            {/* 3. Symmetrical 3-Column Radial Grid (6 Intelligence Cards Around DEX) */}
+            <div className="scene-layout-grid">
+              
+              {/* LEFT STACK (3 Cards) */}
+              <div className="scene-left-stack">
+                
+                {/* 1. Business Health Score */}
+                <div className="intelligence-card">
+                  <div className="card-header-row">
+                    <span>Business Health Score</span>
+                    <Activity className="w-3.5 h-3.5" style={{ color: '#4edea3' }} />
+                  </div>
+                  <div className="card-value-lg">
+                    82 <span style={{ fontSize: '11px', color: '#6b7280' }}>/ 100</span>
+                  </div>
+                  <div className="card-substatus" style={{ color: '#4edea3' }}>
+                    ● Stable Performance
+                  </div>
+                </div>
+
+                {/* 2. Revenue Growth */}
+                <div className="intelligence-card">
+                  <div className="card-header-row">
+                    <span>Revenue Trend</span>
+                    <TrendingUp className="w-3.5 h-3.5" style={{ color: '#2e90ff' }} />
+                  </div>
+                  <div className="card-value-lg">
+                    +12%
+                  </div>
+                  <div className="card-substatus" style={{ color: '#9ca3af' }}>
+                    vs. last period
+                  </div>
+                </div>
+
+                {/* 3. Operational Health */}
+                <div className="intelligence-card">
+                  <div className="card-header-row">
+                    <span>Operational Health</span>
+                    <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#38bdf8' }} />
+                  </div>
+                  <div className="card-value-lg">
+                    91 <span style={{ fontSize: '11px', color: '#6b7280' }}>/ 100</span>
+                  </div>
+                  <div className="card-substatus" style={{ color: '#38bdf8' }}>
+                    ● 783/783 Probes Green
+                  </div>
+                </div>
+
+              </div>
+
+              {/* CENTER: Visually Dominant DEX Card */}
+              <div className="dex-centerpiece-card">
+                <div className="dex-halo-avatar">
+                  <Cpu className="w-8 h-8" style={{ color: '#ffffff' }} />
+                </div>
+                <div className="dex-tag-badge">
+                  Executive Analyst
+                </div>
+                <h2 className="dex-title-name">
+                  DEX
+                </h2>
+                <div className="dex-sub-desc">
+                  DecisionOS Executive Analyst
+                </div>
+                <div className="dex-partner-label">
+                  Your Executive Intelligence Partner
+                </div>
+                <div className="dex-status-pill">
+                  <span className="pulse-dot" />
+                  <span>Telemetry Active</span>
+                </div>
+              </div>
+
+              {/* RIGHT STACK (3 Cards) */}
+              <div className="scene-right-stack">
+                
+                {/* 4. Forecast Confidence */}
+                <div className="intelligence-card">
+                  <div className="card-header-row">
+                    <span>Forecast Confidence</span>
+                    <CheckCircle2 className="w-3.5 h-3.5" style={{ color: '#2e90ff' }} />
+                  </div>
+                  <div className="card-value-lg">
+                    92%
+                  </div>
+                  <div className="card-substatus" style={{ color: '#2e90ff' }}>
+                    High Confidence
+                  </div>
+                </div>
+
+                {/* 5. Top Risk */}
+                <div className="intelligence-card">
+                  <div className="card-header-row">
+                    <span>Top Risk</span>
+                    <AlertTriangle className="w-3.5 h-3.5" style={{ color: '#fbbf24' }} />
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    Customer Retention
+                  </div>
+                  <div className="card-substatus" style={{ color: '#fbbf24' }}>
+                    High Revenue Impact
+                  </div>
+                </div>
+
+                {/* 6. Recommended Action */}
+                <div className="intelligence-card">
+                  <div className="card-header-row">
+                    <span>Recommended Action</span>
+                    <TrendingUp className="w-3.5 h-3.5" style={{ color: '#4edea3' }} />
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    Win-Back Campaign
+                  </div>
+                  <div className="card-substatus" style={{ color: '#4edea3' }}>
+                    Priority: High
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
-      </div>
-
-      {/* Trust & Precision Bar */}
-      <div className="mt-12 pt-8 border-t border-white/10 w-full max-w-4xl flex flex-wrap items-center justify-around gap-6 text-xs text-gray-400 font-medium">
-        <div className="flex items-center gap-2">
-          <span className="text-blue-400 font-bold">✓</span>
-          <span>100% Deterministic Calculations</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-emerald-400 font-bold">✓</span>
-          <span>Causal Root Cause DAG</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400 font-bold">✓</span>
-          <span>SHA-256 State Replay</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-cyan-400 font-bold">✓</span>
-          <span>783+ Automated Tests</span>
-        </div>
       </div>
 
     </section>
