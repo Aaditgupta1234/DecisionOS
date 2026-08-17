@@ -13,6 +13,7 @@
   overflow-x: hidden;
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
+  zoom: 0.8;
 }
 
 .page-root *, .page-root *::before, .page-root *::after {
