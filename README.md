@@ -25,7 +25,7 @@
 | Metric | Value |
 | :--- | :--- |
 | **Backend Status** | **Feature Complete Through Phase 12.9** |
-| **Remaining Backend** | **Phase 13 – Production Governance & Operational Intelligence** |
+| **Remaining Backend Work** | **Phase 13 – Production Governance, Operational Intelligence & Alert Monitoring** |
 | **Completed Phases** | **Phase 0 – Phase 12.9 (13 Major Milestone Phases)** |
 | **Automated Tests** | **771+ Tests (100% Pass Rate across Unit, Integration & Regression)** |
 | **REST API Endpoints** | **100+ Production-Ready Endpoints** |
@@ -50,9 +50,40 @@
 
 ---
 
+## 📐 Architecture Metrics
+
+| Metric | Value |
+| :--- | :--- |
+| **Phases Completed** | **13 Major Phases (Phase 0 – Phase 12.9)** |
+| **Deterministic Intelligence Engines** | **25+ Specialized Engines** |
+| **REST API Endpoints** | **100+ Endpoints** |
+| **Automated Test Cases** | **771+ Tests (100% Passing)** |
+| **Database Tables & Models** | **40+ SQLAlchemy 2.0 Models** |
+| **Pydantic Schemas** | **80+ Domain Schemas** |
+| **Service & Orchestration Classes** | **60+ Services** |
+
+---
+
+## 💼 Why This Project Matters (Portfolio Value)
+
+DecisionOS demonstrates mastery across real-world enterprise engineering domains:
+
+- **Enterprise Backend Architecture**: Clean modular architecture with strict separation of concerns.
+- **Multi-Tenant SaaS Design**: Database-level organization boundaries and multi-role access enforcement.
+- **Complex Domain Modeling**: Comprehensive schemas linking operational events, KPIs, programs, and governance.
+- **Deterministic Analytics Systems**: 100% explainable mathematical models with zero hallucination risk.
+- **Explainable Decision Intelligence**: Causal graph traversal, priority ranking, and multi-factor decision drivers.
+- **Historical State Replay & Auditability**: Cryptographic SHA-256 snapshot integrity and time-series replay.
+- **Production-Grade Testing Practices**: 771+ automated tests with continuous regression verification.
+- **Executive Reporting & Governance Workflows**: Stage-gate review compliance, action aging, and realization tracking.
+
+> **Result**: A platform significantly beyond traditional CRUD applications, representative of high-scale enterprise software engineering.
+
+---
+
 ## 🔄 What DecisionOS Actually Does
 
-DecisionOS converts raw transactional data into high-confidence executive actions through a continuous, auditable pipeline:
+DecisionOS converts raw operational data into high-confidence executive actions through an auditable pipeline:
 
 ```
 Business Data Upload (CSV / JSON)
@@ -301,6 +332,21 @@ AI is reserved exclusively for future **narrative synthesis layers**, strictly g
 
 ---
 
+## 🚫 Explicit Design Boundaries (What DecisionOS Does NOT Do)
+
+To guarantee 100% auditability and institutional trust, DecisionOS intentionally excludes:
+
+- ❌ **Machine Learning Predictions**: No statistical model drift or opaque probability weights.
+- ❌ **Forecasting Estimators**: No speculative predictive regressions.
+- ❌ **Monte Carlo Simulations**: No randomized stochastic approximations.
+- ❌ **Autonomous Decision Execution**: System remains strictly descriptive and decision-support oriented.
+- ❌ **Black-Box AI Scoring**: Zero unexplainable neural network rankings.
+- ❌ **Unexplainable Recommendations**: Every action requires 100% driver coverage and reason codes.
+
+> **Guarantee**: Every output is generated through deterministic mathematics, business rules, and auditable calculations.
+
+---
+
 ## 📋 Core Capability Matrix
 
 | Domain | Status | Key Enterprise Capabilities |
@@ -359,7 +405,7 @@ DecisionOS demonstrates mastery in modern production backend and system design:
 - **Modern Asynchronous Stack**: High-concurrency FastAPI combined with SQLAlchemy 2.0 async sessions and Alembic.
 - **Deterministic Decision Intelligence**: Causal graph traversal, dense ranking, and multi-factor mathematical models.
 - **Cryptographic Auditability**: SHA-256 immutable snapshot hashing, lineage ancestry tracking, and lossless historical state replay.
-- **Complete Strategic Execution Lifecycle**: From raw dataset ingestion $\to$ KPI diagnostics $\to$ stage-gate governance $\to$ benefits realization $\to$ portfolio optimization.
+- **Complete Strategic Execution Lifecycle**: From raw dataset ingestion $\to$ KPI diagnostics $\to$ stage-gate governance $\to$ benefits realization $\to$ portfolio balance intelligence.
 - **Comprehensive Quality Assurance**: 771+ automated tests with 100% pass rate across unit, service, integration, and API suites.
 
 ---
@@ -391,9 +437,13 @@ DecisionOS/
 
 ### 🔗 Quick Links
 - [System Scale Snapshot](#-system-scale-snapshot)
+- [Architecture Metrics](#-architecture-metrics)
+- [Why This Project Matters](#-why-this-project-matters-portfolio-value)
 - [Key Features Grid](#-key-features-grid)
 - [Why DecisionOS Is Different](#-why-decisionos-is-different)
 - [Executive Demo Scenario](#-executive-demo-scenario-30-second-walkthrough)
+- [Deterministic Intelligence Principles](#-deterministic-intelligence-principles)
+- [Explicit Design Boundaries](#-explicit-design-boundaries-what-decisionos-does-not-do)
 - [Core Capability Matrix](#-core-capability-matrix)
 - [Strategic Analytics (Phase 12.7)](#1-strategic-analytics--executive-intelligence-phase-127)
 - [Historical Snapshots (Phase 12.8)](#2-historical-snapshots--time-series-intelligence-phase-128)
@@ -406,7 +456,7 @@ DecisionOS/
 
 ### Current Status
 - **Backend**: **Feature Complete Through Phase 12.9**
-- **Remaining Backend Milestone**: **Phase 13 – Production Governance, Operational Intelligence & Alert Monitoring**
+- **Remaining Backend Work**: **Phase 13 – Production Governance, Operational Intelligence & Alert Monitoring**
 - **Frontend**: **Dashboard Integration In Progress**
 
 ### Platform Roadmap
