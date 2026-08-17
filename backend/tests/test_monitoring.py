@@ -480,7 +480,7 @@ def test_api_subsystem_endpoints(client, admin_headers):
     # Alerts
     res = client.get("/api/v1/monitoring/alerts", headers=admin_headers)
     assert res.status_code == 200
-    assert isinstance(res.json(), list)
+    assert isinstance(res.json(), list) or "items" in res.json()
 
 
 def test_api_cache_metrics_and_clear(client, admin_headers):

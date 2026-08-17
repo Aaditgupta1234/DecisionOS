@@ -10,8 +10,29 @@ from app.monitoring.schemas.monitoring import (
     ScheduleOperationalSummary,
     SystemHealthSummary,
 )
+from app.monitoring.schemas.production_monitoring import (
+    AcknowledgeAlertRequest,
+    AlertDistributionItem,
+    AlertEvaluationResponse,
+    ExecutiveEscalationItem,
+    ExecutiveEscalationQueueResponse,
+    ExecutiveMonitoringDashboardResponse,
+    GovernanceDashboardResponse,
+    MetricAuditSummary,
+    MonitoringAlertBase,
+    MonitoringAlertCreate,
+    MonitoringAlertListResponse,
+    MonitoringAlertResponse,
+    OperationalHealthMetricsResponse,
+    OperationalIntelligenceReportResponse,
+    PortfolioMonitoringDashboardResponse,
+    ResolveAlertRequest,
+    SnapshotLineageDepthResponse,
+    SuppressAlertRequest,
+)
 
 __all__ = [
+    # Legacy Phase 10.5
     "AuditOperationalSummary",
     "ComponentHealth",
     "JobOperationalSummary",
@@ -20,4 +41,23 @@ __all__ = [
     "OperationalDashboardResponse",
     "ScheduleOperationalSummary",
     "SystemHealthSummary",
+    # Phase 13
+    "MonitoringAlertBase",
+    "MonitoringAlertCreate",
+    "MonitoringAlertResponse",
+    "MonitoringAlertListResponse",
+    "AcknowledgeAlertRequest",
+    "ResolveAlertRequest",
+    "SuppressAlertRequest",
+    "AlertEvaluationResponse",
+    "AlertDistributionItem",
+    "OperationalIntelligenceReportResponse",
+    "ExecutiveEscalationItem",
+    "ExecutiveEscalationQueueResponse",
+    "OperationalHealthMetricsResponse",
+    "MetricAuditSummary",
+    "SnapshotLineageDepthResponse",
+    "ExecutiveMonitoringDashboardResponse",
+    "GovernanceDashboardResponse",
+    "PortfolioMonitoringDashboardResponse",
 ]

@@ -55,7 +55,7 @@ from app.schedules.models import Schedule, ScheduleExecution
 from app.schedules.constants import ScheduleType, ExecutionStatus
 from app.governance.models import GovernancePolicy
 from app.admin.models import OrganizationSettings
-from app.portfolio.models import PortfolioSnapshot, WorkspaceBenchmark
+from app.models.monitoring_alert import MonitoringAlert
 from app.execution.models import (
     ExecutionSnapshot,
     GovernanceAction,
@@ -75,6 +75,7 @@ from app.execution.models import (
 )
 
 __all__ = [
+    "MonitoringAlert",
     "Base",
     "TimestampMixin",
     "User",

@@ -12,8 +12,8 @@
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/SQLAlchemy-2.0-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white" alt="SQLAlchemy 2.0" />
-  <img src="https://img.shields.io/badge/Platform_Tests-771%2F771_Passed_(100%25)-brightgreen?style=for-the-badge&logo=pytest&logoColor=white" alt="Platform Tests 771/771 Passed" />
-  <img src="https://img.shields.io/badge/Architecture-Phases_0--12.9_Verified-blueviolet?style=for-the-badge" alt="Phases 0-12.9 Verified" />
+  <img src="https://img.shields.io/badge/Platform_Tests-783%2F783_Passed_(100%25)-brightgreen?style=for-the-badge&logo=pytest&logoColor=white" alt="Platform Tests 783/783 Passed" />
+  <img src="https://img.shields.io/badge/Architecture-Phases_0--13_Verified-blueviolet?style=for-the-badge" alt="Phases 0-13 Verified" />
   <img src="https://img.shields.io/badge/Multi--Tenant-Strictly_Isolated-orange?style=for-the-badge" alt="Multi-Tenant" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License MIT" />
 </p>
@@ -24,10 +24,9 @@
 
 | Metric | Value |
 | :--- | :--- |
-| **Backend Status** | **Feature Complete Through Phase 12.9** |
-| **Remaining Backend Work** | **Phase 13 – Production Governance, Operational Intelligence & Alert Monitoring** |
-| **Completed Phases** | **Phase 0 – Phase 12.9 (13 Major Milestone Phases)** |
-| **Automated Tests** | **771+ Tests (100% Pass Rate across Unit, Integration & Regression)** |
+| **Backend Status** | **100% Complete & Production Hardened (Phases 0 – 13 Verified)** |
+| **Completed Phases** | **Phase 0 – Phase 13 (14 Major Milestone Phases Complete)** |
+| **Automated Tests** | **783+ Tests (100% Pass Rate across Unit, Integration & Regression)** |
 | **REST API Endpoints** | **100+ Production-Ready Endpoints** |
 | **Deterministic Engines** | **25+ Specialized Mathematical Intelligence Engines** |
 | **Database Models** | **40+ Normalized SQLAlchemy 2.0 Models** |
@@ -45,7 +44,8 @@
 ✓ Multi-Tenant Enterprise Architecture (Strict Database & RBAC Isolation)
 ✓ Immutable Historical Snapshots & Lossless State Replay
 ✓ Executive Decision Support & Portfolio Balance Intelligence
-✓ 771+ Automated Unit, Integration & Regression Tests (100% Pass Rate)
+✓ Production Governance, Idempotent Alerting & Executive Escalation
+✓ 783+ Automated Unit, Integration & Regression Tests (100% Pass Rate)
 ```
 
 ---
@@ -54,10 +54,10 @@
 
 | Metric | Value |
 | :--- | :--- |
-| **Phases Completed** | **13 Major Phases (Phase 0 – Phase 12.9)** |
+| **Phases Completed** | **14 Major Phases (Phase 0 – Phase 13 Complete)** |
 | **Deterministic Intelligence Engines** | **25+ Specialized Engines** |
 | **REST API Endpoints** | **100+ Endpoints** |
-| **Automated Test Cases** | **771+ Tests (100% Passing)** |
+| **Automated Test Cases** | **783+ Tests (100% Passing)** |
 | **Database Tables & Models** | **40+ SQLAlchemy 2.0 Models** |
 | **Pydantic Schemas** | **80+ Domain Schemas** |
 | **Service & Orchestration Classes** | **60+ Services** |
@@ -74,8 +74,8 @@ DecisionOS demonstrates mastery across real-world enterprise engineering domains
 - **Deterministic Analytics Systems**: 100% explainable mathematical models with zero hallucination risk.
 - **Explainable Decision Intelligence**: Causal graph traversal, priority ranking, and multi-factor decision drivers.
 - **Historical State Replay & Auditability**: Cryptographic SHA-256 snapshot integrity and time-series replay.
-- **Production-Grade Testing Practices**: 771+ automated tests with continuous regression verification.
-- **Executive Reporting & Governance Workflows**: Stage-gate review compliance, action aging, and realization tracking.
+- **Production-Grade Testing Practices**: 783+ automated tests with continuous regression verification.
+- **Production Governance & Alert Monitoring**: Idempotent alert evaluation, fingerprint deduplication, and executive escalations.
 
 > **Result**: A platform significantly beyond traditional CRUD applications, representative of high-scale enterprise software engineering.
 
@@ -101,6 +101,8 @@ Governance Stage-Gates & Benefits Realization
 Historical Intelligence (Immutable Snapshots & Replay)
         ↓
 Executive Decision Support & Portfolio Balance Intelligence
+        ↓
+Production Governance & Operational Monitoring (Phase 13)
 ```
 
 ---
@@ -117,6 +119,7 @@ Executive Decision Support & Portfolio Balance Intelligence
 | **Value** | Expected vs Realized Benefits, Risk-Adjusted ROI, Value Efficiency Ratios |
 | **Historical** | Immutable Snapshots, SHA-256 Checksums, Lineage Ancestry, Lossless Replay |
 | **Executive** | Decision Readiness Score, Actionability Index, Intervention Queue, Portfolio Balance |
+| **Monitoring** | Production Governance, Idempotent Alerting, Operational Health Score, Escalations |
 
 ---
 
@@ -132,6 +135,7 @@ DecisionOS empowers executive leadership and PMO organizations to answer fundame
 - ✓ **How has portfolio performance evolved over time?** (Rolling statistical windows and momentum grades)
 - ✓ **Which initiatives should receive additional investment?** (Expected value ranking and investment capacity)
 - ✓ **Is the portfolio structurally balanced?** (Concentration dispersion, Pareto ratios, and SPOFs)
+- ✓ **Are operational and strategic risks escalating in real-time?** (Phase 13 Alerting & Escalation Queue)
 
 ---
 
@@ -148,8 +152,9 @@ DecisionOS delivers the complete decision-making lifecycle:
 5. **Tracks execution governance** across milestones, critical paths, and stage gates.
 6. **Preserves historical intelligence** with cryptographic snapshot ancestry and lossless replay.
 7. **Generates deterministic executive recommendations** with 100% explainable mathematical drivers.
+8. **Continuously monitors production governance** with idempotent alert evaluation and executive escalations.
 
-> **Core Guarantee**: Every score, delta, ranking, and recommended action is explainable, auditable, and reproducible.
+> **Core Guarantee**: Every score, delta, ranking, alert, and recommended action is explainable, auditable, and reproducible.
 
 ---
 
@@ -168,12 +173,14 @@ An enterprise uploads operational sales and fulfillment data:
 4. **Strategic Analytics**: Flags associated program maturity drag and outcome realization lag.
 5. **Historical Engine**: Compares current metrics against the Q1 Baseline Snapshot (identifies a -14.2 point momentum collapse).
 6. **Decision Support Engine**: Evaluates decision score, expected value, and portfolio structural exposure.
+7. **Production Monitoring Engine**: Emits an idempotent, deduplicated `CRITICAL` operational alert and enters the Executive Escalation Queue.
 
 ### 3. Executive Decision Output
 ```json
 {
   "initiative_name": "Supply Chain Modernization & Fleet Routing",
   "decision_priority": "CRITICAL",
+  "escalation_level": "EXECUTIVE_ESCALATION",
   "impact_tier": "TRANSFORMATIONAL",
   "recommended_action": "ESCALATE",
   "recommendation_reason_codes": [
@@ -182,8 +189,8 @@ An enterprise uploads operational sales and fulfillment data:
     "HIGH_STRATEGIC_VALUE"
   ],
   "decision_score": 84.5,
-  "decision_confidence_score": 92.0,
-  "decision_confidence_level": "HIGH",
+  "alert_confidence_score": 95.0,
+  "alert_confidence_level": "HIGH",
   "metrics": {
     "execution_health": 41.0,
     "risk_score": 82.0,
@@ -228,7 +235,7 @@ An enterprise uploads operational sales and fulfillment data:
 - **Role-Based Access Control (RBAC)**: Admin, Analyst, Viewer roles
 
 ### Testing & Verification
-- **Pytest**: 771+ automated tests with 100% pass rate
+- **Pytest**: 783+ automated tests with 100% pass rate
 - **AnyIO**: Asynchronous integration test harness
 - **Starlette TestClient**: End-to-end HTTP API validation
 
@@ -246,7 +253,7 @@ An enterprise uploads operational sales and fulfillment data:
 ┌────────────────────────────────────▼────────────────────────────────────┐
 │         FastAPI Presentation Layer (100+ Endpoints, JWT & RBAC)         │
 ├─────────────────────────────────────────────────────────────────────────┤
-│    Execution    │   Diagnostics   │   Strategic   │     Snapshots   │ Auth & Tenant │
+│    Execution    │   Diagnostics   │   Strategic   │     Snapshots   │ Monitoring & Gov│
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │
 ┌────────────────────────────────────▼────────────────────────────────────┐
@@ -261,6 +268,7 @@ An enterprise uploads operational sales and fulfillment data:
 │ • Health & Risk Engines      • Governance Engine      • ROI Engine      │
 │ • Strategic Analytics Engine • Snapshot Replay Engine • Decision Engine │
 │ • Investment Priority Engine • Portfolio Balance      • Intervention    │
+│ • Alert Rule Engine          • Operational Health     • Escalation      │
 └────────────────────────────────────┬────────────────────────────────────┘
                                      │
 ┌────────────────────────────────────▼────────────────────────────────────┐
@@ -308,6 +316,12 @@ flowchart TD
         R --> S[5-Tier Executive Intervention Queue]
         S --> T[Portfolio Balance & Strategic Exposure]
     end
+
+    subgraph Monitoring["7. Production Governance & Alerting (Phase 13)"]
+        T --> U[Idempotent Alert Rule Engine]
+        U --> V[Executive Escalation Queue]
+        V --> W[Normalized Operational Health Score 0-100]
+    end
 ```
 
 ---
@@ -316,7 +330,7 @@ flowchart TD
 
 DecisionOS adheres to a strict, non-negotiable architectural standard:
 
-> **All prioritization, health scoring, risk modeling, portfolio balancing, investment ranking, intervention categorization, and executive recommendations are calculated using deterministic mathematical algorithms and business rules.**
+> **All prioritization, health scoring, risk modeling, portfolio balancing, investment ranking, alert generation, intervention categorization, and executive recommendations are calculated using deterministic mathematical algorithms and business rules.**
 
 ### Zero-AI Policy in Calculations
 AI/LLM models are strictly prohibited from:
@@ -324,7 +338,7 @@ AI/LLM models are strictly prohibited from:
 - Ranking initiatives or programs
 - Computing investment priorities
 - Determining portfolio balance status
-- Generating intervention or restructuring recommendations
+- Generating alert rules, severities, or intervention recommendations
 - Calculating risk exposure or dependency exposure
 
 ### The Role of AI in DecisionOS
@@ -341,7 +355,7 @@ To guarantee 100% auditability and institutional trust, DecisionOS intentionally
 - ❌ **Monte Carlo Simulations**: No randomized stochastic approximations.
 - ❌ **Autonomous Decision Execution**: System remains strictly descriptive and decision-support oriented.
 - ❌ **Black-Box AI Scoring**: Zero unexplainable neural network rankings.
-- ❌ **Unexplainable Recommendations**: Every action requires 100% driver coverage and reason codes.
+- ❌ **Unexplainable Recommendations & Alerts**: Every action requires 100% driver coverage, reason codes, and deterministic fingerprints.
 
 > **Guarantee**: Every output is generated through deterministic mathematics, business rules, and auditable calculations.
 
@@ -366,6 +380,7 @@ To guarantee 100% auditability and institutional trust, DecisionOS intentionally
 | **State Replay Engine** | ✅ | Lossless point-in-time state reconstruction, checksum verification (Phase 12.8) |
 | **Executive Decision Support** | ✅ | Decision Readiness, Actionability Index, Intervention Queues (Phase 12.9) |
 | **Portfolio Balance Intelligence** | ✅ | Investment prioritization, structural balance, strategic exposure (Phase 12.9) |
+| **Production Governance & Alerting** | ✅ | Idempotent alerts, deduplication, 4-tier escalations, operational health (Phase 13) |
 | **AI Narrative Layer** | 🔄 *Planned* | Telemetry-grounded executive narrative synthesis |
 | **Frontend UI Integration** | 🔄 *In Progress* | Modern React 19 / TypeScript / Vite analytics dashboard |
 
@@ -395,6 +410,14 @@ To guarantee 100% auditability and institutional trust, DecisionOS intentionally
 - **5-Tier Executive Intervention Queue**: Segmented into Critical Escalations, Stabilization, Acceleration, Restructure, and Monitored pools with composite execution pressure ratings.
 - **Portfolio Structural Balance**: Concentration dispersion metrics, Pareto ratios, single point of failure (SPOF) counts, and headline strategic exposure.
 
+### 4. Production Governance, Operational Intelligence & Alerting (Phase 13)
+- **Idempotent Alert Rule Engine**: Deterministic rule evaluation generating candidate alerts with SHA-256 fingerprints, preventing evaluation alert spam.
+- **Alert Occurrence & Temporal Tracking**: Tracks `occurrence_count`, `first_triggered_at`, `last_triggered_at`, and computed `alert_age_days`.
+- **Alert Confidence Scoring**: Empirical score ($0\text{--}100$) derived from metric coverage, snapshot completeness, and data quality.
+- **4-Tier Executive Escalation Queue**: Prioritizes `EXECUTIVE_ESCALATION`, `EXECUTIVE_REVIEW`, `ACTION_REQUIRED`, and `WATCH` with multi-key tie-breaking.
+- **Exact 5-Factor Operational Health Index**: Normalized composite score ($0\text{--}100$) derived from alert penalties, governance score, risk posture, data quality, and portfolio balance.
+- **Snapshot Lineage Depth Topology**: Recursive DAG traversal computing lineage depth and root baseline ancestry.
+
 ---
 
 ## 🏆 Enterprise Engineering & Resume Highlights
@@ -405,8 +428,8 @@ DecisionOS demonstrates mastery in modern production backend and system design:
 - **Modern Asynchronous Stack**: High-concurrency FastAPI combined with SQLAlchemy 2.0 async sessions and Alembic.
 - **Deterministic Decision Intelligence**: Causal graph traversal, dense ranking, and multi-factor mathematical models.
 - **Cryptographic Auditability**: SHA-256 immutable snapshot hashing, lineage ancestry tracking, and lossless historical state replay.
-- **Complete Strategic Execution Lifecycle**: From raw dataset ingestion $\to$ KPI diagnostics $\to$ stage-gate governance $\to$ benefits realization $\to$ portfolio balance intelligence.
-- **Comprehensive Quality Assurance**: 771+ automated tests with 100% pass rate across unit, service, integration, and API suites.
+- **Complete Strategic Execution Lifecycle**: From raw dataset ingestion $\to$ KPI diagnostics $\to$ stage-gate governance $\to$ benefits realization $\to$ portfolio balance $\to$ operational alert management.
+- **Comprehensive Quality Assurance**: 783+ automated tests with 100% pass rate across unit, service, integration, and API suites.
 
 ---
 
@@ -417,6 +440,7 @@ DecisionOS/
 ├── backend/
 │   ├── app/
 │   │   ├── api/          # 100+ REST API routing and dependencies
+│   │   ├── monitoring/   # Production governance, alert rule engine & health
 │   │   ├── execution/    # Strategic execution, snapshots & decision support
 │   │   ├── diagnostics/  # Diagnostic rules & finding repository
 │   │   ├── causal/       # Causal root cause analysis DAG
@@ -425,7 +449,7 @@ DecisionOS/
 │   │   ├── tenant/       # Multi-tenant context & security
 │   │   ├── database/     # SQLAlchemy 2.0 session & migrations
 │   │   └── models/       # 40+ database models
-│   └── tests/            # 771+ automated unit and integration tests
+│   └── tests/            # 783+ automated unit and integration tests
 ├── frontend/
 │   ├── src/
 │   │   ├── components/   # Modular UI components & design system
@@ -448,6 +472,7 @@ DecisionOS/
 - [Strategic Analytics (Phase 12.7)](#1-strategic-analytics--executive-intelligence-phase-127)
 - [Historical Snapshots (Phase 12.8)](#2-historical-snapshots--time-series-intelligence-phase-128)
 - [Executive Decision Support (Phase 12.9)](#3-executive-decision-support--portfolio-balance-intelligence-phase-129)
+- [Production Governance & Alerting (Phase 13)](#4-production-governance-operational-intelligence--alerting-phase-13)
 - [Quickstart Guide](#-quickstart--local-setup)
 
 ---
@@ -455,9 +480,8 @@ DecisionOS/
 ## 🗺️ Current Status & Product Roadmap
 
 ### Current Status
-- **Backend**: **Feature Complete Through Phase 12.9**
-- **Remaining Backend Work**: **Phase 13 – Production Governance, Operational Intelligence & Alert Monitoring**
-- **Frontend**: **Dashboard Integration In Progress**
+- **Backend Status**: **100% Feature Complete & Production Hardened (Phases 0 – 13 Complete)**
+- **Frontend Status**: **Dashboard UI Integration In Progress**
 
 ### Platform Roadmap
 - [x] **Phase 0–3**: Foundation, Ingestion, KPI Engine & Health Scoring
@@ -468,7 +492,7 @@ DecisionOS/
 - [x] **Phase 12.7**: Strategic Portfolio Analytics & Executive Intelligence
 - [x] **Phase 12.8**: Historical Snapshots, Time-Series Intelligence & State Replay
 - [x] **Phase 12.9**: Deterministic Executive Decision Support & Portfolio Balance Intelligence
-- [ ] **Phase 13**: Production Governance, Operational Intelligence & Alert Monitoring
+- [x] **Phase 13**: Production Governance, Operational Intelligence & Alert Monitoring
 - [ ] **Phase 14**: Telemetry-Grounded AI Narrative Synthesis Layer
 - [ ] **Phase 15**: Complete Frontend Dashboard UI Integration
 
@@ -508,7 +532,7 @@ uvicorn app.main:app --reload --port 8000
 
 ### 2. Run Automated Test Suite
 ```bash
-# Run all 771+ automated tests
+# Run all 783+ automated tests
 pytest -v
 ```
 
