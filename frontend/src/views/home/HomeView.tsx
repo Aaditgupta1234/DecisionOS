@@ -16,8 +16,7 @@ import {
   ArrowUpRight,
   ShieldCheck,
   CheckCircle2,
-  Server,
-  Layers
+  Check
 } from 'lucide-react';
 import '../../styles/home.css';
 
@@ -57,7 +56,7 @@ export const HomeView: React.FC = () => {
       <section className="hero-wrapper">
         <div className="page-container hero-grid">
           
-          {/* LEFT COLUMN (45%): Executive Positioning & Story */}
+          {/* LEFT COLUMN (46%): Executive Positioning & Story */}
           <div>
             <div className="hero-badge">
               EXECUTIVE BUSINESS ASSISTANT
@@ -92,43 +91,41 @@ export const HomeView: React.FC = () => {
               </a>
             </div>
 
+            {/* Enterprise Trust Strip (Recruiter Gold) */}
             <div className="hero-trust-bar">
-              <div className="trust-title">
-                TRUSTED BY ANALYTICAL LEADERS
-              </div>
-              <div className="trust-items">
+              <div className="trust-items-row">
                 <div className="trust-item">
-                  <BarChart2 size={13} style={{ color: '#B5BAC4' }} />
-                  <span>KPI Intelligence</span>
+                  <Check size={14} style={{ color: '#FFFFFF' }} />
+                  <span>783+ Automated Tests</span>
                 </div>
                 <div className="trust-item">
-                  <GitMerge size={13} style={{ color: '#B5BAC4' }} />
-                  <span>Root Cause Analysis</span>
+                  <Check size={14} style={{ color: '#FFFFFF' }} />
+                  <span>100+ API Endpoints</span>
                 </div>
                 <div className="trust-item">
-                  <TrendingUp size={13} style={{ color: '#B5BAC4' }} />
-                  <span>Forecasting Engine</span>
+                  <Check size={14} style={{ color: '#FFFFFF' }} />
+                  <span>25+ Intelligence Engines</span>
                 </div>
                 <div className="trust-item">
-                  <Cpu size={13} style={{ color: '#B5BAC4' }} />
-                  <span>DEX Core</span>
+                  <Check size={14} style={{ color: '#FFFFFF' }} />
+                  <span>100% Deterministic</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT COLUMN (55%): Vertical Axis (Spotlight -> DEX -> Pedestal) */}
+          {/* RIGHT COLUMN (54%): Vertical Axis (Spotlight -> DEX -> Pedestal) */}
           <div className="hero-stage">
             
-            {/* 1. Overhead White-Gray Spotlight Beam (12% Opacity) */}
+            {/* 1. Overhead White-Gray Spotlight Beam (18% Opacity) */}
             <div className="hero-spotlight" />
 
-            {/* 2. 3D Metallic Graphite Pedestal Platform Beneath DEX */}
+            {/* 2. 3D Metallic Graphite Pedestal Platform (500px) */}
             <div className="stage-pedestal">
               <div className="pedestal-disc" />
             </div>
 
-            {/* 3. Central Standalone 3D Spline Robot + 4 Symmetrical Telemetry Cards */}
+            {/* 3. Central Standalone 3D Spline Robot + Symmetrical Telemetry Grid */}
             <div className="stage-cards-layout">
               
               {/* TOP-LEFT: Business Health Score */}
@@ -161,7 +158,7 @@ export const HomeView: React.FC = () => {
                 </div>
               </div>
 
-              {/* CENTERPIECE: Standalone Interactive 3D Spline Robot atop Pedestal */}
+              {/* CENTERPIECE: Dominant Standalone 3D Spline Robot on Pedestal */}
               <div className="dex-bot-standalone">
                 <iframe 
                   src="https://my.spline.design/genkubgreetingrobot-5exzcKZ24el7lb1Perqf1bkP/" 
