@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DecisionOS Flagship Homepage — Pure Executive Monochrome Theme
+   DecisionOS Flagship Homepage — Deterministic Executive Intelligence Theme
    Inspired by Apple, Palantir Foundry, Linear, Bloomberg Terminal
    ========================================================================== */
 
@@ -114,8 +114,8 @@
 /* 3. Hero Section (Strict 2-Column Composition) */
 .hero-wrapper {
   position: relative;
-  padding: 16px 0 140px 0;
-  min-height: 800px;
+  padding: 16px 0 130px 0;
+  min-height: 780px;
   display: flex;
   align-items: flex-start;
 }
@@ -130,44 +130,44 @@
 
 /* Left Hero Column */
 .hero-left-column {
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 4px;
   background: #0D0F13;
   border: 1px solid #22262E;
   color: #B5BAC4;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .hero-headline {
-  font-size: 72px;
+  font-size: clamp(56px, 4.8vw, 64px);
   font-weight: 800;
   line-height: 1.05;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
   color: #FFFFFF;
-  margin: 0 0 32px 0;
-  max-width: 650px;
+  margin: 0 0 28px 0;
+  max-width: 620px;
 }
 
 .hero-value-prop {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.55;
   color: #E8E8E8;
-  padding: 24px;
+  padding: 20px 24px;
   border-left: 2px solid #2E90FF;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.025);
   border-radius: 0 8px 8px 0;
-  margin: 0 0 32px 0;
+  margin: 0 0 28px 0;
   max-width: 540px;
 }
 
@@ -181,7 +181,7 @@
   font-size: 15px;
   line-height: 1.7;
   color: #B5BAC4;
-  margin: 0 0 36px 0;
+  margin: 0 0 32px 0;
   max-width: 520px;
 }
 
@@ -189,7 +189,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .btn-start-analysis {
@@ -233,18 +233,25 @@
   border-color: rgba(255, 255, 255, 0.25);
 }
 
+.hero-traceability-subtext {
+  font-size: 12px;
+  color: #727A86;
+  font-family: monospace;
+  margin-bottom: 24px;
+}
+
 /* Recruiter Trust Strip */
 .hero-trust-bar {
   border-top: 1px solid #16181D;
   padding-top: 18px;
-  max-width: 560px;
+  max-width: 580px;
 }
 
 .trust-items-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 18px;
   font-size: 13px;
   color: #B5BAC4;
   font-weight: 500;
@@ -253,12 +260,6 @@
 .trust-dot {
   color: #727A86;
   margin-right: 4px;
-}
-
-.trust-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 /* Right Hero Visual Stage (Vertical Axis: Spotlight -> DEX -> Pedestal) */
@@ -291,13 +292,13 @@
   z-index: 1;
 }
 
-/* 3D Metallic Graphite Pedestal Platform (540px wide, 90px high) */
+/* 3D Metallic Graphite Pedestal Platform (560px wide, 90px high) */
 .stage-pedestal {
   position: absolute;
   bottom: 45px;
   left: 50%;
   transform: translateX(-50%);
-  width: 540px;
+  width: 560px;
   height: 90px;
   z-index: 2;
   perspective: 500px;
@@ -326,9 +327,9 @@
 /* Dominant Standalone 3D Robot atop Pedestal (Watermark Hidden) */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 45px;
+  bottom: 40px;
   left: 50%;
-  transform: translateX(-50%) scale(1.18);
+  transform: translateX(-50%) translateY(15px) scale(1.18);
   width: 440px;
   height: 440px;
   z-index: 10;
@@ -348,10 +349,10 @@
   pointer-events: auto;
 }
 
-/* 4 Structured Telemetry Cards (Symmetrical 2x2 Grid with Equal min-height) */
+/* 4 Structured Telemetry Cards (Symmetrical 2x2 Grid with Dominant Metric Hierarchy) */
 .stage-card {
   position: absolute;
-  width: 205px;
+  width: 210px;
   min-height: 120px;
   background: #0D0F13;
   border: 1px solid #22262E;
@@ -371,34 +372,41 @@
   transform: translateY(-2px);
 }
 
+.metric-value-huge {
+  font-size: 38px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
 .card-business-health {
   top: 30px;
-  left: 10px;
+  left: 5px;
 }
 
 .card-forecast-conf {
   top: 30px;
-  right: 10px;
+  right: 5px;
 }
 
 .card-top-risk {
   bottom: 150px;
-  left: 10px;
+  left: 5px;
 }
 
 .card-recommended-action {
   bottom: 150px;
-  right: 10px;
+  right: 5px;
 }
 
-/* 4. Section: Why DecisionOS Exists (140px Hero Spacing) */
+/* 4. Section: Why DecisionOS Exists (Showdown Comparison) */
 .section-identity {
-  padding: 140px 0 120px 0;
+  padding: 130px 0 110px 0;
   border-top: 1px solid #16181D;
 }
 
 .identity-header-block {
-  max-width: 800px;
+  max-width: 820px;
   margin: 0 auto 56px auto;
   text-align: center;
 }
@@ -421,7 +429,7 @@
 .identity-three-questions {
   display: flex;
   justify-content: center;
-  gap: 32px;
+  gap: 36px;
   font-size: 15px;
   font-weight: 600;
   color: #FFFFFF;
@@ -432,7 +440,7 @@
 .identity-sub-statement {
   font-size: 13px;
   color: #727A86;
-  max-width: 620px;
+  max-width: 640px;
   margin: 0 auto;
 }
 
@@ -495,7 +503,7 @@
   font-weight: 600;
 }
 
-/* 5. Section: The Intelligence Pipeline (130px Spacing) */
+/* 5. Section: The Signature Intelligence Pipeline (Visual Moat) */
 .section-pipeline {
   padding: 130px 0;
   border-top: 1px solid #16181D;
@@ -507,7 +515,7 @@
 }
 
 .section-title-lg {
-  font-size: 34px;
+  font-size: 36px;
   font-weight: 800;
   color: #FFFFFF;
   margin: 0 0 12px 0;
@@ -518,49 +526,50 @@
   font-size: 15px;
   color: #B5BAC4;
   margin: 0;
-  max-width: 620px;
+  max-width: 660px;
   margin: 0 auto;
 }
 
 .pipeline-flex-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   overflow-x: auto;
-  padding: 12px 0;
+  padding: 16px 0;
 }
 
 .pipeline-step-card {
   flex: 1;
-  min-width: 105px;
+  min-width: 120px;
   background: #0D0F13;
   border: 1px solid #22262E;
-  border-radius: 10px;
-  padding: 20px 10px;
+  border-radius: 12px;
+  padding: 22px 12px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.25s ease;
 }
 
 .pipeline-step-card:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
 }
 
 .pipeline-step-card.dex-highlight {
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.45);
   background: #14171C;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.08);
 }
 
 .pipeline-icon-box {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   background: #14171C;
   border: 1px solid #22262E;
   display: flex;
@@ -569,24 +578,41 @@
   color: #FFFFFF;
 }
 
+.pipeline-step-num {
+  font-size: 10px;
+  font-family: monospace;
+  color: #727A86;
+}
+
 .pipeline-step-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #FFFFFF;
 }
 
 .pipeline-step-sub {
-  font-size: 10px;
+  font-size: 11px;
   color: #727A86;
+  line-height: 1.4;
+}
+
+.pipeline-latency-tag {
+  font-size: 9px;
+  font-family: monospace;
+  color: #34D399;
+  background: rgba(52, 211, 153, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .pipeline-arrow {
   color: #3F444E;
   font-size: 16px;
+  align-self: center;
   flex-shrink: 0;
 }
 
-/* 6. Section: Executive Intelligence Overview (130px Spacing) */
+/* 6. Section: Executive Command Center Preview (Real Causal Chain Cockpit) */
 .section-dashboard {
   padding: 130px 0;
   border-top: 1px solid #16181D;
@@ -719,7 +745,7 @@
   border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* 7. Section: Enterprise System Scale (Recruiter Metrics Grid - 130px Spacing) */
+/* 7. Section: Enterprise System Scale (Recruiter Metrics Grid) */
 .section-scale {
   padding: 130px 0;
   border-top: 1px solid #16181D;
@@ -768,7 +794,7 @@
   border-top: 1px solid #22262E;
 }
 
-/* 8. Section: Turn Data Into Decisions (CTA Card - 130px Spacing) */
+/* 8. Section: Turn Data Into Decisions (CTA Card) */
 .section-cta {
   padding: 0 0 130px 0;
 }
@@ -808,8 +834,14 @@
 .cta-subtext {
   font-size: 14px;
   color: #B5BAC4;
-  margin: 0;
+  margin: 0 0 8px 0;
   max-width: 580px;
+}
+
+.cta-guarantee-tag {
+  font-size: 12px;
+  color: #727A86;
+  font-family: monospace;
 }
 
 .cta-button-group {

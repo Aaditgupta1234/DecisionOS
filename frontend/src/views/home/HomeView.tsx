@@ -16,7 +16,10 @@ import {
   ArrowUpRight,
   ShieldCheck,
   CheckCircle2,
-  Check
+  Check,
+  Layers,
+  Activity,
+  Workflow
 } from 'lucide-react';
 import '../../styles/home.css';
 
@@ -59,7 +62,7 @@ export const HomeView: React.FC = () => {
           {/* LEFT COLUMN (46%): Executive Positioning & Story */}
           <div className="hero-left-column">
             <div className="hero-badge">
-              EXECUTIVE BUSINESS ASSISTANT
+              DETERMINISTIC EXECUTIVE INTELLIGENCE
             </div>
 
             <h1 className="hero-headline">
@@ -75,7 +78,7 @@ export const HomeView: React.FC = () => {
             </div>
 
             <p className="hero-desc">
-              DecisionOS transforms business data into explainable intelligence through deterministic KPI evaluation, causal root-cause discovery, forecasting, and prioritized executive interventions.
+              DecisionOS transforms business telemetry into explainable intelligence through deterministic KPI evaluation, causal root-cause discovery, forecasting, and prioritized executive interventions.
             </p>
 
             <div className="hero-btn-group">
@@ -91,7 +94,11 @@ export const HomeView: React.FC = () => {
               </a>
             </div>
 
-            {/* Enterprise Trust Strip (Recruiter Gold) */}
+            <div className="hero-traceability-subtext">
+              No LLM hallucinations. 100% deterministic decision logic.
+            </div>
+
+            {/* Recruiter Trust Strip (Gold Standard) */}
             <div className="hero-trust-bar">
               <div className="trust-items-row">
                 <div className="trust-item">
@@ -100,11 +107,15 @@ export const HomeView: React.FC = () => {
                 </div>
                 <div className="trust-item">
                   <span className="trust-dot">●</span>
-                  <span>100+ APIs</span>
+                  <span>100+ REST APIs</span>
                 </div>
                 <div className="trust-item">
                   <span className="trust-dot">●</span>
                   <span>25+ Engines</span>
+                </div>
+                <div className="trust-item">
+                  <span className="trust-dot">●</span>
+                  <span>40+ Models</span>
                 </div>
                 <div className="trust-item">
                   <span className="trust-dot">●</span>
@@ -117,10 +128,10 @@ export const HomeView: React.FC = () => {
           {/* RIGHT COLUMN (54%): Vertical Axis (Spotlight -> DEX -> Pedestal) */}
           <div className="hero-stage">
             
-            {/* 1. Overhead White-Gray Spotlight Beam (18% Opacity) */}
+            {/* 1. Overhead White-Gray Spotlight Beam (16% Opacity) */}
             <div className="hero-spotlight" />
 
-            {/* 2. 3D Metallic Graphite Pedestal Platform (500px) */}
+            {/* 2. 3D Metallic Graphite Pedestal Platform (560px) */}
             <div className="stage-pedestal">
               <div className="pedestal-disc" />
             </div>
@@ -130,14 +141,14 @@ export const HomeView: React.FC = () => {
               
               {/* TOP-LEFT: Business Health Score */}
               <div className="stage-card card-business-health">
-                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
                   Business Health Score
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-                  <span style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>82</span>
-                  <span style={{ fontSize: '11px', color: '#727A86' }}>/ 100</span>
+                  <span className="metric-value-huge">82</span>
+                  <span style={{ fontSize: '13px', color: '#727A86' }}>/ 100</span>
                 </div>
-                <div style={{ marginTop: '8px', height: '14px', width: '100%' }}>
+                <div style={{ marginTop: '6px', height: '14px', width: '100%' }}>
                   <svg width="100%" height="100%" viewBox="0 0 80 14" preserveAspectRatio="none">
                     <path d="M0,10 Q20,12 40,6 T80,4" fill="none" stroke="#B5BAC4" strokeWidth="1.5" />
                   </svg>
@@ -146,15 +157,15 @@ export const HomeView: React.FC = () => {
 
               {/* TOP-RIGHT: Forecast Confidence */}
               <div className="stage-card card-forecast-conf">
-                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
                   Forecast Confidence
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontSize: '22px', fontWeight: '800', color: '#FFFFFF' }}>92%</div>
-                    <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '2px' }}>High Confidence</div>
+                    <div className="metric-value-huge">92%</div>
+                    <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '3px' }}>High Confidence</div>
                   </div>
-                  <div style={{ width: '26px', height: '26px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
                 </div>
               </div>
 
@@ -173,11 +184,11 @@ export const HomeView: React.FC = () => {
                   <span>Top Operational Risk</span>
                   <AlertTriangle size={12} style={{ color: '#E8E8E8' }} />
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF', marginTop: '2px' }}>
+                <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF', marginTop: '2px' }}>
                   Customer Retention
                 </div>
                 <div style={{ fontSize: '10px', color: '#727A86', marginTop: '3px' }}>
-                  ● High Revenue Exposure
+                  ● -4.3% Revenue Drag
                 </div>
               </div>
 
@@ -187,13 +198,13 @@ export const HomeView: React.FC = () => {
                   Recommended Action
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF' }}>
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
                     Win-Back Campaign
                   </div>
                   <ArrowUpRight size={14} style={{ color: '#FFFFFF' }} />
                 </div>
                 <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '3px' }}>
-                  Priority: High Intervention
+                  Impact: +$320k Recovery
                 </div>
               </div>
 
@@ -205,7 +216,7 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          3. Section: Why DecisionOS Exists (The Core Identity)
+          3. Section: Why DecisionOS Exists (The Core Identity Showdown)
           ====================================================================== */}
       <section id="why-exists" className="section-identity">
         <div className="page-container">
@@ -215,8 +226,8 @@ export const HomeView: React.FC = () => {
               Why DecisionOS Exists
             </h2>
             <p className="identity-lead-text">
-              Most business platforms stop at reporting. They tell executives what happened.<br />
-              DecisionOS was built to answer the questions that matter:
+              Most business analytics platforms stop at reporting. They tell executives what happened.<br />
+              DecisionOS was built to answer the questions that determine business survival:
             </p>
             <div className="identity-three-questions">
               <span>• What changed?</span>
@@ -236,7 +247,7 @@ export const HomeView: React.FC = () => {
                 <div className="diff-tag">Legacy Approach</div>
                 <h3 className="diff-title">Traditional Dashboard</h3>
                 <p className="diff-desc">
-                  Displays raw metrics and retroactive charts. Forces executives to manually guess what is happening across disparate data silos.
+                  Displays raw retroactive charts and static numbers. Forces leadership to manually guess root causes across fragmented silos.
                 </p>
               </div>
               <div className="diff-outcome" style={{ color: '#727A86' }}>
@@ -250,7 +261,7 @@ export const HomeView: React.FC = () => {
                 <div className="diff-tag">Analytical Approach</div>
                 <h3 className="diff-title">BI Platform</h3>
                 <p className="diff-desc">
-                  Visualizes longitudinal trends and multi-dimensional slices, but leaves causality and root-cause analysis completely unresolved.
+                  Visualizes longitudinal trends and multi-dimensional slices, but leaves causal drivers and actionable solutions unresolved.
                 </p>
               </div>
               <div className="diff-outcome" style={{ color: '#B5BAC4' }}>
@@ -261,14 +272,14 @@ export const HomeView: React.FC = () => {
             {/* Pillar 3: DecisionOS */}
             <div className="diff-card active-diff">
               <div>
-                <div className="diff-tag" style={{ color: '#FFFFFF' }}>Executive Operating System</div>
+                <div className="diff-tag" style={{ color: '#FFFFFF' }}>Executive Decision OS</div>
                 <h3 className="diff-title">DecisionOS</h3>
                 <p className="diff-desc">
                   Continuously traces causal DAGs, isolates root causes from symptom noise, and calculates prioritized, risk-discounted executive interventions.
                 </p>
               </div>
               <div className="diff-outcome" style={{ color: '#FFFFFF' }}>
-                → Guides Decisions: <span style={{ color: '#E8E8E8' }}>"Root Cause: ERP Sync $\to$ Deploy Fleet Pods (P1)"</span>
+                → Guides Decisions: <span style={{ color: '#E8E8E8' }}>"Root Cause: ERP Sync $\to$ Win-Back Campaign (+$320k)"</span>
               </div>
             </div>
 
@@ -278,106 +289,121 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          4. Section: The Intelligence Pipeline
+          4. Section: The Signature Intelligence Pipeline (Visual Moat)
           ====================================================================== */}
       <section id="pipeline" className="section-pipeline">
         <div className="page-container">
           
           <div className="section-header-center">
             <h2 className="section-title-lg">
-              The Intelligence Pipeline
+              The Signature Intelligence Pipeline
             </h2>
             <p className="section-subtitle-sm">
-              A fully integrated deterministic engine turning raw telemetry into auditable executive decisions.
+              An 8-stage deterministic operating system transforming raw enterprise telemetry into audited executive decisions.
             </p>
           </div>
 
           <div className="pipeline-flex-row">
             
-            {/* Step 1 */}
+            {/* Step 01 */}
             <div className="pipeline-step-card">
+              <div className="pipeline-step-num">01</div>
               <div className="pipeline-icon-box">
                 <Database size={18} />
               </div>
               <div className="pipeline-step-name">Business Data</div>
-              <div className="pipeline-step-sub">Collect & Integrate</div>
+              <div className="pipeline-step-sub">ERP, SQL & CSV Ingestion</div>
+              <div className="pipeline-latency-tag">&lt; 14ms</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 2 */}
+            {/* Step 02 */}
             <div className="pipeline-step-card">
+              <div className="pipeline-step-num">02</div>
               <div className="pipeline-icon-box">
                 <BarChart2 size={18} />
               </div>
-              <div className="pipeline-step-name">KPIs</div>
-              <div className="pipeline-step-sub">Measure Performance</div>
+              <div className="pipeline-step-name">KPI Engine</div>
+              <div className="pipeline-step-sub">Health & Variance Scoring</div>
+              <div className="pipeline-latency-tag">82/100</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 3 */}
+            {/* Step 03 */}
             <div className="pipeline-step-card">
               <div className="pipeline-icon-box">
                 <Search size={18} />
               </div>
               <div className="pipeline-step-name">Diagnostics</div>
-              <div className="pipeline-step-sub">Detect Anomalies</div>
+              <div className="pipeline-step-sub">Statistical Anomalies</div>
+              <div className="pipeline-latency-tag">Z-Score 2.4</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 4 */}
+            {/* Step 04 */}
             <div className="pipeline-step-card">
+              <div className="pipeline-step-num">04</div>
               <div className="pipeline-icon-box">
                 <GitMerge size={18} />
               </div>
               <div className="pipeline-step-name">Root Causes</div>
-              <div className="pipeline-step-sub">Find What Matters</div>
+              <div className="pipeline-step-sub">Causal DAG Discovery</div>
+              <div className="pipeline-latency-tag">94% Conf.</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 5 */}
+            {/* Step 05 */}
             <div className="pipeline-step-card">
+              <div className="pipeline-step-num">05</div>
               <div className="pipeline-icon-box">
                 <Target size={18} />
               </div>
-              <div className="pipeline-step-name">Recommendations</div>
-              <div className="pipeline-step-sub">Actionable Steps</div>
+              <div className="pipeline-step-name">Interventions</div>
+              <div className="pipeline-step-sub">ROI Ranked Actions</div>
+              <div className="pipeline-latency-tag">P1 Priority</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 6 */}
+            {/* Step 06 */}
             <div className="pipeline-step-card">
+              <div className="pipeline-step-num">06</div>
               <div className="pipeline-icon-box">
                 <TrendingUp size={18} />
               </div>
-              <div className="pipeline-step-name">Forecasts</div>
-              <div className="pipeline-step-sub">Predict Outcomes</div>
+              <div className="pipeline-step-name">Forecasting</div>
+              <div className="pipeline-step-sub">3-Month Forward Curves</div>
+              <div className="pipeline-latency-tag">+9.6% Growth</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 7 */}
+            {/* Step 07 */}
             <div className="pipeline-step-card">
+              <div className="pipeline-step-num">07</div>
               <div className="pipeline-icon-box">
                 <FileText size={18} />
               </div>
               <div className="pipeline-step-name">Executive Intel</div>
-              <div className="pipeline-step-sub">Strategic Insights</div>
+              <div className="pipeline-step-sub">Board Syntheses</div>
+              <div className="pipeline-latency-tag">Audited</div>
             </div>
 
             <div className="pipeline-arrow">→</div>
 
-            {/* Step 8 (DEX Core Highlight) */}
+            {/* Step 08 (DEX Core Highlight) */}
             <div className="pipeline-step-card dex-highlight">
+              <div className="pipeline-step-num" style={{ color: '#FFFFFF' }}>08</div>
               <div className="pipeline-icon-box" style={{ background: '#1A1E26' }}>
                 <Cpu size={18} style={{ color: '#FFFFFF' }} />
               </div>
               <div className="pipeline-step-name" style={{ color: '#FFFFFF' }}>DEX Core</div>
-              <div className="pipeline-step-sub" style={{ color: '#E8E8E8', fontWeight: '600' }}>Executive Partner</div>
+              <div className="pipeline-step-sub" style={{ color: '#E8E8E8', fontWeight: '600' }}>Decision Partner</div>
+              <div className="pipeline-latency-tag" style={{ background: 'rgba(255,255,255,0.15)', color: '#FFFFFF' }}>Active</div>
             </div>
 
           </div>
@@ -386,17 +412,17 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          5. Section: Executive Intelligence Overview (Command Center Preview)
+          5. Section: Executive Intelligence Overview (Real Causal Cockpit)
           ====================================================================== */}
       <section id="overview" className="section-dashboard">
         <div className="page-container">
           
           <div className="section-header-center">
             <h2 className="section-title-lg">
-              Executive Intelligence Overview
+              Executive Command Center Preview
             </h2>
             <p className="section-subtitle-sm">
-              A real-time command center for data-driven leaders.
+              Traceable relationships from top-level metric shifts down to isolated causal drivers and calculated ROI recovery.
             </p>
           </div>
 
@@ -412,13 +438,13 @@ export const HomeView: React.FC = () => {
               </div>
 
               <div className="kpi-stat-box">
-                <div className="kpi-stat-header">Orders</div>
+                <div className="kpi-stat-header">Orders Completed</div>
                 <div className="kpi-stat-value">18,530</div>
                 <div className="kpi-stat-delta">+8.7% vs last period ↗</div>
               </div>
 
               <div className="kpi-stat-box">
-                <div className="kpi-stat-header">Customers</div>
+                <div className="kpi-stat-header">Active Customers</div>
                 <div className="kpi-stat-value">6,842</div>
                 <div className="kpi-stat-delta">+11.3% vs last period ↗</div>
               </div>
@@ -428,7 +454,7 @@ export const HomeView: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <div className="kpi-stat-value">82 <span style={{ fontSize: '13px', color: '#727A86' }}>/ 100</span></div>
-                    <div style={{ fontSize: '11px', color: '#B5BAC4', marginTop: '4px' }}>Good Performance</div>
+                    <div style={{ fontSize: '11px', color: '#B5BAC4', marginTop: '4px' }}>Optimal Performance</div>
                   </div>
                   <div style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF' }} />
                 </div>
@@ -436,15 +462,15 @@ export const HomeView: React.FC = () => {
 
             </div>
 
-            {/* Main Grid: Revenue Trend + Forecast Curve + Right Panel */}
+            {/* Main Grid: Revenue Trajectory + Forecast Projection + Right Causal Stack */}
             <div className="dash-main-grid">
               
               {/* Left Chart: Revenue Trend */}
               <div className="dash-chart-card">
                 <div className="chart-header">
                   <div>
-                    <div className="chart-title">Revenue Trend</div>
-                    <div className="chart-subtitle">✓ Last 12 Months</div>
+                    <div className="chart-title">Revenue Trajectory</div>
+                    <div className="chart-subtitle">✓ 12-Month Audited Curve</div>
                   </div>
                   <div className="chart-value-tag">$4.2M <span style={{ fontSize: '10px', color: '#727A86' }}>Dec 2024</span></div>
                 </div>
@@ -469,8 +495,8 @@ export const HomeView: React.FC = () => {
               <div className="dash-chart-card">
                 <div className="chart-header">
                   <div>
-                    <div className="chart-title">Forecast (Next 3 Months)</div>
-                    <div className="chart-subtitle">Projected Revenue</div>
+                    <div className="chart-title">Forward Projection</div>
+                    <div className="chart-subtitle">92% Confidence Horizon</div>
                   </div>
                 </div>
 
@@ -478,7 +504,7 @@ export const HomeView: React.FC = () => {
                   $4.8M
                 </div>
                 <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '10px' }}>
-                  +9.6% forward growth
+                  +9.6% forward projection
                 </div>
 
                 <div style={{ height: '80px', width: '100%' }}>
@@ -500,30 +526,41 @@ export const HomeView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right Stack: Executive Summary & Top Root Cause */}
+              {/* Right Stack: Causal Driver & ROI Recovery Plan */}
               <div className="dash-side-stack">
                 
-                {/* Executive Summary */}
+                {/* Isolated Root Cause */}
                 <div className="side-info-card">
-                  <div className="side-info-title">Executive Summary</div>
+                  <div style={{ fontSize: '10px', color: '#727A86', textTransform: 'uppercase', marginBottom: '2px', fontFamily: 'monospace' }}>
+                    Isolated Root Cause
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
+                    Retention Churn Drag (-4.3%)
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '6px' }}>
+                    Primary Driver: Fulfillment Latency & ERP Sync
+                  </div>
                   <p className="side-info-text">
-                    Revenue increased 12.4% driven by higher AOV and returning customers. However, customer retention declined 4.3% due to increased churn in the last 30 days.
+                    Algorithmic causal DAG isolated fulfillment delays causing 72% of recent retention drop.
                   </p>
-                  <Link to="/reports" className="btn-card-action">
-                    View Full Report
+                  <Link to="/root-causes" className="btn-card-action">
+                    Explore Causal Graph
                   </Link>
                 </div>
 
-                {/* Top Root Cause */}
+                {/* Priority Intervention Plan */}
                 <div className="side-info-card">
-                  <div style={{ fontSize: '10px', color: '#727A86', textTransform: 'uppercase', marginBottom: '2px' }}>Top Root Cause</div>
-                  <div style={{ fontSize: '13px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>Customer Retention Decline</div>
-                  <div style={{ fontSize: '10px', color: '#B5BAC4', marginBottom: '6px' }}>Impact: High Exposure</div>
-                  <p className="side-info-text">
-                    Analysis shows churn increased due to late deliveries and reduced engagement in the last 30 days.
-                  </p>
-                  <Link to="/root-causes" className="btn-card-action">
-                    Explore Root Cause
+                  <div style={{ fontSize: '10px', color: '#727A86', textTransform: 'uppercase', marginBottom: '2px', fontFamily: 'monospace' }}>
+                    Calculated Intervention (P1)
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
+                    Win-Back Retention Campaign
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#34D399', fontWeight: '600', marginBottom: '8px' }}>
+                    Projected Recovery: +$320,000 ARR
+                  </div>
+                  <Link to="/recommendations" className="btn-card-action">
+                    Deploy Intervention Plan
                   </Link>
                 </div>
 
@@ -586,7 +623,7 @@ export const HomeView: React.FC = () => {
             <div className="scale-card">
               <div className="scale-value-huge">100%</div>
               <div className="scale-label-title">Deterministic Intelligence</div>
-              <div className="scale-sub-desc">Zero AI Hallucination or Calculation Drift</div>
+              <div className="scale-sub-desc">Zero LLM Hallucinations or Calculation Drift</div>
             </div>
 
           </div>
@@ -607,8 +644,11 @@ export const HomeView: React.FC = () => {
               <div>
                 <h3 className="cta-heading">Turn Data Into Decisions</h3>
                 <p className="cta-subtext">
-                  Understand performance, uncover root causes, forecast outcomes, and make smarter decisions with DecisionOS.
+                  Understand performance, uncover causal root causes, forecast outcomes, and execute verified leadership interventions.
                 </p>
+                <div className="cta-guarantee-tag">
+                  ✓ No LLM hallucinations · 100% deterministic decision logic · Fully auditable
+                </div>
               </div>
             </div>
 
@@ -618,11 +658,11 @@ export const HomeView: React.FC = () => {
                 <ArrowRight size={15} />
               </Link>
               <button 
-                onClick={() => alert("Demo request logged. Our enterprise team will reach out promptly.")}
+                onClick={() => alert("Enterprise briefing scheduled. Our engineering team will contact you directly.")}
                 className="btn-explore-flow"
                 style={{ cursor: 'pointer' }}
               >
-                <span>Request Demo</span>
+                <span>Request Briefing</span>
               </button>
             </div>
 
