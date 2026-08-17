@@ -36,6 +36,23 @@ from app.execution.services.portfolio_benefits_engine import (
 )
 from app.execution.services.roi_engine import ROIIntelligenceEngine
 
+from app.execution.services.executive_attention_engine import ExecutiveAttentionEngine
+from app.execution.services.executive_intelligence_engine import (
+    ExecutiveIntelligenceEngine,
+)
+from app.execution.services.portfolio_ranking_engine import PortfolioRankingEngine
+from app.execution.services.portfolio_trend_engine import PortfolioTrendEngine
+from app.execution.services.strategic_alignment_engine import (
+    StrategicAlignmentEngine,
+)
+from app.execution.services.strategic_analytics_engine import (
+    StrategicAnalyticsEngine,
+)
+from app.execution.services.strategic_analytics_service import (
+    StrategicAnalyticsService,
+)
+from app.execution.services.value_diagnostics_engine import ValueDiagnosticsEngine
+
 __all__ = [
     "ProgramRollupEngine",
     "ProgramService",
@@ -65,4 +82,12 @@ __all__ = [
     "GovernanceOutcomeAlignmentEngine",
     "PortfolioBenefitsEngine",
     "OutcomeService",
+    "StrategicAnalyticsEngine",
+    "PortfolioTrendEngine",
+    "ValueDiagnosticsEngine",
+    "StrategicAlignmentEngine",
+    "ExecutiveIntelligenceEngine",
+    "PortfolioRankingEngine",
+    "ExecutiveAttentionEngine",
+    "StrategicAnalyticsService",
 ]

@@ -1014,3 +1014,262 @@ def calculate_governance_trend(
     return GovernanceTrend.STABLE
 
 
+# ==============================================================================
+# PHASE 12.7: STRATEGIC ANALYTICS & EXECUTIVE INTELLIGENCE ENGINE DOMAIN
+# ==============================================================================
+
+STRATEGIC_ANALYTICS_ENGINE_VERSION = "1.0"
+EXECUTIVE_INTELLIGENCE_ENGINE_VERSION = "1.0"
+PORTFOLIO_TREND_ENGINE_VERSION = "1.0"
+VALUE_DIAGNOSTICS_ENGINE_VERSION = "1.0"
+STRATEGIC_ALIGNMENT_ENGINE_VERSION = "1.0"
+RANKING_ENGINE_VERSION = "1.0"
+EXECUTIVE_ATTENTION_ENGINE_VERSION = "1.0"
+STRATEGIC_SNAPSHOT_METRIC_VERSION = "1.0"
+
+
+class StrategicTrend(str, Enum):
+    """Directional trend for strategic and portfolio metrics."""
+    IMPROVING = "IMPROVING"
+    STABLE = "STABLE"
+    DETERIORATING = "DETERIORATING"
+
+
+class StrategicPriority(str, Enum):
+    """Deterministic strategic initiative action priority."""
+    ACCELERATE = "ACCELERATE"
+    STABILIZE = "STABILIZE"
+    RESTRUCTURE = "RESTRUCTURE"
+    ESCALATE = "ESCALATE"
+    MONITOR = "MONITOR"
+
+
+class ExecutiveAttentionLevel(str, Enum):
+    """Severity tier indicating executive intervention urgency."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class ValueEfficiencyGrade(str, Enum):
+    """Efficiency grade measuring strategic value delivered relative to cost and risk."""
+    EXCEPTIONAL = "EXCEPTIONAL"  # >= 85.0
+    STRONG = "STRONG"            # 70.0 - 84.9
+    MODERATE = "MODERATE"        # 50.0 - 69.9
+    WEAK = "WEAK"                # 30.0 - 49.9
+    POOR = "POOR"                # < 30.0
+
+
+class StrategicHealthGrade(str, Enum):
+    """Executive composite health rating for an initiative or program."""
+    EXCEPTIONAL = "EXCEPTIONAL"  # >= 85.0
+    STRONG = "STRONG"            # 75.0 - 84.9
+    STABLE = "STABLE"            # 60.0 - 74.9
+    AT_RISK = "AT_RISK"          # 45.0 - 59.9
+    CRITICAL = "CRITICAL"        # < 45.0
+
+
+class StrategicConfidenceLevel(str, Enum):
+    """Confidence band evaluating underlying data reliability and measurement rigor."""
+    HIGH = "HIGH"      # >= 80.0
+    MEDIUM = "MEDIUM"  # 60.0 - 79.9
+    LOW = "LOW"        # < 60.0
+
+
+class ExecutiveFindingSeverity(str, Enum):
+    """Severity classification for strategic findings and insights."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+
+
+class PortfolioTrajectoryGrade(str, Enum):
+    """Overall directional trajectory classification for the strategic portfolio."""
+    ACCELERATING = "ACCELERATING"
+    STABLE = "STABLE"
+    SLOWING = "SLOWING"
+    DECLINING = "DECLINING"
+
+
+def calculate_value_efficiency_grade(score: float) -> ValueEfficiencyGrade:
+    """Deterministically maps a 0-100 value efficiency score to its grade tier."""
+    if score >= 85.0:
+        return ValueEfficiencyGrade.EXCEPTIONAL
+    if score >= 70.0:
+        return ValueEfficiencyGrade.STRONG
+    if score >= 50.0:
+        return ValueEfficiencyGrade.MODERATE
+    if score >= 30.0:
+        return ValueEfficiencyGrade.WEAK
+    return ValueEfficiencyGrade.POOR
+
+
+def calculate_strategic_health_grade(
+    strategic_value_score: float,
+    alignment_score: float = 100.0,
+    execution_health_score: float = 100.0,
+) -> StrategicHealthGrade:
+    """Deterministically calculates strategic health grade from value, alignment, and health."""
+    composite = 0.50 * strategic_value_score + 0.30 * alignment_score + 0.20 * execution_health_score
+    if composite >= 85.0:
+        return StrategicHealthGrade.EXCEPTIONAL
+    if composite >= 75.0:
+        return StrategicHealthGrade.STRONG
+    if composite >= 60.0:
+        return StrategicHealthGrade.STABLE
+    if composite >= 45.0:
+        return StrategicHealthGrade.AT_RISK
+    return StrategicHealthGrade.CRITICAL
+
+
+def calculate_strategic_confidence_score(
+    outcome_data_reliability_score: float = 100.0,
+    governance_compliance_score: float = 100.0,
+    measurement_quality_score: float = 100.0,
+    metric_coverage_rate: float = 100.0,
+) -> float:
+    """
+    Deterministically computes strategic confidence score (0-100) based on:
+    0.40 * Outcome Reliability + 0.25 * Governance Compliance + 0.20 * Measurement Quality + 0.15 * Metric Coverage.
+    """
+    score = (
+        0.40 * outcome_data_reliability_score
+        + 0.25 * governance_compliance_score
+        + 0.20 * measurement_quality_score
+        + 0.15 * metric_coverage_rate
+    )
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def calculate_strategic_confidence_level(score: float) -> StrategicConfidenceLevel:
+    """Deterministically maps 0-100 confidence score to HIGH, MEDIUM, LOW tier."""
+    if score >= 80.0:
+        return StrategicConfidenceLevel.HIGH
+    if score >= 60.0:
+        return StrategicConfidenceLevel.MEDIUM
+    return StrategicConfidenceLevel.LOW
+
+
+def calculate_strategic_priority(
+    value_score: float,
+    risk_score: float,
+    health_score: float,
+    outcome_realization: float,
+) -> StrategicPriority:
+    """
+    Deterministically classifies strategic priority based on value, risk, health, and outcome realization:
+    - ESCALATE: High/Critical Risk (>= 70) and Low Health (< 50)
+    - RESTRUCTURE: Low Outcome Realization (< 40) and Low Health (< 60) and Cost/Risk concerns
+    - ACCELERATE: High Value (>= 75) and High Health (>= 75) and Low/Moderate Risk (< 50)
+    - STABILIZE: Moderate/High Risk (>= 50) or Sub-optimal Health (< 70) with Moderate/High Value (>= 50)
+    - MONITOR: Low Risk (< 40) and Stable/Good Health (>= 70)
+    """
+    if risk_score >= 70.0 and health_score < 50.0:
+        return StrategicPriority.ESCALATE
+    if outcome_realization < 40.0 and health_score < 60.0:
+        return StrategicPriority.RESTRUCTURE
+    if value_score >= 75.0 and health_score >= 75.0 and risk_score < 50.0:
+        return StrategicPriority.ACCELERATE
+    if risk_score >= 50.0 or health_score < 70.0:
+        return StrategicPriority.STABILIZE
+    return StrategicPriority.MONITOR
+
+
+def calculate_strategic_trend(
+    delta_pct: float,
+    higher_is_better: bool = True,
+    threshold: float = 2.0,
+) -> StrategicTrend:
+    """
+    Deterministically maps percentage change to IMPROVING, STABLE, DETERIORATING.
+    Accounts for metrics where higher is worse (e.g. Risk, Delay).
+    """
+    if abs(delta_pct) < threshold:
+        return StrategicTrend.STABLE
+    if higher_is_better:
+        return StrategicTrend.IMPROVING if delta_pct > 0 else StrategicTrend.DETERIORATING
+    else:
+        return StrategicTrend.DETERIORATING if delta_pct > 0 else StrategicTrend.IMPROVING
+
+
+def calculate_executive_attention_level(attention_score: float) -> ExecutiveAttentionLevel:
+    """Deterministically classifies 0-100 attention score into 4 tiers."""
+    if attention_score >= 75.0:
+        return ExecutiveAttentionLevel.CRITICAL
+    if attention_score >= 55.0:
+        return ExecutiveAttentionLevel.HIGH
+    if attention_score >= 35.0:
+        return ExecutiveAttentionLevel.MEDIUM
+    return ExecutiveAttentionLevel.LOW
+
+
+def calculate_finding_severity(
+    impact_score: float,
+    affected_share_pct: float = 0.0,
+) -> ExecutiveFindingSeverity:
+    """Deterministically classifies executive finding severity from impact and affected scope."""
+    combined = 0.70 * impact_score + 0.30 * affected_share_pct
+    if combined >= 75.0:
+        return ExecutiveFindingSeverity.CRITICAL
+    if combined >= 55.0:
+        return ExecutiveFindingSeverity.HIGH
+    if combined >= 35.0:
+        return ExecutiveFindingSeverity.MEDIUM
+    return ExecutiveFindingSeverity.LOW
+
+
+def calculate_portfolio_trajectory_grade(
+    health_delta: float,
+    outcome_delta: float,
+    roi_delta: float,
+    risk_delta: float,
+) -> PortfolioTrajectoryGrade:
+    """
+    Deterministically computes overall portfolio trajectory from compound metric deltas:
+    Compound = 0.30 * Health Delta + 0.30 * Outcome Delta + 0.20 * ROI Delta - 0.20 * Risk Delta
+    """
+    compound_delta = (
+        0.30 * health_delta
+        + 0.30 * outcome_delta
+        + 0.20 * roi_delta
+        - 0.20 * risk_delta
+    )
+    if compound_delta >= 5.0:
+        return PortfolioTrajectoryGrade.ACCELERATING
+    if compound_delta >= -2.0:
+        return PortfolioTrajectoryGrade.STABLE
+    if compound_delta >= -10.0:
+        return PortfolioTrajectoryGrade.SLOWING
+    return PortfolioTrajectoryGrade.DECLINING
+
+
+def calculate_portfolio_strategic_maturity_score(
+    governance_maturity: float,
+    execution_health: float,
+    outcome_achievement: float,
+    benefits_realization: float,
+) -> float:
+    """
+    Deterministically calculates 0-100 Portfolio Strategic Maturity Score:
+    0.30 * Governance + 0.25 * Execution + 0.25 * Outcomes + 0.20 * Benefits.
+    """
+    score = (
+        0.30 * governance_maturity
+        + 0.25 * execution_health
+        + 0.25 * outcome_achievement
+        + 0.20 * benefits_realization
+    )
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def calculate_ranking_percentile(rank: int, total_items: int) -> float:
+    """
+    Deterministically computes ranking percentile:
+    100 * (1 - ((rank - 1) / max(1, total_items)))
+    """
+    if total_items <= 0:
+        return 100.0
+    val = 100.0 * (1.0 - ((max(1, rank) - 1) / float(total_items)))
+    return round(max(0.0, min(100.0, val)), 2)
