@@ -112,12 +112,20 @@
 						app._renderer.setClearColor(0x000000, 1);
 					}
 
-					// Ensure robot is visible
+					// Ensure robot is visible and strip any pink tints from ears/highlights
 					if (scene) {
 						scene.traverse((child) => {
 							if (!child) return;
-							// Make sure robot and its elements are fully visible
 							const name = child.name || '';
+							
+							// Neutralize light tints if pinkish
+							if (child.isLight && child.color) {
+								if (child.color.r > child.color.b && child.color.r > child.color.g) {
+									child.color.setHex(0xE2E8F0);
+								}
+							}
+
+							// Make sure robot and its elements are fully visible
 							if (
 								name.includes('RoBOT') || 
 								name.includes('Head') || 
@@ -128,6 +136,7 @@
 								name.includes('Mouth') || 
 								name.includes('Neck') ||
 								name.includes('Ears') ||
+								name.includes('Ear') ||
 								name.includes('Shoulder') ||
 								name.includes('Forearm') ||
 								name.includes('Headphone') ||
@@ -140,6 +149,16 @@
 								if (child.material) {
 									child.material.visible = true;
 									if (child.material.opacity === 0) child.material.opacity = 1;
+									
+									// Recalibrate headphone/ear highlights to pure executive steel #D9DDE3
+									if (name.includes('Headphone') || name.includes('Ear') || name.includes('Cylinder002')) {
+										if (child.material.color) {
+											child.material.color.setHex(0xD9DDE3);
+										}
+										if (child.material.emissive) {
+											child.material.emissive.setHex(0x181C22);
+										}
+									}
 								}
 							}
 

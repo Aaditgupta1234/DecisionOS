@@ -87,52 +87,56 @@ export const HomeView: React.FC = () => {
               </a>
             </div>
 
-            {/* Trust Strip Under Buttons */}
+            {/* Trust Strip Directly Beneath CTAs */}
             <div className="hero-trust-strip">
               <span className="strip-item">783+ Tests</span>
+              <span className="strip-dot">•</span>
               <span className="strip-item">100+ APIs</span>
+              <span className="strip-dot">•</span>
               <span className="strip-item">25+ Engines</span>
-              <span className="strip-item">40+ Models</span>
+              <span className="strip-dot">•</span>
+              <span className="strip-item">14 Development Phases</span>
+              <span className="strip-dot">•</span>
               <span className="strip-item">Deterministic Intelligence</span>
             </div>
           </div>
 
           {/* RIGHT: Spotlight Beam, 3D Glowing Pedestal & Orbiting Telemetry */}
           <div className="hero-right-stage">
-            {/* High-Fidelity 3D Pedestal Stage with Illuminated LED Rim (Pure Vector/CSS) */}
+            {/* High-Fidelity 3D Pedestal Stage with Illuminated LED Rim (Pure Steel 620px Widen) */}
             <div className="stage-pedestal-wrap">
-              <svg width="480" height="130" viewBox="0 0 480 130" fill="none" xmlns="http://www.w3.org/2000/svg" className="pedestal-svg">
+              <svg width="620" height="110" viewBox="0 0 620 110" fill="none" xmlns="http://www.w3.org/2000/svg" className="pedestal-svg">
                 <defs>
-                  {/* Top Disc Ambient Spotlight Reflection (Pure Neutral Steel) */}
+                  {/* Top Disc Ambient Spotlight Reflection (Softened Pure Neutral Steel) */}
                   <radialGradient id="pedTopSurface" cx="50%" cy="38%" r="58%">
-                    <stop offset="0%" stopColor="#4A4A4A" />
-                    <stop offset="25%" stopColor="#303030" />
-                    <stop offset="55%" stopColor="#1A1A1A" />
-                    <stop offset="85%" stopColor="#0D0D0D" />
-                    <stop offset="100%" stopColor="#050505" />
+                    <stop offset="0%" stopColor="#383838" />
+                    <stop offset="25%" stopColor="#242424" />
+                    <stop offset="55%" stopColor="#141414" />
+                    <stop offset="85%" stopColor="#080808" />
+                    <stop offset="100%" stopColor="#030303" />
                   </radialGradient>
 
                   {/* Cylinder Wall Vertical Shadow Falloff (Pure Neutral Steel) */}
                   <linearGradient id="pedCylinderVertical" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#2E2E2E" />
-                    <stop offset="20%" stopColor="#1C1C1C" />
-                    <stop offset="60%" stopColor="#0D0D0D" />
-                    <stop offset="100%" stopColor="#030303" />
+                    <stop offset="0%" stopColor="#282828" />
+                    <stop offset="20%" stopColor="#181818" />
+                    <stop offset="60%" stopColor="#0C0C0C" />
+                    <stop offset="100%" stopColor="#020202" />
                   </linearGradient>
 
                   {/* Cylinder Horizontal Center Sheen (Pure Neutral Steel) */}
                   <linearGradient id="pedCylinderSheen" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#050505" stopOpacity="0.9" />
-                    <stop offset="30%" stopColor="#222222" stopOpacity="0.4" />
-                    <stop offset="50%" stopColor="#3A3A3A" stopOpacity="0.25" />
-                    <stop offset="70%" stopColor="#222222" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#050505" stopOpacity="0.9" />
+                    <stop offset="0%" stopColor="#040404" stopOpacity="0.9" />
+                    <stop offset="30%" stopColor="#1E1E1E" stopOpacity="0.35" />
+                    <stop offset="50%" stopColor="#323232" stopOpacity="0.2" />
+                    <stop offset="70%" stopColor="#1E1E1E" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#040404" stopOpacity="0.9" />
                   </linearGradient>
 
                   {/* Brilliant Neon Glow Filter */}
                   <filter id="pureNeonGlow" x="-25%" y="-45%" width="150%" height="190%">
-                    <feGaussianBlur stdDeviation="7.5" result="blur1" />
-                    <feGaussianBlur stdDeviation="2.5" result="blur2" />
+                    <feGaussianBlur stdDeviation="6" result="blur1" />
+                    <feGaussianBlur stdDeviation="2" result="blur2" />
                     <feMerge>
                       <feMergeNode in="blur1" />
                       <feMergeNode in="blur2" />
@@ -147,52 +151,52 @@ export const HomeView: React.FC = () => {
                 </defs>
 
                 {/* 1. Deep Atmospheric Ground Shadow */}
-                <ellipse cx="240" cy="100" rx="215" ry="24" fill="rgba(0,0,0,0.95)" filter="url(#pedContactShadow)" />
-                <ellipse cx="240" cy="94" rx="180" ry="18" fill="rgba(0,0,0,0.9)" />
+                <ellipse cx="310" cy="85" rx="275" ry="22" fill="rgba(0,0,0,0.95)" filter="url(#pedContactShadow)" />
+                <ellipse cx="310" cy="80" rx="235" ry="16" fill="rgba(0,0,0,0.9)" />
 
                 {/* 2. 3D Cylinder Extruded Side Wall */}
                 <path
-                  d="M 35,42 A 205 38 0 0 0 445,42 L 445,78 A 205 38 0 0 1 35,78 Z"
+                  d="M 40,36 A 270 34 0 0 0 580,36 L 580,68 A 270 34 0 0 1 40,68 Z"
                   fill="url(#pedCylinderVertical)"
                 />
                 <path
-                  d="M 35,42 A 205 38 0 0 0 445,42 L 445,78 A 205 38 0 0 1 35,78 Z"
+                  d="M 40,36 A 270 34 0 0 0 580,36 L 580,68 A 270 34 0 0 1 40,68 Z"
                   fill="url(#pedCylinderSheen)"
                 />
 
                 {/* 3. Bottom Edge Bevel Line */}
                 <path
-                  d="M 35,78 A 205 38 0 0 0 445,78"
-                  stroke="#181818"
+                  d="M 40,68 A 270 34 0 0 0 580,68"
+                  stroke="#161616"
                   strokeWidth="1.5"
                 />
 
                 {/* 4. Top Disc Surface Platform */}
-                <ellipse cx="240" cy="42" rx="205" ry="38" fill="url(#pedTopSurface)" />
+                <ellipse cx="310" cy="36" rx="270" ry="34" fill="url(#pedTopSurface)" />
 
                 {/* 5. Inner Inset Ring Edge */}
-                <ellipse cx="240" cy="42" rx="204" ry="37" stroke="#0A0A0A" strokeWidth="2" fill="none" />
+                <ellipse cx="310" cy="36" rx="269" ry="33" stroke="#080808" strokeWidth="2" fill="none" />
 
-                {/* 6. Glowing Neon LED Ring (Outer Diffused Glow) */}
+                {/* 6. Glowing Neon LED Ring (Softened 20% for Face Focus) */}
                 <ellipse
-                  cx="240"
-                  cy="42"
-                  rx="205"
-                  ry="38"
-                  stroke="rgba(255, 255, 255, 0.75)"
-                  strokeWidth="4.5"
+                  cx="310"
+                  cy="36"
+                  rx="270"
+                  ry="34"
+                  stroke="rgba(255, 255, 255, 0.40)"
+                  strokeWidth="3.2"
                   fill="none"
                   filter="url(#pureNeonGlow)"
                 />
 
-                {/* 7. Solid White Razor-Sharp Core Ring */}
+                {/* 7. Solid Razor-Sharp Core Ring (Softened 20%) */}
                 <ellipse
-                  cx="240"
-                  cy="42"
-                  rx="205"
-                  ry="38"
-                  stroke="#FFFFFF"
-                  strokeWidth="2.2"
+                  cx="310"
+                  cy="36"
+                  rx="270"
+                  ry="34"
+                  stroke="rgba(255, 255, 255, 0.80)"
+                  strokeWidth="1.6"
                   fill="none"
                 />
               </svg>
@@ -209,30 +213,39 @@ export const HomeView: React.FC = () => {
               />
             </div>
 
+            {/* DEX Subtle Product Identity Tag */}
+            <div className="dex-identity-tag">
+              <span className="dex-name">DEX</span>
+              <span className="dex-dot">•</span>
+              <span className="dex-role">Decision Execution Engine</span>
+              <span className="dex-dot">•</span>
+              <span className="dex-sub">Deterministic Strategic Intelligence Core</span>
+            </div>
+
             {/* Orbiting Telemetry Card 1: Top-Left Business Health Score */}
             <div className="telemetry-card card-pos-top-left">
-              <div className="t-card-label">Business Health Score</div>
+              <div className="t-card-label">HEALTH SCORE</div>
               <div className="t-card-metric-row">
                 <span className="t-val-lg">82</span>
                 <span className="t-val-sub">/100</span>
               </div>
               <div className="t-sparkline-wrap">
-                <svg width="100%" height="20" viewBox="0 0 100 20" preserveAspectRatio="none">
-                  <path d="M0,14 Q25,18 50,8 T100,5" fill="none" stroke="#FFFFFF" strokeWidth="1.8" />
+                <svg width="100%" height="14" viewBox="0 0 100 14" preserveAspectRatio="none">
+                  <path d="M0,10 Q25,14 50,6 T100,3" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
                 </svg>
               </div>
             </div>
 
             {/* Orbiting Telemetry Card 2: Top-Right Forecast Confidence */}
             <div className="telemetry-card card-pos-top-right">
-              <div className="t-card-label">Forecast Confidence</div>
+              <div className="t-card-label">CONFIDENCE</div>
               <div className="t-forecast-row">
                 <div>
                   <div className="t-val-lg">92%</div>
-                  <div className="t-status-sub">High Confidence</div>
+                  <div className="t-status-sub">Optimal</div>
                 </div>
                 <div className="t-circle-gauge">
-                  <svg width="34" height="34" viewBox="0 0 36 36">
+                  <svg width="26" height="26" viewBox="0 0 36 36">
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
@@ -251,37 +264,29 @@ export const HomeView: React.FC = () => {
               </div>
             </div>
 
-            {/* Orbiting Telemetry Card 3: Mid-Left Revenue Trend */}
-            <div className="telemetry-card card-pos-mid-left">
-              <div className="t-card-label">Revenue Trend</div>
-              <div className="t-val-lg" style={{ color: '#FFFFFF' }}>+12%</div>
-              <div className="t-status-sub">vs last period</div>
-              <div className="t-mini-bars">
-                <div className="bar" style={{ height: '40%' }} />
-                <div className="bar" style={{ height: '60%' }} />
-                <div className="bar" style={{ height: '35%' }} />
-                <div className="bar" style={{ height: '80%' }} />
-                <div className="bar" style={{ height: '100%' }} />
-              </div>
-            </div>
-
-            {/* Orbiting Telemetry Card 4: Mid-Right Top Risk */}
-            <div className="telemetry-card card-pos-mid-right">
+            {/* Orbiting Telemetry Card 3: Bottom-Left Top Risk (Compact Badge) */}
+            <div className="telemetry-card card-pos-bottom-left">
               <div className="t-risk-header">
-                <span className="t-card-label">Top Risk</span>
-                <AlertTriangle size={12} className="t-risk-icon" />
+                <span className="t-card-label">TOP RISK</span>
+                <span className="t-risk-badge">
+                  <AlertTriangle size={10} className="t-risk-icon" />
+                  <span>High</span>
+                </span>
               </div>
               <div className="t-risk-title">Customer Retention</div>
-              <div className="t-risk-impact">High Impact</div>
+              <div className="t-card-subtext">Exposure: 14.2% Churn</div>
             </div>
 
-            {/* Orbiting Telemetry Card 5: Bottom-Right Recommended Action */}
+            {/* Orbiting Telemetry Card 4: Bottom-Right Recommended Action (Compact Badge) */}
             <div className="telemetry-card card-pos-bottom-right">
-              <div className="t-card-label">Recommended Action</div>
+              <div className="t-action-header">
+                <span className="t-card-label">RECOMMENDED</span>
+                <span className="t-action-pill">High Priority</span>
+              </div>
               <div className="t-action-title">Win-Back Campaign</div>
               <div className="t-action-footer">
-                <span>Priority: High</span>
-                <ArrowUpRight size={13} style={{ color: '#FFFFFF' }} />
+                <span>+$180k ARR Target</span>
+                <ArrowUpRight size={12} style={{ color: '#FFFFFF' }} />
               </div>
             </div>
 
@@ -291,16 +296,16 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          3. Why Traditional Dashboards Fail (The Paradigm Shift Table)
+          3. Why DecisionOS (The Paradigm Shift Table)
           ====================================================================== */}
       <section className="section-comparison-wrap" id="comparison">
         <div className="page-container">
           
           <div className="section-heading-center">
             <div className="section-badge">THE PARADIGM SHIFT</div>
-            <h2 className="section-title-main">Why Traditional Dashboards Fail</h2>
+            <h2 className="section-title-main">Why DecisionOS</h2>
             <p className="section-subtitle-main">
-              Charts tell you what happened. DecisionOS isolates why it happened and calculates the exact action plan.
+              Traditional tools show charts. DecisionOS computes root causes and delivers prioritized action plans.
             </p>
           </div>
 
@@ -309,7 +314,7 @@ export const HomeView: React.FC = () => {
               {/* Header */}
               <div className="comp-row comp-header">
                 <div className="comp-col comp-col-dim">Dimension</div>
-                <div className="comp-col comp-col-trad">Dashboard</div>
+                <div className="comp-col comp-col-trad">Traditional Dashboard</div>
                 <div className="comp-col comp-col-bi">BI Platform</div>
                 <div className="comp-col comp-col-decisionos">DecisionOS</div>
               </div>
@@ -325,25 +330,25 @@ export const HomeView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Row 2: Analytical Depth */}
+              {/* Row 2: Focus */}
               <div className="comp-row">
-                <div className="comp-col comp-col-dim">Analytical Depth</div>
-                <div className="comp-col comp-col-trad">Static metrics</div>
-                <div className="comp-col comp-col-bi">Historical trends</div>
+                <div className="comp-col comp-col-dim">Focus</div>
+                <div className="comp-col comp-col-trad">Metrics</div>
+                <div className="comp-col comp-col-bi">Analytics</div>
                 <div className="comp-col comp-col-decisionos">
                   <CheckCircle2 size={16} className="comp-check" />
-                  <span>Deterministic root causes</span>
+                  <span>Decisions</span>
                 </div>
               </div>
 
-              {/* Row 3: Actionability */}
+              {/* Row 3: Output */}
               <div className="comp-row">
-                <div className="comp-col comp-col-dim">Actionability</div>
-                <div className="comp-col comp-col-trad">No actions</div>
-                <div className="comp-col comp-col-bi">No prioritization</div>
+                <div className="comp-col comp-col-dim">Output</div>
+                <div className="comp-col comp-col-trad">Charts</div>
+                <div className="comp-col comp-col-bi">Reports</div>
                 <div className="comp-col comp-col-decisionos">
                   <CheckCircle2 size={16} className="comp-check" />
-                  <span>Calculated action plans</span>
+                  <span>Actions</span>
                 </div>
               </div>
             </div>

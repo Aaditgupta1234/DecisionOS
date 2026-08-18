@@ -130,10 +130,16 @@
 /* Left Hero Column */
 .hero-left {
   padding-right: 8px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .hero-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
   padding: 5px 12px;
   border-radius: 14px;
   background: #0D0F14;
@@ -143,23 +149,24 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin: 0 0 16px 0;
+  text-align: left;
 }
 
 .hero-headline {
-  font-size: clamp(38px, 3.4vw, 48px);
+  font-size: clamp(30px, 2.7vw, 38px);
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.035em;
   color: #FFFFFF;
-  margin: 0 0 18px 0;
+  margin: 0 0 16px 0;
 }
 
 .hero-desc {
   font-size: 14.5px;
   line-height: 1.62;
-  color: #8E99A8;
-  margin: 0 0 24px 0;
+  color: #C4CAD4;
+  margin: 0 0 22px 0;
   max-width: 520px;
 }
 
@@ -167,7 +174,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .btn-hero-primary {
@@ -221,29 +228,27 @@
   justify-content: center;
 }
 
-/* Trust Strip Under Buttons */
+/* Trust Strip Directly Beneath CTAs */
 .hero-trust-strip {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px 16px;
-  font-size: 12px;
-  color: #616B78;
+  gap: 4px 10px;
+  font-size: 11px;
+  color: #6B7280;
   font-weight: 500;
-  padding-top: 6px;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .hero-trust-strip .strip-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   color: #8E99A8;
+  font-weight: 500;
 }
 
-.hero-trust-strip .strip-item::before {
-  content: "●";
-  font-size: 7px;
+.hero-trust-strip .strip-dot {
   color: #4B5563;
+  font-size: 9px;
 }
 
 /* 4. Right Hero Stage Composition */
@@ -254,6 +259,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 /* Overhead Spotlight Cone (Removed as requested) */
@@ -261,14 +267,14 @@
   display: none;
 }
 
-/* 3D Glowing Pedestal Disc */
+/* 3D Glowing Pedestal Disc (620px Wide Anchor) */
 .stage-pedestal-wrap {
   position: absolute;
   bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 480px;
-  height: 130px;
+  width: 620px;
+  height: 110px;
   z-index: 2;
   pointer-events: none;
   display: flex;
@@ -285,7 +291,7 @@
 /* Dominant Standalone 3D Spline Robot atop Pedestal */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 95px;
+  bottom: 88px;
   left: 50%;
   transform: translateX(calc(-50% + 38px)) scale(1.10);
   width: 430px;
@@ -309,32 +315,81 @@
   mix-blend-mode: screen;
 }
 
-/* Generic Telemetry Card Shell */
+/* DEX Product Identity Core Tag */
+.dex-identity-tag {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 6;
+  padding: 5px 16px;
+  background: rgba(10, 13, 18, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+}
+
+.dex-name {
+  font-size: 12px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.08em;
+}
+
+.dex-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: #C4CAD4;
+}
+
+.dex-dot {
+  color: #555E70;
+  font-size: 8px;
+}
+
+.dex-sub {
+  font-size: 11px;
+  color: #8E99A8;
+  font-weight: 500;
+}
+
+/* Generic Telemetry Card Shell - Floating Telemetry Status Badges */
 .telemetry-card {
   position: absolute;
-  background: #080A0E;
-  border: 1px solid #1A1E26;
-  border-radius: 10px;
-  padding: 12px 14px;
+  background: rgba(8, 10, 14, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
   z-index: 5;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
   transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .telemetry-card:hover {
-  border-color: #2D333F;
+  border-color: rgba(255, 255, 255, 0.16);
   transform: translateY(-2px);
 }
 
 .t-card-label {
-  font-size: 10.5px;
+  font-size: 9px;
   color: #727A86;
-  font-weight: 500;
-  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
 }
 
 .t-val-lg {
-  font-size: 38px;
+  font-size: 26px;
   font-weight: 800;
   color: #FFFFFF;
   line-height: 1;
@@ -342,47 +397,45 @@
 }
 
 .t-val-sub {
-  font-size: 13px;
+  font-size: 11px;
   color: #616B78;
   margin-left: 2px;
   font-weight: 600;
 }
 
 .t-status-sub {
-  font-size: 10px;
+  font-size: 9px;
   color: #727A86;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
-/* Positions for Orbiting Cards */
+/* Dynamic Asymmetrical Diagonal Positioning with +30px Breathing Space */
+/* 1. Business Health Score (High, Offset Left) */
 .card-pos-top-left {
-  top: -15px;
-  left: 20px;
-  width: 165px;
+  top: 15px;
+  left: -15px;
+  width: 190px;
 }
 
+/* 2. Forecast Confidence (Mid-Upper Right) */
 .card-pos-top-right {
-  top: -15px;
-  right: 20px;
-  width: 180px;
-}
-
-.card-pos-mid-left {
-  top: 85px;
-  left: 5px;
-  width: 155px;
-}
-
-.card-pos-mid-right {
-  top: 85px;
-  right: 5px;
-  width: 170px;
-}
-
-.card-pos-bottom-right {
-  bottom: 160px;
+  top: 15px;
   right: 15px;
-  width: 180px;
+  width: 190px;
+}
+
+/* 3. Customer Retention (Lower Left, Moved Outward) */
+.card-pos-bottom-left {
+  bottom: 140px;
+  left: -45px;
+  width: 210px;
+}
+
+/* 4. Win-Back Campaign (Bottom Right, Moved Outward & Elevated) */
+.card-pos-bottom-right {
+  bottom: 140px;
+  right: -45px;
+  width: 228px;
 }
 
 /* Card internals */
@@ -392,7 +445,7 @@
 }
 
 .t-sparkline-wrap {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .t-forecast-row {
@@ -401,25 +454,22 @@
   justify-content: space-between;
 }
 
-.t-mini-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-  height: 22px;
-  margin-top: 8px;
-}
-
-.t-mini-bars .bar {
-  flex: 1;
-  background: #FFFFFF;
-  border-radius: 2px;
-  opacity: 0.85;
-}
-
 .t-risk-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.t-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: #E2E8F0;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-weight: 600;
 }
 
 .t-risk-icon {
@@ -427,23 +477,41 @@
 }
 
 .t-risk-title {
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #FFFFFF;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
-.t-risk-impact {
+.t-card-subtext {
   font-size: 10px;
-  color: #727A86;
-  margin-top: 3px;
+  color: #8E99A8;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.t-action-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.t-action-pill {
+  font-size: 9px;
+  color: #2E90FF;
+  background: rgba(46, 144, 255, 0.12);
+  border: 1px solid rgba(46, 144, 255, 0.3);
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .t-action-title {
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 700;
   color: #FFFFFF;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .t-action-footer {
@@ -452,7 +520,8 @@
   justify-content: space-between;
   font-size: 10px;
   color: #8E99A8;
-  margin-top: 6px;
+  margin-top: 4px;
+  font-weight: 600;
 }
 
 /* ======================================================================
