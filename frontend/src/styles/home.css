@@ -269,7 +269,7 @@
 /* 3D Glowing Pedestal Disc */
 .stage-pedestal-wrap {
   position: absolute;
-  bottom: 12px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   width: 480px;
@@ -290,9 +290,9 @@
 /* Dominant Standalone 3D Spline Robot atop Pedestal */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 25px;
+  bottom: 60px;
   left: 50%;
-  transform: translateX(-50%) scale(1.1);
+  transform: translateX(-50%) scale(1.04);
   width: 440px;
   height: 440px;
   z-index: 3;
@@ -301,8 +301,8 @@
   justify-content: center;
   pointer-events: auto;
   overflow: visible;
-  mask-image: radial-gradient(circle at 50% 50%, black 58%, transparent 88%);
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 58%, transparent 88%);
+  mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 90%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 90%);
 }
 
 .dex-spline-iframe {

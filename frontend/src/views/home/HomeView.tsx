@@ -211,16 +211,6 @@ export const HomeView: React.FC = () => {
                   strokeWidth="2.2"
                   fill="none"
                 />
-
-                {/* 8. Front Arc Specular Highlight */}
-                <path
-                  d="M 70,52 A 205 38 0 0 0 410,52"
-                  stroke="#FFFFFF"
-                  strokeWidth="3.2"
-                  strokeLinecap="round"
-                  filter="url(#pureNeonGlow)"
-                  opacity="0.95"
-                />
               </svg>
             </div>
 
