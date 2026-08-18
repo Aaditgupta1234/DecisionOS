@@ -295,11 +295,11 @@
 /* Dominant Standalone 3D Spline Robot atop Pedestal */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 78px;
+  bottom: 95px;
   left: 50%;
-  transform: translateX(calc(-50% + 38px)) scale(1.08);
-  width: 440px;
-  height: 440px;
+  transform: translateX(calc(-50% + 38px)) scale(1.10);
+  width: 430px;
+  height: 430px;
   z-index: 3;
   display: flex;
   align-items: center;
@@ -364,31 +364,31 @@
 
 /* Positions for Orbiting Cards */
 .card-pos-top-left {
-  top: 30px;
+  top: -15px;
   left: 20px;
   width: 155px;
 }
 
 .card-pos-top-right {
-  top: 30px;
+  top: -15px;
   right: 20px;
   width: 170px;
 }
 
 .card-pos-mid-left {
-  top: 155px;
+  top: 85px;
   left: 5px;
   width: 145px;
 }
 
 .card-pos-mid-right {
-  top: 145px;
+  top: 85px;
   right: 5px;
   width: 165px;
 }
 
 .card-pos-bottom-right {
-  bottom: 80px;
+  bottom: 160px;
   right: 15px;
   width: 175px;
 }
