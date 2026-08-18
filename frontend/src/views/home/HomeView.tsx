@@ -112,9 +112,6 @@ export const HomeView: React.FC = () => {
 
           {/* RIGHT: Spotlight Beam, 3D Glowing Pedestal & Orbiting Telemetry */}
           <div className="hero-right-stage">
-            {/* Top spotlight cone */}
-            <div className="stage-spotlight" />
-
             {/* High-Fidelity 3D Pedestal Stage with Illuminated LED Rim (Pure Vector/CSS) */}
             <div className="stage-pedestal-wrap">
               <svg width="480" height="130" viewBox="0 0 480 130" fill="none" xmlns="http://www.w3.org/2000/svg" className="pedestal-svg">
