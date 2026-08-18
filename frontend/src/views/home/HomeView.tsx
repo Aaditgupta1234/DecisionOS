@@ -18,7 +18,10 @@ import {
   Layers,
   Cpu,
   ShieldCheck,
-  Activity
+  Activity,
+  CheckCircle2,
+  Zap,
+  ArrowDown
 } from 'lucide-react';
 import '../../styles/home.css';
 
@@ -36,10 +39,10 @@ export const HomeView: React.FC = () => {
           </Link>
 
           <div className="nav-links">
-            <a href="#platform" className="nav-link">Platform</a>
+            <a href="#comparison" className="nav-link">Why DecisionOS</a>
+            <a href="#pipeline" className="nav-link">Signature Pipeline</a>
             <a href="#intelligence" className="nav-link">Intelligence</a>
             <a href="#solutions" className="nav-link">Solutions</a>
-            <a href="#resources" className="nav-link">Resources</a>
             <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="nav-link">Docs</a>
           </div>
 
@@ -58,19 +61,17 @@ export const HomeView: React.FC = () => {
           {/* LEFT: Headline & Value Narrative */}
           <div className="hero-left">
             <div className="hero-badge">
-              AI-NATIVE BUSINESS INTELLIGENCE
+              DETERMINISTIC EXECUTIVE INTELLIGENCE
             </div>
 
             <h1 className="hero-headline">
-              Know What’s<br />
-              Happening.<br />
+              Know What’s Happening.<br />
               Understand Why.<br />
-              Decide What Comes<br />
-              Next.
+              Decide What Comes Next.
             </h1>
 
             <p className="hero-desc">
-              DecisionOS transforms business data into explainable intelligence through KPI analysis, diagnostics, root cause discovery, forecasting, and AI-powered executive insights.
+              DecisionOS identifies why business performance changed, isolates root causes through deterministic analysis, and calculates the highest-impact actions to take next.
             </p>
 
             <div className="hero-btn-row">
@@ -86,27 +87,13 @@ export const HomeView: React.FC = () => {
               </a>
             </div>
 
-            {/* Trusted Strip */}
-            <div className="hero-trust-block">
-              <div className="trust-heading">TRUSTED BY ANALYTICAL LEADERS</div>
-              <div className="trust-items">
-                <div className="trust-chip">
-                  <BarChart2 size={13} className="trust-icon" />
-                  <span>KPI Intelligence</span>
-                </div>
-                <div className="trust-chip">
-                  <GitMerge size={13} className="trust-icon" />
-                  <span>Root Cause Analysis</span>
-                </div>
-                <div className="trust-chip">
-                  <TrendingUp size={13} className="trust-icon" />
-                  <span>Forecasting Engine</span>
-                </div>
-                <div className="trust-chip">
-                  <Bot size={13} className="trust-icon" />
-                  <span>AI Analyst</span>
-                </div>
-              </div>
+            {/* Trust Strip Under Buttons */}
+            <div className="hero-trust-strip">
+              <span className="strip-item">783+ Tests</span>
+              <span className="strip-item">100+ APIs</span>
+              <span className="strip-item">25+ Engines</span>
+              <span className="strip-item">40+ Models</span>
+              <span className="strip-item">Deterministic Intelligence</span>
             </div>
           </div>
 
@@ -116,30 +103,30 @@ export const HomeView: React.FC = () => {
             <div className="stage-pedestal-wrap">
               <svg width="480" height="130" viewBox="0 0 480 130" fill="none" xmlns="http://www.w3.org/2000/svg" className="pedestal-svg">
                 <defs>
-                  {/* Top Disc Ambient Spotlight Reflection */}
+                  {/* Top Disc Ambient Spotlight Reflection (Pure Neutral Steel) */}
                   <radialGradient id="pedTopSurface" cx="50%" cy="38%" r="58%">
-                    <stop offset="0%" stopColor="#555E70" />
-                    <stop offset="25%" stopColor="#363E4B" />
-                    <stop offset="55%" stopColor="#1B2028" />
-                    <stop offset="85%" stopColor="#0E1015" />
-                    <stop offset="100%" stopColor="#06070A" />
+                    <stop offset="0%" stopColor="#4A4A4A" />
+                    <stop offset="25%" stopColor="#303030" />
+                    <stop offset="55%" stopColor="#1A1A1A" />
+                    <stop offset="85%" stopColor="#0D0D0D" />
+                    <stop offset="100%" stopColor="#050505" />
                   </radialGradient>
 
-                  {/* Cylinder Wall Vertical Shadow Falloff */}
+                  {/* Cylinder Wall Vertical Shadow Falloff (Pure Neutral Steel) */}
                   <linearGradient id="pedCylinderVertical" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#2A303C" />
-                    <stop offset="20%" stopColor="#181B22" />
-                    <stop offset="60%" stopColor="#0B0D11" />
-                    <stop offset="100%" stopColor="#020304" />
+                    <stop offset="0%" stopColor="#2E2E2E" />
+                    <stop offset="20%" stopColor="#1C1C1C" />
+                    <stop offset="60%" stopColor="#0D0D0D" />
+                    <stop offset="100%" stopColor="#030303" />
                   </linearGradient>
 
-                  {/* Cylinder Horizontal Center Sheen */}
+                  {/* Cylinder Horizontal Center Sheen (Pure Neutral Steel) */}
                   <linearGradient id="pedCylinderSheen" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#040507" stopOpacity="0.9" />
-                    <stop offset="30%" stopColor="#1C212A" stopOpacity="0.5" />
-                    <stop offset="50%" stopColor="#323A48" stopOpacity="0.3" />
-                    <stop offset="70%" stopColor="#1C212A" stopOpacity="0.5" />
-                    <stop offset="100%" stopColor="#040507" stopOpacity="0.9" />
+                    <stop offset="0%" stopColor="#050505" stopOpacity="0.9" />
+                    <stop offset="30%" stopColor="#222222" stopOpacity="0.4" />
+                    <stop offset="50%" stopColor="#3A3A3A" stopOpacity="0.25" />
+                    <stop offset="70%" stopColor="#222222" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="#050505" stopOpacity="0.9" />
                   </linearGradient>
 
                   {/* Brilliant Neon Glow Filter */}
@@ -176,7 +163,7 @@ export const HomeView: React.FC = () => {
                 {/* 3. Bottom Edge Bevel Line */}
                 <path
                   d="M 35,78 A 205 38 0 0 0 445,78"
-                  stroke="#161920"
+                  stroke="#181818"
                   strokeWidth="1.5"
                 />
 
@@ -184,7 +171,7 @@ export const HomeView: React.FC = () => {
                 <ellipse cx="240" cy="42" rx="205" ry="38" fill="url(#pedTopSurface)" />
 
                 {/* 5. Inner Inset Ring Edge */}
-                <ellipse cx="240" cy="42" rx="204" ry="37" stroke="#080A0E" strokeWidth="2" fill="none" />
+                <ellipse cx="240" cy="42" rx="204" ry="37" stroke="#0A0A0A" strokeWidth="2" fill="none" />
 
                 {/* 6. Glowing Neon LED Ring (Outer Diffused Glow) */}
                 <ellipse
@@ -304,104 +291,185 @@ export const HomeView: React.FC = () => {
       </section>
 
       {/* ======================================================================
-          3. The Intelligence Pipeline Section
+          3. Why Traditional Dashboards Fail (The Paradigm Shift Table)
           ====================================================================== */}
-      <section className="section-pipeline-wrap" id="intelligence">
+      <section className="section-comparison-wrap" id="comparison">
         <div className="page-container">
           
           <div className="section-heading-center">
-            <h2 className="section-title-main">The Intelligence Pipeline</h2>
+            <div className="section-badge">THE PARADIGM SHIFT</div>
+            <h2 className="section-title-main">Why Traditional Dashboards Fail</h2>
             <p className="section-subtitle-main">
-              A fully integrated analytical engine turning raw data into actionable executive decisions.
+              Charts tell you what happened. DecisionOS isolates why it happened and calculates the exact action plan.
             </p>
           </div>
 
-          <div className="pipeline-flow-row">
+          <div className="comparison-table-wrap">
+            <div className="comparison-table">
+              {/* Header */}
+              <div className="comp-row comp-header">
+                <div className="comp-col comp-col-dim">Dimension</div>
+                <div className="comp-col comp-col-trad">Dashboard</div>
+                <div className="comp-col comp-col-bi">BI Platform</div>
+                <div className="comp-col comp-col-decisionos">DecisionOS</div>
+              </div>
+
+              {/* Row 1: Core Question */}
+              <div className="comp-row">
+                <div className="comp-col comp-col-dim">Core Question</div>
+                <div className="comp-col comp-col-trad">What happened?</div>
+                <div className="comp-col comp-col-bi">Where did it trend?</div>
+                <div className="comp-col comp-col-decisionos">
+                  <CheckCircle2 size={16} className="comp-check" />
+                  <span>Why did it happen?</span>
+                </div>
+              </div>
+
+              {/* Row 2: Analytical Depth */}
+              <div className="comp-row">
+                <div className="comp-col comp-col-dim">Analytical Depth</div>
+                <div className="comp-col comp-col-trad">Static metrics</div>
+                <div className="comp-col comp-col-bi">Historical trends</div>
+                <div className="comp-col comp-col-decisionos">
+                  <CheckCircle2 size={16} className="comp-check" />
+                  <span>Deterministic root causes</span>
+                </div>
+              </div>
+
+              {/* Row 3: Actionability */}
+              <div className="comp-row">
+                <div className="comp-col comp-col-dim">Actionability</div>
+                <div className="comp-col comp-col-trad">No actions</div>
+                <div className="comp-col comp-col-bi">No prioritization</div>
+                <div className="comp-col comp-col-decisionos">
+                  <CheckCircle2 size={16} className="comp-check" />
+                  <span>Calculated action plans</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================================
+          4. The Signature Pipeline Section (DecisionOS's Moat)
+          ====================================================================== */}
+      <section className="section-pipeline-wrap" id="pipeline">
+        <div className="page-container">
+          
+          <div className="section-heading-center">
+            <div className="section-badge">END-TO-END MOAT</div>
+            <h2 className="section-title-main">The Signature Intelligence Pipeline</h2>
+            <p className="section-subtitle-main">
+              From raw business telemetry to autonomous executive briefings in 8 deterministic stages.
+            </p>
+          </div>
+
+          <div className="pipeline-grid-container">
             
-            {/* Step 1 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <Database size={20} />
+            {/* Stage 1: Data */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>01. INGESTION</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">Business Data</div>
-              <div className="flow-sub">Collect & Integrate</div>
+              <div className="pipeline-card-icon">
+                <Database size={18} />
+              </div>
+              <div className="pipeline-card-title">Data</div>
+              <div className="pipeline-card-desc">Unified multi-source ingestion & schema normalization across ERP and transactional databases.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 2 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <BarChart2 size={20} />
+            {/* Stage 2: KPIs */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>02. METRICS</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">KPIs</div>
-              <div className="flow-sub">Measure Performance</div>
+              <div className="pipeline-card-icon">
+                <BarChart2 size={18} />
+              </div>
+              <div className="pipeline-card-title">KPIs</div>
+              <div className="pipeline-card-desc">Deterministic performance computation with period-over-period delta attribution.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 3 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <Search size={20} />
+            {/* Stage 3: Diagnostics */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>03. ANOMALY</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">Diagnostics</div>
-              <div className="flow-sub">Detect Anomalies</div>
+              <div className="pipeline-card-icon">
+                <Search size={18} />
+              </div>
+              <div className="pipeline-card-title">Diagnostics</div>
+              <div className="pipeline-card-desc">Statistical anomaly scanning, threshold breaches, and volatility pattern detection.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 4 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <GitMerge size={20} />
+            {/* Stage 4: Root Cause */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>04. ATTRIBUTION</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">Root Causes</div>
-              <div className="flow-sub">Find What Matters</div>
+              <div className="pipeline-card-icon">
+                <GitMerge size={18} />
+              </div>
+              <div className="pipeline-card-title">Root Cause</div>
+              <div className="pipeline-card-desc">Multi-dimensional variance isolation pinpointing exact revenue and cost drivers.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 5 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <Target size={20} />
+            {/* Stage 5: Recommendations */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>05. ACTIONS</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">Recommendations</div>
-              <div className="flow-sub">Actionable Steps</div>
+              <div className="pipeline-card-icon">
+                <Target size={18} />
+              </div>
+              <div className="pipeline-card-title">Recommendations</div>
+              <div className="pipeline-card-desc">Prioritized corrective playbooks ranked by expected revenue impact and feasibility.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 6 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <TrendingUp size={20} />
+            {/* Stage 6: Forecasting */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>06. SIMULATION</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">Forecasts</div>
-              <div className="flow-sub">Predict Outcomes</div>
+              <div className="pipeline-card-icon">
+                <TrendingUp size={18} />
+              </div>
+              <div className="pipeline-card-title">Forecasting</div>
+              <div className="pipeline-card-desc">Predictive modeling with confidence intervals and what-if scenario simulations.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 7 */}
-            <div className="flow-node">
-              <div className="flow-icon-circle">
-                <FileText size={20} />
+            {/* Stage 7: Executive Intelligence */}
+            <div className="pipeline-card">
+              <div className="pipeline-card-step">
+                <span>07. SYNTHESIS</span>
+                <span className="pipeline-dot" />
               </div>
-              <div className="flow-title">Executive Intelligence</div>
-              <div className="flow-sub">Strategic Insights</div>
+              <div className="pipeline-card-icon">
+                <FileText size={18} />
+              </div>
+              <div className="pipeline-card-title">Executive Intelligence</div>
+              <div className="pipeline-card-desc">Natural language executive briefs and strategic decision summaries.</div>
             </div>
 
-            <div className="flow-arrow">→</div>
-
-            {/* Step 8 (DEX Highlight) */}
-            <div className="flow-node flow-node-dex">
-              <div className="flow-icon-circle flow-icon-dex">
-                <Bot size={22} style={{ color: '#FFFFFF' }} />
+            {/* Stage 8: DEX */}
+            <div className="pipeline-card pipeline-card-highlight">
+              <div className="pipeline-card-step">
+                <span style={{ color: '#FFFFFF' }}>08. AUTONOMOUS</span>
+                <Sparkles size={12} style={{ color: '#FFFFFF' }} />
               </div>
-              <div className="flow-title" style={{ color: '#FFFFFF' }}>AI Analyst</div>
-              <div className="flow-sub" style={{ color: '#E8E8E8', fontWeight: '600' }}>DEX</div>
+              <div className="pipeline-card-icon">
+                <Bot size={20} />
+              </div>
+              <div className="pipeline-card-title" style={{ color: '#FFFFFF' }}>DEX</div>
+              <div className="pipeline-card-desc" style={{ color: '#C5CCD6' }}>Your autonomous 24/7 AI decision analyst providing conversational deep dives.</div>
             </div>
 
           </div>
