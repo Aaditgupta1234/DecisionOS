@@ -10,16 +10,15 @@ import {
   Target, 
   TrendingUp, 
   FileText, 
-  Cpu, 
+  Bot, 
   AlertTriangle, 
   Sparkles, 
   ArrowUpRight,
-  ShieldCheck,
-  CheckCircle2,
-  Check,
+  TrendingDown,
   Layers,
-  Activity,
-  Workflow
+  Cpu,
+  ShieldCheck,
+  Activity
 } from 'lucide-react';
 import '../../styles/home.css';
 
@@ -28,22 +27,19 @@ export const HomeView: React.FC = () => {
     <div className="page-root">
       
       {/* ======================================================================
-          1. Top Navigation Bar (Command Center Navigation)
+          1. Top Navigation Bar
           ====================================================================== */}
       <nav className="top-nav">
         <div className="page-container top-nav-inner">
           <Link to="/" className="nav-brand">
-            <div className="nav-brand-emblem">
-              <Cpu size={14} color="#FFFFFF" />
-            </div>
-            <span>DecisionOS</span>
+            <span className="nav-brand-text">DecisionOS</span>
           </Link>
 
           <div className="nav-links">
-            <a href="#why-exists" className="nav-link">Platform</a>
-            <a href="#pipeline" className="nav-link">Intelligence</a>
-            <a href="#overview" className="nav-link">Capabilities</a>
-            <a href="#scale" className="nav-link">Architecture</a>
+            <a href="#platform" className="nav-link">Platform</a>
+            <a href="#intelligence" className="nav-link">Intelligence</a>
+            <a href="#solutions" className="nav-link">Solutions</a>
+            <a href="#resources" className="nav-link">Resources</a>
             <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="nav-link">Docs</a>
           </div>
 
@@ -54,639 +50,617 @@ export const HomeView: React.FC = () => {
       </nav>
 
       {/* ======================================================================
-          2. Hero Section (Strict 2-Column Composition)
+          2. Hero Section with Spotlight, Pedestal & Symmetrical Telemetry
           ====================================================================== */}
-      <section className="hero-wrapper">
+      <section className="hero-section" id="platform">
         <div className="page-container hero-grid">
           
-          {/* LEFT COLUMN (46%): Executive Positioning & Story */}
-          <div className="hero-left-column">
+          {/* LEFT: Headline & Value Narrative */}
+          <div className="hero-left">
             <div className="hero-badge">
-              DETERMINISTIC EXECUTIVE INTELLIGENCE
+              AI-NATIVE BUSINESS INTELLIGENCE
             </div>
 
             <h1 className="hero-headline">
-              Know What’s Happening.<br />
+              Know What’s<br />
+              Happening.<br />
               Understand Why.<br />
-              Decide What Comes Next.
+              Decide What Comes<br />
+              Next.
             </h1>
 
-            {/* Differentiator Value Proposition Block */}
-            <div className="hero-value-prop">
-              Most platforms tell you what happened.
-              <strong>DecisionOS determines why it happened and calculates what to do next.</strong>
-            </div>
-
             <p className="hero-desc">
-              DecisionOS transforms business telemetry into explainable intelligence through deterministic KPI evaluation, causal root-cause discovery, forecasting, and prioritized executive interventions.
+              DecisionOS transforms business data into explainable intelligence through KPI analysis, diagnostics, root cause discovery, forecasting, and AI-powered executive insights.
             </p>
 
-            <div className="hero-btn-group">
-              <Link to="/dashboard" className="btn-start-analysis">
+            <div className="hero-btn-row">
+              <Link to="/dashboard" className="btn-hero-primary">
                 <span>Start Analysis</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={16} />
               </Link>
-              <a href="#why-exists" className="btn-explore-flow">
-                <span>Explore Decision Flow</span>
-                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Play size={10} style={{ fill: '#060709', color: '#060709', marginLeft: '1px' }} />
+              <a href="#intelligence" className="btn-hero-secondary">
+                <span>Watch Demo</span>
+                <div className="btn-play-circle">
+                  <Play size={10} style={{ fill: '#FFFFFF', marginLeft: '1px' }} />
                 </div>
               </a>
             </div>
 
-            <div className="hero-traceability-subtext">
-              No LLM hallucinations. 100% deterministic decision logic.
-            </div>
-
-            {/* Recruiter Trust Strip (Gold Standard) */}
-            <div className="hero-trust-bar">
-              <div className="trust-items-row">
-                <div className="trust-item">
-                  <span className="trust-dot">●</span>
-                  <span>783+ Tests</span>
+            {/* Trusted Strip */}
+            <div className="hero-trust-block">
+              <div className="trust-heading">TRUSTED BY ANALYTICAL LEADERS</div>
+              <div className="trust-items">
+                <div className="trust-chip">
+                  <BarChart2 size={13} className="trust-icon" />
+                  <span>KPI Intelligence</span>
                 </div>
-                <div className="trust-item">
-                  <span className="trust-dot">●</span>
-                  <span>100+ REST APIs</span>
+                <div className="trust-chip">
+                  <GitMerge size={13} className="trust-icon" />
+                  <span>Root Cause Analysis</span>
                 </div>
-                <div className="trust-item">
-                  <span className="trust-dot">●</span>
-                  <span>25+ Engines</span>
+                <div className="trust-chip">
+                  <TrendingUp size={13} className="trust-icon" />
+                  <span>Forecasting Engine</span>
                 </div>
-                <div className="trust-item">
-                  <span className="trust-dot">●</span>
-                  <span>40+ Models</span>
-                </div>
-                <div className="trust-item">
-                  <span className="trust-dot">●</span>
-                  <span>Deterministic</span>
+                <div className="trust-chip">
+                  <Bot size={13} className="trust-icon" />
+                  <span>AI Analyst</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT COLUMN (54%): Vertical Axis (Spotlight -> DEX -> Pedestal) */}
-          <div className="hero-stage">
-            
-            {/* 1. Overhead White-Gray Spotlight Beam (16% Opacity) */}
-            <div className="hero-spotlight" />
+          {/* RIGHT: Spotlight Beam, 3D Glowing Pedestal & Orbiting Telemetry */}
+          <div className="hero-right-stage">
+            {/* Top spotlight cone */}
+            <div className="stage-spotlight" />
 
-            {/* 2. 3D Metallic Graphite Pedestal Platform (560px) */}
-            <div className="stage-pedestal">
-              <div className="pedestal-disc" />
-            </div>
+            {/* High-Fidelity 3D Pedestal Stage with Illuminated LED Rim (Pure Vector/CSS) */}
+            <div className="stage-pedestal-wrap">
+              <svg width="480" height="130" viewBox="0 0 480 130" fill="none" xmlns="http://www.w3.org/2000/svg" className="pedestal-svg">
+                <defs>
+                  {/* Top Disc Ambient Spotlight Reflection */}
+                  <radialGradient id="pedTopSurface" cx="50%" cy="38%" r="58%">
+                    <stop offset="0%" stopColor="#555E70" />
+                    <stop offset="25%" stopColor="#363E4B" />
+                    <stop offset="55%" stopColor="#1B2028" />
+                    <stop offset="85%" stopColor="#0E1015" />
+                    <stop offset="100%" stopColor="#06070A" />
+                  </radialGradient>
 
-            {/* 3. Central Standalone 3D Spline Robot + Symmetrical Telemetry Grid */}
-            <div className="stage-cards-layout">
-              
-              {/* TOP-LEFT: Business Health Score */}
-              <div className="stage-card card-business-health">
-                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
-                  Business Health Score
-                </div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-                  <span className="metric-value-huge">82</span>
-                  <span style={{ fontSize: '13px', color: '#727A86' }}>/ 100</span>
-                </div>
-                <div style={{ marginTop: '6px', height: '14px', width: '100%' }}>
-                  <svg width="100%" height="100%" viewBox="0 0 80 14" preserveAspectRatio="none">
-                    <path d="M0,10 Q20,12 40,6 T80,4" fill="none" stroke="#B5BAC4" strokeWidth="1.5" />
-                  </svg>
-                </div>
-              </div>
+                  {/* Cylinder Wall Vertical Shadow Falloff */}
+                  <linearGradient id="pedCylinderVertical" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#2A303C" />
+                    <stop offset="20%" stopColor="#181B22" />
+                    <stop offset="60%" stopColor="#0B0D11" />
+                    <stop offset="100%" stopColor="#020304" />
+                  </linearGradient>
 
-              {/* TOP-RIGHT: Forecast Confidence */}
-              <div className="stage-card card-forecast-conf">
-                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
-                  Forecast Confidence
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div className="metric-value-huge">92%</div>
-                    <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '3px' }}>High Confidence</div>
-                  </div>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
-                </div>
-              </div>
+                  {/* Cylinder Horizontal Center Sheen */}
+                  <linearGradient id="pedCylinderSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#040507" stopOpacity="0.9" />
+                    <stop offset="30%" stopColor="#1C212A" stopOpacity="0.5" />
+                    <stop offset="50%" stopColor="#323A48" stopOpacity="0.3" />
+                    <stop offset="70%" stopColor="#1C212A" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#040507" stopOpacity="0.9" />
+                  </linearGradient>
 
-              {/* CENTERPIECE: Dominant Standalone 3D Spline Robot on Pedestal */}
-              <div className="dex-bot-standalone">
-                <iframe 
-                  src="https://my.spline.design/genkubgreetingrobot-5exzcKZ24el7lb1Perqf1bkP/" 
-                  className="dex-spline-iframe"
-                  title="DEX 3D Interactive Robot"
+                  {/* Brilliant Neon Glow Filter */}
+                  <filter id="pureNeonGlow" x="-25%" y="-45%" width="150%" height="190%">
+                    <feGaussianBlur stdDeviation="7.5" result="blur1" />
+                    <feGaussianBlur stdDeviation="2.5" result="blur2" />
+                    <feMerge>
+                      <feMergeNode in="blur1" />
+                      <feMergeNode in="blur2" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+
+                  {/* Soft Ground Contact Shadow Filter */}
+                  <filter id="pedContactShadow" x="-20%" y="-30%" width="140%" height="160%">
+                    <feGaussianBlur stdDeviation="14" />
+                  </filter>
+                </defs>
+
+                {/* 1. Deep Atmospheric Ground Shadow */}
+                <ellipse cx="240" cy="100" rx="215" ry="24" fill="rgba(0,0,0,0.95)" filter="url(#pedContactShadow)" />
+                <ellipse cx="240" cy="94" rx="180" ry="18" fill="rgba(0,0,0,0.9)" />
+
+                {/* 2. 3D Cylinder Extruded Side Wall */}
+                <path
+                  d="M 35,42 A 205 38 0 0 0 445,42 L 445,78 A 205 38 0 0 1 35,78 Z"
+                  fill="url(#pedCylinderVertical)"
                 />
-              </div>
+                <path
+                  d="M 35,42 A 205 38 0 0 0 445,42 L 445,78 A 205 38 0 0 1 35,78 Z"
+                  fill="url(#pedCylinderSheen)"
+                />
 
-              {/* BOTTOM-LEFT: Top Operational Risk */}
-              <div className="stage-card card-top-risk">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
-                  <span>Top Operational Risk</span>
-                  <AlertTriangle size={12} style={{ color: '#E8E8E8' }} />
+                {/* 3. Bottom Edge Bevel Line */}
+                <path
+                  d="M 35,78 A 205 38 0 0 0 445,78"
+                  stroke="#161920"
+                  strokeWidth="1.5"
+                />
+
+                {/* 4. Top Disc Surface Platform */}
+                <ellipse cx="240" cy="42" rx="205" ry="38" fill="url(#pedTopSurface)" />
+
+                {/* 5. Inner Inset Ring Edge */}
+                <ellipse cx="240" cy="42" rx="204" ry="37" stroke="#080A0E" strokeWidth="2" fill="none" />
+
+                {/* 6. Glowing Neon LED Ring (Outer Diffused Glow) */}
+                <ellipse
+                  cx="240"
+                  cy="42"
+                  rx="205"
+                  ry="38"
+                  stroke="rgba(255, 255, 255, 0.75)"
+                  strokeWidth="4.5"
+                  fill="none"
+                  filter="url(#pureNeonGlow)"
+                />
+
+                {/* 7. Solid White Razor-Sharp Core Ring */}
+                <ellipse
+                  cx="240"
+                  cy="42"
+                  rx="205"
+                  ry="38"
+                  stroke="#FFFFFF"
+                  strokeWidth="2.2"
+                  fill="none"
+                />
+
+                {/* 8. Front Arc Specular Highlight */}
+                <path
+                  d="M 70,52 A 205 38 0 0 0 410,52"
+                  stroke="#FFFFFF"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                  filter="url(#pureNeonGlow)"
+                  opacity="0.95"
+                />
+              </svg>
+            </div>
+
+            {/* CENTERPIECE: Dominant Standalone 3D Spline Robot on Pedestal */}
+            <div className="dex-bot-standalone">
+              <iframe 
+                src="/dex-robot.html" 
+                className="dex-spline-iframe"
+                title="DEX 3D Interactive Robot"
+                allow="autoplay; fullscreen"
+                style={{ background: 'transparent' }}
+              />
+            </div>
+
+            {/* Orbiting Telemetry Card 1: Top-Left Business Health Score */}
+            <div className="telemetry-card card-pos-top-left">
+              <div className="t-card-label">Business Health Score</div>
+              <div className="t-card-metric-row">
+                <span className="t-val-lg">82</span>
+                <span className="t-val-sub">/100</span>
+              </div>
+              <div className="t-sparkline-wrap">
+                <svg width="100%" height="20" viewBox="0 0 100 20" preserveAspectRatio="none">
+                  <path d="M0,14 Q25,18 50,8 T100,5" fill="none" stroke="#FFFFFF" strokeWidth="1.8" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Orbiting Telemetry Card 2: Top-Right Forecast Confidence */}
+            <div className="telemetry-card card-pos-top-right">
+              <div className="t-card-label">Forecast Confidence</div>
+              <div className="t-forecast-row">
+                <div>
+                  <div className="t-val-lg">92%</div>
+                  <div className="t-status-sub">High Confidence</div>
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF', marginTop: '2px' }}>
-                  Customer Retention
-                </div>
-                <div style={{ fontSize: '10px', color: '#727A86', marginTop: '3px' }}>
-                  ● -4.3% Revenue Drag
-                </div>
-              </div>
-
-              {/* BOTTOM-RIGHT: Recommended Action */}
-              <div className="stage-card card-recommended-action">
-                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '2px' }}>
-                  Recommended Action
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: '#FFFFFF' }}>
-                    Win-Back Campaign
-                  </div>
-                  <ArrowUpRight size={14} style={{ color: '#FFFFFF' }} />
-                </div>
-                <div style={{ fontSize: '10px', color: '#B5BAC4', marginTop: '3px' }}>
-                  Impact: +$320k Recovery
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ======================================================================
-          3. Section: Why DecisionOS Exists (The Core Identity Showdown)
-          ====================================================================== */}
-      <section id="why-exists" className="section-identity">
-        <div className="page-container">
-          
-          <div className="identity-header-block">
-            <h2 className="identity-section-title">
-              Why DecisionOS Exists
-            </h2>
-            <p className="identity-lead-text">
-              Most business analytics platforms stop at reporting. They tell executives what happened.<br />
-              DecisionOS was built to answer the questions that determine business survival:
-            </p>
-            <div className="identity-three-questions">
-              <span>• What changed?</span>
-              <span>• Why did it change?</span>
-              <span>• What should we do next?</span>
-            </div>
-            <p className="identity-sub-statement">
-              Every score, recommendation, forecast, and intervention is fully traceable through deterministic business logic.
-            </p>
-          </div>
-
-          <div className="differentiator-grid">
-            
-            {/* Pillar 1: Traditional Dashboard */}
-            <div className="diff-card">
-              <div>
-                <div className="diff-tag">Legacy Approach</div>
-                <h3 className="diff-title">Traditional Dashboard</h3>
-                <p className="diff-desc">
-                  Displays raw retroactive charts and static numbers. Forces leadership to manually guess root causes across fragmented silos.
-                </p>
-              </div>
-              <div className="diff-outcome" style={{ color: '#727A86' }}>
-                → Reports Metrics: <span style={{ color: '#FFFFFF' }}>"Revenue dropped 18%"</span>
-              </div>
-            </div>
-
-            {/* Pillar 2: BI Platform */}
-            <div className="diff-card">
-              <div>
-                <div className="diff-tag">Analytical Approach</div>
-                <h3 className="diff-title">BI Platform</h3>
-                <p className="diff-desc">
-                  Visualizes longitudinal trends and multi-dimensional slices, but leaves causal drivers and actionable solutions unresolved.
-                </p>
-              </div>
-              <div className="diff-outcome" style={{ color: '#B5BAC4' }}>
-                → Reports Trends: <span style={{ color: '#FFFFFF' }}>"4-Quarter Decline Pattern"</span>
-              </div>
-            </div>
-
-            {/* Pillar 3: DecisionOS */}
-            <div className="diff-card active-diff">
-              <div>
-                <div className="diff-tag" style={{ color: '#FFFFFF' }}>Executive Decision OS</div>
-                <h3 className="diff-title">DecisionOS</h3>
-                <p className="diff-desc">
-                  Continuously traces causal DAGs, isolates root causes from symptom noise, and calculates prioritized, risk-discounted executive interventions.
-                </p>
-              </div>
-              <div className="diff-outcome" style={{ color: '#FFFFFF' }}>
-                → Guides Decisions: <span style={{ color: '#E8E8E8' }}>"Root Cause: ERP Sync $\to$ Win-Back Campaign (+$320k)"</span>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ======================================================================
-          4. Section: The Signature Intelligence Pipeline (Visual Moat)
-          ====================================================================== */}
-      <section id="pipeline" className="section-pipeline">
-        <div className="page-container">
-          
-          <div className="section-header-center">
-            <h2 className="section-title-lg">
-              The Signature Intelligence Pipeline
-            </h2>
-            <p className="section-subtitle-sm">
-              An 8-stage deterministic operating system transforming raw enterprise telemetry into audited executive decisions.
-            </p>
-          </div>
-
-          <div className="pipeline-flex-row">
-            
-            {/* Step 01 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-step-num">01</div>
-              <div className="pipeline-icon-box">
-                <Database size={18} />
-              </div>
-              <div className="pipeline-step-name">Business Data</div>
-              <div className="pipeline-step-sub">ERP, SQL & CSV Ingestion</div>
-              <div className="pipeline-latency-tag">&lt; 14ms</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 02 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-step-num">02</div>
-              <div className="pipeline-icon-box">
-                <BarChart2 size={18} />
-              </div>
-              <div className="pipeline-step-name">KPI Engine</div>
-              <div className="pipeline-step-sub">Health & Variance Scoring</div>
-              <div className="pipeline-latency-tag">82/100</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 03 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-icon-box">
-                <Search size={18} />
-              </div>
-              <div className="pipeline-step-name">Diagnostics</div>
-              <div className="pipeline-step-sub">Statistical Anomalies</div>
-              <div className="pipeline-latency-tag">Z-Score 2.4</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 04 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-step-num">04</div>
-              <div className="pipeline-icon-box">
-                <GitMerge size={18} />
-              </div>
-              <div className="pipeline-step-name">Root Causes</div>
-              <div className="pipeline-step-sub">Causal DAG Discovery</div>
-              <div className="pipeline-latency-tag">94% Conf.</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 05 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-step-num">05</div>
-              <div className="pipeline-icon-box">
-                <Target size={18} />
-              </div>
-              <div className="pipeline-step-name">Interventions</div>
-              <div className="pipeline-step-sub">ROI Ranked Actions</div>
-              <div className="pipeline-latency-tag">P1 Priority</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 06 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-step-num">06</div>
-              <div className="pipeline-icon-box">
-                <TrendingUp size={18} />
-              </div>
-              <div className="pipeline-step-name">Forecasting</div>
-              <div className="pipeline-step-sub">3-Month Forward Curves</div>
-              <div className="pipeline-latency-tag">+9.6% Growth</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 07 */}
-            <div className="pipeline-step-card">
-              <div className="pipeline-step-num">07</div>
-              <div className="pipeline-icon-box">
-                <FileText size={18} />
-              </div>
-              <div className="pipeline-step-name">Executive Intel</div>
-              <div className="pipeline-step-sub">Board Syntheses</div>
-              <div className="pipeline-latency-tag">Audited</div>
-            </div>
-
-            <div className="pipeline-arrow">→</div>
-
-            {/* Step 08 (DEX Core Highlight) */}
-            <div className="pipeline-step-card dex-highlight">
-              <div className="pipeline-step-num" style={{ color: '#FFFFFF' }}>08</div>
-              <div className="pipeline-icon-box" style={{ background: '#1A1E26' }}>
-                <Cpu size={18} style={{ color: '#FFFFFF' }} />
-              </div>
-              <div className="pipeline-step-name" style={{ color: '#FFFFFF' }}>DEX Core</div>
-              <div className="pipeline-step-sub" style={{ color: '#E8E8E8', fontWeight: '600' }}>Decision Partner</div>
-              <div className="pipeline-latency-tag" style={{ background: 'rgba(255,255,255,0.15)', color: '#FFFFFF' }}>Active</div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ======================================================================
-          5. Section: Executive Intelligence Overview (Real Causal Cockpit)
-          ====================================================================== */}
-      <section id="overview" className="section-dashboard">
-        <div className="page-container">
-          
-          <div className="section-header-center">
-            <h2 className="section-title-lg">
-              Executive Command Center Preview
-            </h2>
-            <p className="section-subtitle-sm">
-              Traceable relationships from top-level metric shifts down to isolated causal drivers and calculated ROI recovery.
-            </p>
-          </div>
-
-          <div className="dashboard-panel-container">
-            
-            {/* Top 4 KPI Metric Cards */}
-            <div className="kpi-row-4cols">
-              
-              <div className="kpi-stat-box">
-                <div className="kpi-stat-header">Total Revenue</div>
-                <div className="kpi-stat-value">$4.2M</div>
-                <div className="kpi-stat-delta">+12.4% vs last period</div>
-              </div>
-
-              <div className="kpi-stat-box">
-                <div className="kpi-stat-header">Orders Completed</div>
-                <div className="kpi-stat-value">18,530</div>
-                <div className="kpi-stat-delta">+8.7% vs last period ↗</div>
-              </div>
-
-              <div className="kpi-stat-box">
-                <div className="kpi-stat-header">Active Customers</div>
-                <div className="kpi-stat-value">6,842</div>
-                <div className="kpi-stat-delta">+11.3% vs last period ↗</div>
-              </div>
-
-              <div className="kpi-stat-box">
-                <div className="kpi-stat-header">Business Health Score</div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <div className="kpi-stat-value">82 <span style={{ fontSize: '13px', color: '#727A86' }}>/ 100</span></div>
-                    <div style={{ fontSize: '11px', color: '#B5BAC4', marginTop: '4px' }}>Optimal Performance</div>
-                  </div>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: '#FFFFFF' }} />
-                </div>
-              </div>
-
-            </div>
-
-            {/* Main Grid: Revenue Trajectory + Forecast Projection + Right Causal Stack */}
-            <div className="dash-main-grid">
-              
-              {/* Left Chart: Revenue Trend */}
-              <div className="dash-chart-card">
-                <div className="chart-header">
-                  <div>
-                    <div className="chart-title">Revenue Trajectory</div>
-                    <div className="chart-subtitle">✓ 12-Month Audited Curve</div>
-                  </div>
-                  <div className="chart-value-tag">$4.2M <span style={{ fontSize: '10px', color: '#727A86' }}>Dec 2024</span></div>
-                </div>
-
-                <div style={{ height: '140px', width: '100%', paddingTop: '10px' }}>
-                  <svg width="100%" height="100%" viewBox="0 0 320 90" preserveAspectRatio="none">
-                    <path 
-                      d="M0,75 Q30,70 60,65 T120,55 T180,45 T240,30 T320,15" 
-                      fill="none" 
-                      stroke="#FFFFFF" 
-                      strokeWidth="2" 
+                <div className="t-circle-gauge">
+                  <svg width="34" height="34" viewBox="0 0 36 36">
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.15)"
+                      strokeWidth="3"
                     />
-                    <circle cx="320" cy="15" r="3.5" fill="#FFFFFF" />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth="3"
+                      strokeDasharray="92, 100"
+                    />
                   </svg>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#727A86', fontFamily: 'monospace', marginTop: '8px', borderTop: '1px solid #22262E', paddingTop: '6px' }}>
-                  <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+              </div>
+            </div>
+
+            {/* Orbiting Telemetry Card 3: Mid-Left Revenue Trend */}
+            <div className="telemetry-card card-pos-mid-left">
+              <div className="t-card-label">Revenue Trend</div>
+              <div className="t-val-lg" style={{ color: '#FFFFFF' }}>+12%</div>
+              <div className="t-status-sub">vs last period</div>
+              <div className="t-mini-bars">
+                <div className="bar" style={{ height: '40%' }} />
+                <div className="bar" style={{ height: '60%' }} />
+                <div className="bar" style={{ height: '35%' }} />
+                <div className="bar" style={{ height: '80%' }} />
+                <div className="bar" style={{ height: '100%' }} />
+              </div>
+            </div>
+
+            {/* Orbiting Telemetry Card 4: Mid-Right Top Risk */}
+            <div className="telemetry-card card-pos-mid-right">
+              <div className="t-risk-header">
+                <span className="t-card-label">Top Risk</span>
+                <AlertTriangle size={12} className="t-risk-icon" />
+              </div>
+              <div className="t-risk-title">Customer Retention</div>
+              <div className="t-risk-impact">High Impact</div>
+            </div>
+
+            {/* Orbiting Telemetry Card 5: Bottom-Right Recommended Action */}
+            <div className="telemetry-card card-pos-bottom-right">
+              <div className="t-card-label">Recommended Action</div>
+              <div className="t-action-title">Win-Back Campaign</div>
+              <div className="t-action-footer">
+                <span>Priority: High</span>
+                <ArrowUpRight size={13} style={{ color: '#FFFFFF' }} />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================================
+          3. The Intelligence Pipeline Section
+          ====================================================================== */}
+      <section className="section-pipeline-wrap" id="intelligence">
+        <div className="page-container">
+          
+          <div className="section-heading-center">
+            <h2 className="section-title-main">The Intelligence Pipeline</h2>
+            <p className="section-subtitle-main">
+              A fully integrated analytical engine turning raw data into actionable executive decisions.
+            </p>
+          </div>
+
+          <div className="pipeline-flow-row">
+            
+            {/* Step 1 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <Database size={20} />
+              </div>
+              <div className="flow-title">Business Data</div>
+              <div className="flow-sub">Collect & Integrate</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 2 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <BarChart2 size={20} />
+              </div>
+              <div className="flow-title">KPIs</div>
+              <div className="flow-sub">Measure Performance</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 3 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <Search size={20} />
+              </div>
+              <div className="flow-title">Diagnostics</div>
+              <div className="flow-sub">Detect Anomalies</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 4 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <GitMerge size={20} />
+              </div>
+              <div className="flow-title">Root Causes</div>
+              <div className="flow-sub">Find What Matters</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 5 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <Target size={20} />
+              </div>
+              <div className="flow-title">Recommendations</div>
+              <div className="flow-sub">Actionable Steps</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 6 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <TrendingUp size={20} />
+              </div>
+              <div className="flow-title">Forecasts</div>
+              <div className="flow-sub">Predict Outcomes</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 7 */}
+            <div className="flow-node">
+              <div className="flow-icon-circle">
+                <FileText size={20} />
+              </div>
+              <div className="flow-title">Executive Intelligence</div>
+              <div className="flow-sub">Strategic Insights</div>
+            </div>
+
+            <div className="flow-arrow">→</div>
+
+            {/* Step 8 (DEX Highlight) */}
+            <div className="flow-node flow-node-dex">
+              <div className="flow-icon-circle flow-icon-dex">
+                <Bot size={22} style={{ color: '#FFFFFF' }} />
+              </div>
+              <div className="flow-title" style={{ color: '#FFFFFF' }}>AI Analyst</div>
+              <div className="flow-sub" style={{ color: '#E8E8E8', fontWeight: '600' }}>DEX</div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================================
+          4. Executive Intelligence Overview (Command Center Cockpit)
+          ====================================================================== */}
+      <section className="section-overview-wrap" id="solutions">
+        <div className="page-container">
+          
+          <div className="section-heading-center">
+            <h2 className="section-title-main">Executive Intelligence Overview</h2>
+            <p className="section-subtitle-main">
+              A real-time command center for data-driven leaders.
+            </p>
+          </div>
+
+          <div className="cockpit-container">
+            
+            {/* Top 5 Stat / Summary Row */}
+            <div className="cockpit-top-row">
+              
+              {/* Stat 1: Total Revenue */}
+              <div className="cockpit-stat-card">
+                <div className="c-stat-title">Total Revenue</div>
+                <div className="c-stat-num">$4.2M</div>
+                <div className="c-stat-delta">+12.4% vs last period</div>
+              </div>
+
+              {/* Stat 2: Orders */}
+              <div className="cockpit-stat-card">
+                <div className="c-stat-title">Orders</div>
+                <div className="c-stat-num">18,530</div>
+                <div className="c-stat-delta delta-pos">+8.7% vs last period ↗</div>
+              </div>
+
+              {/* Stat 3: Customers */}
+              <div className="cockpit-stat-card">
+                <div className="c-stat-title">Customers</div>
+                <div className="c-stat-num">6,842</div>
+                <div className="c-stat-delta delta-pos">+11.3% vs last period ↗</div>
+              </div>
+
+              {/* Stat 4: Business Health Score */}
+              <div className="cockpit-stat-card">
+                <div className="c-stat-title">Business Health Score</div>
+                <div className="c-health-flex">
+                  <div>
+                    <div className="c-stat-num">82 <span style={{ fontSize: '13px', color: '#727A86' }}>/100</span></div>
+                    <div className="c-stat-delta" style={{ color: '#B5BAC4' }}>Good Performance</div>
+                  </div>
+                  <div className="c-ring-gauge">
+                    <svg width="34" height="34" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="rgba(255, 255, 255, 0.15)"
+                        strokeWidth="3"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeWidth="3"
+                        strokeDasharray="82, 100"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Stat 5: Executive Summary Card */}
+              <div className="cockpit-summary-card">
+                <div className="c-sum-header">Executive Summary</div>
+                <p className="c-sum-text">
+                  Revenue increased 12.4% driven by higher AOV and returning customers. However, customer retention declined 4.3% due to increased churn in the last 30 days.
+                </p>
+                <Link to="/reports" className="btn-sum-action">
+                  View Full Report
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Bottom Cockpit Main Grid: 2 Charts + Right Root Cause Panel */}
+            <div className="cockpit-charts-grid">
+              
+              {/* Left Chart: Revenue Trend (12 Months) */}
+              <div className="cockpit-chart-card">
+                <div className="chart-head-flex">
+                  <div>
+                    <div className="chart-main-title">Revenue Trend</div>
+                    <div className="chart-sub-tag">✓ Last 12 Months</div>
+                  </div>
+                  <div className="chart-badge-val">
+                    <div className="badge-amount">$4.2M</div>
+                    <div className="badge-date">Dec 2024</div>
+                  </div>
+                </div>
+
+                <div className="chart-svg-area">
+                  <div className="chart-y-axis">
+                    <span>$5M</span>
+                    <span>$4M</span>
+                    <span>$3M</span>
+                    <span>$2M</span>
+                    <span>$1M</span>
+                    <span>$0</span>
+                  </div>
+                  <div className="chart-canvas-box">
+                    <svg width="100%" height="100%" viewBox="0 0 420 120" preserveAspectRatio="none">
+                      {/* Grid lines */}
+                      <line x1="0" y1="20" x2="420" y2="20" stroke="#1A1E26" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1="0" y1="50" x2="420" y2="50" stroke="#1A1E26" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1="0" y1="80" x2="420" y2="80" stroke="#1A1E26" strokeWidth="1" strokeDasharray="3 3" />
+                      <line x1="0" y1="110" x2="420" y2="110" stroke="#1A1E26" strokeWidth="1" />
+                      
+                      {/* Revenue Smooth Curve */}
+                      <path
+                        d="M0,110 Q35,100 70,90 T140,75 T210,85 T280,60 T350,45 T420,25"
+                        fill="none"
+                        stroke="#FFFFFF"
+                        strokeWidth="2.2"
+                      />
+                      <circle cx="420" cy="25" r="4" fill="#FFFFFF" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div className="chart-x-axis">
+                  <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span>
+                  <span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+                  <span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
                 </div>
               </div>
 
               {/* Middle Chart: Forecast (Next 3 Months) */}
-              <div className="dash-chart-card">
-                <div className="chart-header">
+              <div className="cockpit-chart-card">
+                <div className="chart-head-flex">
                   <div>
-                    <div className="chart-title">Forward Projection</div>
-                    <div className="chart-subtitle">92% Confidence Horizon</div>
+                    <div className="chart-main-title">Forecast <span style={{ color: '#727A86', fontWeight: '400', fontSize: '12px' }}>(Next 3 Months)</span></div>
+                    <div className="chart-sub-tag">Projected Revenue</div>
                   </div>
                 </div>
 
-                <div style={{ fontSize: '26px', fontWeight: '800', color: '#FFFFFF', marginBottom: '2px' }}>
-                  $4.8M
-                </div>
-                <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '10px' }}>
-                  +9.6% forward projection
+                <div className="forecast-metric-lead">
+                  <span className="fc-amount">$4.8M</span>
+                  <span className="fc-delta">+9.6% growth</span>
                 </div>
 
-                <div style={{ height: '80px', width: '100%' }}>
-                  <svg width="100%" height="100%" viewBox="0 0 320 60" preserveAspectRatio="none">
-                    <path 
-                      d="M0,50 Q80,40 160,25 T320,10" 
-                      fill="none" 
-                      stroke="#FFFFFF" 
-                      strokeWidth="2" 
+                <div className="forecast-svg-area">
+                  <svg width="100%" height="100%" viewBox="0 0 280 80" preserveAspectRatio="none">
+                    <line x1="0" y1="75" x2="280" y2="75" stroke="#1A1E26" strokeWidth="1" />
+                    <path
+                      d="M0,65 Q90,55 185,30 T280,10"
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth="2"
                     />
-                    <circle cx="0" cy="50" r="3" fill="#FFFFFF" />
-                    <circle cx="106" cy="35" r="3" fill="#FFFFFF" />
-                    <circle cx="213" cy="20" r="3" fill="#FFFFFF" />
-                    <circle cx="320" cy="10" r="3" fill="#FFFFFF" />
+                    <circle cx="0" cy="65" r="3.5" fill="#FFFFFF" />
+                    <circle cx="93" cy="50" r="3.5" fill="#FFFFFF" />
+                    <circle cx="186" cy="30" r="3.5" fill="#FFFFFF" />
+                    <circle cx="280" cy="10" r="3.5" fill="#FFFFFF" />
                   </svg>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#727A86', fontFamily: 'monospace', marginTop: '6px', borderTop: '1px solid #22262E', paddingTop: '6px' }}>
+
+                <div className="forecast-x-axis">
                   <span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
                 </div>
               </div>
 
-              {/* Right Stack: Causal Driver & ROI Recovery Plan */}
-              <div className="dash-side-stack">
-                
-                {/* Isolated Root Cause */}
-                <div className="side-info-card">
-                  <div style={{ fontSize: '10px', color: '#727A86', textTransform: 'uppercase', marginBottom: '2px', fontFamily: 'monospace' }}>
-                    Isolated Root Cause
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
-                    Retention Churn Drag (-4.3%)
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#B5BAC4', marginBottom: '6px' }}>
-                    Primary Driver: Fulfillment Latency & ERP Sync
-                  </div>
-                  <p className="side-info-text">
-                    Algorithmic causal DAG isolated fulfillment delays causing 72% of recent retention drop.
-                  </p>
-                  <Link to="/root-causes" className="btn-card-action">
-                    Explore Causal Graph
-                  </Link>
-                </div>
-
-                {/* Priority Intervention Plan */}
-                <div className="side-info-card">
-                  <div style={{ fontSize: '10px', color: '#727A86', textTransform: 'uppercase', marginBottom: '2px', fontFamily: 'monospace' }}>
-                    Calculated Intervention (P1)
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '700', color: '#FFFFFF', marginBottom: '2px' }}>
-                    Win-Back Retention Campaign
-                  </div>
-                  <div style={{ fontSize: '11px', color: '#34D399', fontWeight: '600', marginBottom: '8px' }}>
-                    Projected Recovery: +$320,000 ARR
-                  </div>
-                  <Link to="/recommendations" className="btn-card-action">
-                    Deploy Intervention Plan
-                  </Link>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ======================================================================
-          6. Section: Enterprise System Scale (Recruiter Metrics Grid)
-          ====================================================================== */}
-      <section id="scale" className="section-scale">
-        <div className="page-container">
-          
-          <div className="section-header-center">
-            <h2 className="section-title-lg">
-              Enterprise System Scale
-            </h2>
-            <p className="section-subtitle-sm">
-              Engineered with enterprise rigor, multi-tenant isolation, and complete deterministic auditability.
-            </p>
-          </div>
-
-          <div className="scale-metric-grid">
-            
-            <div className="scale-card">
-              <div className="scale-value-huge">783+</div>
-              <div className="scale-label-title">Automated Tests</div>
-              <div className="scale-sub-desc">100% Pass Rate (Unit, Integration & API)</div>
-            </div>
-
-            <div className="scale-card">
-              <div className="scale-value-huge">100+</div>
-              <div className="scale-label-title">REST APIs</div>
-              <div className="scale-sub-desc">High-Concurrency Asynchronous FastAPI</div>
-            </div>
-
-            <div className="scale-card">
-              <div className="scale-value-huge">25+</div>
-              <div className="scale-label-title">Intelligence Engines</div>
-              <div className="scale-sub-desc">Deterministic Mathematical Analytics</div>
-            </div>
-
-            <div className="scale-card">
-              <div className="scale-value-huge">40+</div>
-              <div className="scale-label-title">Domain Models</div>
-              <div className="scale-sub-desc">SQLAlchemy 2.0 Normalized Architecture</div>
-            </div>
-
-            <div className="scale-card">
-              <div className="scale-value-huge">Phases 0–13</div>
-              <div className="scale-label-title">Delivered Architecture</div>
-              <div className="scale-sub-desc">Production Governance & Operational Monitoring</div>
-            </div>
-
-            <div className="scale-card">
-              <div className="scale-value-huge">100%</div>
-              <div className="scale-label-title">Deterministic Intelligence</div>
-              <div className="scale-sub-desc">Zero LLM Hallucinations or Calculation Drift</div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* ======================================================================
-          7. Section: Turn Data Into Decisions (CTA Banner)
-          ====================================================================== */}
-      <section className="section-cta">
-        <div className="page-container">
-          
-          <div className="cta-banner-card">
-            
-            <div className="cta-left-content">
-              <Sparkles className="cta-sparkle-icon" />
-              <div>
-                <h3 className="cta-heading">Turn Data Into Decisions</h3>
-                <p className="cta-subtext">
-                  Understand performance, uncover causal root causes, forecast outcomes, and execute verified leadership interventions.
+              {/* Right Root Cause Panel */}
+              <div className="cockpit-root-cause-card">
+                <div className="rc-tag">Top Root Cause</div>
+                <div className="rc-heading">Customer Retention Decline</div>
+                <div className="rc-impact-badge">Impact: High</div>
+                <p className="rc-desc">
+                  Analysis shows churn increased due to late deliveries and reduced engagement in the last 30 days.
                 </p>
-                <div className="cta-guarantee-tag">
-                  ✓ No LLM hallucinations · 100% deterministic decision logic · Fully auditable
-                </div>
+                <Link to="/root-causes" className="btn-rc-action">
+                  Explore Root Cause
+                </Link>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ======================================================================
+          5. CTA Banner: Turn Data Into Decisions
+          ====================================================================== */}
+      <section className="section-cta-wrap" id="resources">
+        <div className="page-container">
+          
+          <div className="cta-cockpit-banner">
+            <div className="cta-left-part">
+              <div className="cta-sparkle-box">
+                <Sparkles size={28} className="cta-sparkle-svg" />
+              </div>
+              <div className="cta-text-content">
+                <h3 className="cta-title">Turn Data Into Decisions</h3>
+                <p className="cta-subtitle">
+                  Understand performance, uncover root causes, forecast outcomes, and make smarter decisions with DecisionOS.
+                </p>
               </div>
             </div>
 
-            <div className="cta-button-group">
-              <Link to="/dashboard" className="btn-start-analysis">
+            <div className="cta-right-btns">
+              <Link to="/dashboard" className="btn-cta-primary">
                 <span>Start Analysis</span>
                 <ArrowRight size={15} />
               </Link>
               <button 
-                onClick={() => alert("Enterprise briefing scheduled. Our engineering team will contact you directly.")}
-                className="btn-explore-flow"
-                style={{ cursor: 'pointer' }}
+                onClick={() => alert("Briefing request sent. Our team will contact you shortly.")} 
+                className="btn-cta-secondary"
               >
-                <span>Request Briefing</span>
+                <span>Request Demo</span>
               </button>
             </div>
-
           </div>
 
         </div>
       </section>
 
       {/* ======================================================================
-          8. Footer
+          6. Footer
           ====================================================================== */}
       <footer className="site-footer">
-        <div className="page-container footer-inner">
-          <div>
-            <span className="footer-brand">DecisionOS</span>
-            <span style={{ marginLeft: '16px' }}>© 2026 DecisionOS. All rights reserved.</span>
+        <div className="page-container footer-flex">
+          <div className="footer-left">
+            <span className="footer-logo">DecisionOS</span>
+            <span className="footer-copy">© 2025 DecisionOS. All rights reserved.</span>
           </div>
 
-          <div className="footer-links-row">
-            <span className="footer-link">Privacy Policy</span>
-            <span className="footer-link">Terms of Service</span>
-            <span className="footer-link">Security</span>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="footer-link">API Documentation</a>
-            <span className="footer-link">System Status</span>
+          <div className="footer-links">
+            <span className="f-link">Privacy Policy</span>
+            <span className="f-link">Terms of Service</span>
+            <span className="f-link">Security</span>
+            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="f-link">API Documentation</a>
+            <span className="f-link">System Status</span>
           </div>
         </div>
       </footer>
