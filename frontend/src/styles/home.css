@@ -425,10 +425,10 @@
   width: 190px;
 }
 
-/* 3. Customer Retention (Lower Left, Moved Outward) */
+/* 3. Customer Retention (Lower Left) */
 .card-pos-bottom-left {
-  bottom: 140px;
-  left: -65px;
+  bottom: 115px;
+  left: -40px;
   width: 225px;
 }
 
