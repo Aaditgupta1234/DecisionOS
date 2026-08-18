@@ -154,20 +154,20 @@
 }
 
 .hero-headline {
-  font-size: clamp(30px, 2.7vw, 38px);
+  font-size: clamp(40px, 3.4vw, 48px);
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.14;
   letter-spacing: -0.035em;
   color: #FFFFFF;
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
 }
 
 .hero-desc {
-  font-size: 14.5px;
+  font-size: 16px;
   line-height: 1.62;
   color: #C4CAD4;
-  margin: 0 0 22px 0;
-  max-width: 520px;
+  margin: 0 0 24px 0;
+  max-width: 540px;
 }
 
 .hero-btn-row {
@@ -260,6 +260,7 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
+  transform: translateX(-24px);
 }
 
 /* Overhead Spotlight Cone (Removed as requested) */
@@ -293,7 +294,7 @@
   position: absolute;
   bottom: 88px;
   left: 50%;
-  transform: translateX(calc(-50% + 38px)) scale(1.10);
+  transform: translateX(calc(-50% + 28px)) scale(1.10);
   width: 430px;
   height: 430px;
   z-index: 3;
@@ -410,16 +411,16 @@
 }
 
 /* Dynamic Asymmetrical Diagonal Positioning with +30px Breathing Space */
-/* 1. Business Health Score (High, Offset Left) */
+/* 1. Business Health Score (Top Left) */
 .card-pos-top-left {
-  top: 15px;
+  top: 40px;
   left: -15px;
   width: 190px;
 }
 
-/* 2. Forecast Confidence (Mid-Upper Right) */
+/* 2. Forecast Confidence (Top Right) */
 .card-pos-top-right {
-  top: 15px;
+  top: 40px;
   right: 15px;
   width: 190px;
 }
@@ -427,15 +428,15 @@
 /* 3. Customer Retention (Lower Left, Moved Outward) */
 .card-pos-bottom-left {
   bottom: 140px;
-  left: -45px;
-  width: 210px;
+  left: -65px;
+  width: 225px;
 }
 
 /* 4. Win-Back Campaign (Bottom Right, Moved Outward & Elevated) */
 .card-pos-bottom-right {
-  bottom: 140px;
-  right: -45px;
-  width: 228px;
+  bottom: 148px;
+  right: -25px;
+  width: 225px;
 }
 
 /* Card internals */
