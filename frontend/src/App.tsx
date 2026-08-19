@@ -40,6 +40,15 @@ const ScenarioAccuracyTrackerView = React.lazy(() => import('./features/scenario
 const PortfolioOptimizerView = React.lazy(() => import('./features/scenarios/PortfolioOptimizerView').then(m => ({ default: m.PortfolioOptimizerView })));
 const StressTestingView = React.lazy(() => import('./features/scenarios/StressTestingView').then(m => ({ default: m.StressTestingView })));
 const SensitivityAnalysisView = React.lazy(() => import('./features/scenarios/SensitivityAnalysisView').then(m => ({ default: m.SensitivityAnalysisView })));
+const StrategyExecutionCenterView = React.lazy(() => import('./features/strategy-execution/StrategyExecutionCenterView').then(m => ({ default: m.StrategyExecutionCenterView })));
+const InitiativeDetailView = React.lazy(() => import('./features/strategy-execution/InitiativeDetailView').then(m => ({ default: m.InitiativeDetailView })));
+const DependencyGraphView = React.lazy(() => import('./features/strategy-execution/DependencyGraphView').then(m => ({ default: m.DependencyGraphView })));
+const BenefitsRealizationView = React.lazy(() => import('./features/strategy-execution/BenefitsRealizationView').then(m => ({ default: m.BenefitsRealizationView })));
+const ForecastAccuracyView = React.lazy(() => import('./features/strategy-execution/ForecastAccuracyView').then(m => ({ default: m.ForecastAccuracyView })));
+const ExecutiveAccountabilityView = React.lazy(() => import('./features/strategy-execution/ExecutiveAccountabilityView').then(m => ({ default: m.ExecutiveAccountabilityView })));
+const ExecutivePerformanceView = React.lazy(() => import('./features/strategy-execution/ExecutivePerformanceView').then(m => ({ default: m.ExecutivePerformanceView })));
+const StrategyReviewCyclesView = React.lazy(() => import('./features/strategy-execution/StrategyReviewCyclesView').then(m => ({ default: m.StrategyReviewCyclesView })));
+
 
 
 import './styles/globals.css';
@@ -98,6 +107,14 @@ export function App() {
                       <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />
                       <Route path="/ai-analyst" element={<AIAnalystWorkspaceView />} />
                       <Route path="/decision-copilot" element={<DecisionCopilotView />} />
+                      <Route path="/strategy-execution" element={<StrategyExecutionCenterView />} />
+                      <Route path="/strategy-execution/:id" element={<InitiativeDetailView />} />
+                      <Route path="/strategy-execution/dependencies" element={<DependencyGraphView />} />
+                      <Route path="/strategy-execution/benefits" element={<BenefitsRealizationView />} />
+                      <Route path="/strategy-execution/calibration" element={<ForecastAccuracyView />} />
+                      <Route path="/strategy-execution/accountability" element={<ExecutiveAccountabilityView />} />
+                      <Route path="/strategy-execution/performance" element={<ExecutivePerformanceView />} />
+                      <Route path="/strategy-execution/reviews" element={<StrategyReviewCyclesView />} />
                       <Route path="/datasets" element={<DatasetsView />} />
                       <Route path="/datasets/:id/mapping" element={<SchemaMappingView />} />
                       <Route path="/metrics" element={<MetricsView />} />

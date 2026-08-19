@@ -14,6 +14,7 @@ import {
   History,
   PlayCircle,
   TrendingUp,
+  Target,
 } from 'lucide-react';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 
@@ -23,6 +24,7 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { to: '/command-center', label: 'Command Center', icon: LayoutDashboard },
     { to: '/monitoring', label: 'Continuous Monitoring', icon: Activity, badge: 'LIVE' },
+    { to: '/strategy-execution', label: 'Strategy Execution', icon: Target, badge: 'VALUE' },
     { to: '/digital-twin', label: 'Digital Twin & Scenarios', icon: PlayCircle, badge: 'TWIN' },
     { to: '/simulations', label: 'Simulation Studio', icon: PlayCircle },
     { to: '/knowledge-graph', label: 'Knowledge Graph', icon: GitMerge, badge: 'V3' },
