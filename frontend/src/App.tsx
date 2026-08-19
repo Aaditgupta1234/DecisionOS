@@ -17,9 +17,9 @@ const SchemaMappingView = React.lazy(() => import('./features/datasets/SchemaMap
 const MetricsView = React.lazy(() => import('./features/kpis/MetricsView'));
 const DiagnosticsView = React.lazy(() => import('./features/diagnostics/DiagnosticsView'));
 const RootCausesView = React.lazy(() => import('./features/root-causes/RootCausesView'));
-const RecommendationsView = React.lazy(() => import('./views/recommendations/RecommendationsView').then(m => ({ default: m.RecommendationsView })));
-const ReportsView = React.lazy(() => import('./views/reports/ReportsView').then(m => ({ default: m.ReportsView })));
-const HistoryView = React.lazy(() => import('./features/history/HistoryView'));
+const RecommendationsView = React.lazy(() => import('./features/recommendations/RecommendationsView'));
+const ReportsView = React.lazy(() => import('./features/intelligence/ReportsView'));
+const HistoryView = React.lazy(() => import('./features/history/AnalysisHistoryView'));
 const AIInsightsView = React.lazy(() => import('./views/aiInsights/AIInsightsView').then(m => ({ default: m.AIInsightsView })));
 const ChatView = React.lazy(() => import('./views/chat/ChatView').then(m => ({ default: m.ChatView })));
 const OrganizationSettingsView = React.lazy(() => import('./views/settings/OrganizationSettingsView').then(m => ({ default: m.OrganizationSettingsView })));
