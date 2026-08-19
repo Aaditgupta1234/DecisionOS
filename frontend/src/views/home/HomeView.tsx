@@ -136,13 +136,13 @@ export const HomeView: React.FC = () => {
 
             {/* Trust Strip Directly Beneath CTAs */}
             <div className="hero-trust-strip">
-              <span className="strip-item">783+ Automated Tests</span>
+              <span className="strip-item">783+ Tests</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">100+ REST APIs</span>
+              <span className="strip-item">100+ APIs</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">25+ Intelligence Engines</span>
+              <span className="strip-item">25+ Engines</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">14 Completed Phases</span>
+              <span className="strip-item">14 Phases</span>
               <span className="strip-dot">•</span>
               <span className="strip-item">Deterministic Intelligence</span>
             </div>
@@ -274,69 +274,85 @@ export const HomeView: React.FC = () => {
 
             {/* Orbiting Telemetry Card 1: Top-Left Business Health Score */}
             <div className="telemetry-card card-pos-top-left">
-              <div className="t-card-label">HEALTH SCORE</div>
+              <div className="t-card-header-flex">
+                <span className="t-card-label">HEALTH SCORE</span>
+                <span className="t-status-pill">Excellent</span>
+              </div>
               <div className="t-card-metric-row">
                 <span className="t-val-lg">82</span>
                 <span className="t-val-sub">/100</span>
               </div>
+              <div className="t-delta-trend">
+                <span>▲ +7.2 pts this quarter</span>
+              </div>
               <div className="t-sparkline-wrap">
-                <svg width="100%" height="14" viewBox="0 0 100 14" preserveAspectRatio="none">
-                  <path d="M0,10 Q25,14 50,6 T100,3" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+                <svg width="100%" height="12" viewBox="0 0 100 12" preserveAspectRatio="none">
+                  <path d="M0,9 Q25,12 50,5 T100,2" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
                 </svg>
               </div>
             </div>
 
             {/* Orbiting Telemetry Card 2: Top-Right Forecast Confidence */}
             <div className="telemetry-card card-pos-top-right">
-              <div className="t-card-label">CONFIDENCE</div>
-              <div className="t-forecast-row">
-                <div>
-                  <div className="t-val-lg">92%</div>
-                  <div className="t-status-sub">Optimal</div>
-                </div>
+              <div className="t-card-header-flex">
+                <span className="t-card-label">DEX CONFIDENCE</span>
                 <div className="t-circle-gauge">
-                  <svg width="26" height="26" viewBox="0 0 36 36">
+                  <svg width="22" height="22" viewBox="0 0 36 36">
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       stroke="rgba(255, 255, 255, 0.15)"
-                      strokeWidth="3"
+                      strokeWidth="3.2"
                     />
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       stroke="#FFFFFF"
-                      strokeWidth="3"
+                      strokeWidth="3.2"
                       strokeDasharray="92, 100"
+                      strokeLinecap="round"
                     />
                   </svg>
                 </div>
               </div>
+              <div className="t-card-metric-row">
+                <span className="t-val-lg">92%</span>
+                <span className="t-status-sub-inline">Optimal</span>
+              </div>
+              <div className="t-confidence-sub">Trusted Analysis</div>
             </div>
 
-            {/* Orbiting Telemetry Card 3: Bottom-Left Top Risk (Compact Badge) */}
+            {/* Orbiting Telemetry Card 3: Bottom-Left Top Risk */}
             <div className="telemetry-card card-pos-bottom-left">
               <div className="t-risk-header">
                 <span className="t-card-label">TOP RISK</span>
                 <span className="t-risk-badge">
-                  <AlertTriangle size={10} className="t-risk-icon" />
+                  <AlertTriangle size={9} className="t-risk-icon" />
                   <span>High</span>
                 </span>
               </div>
               <div className="t-risk-title">Customer Retention</div>
-              <div className="t-card-subtext">Exposure: 14.2% Churn</div>
+              <div className="t-risk-exposure">14.2% Churn</div>
+              <div className="t-risk-loss">
+                <span className="t-loss-label">Potential Revenue Impact</span>
+                <span className="t-loss-val">-$218K / Quarter</span>
+              </div>
             </div>
 
-            {/* Orbiting Telemetry Card 4: Bottom-Right Recommended Action (Compact Badge) */}
+            {/* Orbiting Telemetry Card 4: Bottom-Right Recommended Action */}
             <div className="telemetry-card card-pos-bottom-right">
               <div className="t-action-header">
-                <span className="t-card-label">RECOMMENDED</span>
+                <span className="t-card-label">RECOMMENDED ACTION</span>
                 <span className="t-action-pill">High Priority</span>
               </div>
               <div className="t-action-title">Win-Back Campaign</div>
+              <div className="t-action-impact">
+                <span className="t-impact-label">Expected Impact</span>
+                <span className="t-impact-val">+$180K ARR</span>
+              </div>
               <div className="t-action-footer">
-                <span>+$180k ARR Target</span>
-                <ArrowUpRight size={12} style={{ color: '#FFFFFF' }} />
+                <span className="t-conf-sub">Confidence: 91%</span>
+                <ArrowUpRight size={11} style={{ color: '#FFFFFF' }} />
               </div>
             </div>
 
