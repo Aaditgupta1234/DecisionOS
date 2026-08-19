@@ -298,7 +298,7 @@
   position: absolute;
   top: -50px;
   left: calc(50% - 12px);
-  transform: translateX(-50%);
+  transform: translateX(-50%);git
   width: 580px;
   height: 520px;
   clip-path: polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%);
@@ -695,14 +695,14 @@
    6. Signature Intelligence Pipeline Section (DecisionOS Moat)
    ====================================================================== */
 .section-pipeline-wrap {
-  padding: 0;
+  padding: 80px 0 0 0;
   border-top: 1px solid #14171E;
   background: #000000;
   position: relative;
 }
 
 .pipeline-grid-container {
-  margin-top: 0;
+  margin-top: 18px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -799,11 +799,12 @@
 
 /* 6. Executive Intelligence Overview Section */
 .section-overview-wrap {
-  padding: 0 0 64px 0;
+  padding: 80px 0 64px 0;
   border-top: 1px solid #14171E;
 }
 
 .cockpit-container {
+  margin-top: 0px;
   background: #040507;
   border: 1px solid #14171E;
   border-radius: 14px;
