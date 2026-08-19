@@ -27,6 +27,17 @@ from app.scenarios.api.endpoints import scenario_router as enterprise_scenario_r
 from app.strategy_execution.api.endpoints import strategy_execution_router
 from app.enterprise_os.api import enterprise_os_router
 
+# Phase 8: Enterprise Intelligence Platform, Integrations & Production Readiness
+from app.boardroom.api.endpoints import router as boardroom_router
+from app.integrations.api.endpoints import router as integrations_router
+from app.data_governance.api.endpoints import router as data_governance_router
+from app.ai_governance.api.endpoints import router as ai_governance_router
+from app.delivery.api.endpoints import router as delivery_router
+from app.public_api.api.endpoints import router as public_api_router
+from app.administration.api.endpoints import router as administration_router
+from app.security_center.api.endpoints import router as security_center_router
+from app.platform_ops.api.endpoints import router as platform_ops_router
+
 api_router = APIRouter()
 
 # Include endpoints
@@ -66,14 +77,13 @@ api_router.include_router(strategy_execution_router, tags=["Enterprise Strategy 
 api_router.include_router(enterprise_monitoring_router, tags=["Enterprise Monitoring, Event Intelligence & Predictive Alerting Platform"])
 api_router.include_router(enterprise_os_router, tags=["Enterprise Intelligence Operating System (Governance, Benchmarking & Orchestration)"])
 
-
-
-
-
-
-
-
-
-
-
-
+# Phase 8: Platform Integrations, Boardroom & Production Readiness
+api_router.include_router(boardroom_router)
+api_router.include_router(integrations_router)
+api_router.include_router(data_governance_router)
+api_router.include_router(ai_governance_router)
+api_router.include_router(delivery_router)
+api_router.include_router(public_api_router)
+api_router.include_router(administration_router)
+api_router.include_router(security_center_router)
+api_router.include_router(platform_ops_router)

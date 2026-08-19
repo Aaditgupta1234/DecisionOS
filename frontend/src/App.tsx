@@ -13,22 +13,33 @@ import { OnboardingWizardModal } from './features/shared/OnboardingWizardModal';
 import { NotificationCenterDrawer } from './features/shared/NotificationCenterDrawer';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
-// 21 Flagship Route Lazy Loaders
+// Landing Page & Auth
 const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
 const LoginPage = React.lazy(() => import('./features/auth/LoginPage'));
 
-// Core Phase 7 Studios & Control Centers
+// Core Multi-Portfolio & Executive Studios
 const EnterpriseCommandCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseCommandCenterView').then(m => ({ default: m.EnterpriseCommandCenterView })));
+const BoardroomCenterView = React.lazy(() => import('./features/boardroom/BoardroomCenterView').then(m => ({ default: m.BoardroomCenterView })));
 const PortfolioRollupView = React.lazy(() => import('./features/portfolio-rollup/PortfolioRollupView').then(m => ({ default: m.PortfolioRollupView })));
 const CapitalAllocationStudioView = React.lazy(() => import('./features/capital-allocation/CapitalAllocationStudioView').then(m => ({ default: m.CapitalAllocationStudioView })));
 const KPIDictionaryView = React.lazy(() => import('./features/kpi-dictionary/KPIDictionaryView').then(m => ({ default: m.KPIDictionaryView })));
 const RiskConcentrationRadarView = React.lazy(() => import('./features/risk-concentration/RiskConcentrationRadarView').then(m => ({ default: m.RiskConcentrationRadarView })));
 const AutonomousAgentsHubView = React.lazy(() => import('./features/agents/AutonomousAgentsHubView').then(m => ({ default: m.AutonomousAgentsHubView })));
+
+// Phase 8: Integrations, Data Governance, AI Audit & Production Operations
+const IntegrationsCenterView = React.lazy(() => import('./features/integrations/IntegrationsCenterView').then(m => ({ default: m.IntegrationsCenterView })));
+const EnterpriseDataReliabilityView = React.lazy(() => import('./features/enterprise-data/EnterpriseDataReliabilityView').then(m => ({ default: m.EnterpriseDataReliabilityView })));
+const AIGovernanceCenterView = React.lazy(() => import('./features/ai-governance/AIGovernanceCenterView').then(m => ({ default: m.AIGovernanceCenterView })));
+const ScheduledReportsView = React.lazy(() => import('./features/intelligence-delivery/ScheduledReportsView').then(m => ({ default: m.ScheduledReportsView })));
+const ApiPlatformView = React.lazy(() => import('./features/api-platform/ApiPlatformView').then(m => ({ default: m.ApiPlatformView })));
+const EnterpriseAdministrationView = React.lazy(() => import('./features/administration/EnterpriseAdministrationView').then(m => ({ default: m.EnterpriseAdministrationView })));
+const SecurityCenterView = React.lazy(() => import('./features/security-center/SecurityCenterView').then(m => ({ default: m.SecurityCenterView })));
+const PlatformOperationsView = React.lazy(() => import('./features/platform-ops/PlatformOperationsView').then(m => ({ default: m.PlatformOperationsView })));
+
+// Existing Core Intelligence Engines
 const DatasetManagementCenterView = React.lazy(() => import('./features/data-management/DatasetManagementCenterView').then(m => ({ default: m.DatasetManagementCenterView })));
 const JobCenterView = React.lazy(() => import('./features/jobs/JobCenterView').then(m => ({ default: m.JobCenterView })));
 const SystemAdminCenterView = React.lazy(() => import('./features/admin/SystemAdminCenterView').then(m => ({ default: m.SystemAdminCenterView })));
-
-// Existing Core Intelligence Engines
 const EnterpriseGovernanceCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseGovernanceCenterView').then(m => ({ default: m.EnterpriseGovernanceCenterView })));
 const CompetitiveIntelligenceCenterView = React.lazy(() => import('./features/enterprise-os/CompetitiveIntelligenceCenterView').then(m => ({ default: m.CompetitiveIntelligenceCenterView })));
 const EnterpriseOperatingSystemCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseOperatingSystemCenterView').then(m => ({ default: m.EnterpriseOperatingSystemCenterView })));
@@ -82,7 +93,7 @@ function AppContent() {
           {/* Authentication Screen */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Protected In-App SaaS Routes (21 Flagship Modules) */}
+          {/* Protected In-App SaaS Routes */}
           <Route
             element={
               <ProtectedRoute>
@@ -95,10 +106,19 @@ function AppContent() {
             }
           >
             <Route path="/enterprise" element={<EnterpriseCommandCenterView />} />
+            <Route path="/boardroom" element={<BoardroomCenterView />} />
             <Route path="/portfolio-rollup" element={<PortfolioRollupView />} />
             <Route path="/capital-allocation" element={<CapitalAllocationStudioView />} />
             <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
             <Route path="/risk-concentration" element={<RiskConcentrationRadarView />} />
+            <Route path="/integrations" element={<IntegrationsCenterView />} />
+            <Route path="/enterprise-data" element={<EnterpriseDataReliabilityView />} />
+            <Route path="/ai-governance" element={<AIGovernanceCenterView />} />
+            <Route path="/intelligence-delivery" element={<ScheduledReportsView />} />
+            <Route path="/api-platform" element={<ApiPlatformView />} />
+            <Route path="/administration" element={<EnterpriseAdministrationView />} />
+            <Route path="/security-center" element={<SecurityCenterView />} />
+            <Route path="/platform-ops" element={<PlatformOperationsView />} />
             <Route path="/agents" element={<AutonomousAgentsHubView />} />
             <Route path="/portfolio" element={<MetricsView />} />
             <Route path="/data-management" element={<DatasetManagementCenterView />} />
@@ -122,6 +142,8 @@ function AppContent() {
             <Route path="/dashboard" element={<Navigate to="/enterprise" replace />} />
             <Route path="/metrics" element={<Navigate to="/portfolio" replace />} />
             <Route path="/datasets" element={<Navigate to="/data-management" replace />} />
+            <Route path="/production-readiness" element={<Navigate to="/platform-ops" replace />} />
+            <Route path="/tenant-admin" element={<Navigate to="/administration" replace />} />
           </Route>
         </Routes>
       </Suspense>
