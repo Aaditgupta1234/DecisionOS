@@ -1,13 +1,32 @@
-"""Schemas for Phase 9.5: Executive Report Generation & PDF Export Engine."""
+"""Reporting schemas package."""
 
 from app.reporting.schemas.requests import (
     GenerateReportRequest,
     ReportFilterRequest,
 )
 from app.reporting.schemas.responses import (
-    ReportDetailResponse,
     ReportExportResponse,
+    ReportDetailResponse,
     ReportListResponse,
+)
+from app.reporting.schemas.reporting_schemas import (
+    ReportTemplateCreateRequest,
+    ReportTemplateResponse,
+    ReportGenerationRequest,
+    ConfidenceBreakdown,
+    ExecutiveReportResponse,
+    ReportKPISnapshotResponse,
+    ReportGenerationRunResponse,
+    ReportEvidenceCoverageResponse,
+    ReportLineageGraphResponse,
+    ReportVersionDiffResponse,
+    BoardDirectiveCreateRequest,
+    BoardDirectiveResponse,
+    ReportPresentationSlideResponse,
+    ReportSignOffRequest,
+    ReportTransitionRequest,
+    ReportAuditEventResponse,
+    ReportIntegrityVerifyResponse,
 )
 
 __all__ = [
@@ -16,4 +35,21 @@ __all__ = [
     "ReportExportResponse",
     "ReportDetailResponse",
     "ReportListResponse",
+    "ReportTemplateCreateRequest",
+    "ReportTemplateResponse",
+    "ReportGenerationRequest",
+    "ConfidenceBreakdown",
+    "ExecutiveReportResponse",
+    "ReportKPISnapshotResponse",
+    "ReportGenerationRunResponse",
+    "ReportEvidenceCoverageResponse",
+    "ReportLineageGraphResponse",
+    "ReportVersionDiffResponse",
+    "BoardDirectiveCreateRequest",
+    "BoardDirectiveResponse",
+    "ReportPresentationSlideResponse",
+    "ReportSignOffRequest",
+    "ReportTransitionRequest",
+    "ReportAuditEventResponse",
+    "ReportIntegrityVerifyResponse",
 ]

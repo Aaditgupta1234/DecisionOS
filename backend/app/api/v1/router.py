@@ -9,7 +9,7 @@ from app.forecasting.api import router as forecast_router
 from app.narratives.api import narrative_router
 from app.scenario_simulation.api import router as scenario_router
 from app.strategy_planner.api import router as strategy_router
-from app.reporting.api import report_router
+from app.reporting.api import report_router, reporting_router
 from app.dashboard.api import dashboard_router
 from app.jobs.api import jobs_router
 from app.notifications.api import notifications_router
@@ -57,6 +57,8 @@ api_router.include_router(simulation_router, tags=["Enterprise Simulation & Auto
 api_router.include_router(knowledge_graph_router, tags=["Enterprise Knowledge Graph & Causal Intelligence"])
 api_router.include_router(ai_analyst_router, tags=["Explainable AI Business Analyst & Decision Copilot"])
 api_router.include_router(workspace_router, tags=["Executive Intelligence Workspace & Enterprise UX Platform"])
+api_router.include_router(reporting_router, tags=["Executive Reporting & Boardroom Communication Platform"])
+
 
 
 
