@@ -136,13 +136,13 @@ export const HomeView: React.FC = () => {
 
             {/* Trust Strip Directly Beneath CTAs */}
             <div className="hero-trust-strip">
-              <span className="strip-item">783+ Tests</span>
+              <span className="strip-item">783+ Automated Tests</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">100+ APIs</span>
+              <span className="strip-item">100+ REST APIs</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">25+ Engines</span>
+              <span className="strip-item">25+ Intelligence Engines</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">14 Development Phases</span>
+              <span className="strip-item">14 Completed Phases</span>
               <span className="strip-dot">•</span>
               <span className="strip-item">Deterministic Intelligence</span>
             </div>

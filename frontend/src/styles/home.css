@@ -339,9 +339,9 @@
 /* Dominant Standalone 3D Spline Robot atop Pedestal */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 88px;
+  bottom: 80px;
   left: 50%;
-  transform: translateX(calc(-50% + 28px)) scale(1.10);
+  transform: translateX(calc(-50% + 36px)) scale(1.10);
   width: 430px;
   height: 430px;
   z-index: 3;
@@ -411,8 +411,8 @@
   position: absolute;
   background: rgba(8, 10, 14, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 10px 14px;
+  border-radius: 9px;
+  padding: 7px 11px;
   z-index: 5;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(10px);
@@ -428,16 +428,16 @@
 }
 
 .t-card-label {
-  font-size: 9px;
+  font-size: 8px;
   color: #727A86;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .t-val-lg {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
   color: #FFFFFF;
   line-height: 1;
@@ -445,45 +445,45 @@
 }
 
 .t-val-sub {
-  font-size: 11px;
+  font-size: 9.5px;
   color: #616B78;
   margin-left: 2px;
   font-weight: 600;
 }
 
 .t-status-sub {
-  font-size: 9px;
+  font-size: 8px;
   color: #727A86;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
-/* Dynamic Asymmetrical Diagonal Positioning with +30px Breathing Space */
+/* Dynamic Asymmetrical Diagonal Positioning */
 /* 1. Business Health Score (Top Left) */
 .card-pos-top-left {
-  top: 48px;
-  left: -35px;
-  width: 190px;
+  top: 52px;
+  left: -20px;
+  width: 155px;
 }
 
 /* 2. Forecast Confidence (Top Right) */
 .card-pos-top-right {
-  top: 58px;
-  right: 15px;
-  width: 190px;
+  top: 62px;
+  right: 25px;
+  width: 155px;
 }
 
 /* 3. Customer Retention (Lower Left) */
 .card-pos-bottom-left {
   bottom: 132px;
-  left: -60px;
-  width: 225px;
+  left: -45px;
+  width: 185px;
 }
 
-/* 4. Win-Back Campaign (Bottom Right, Moved Outward & Elevated) */
+/* 4. Win-Back Campaign (Bottom Right) */
 .card-pos-bottom-right {
   bottom: 148px;
-  right: -25px;
-  width: 225px;
+  right: 8px;
+  width: 185px;
 }
 
 /* Card internals */
@@ -511,12 +511,12 @@
 .t-risk-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 9px;
+  gap: 3px;
+  font-size: 8px;
   color: #E2E8F0;
   background: rgba(255, 255, 255, 0.07);
-  padding: 1px 6px;
-  border-radius: 5px;
+  padding: 1px 5px;
+  border-radius: 4px;
   font-weight: 600;
 }
 
@@ -525,16 +525,16 @@
 }
 
 .t-risk-title {
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #FFFFFF;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .t-card-subtext {
-  font-size: 10px;
+  font-size: 8.5px;
   color: #8E99A8;
-  margin-top: 2px;
+  margin-top: 1px;
   font-weight: 500;
 }
 
@@ -545,30 +545,30 @@
 }
 
 .t-action-pill {
-  font-size: 9px;
+  font-size: 8px;
   color: #2E90FF;
   background: rgba(46, 144, 255, 0.12);
   border: 1px solid rgba(46, 144, 255, 0.3);
-  padding: 1px 6px;
-  border-radius: 5px;
+  padding: 1px 5px;
+  border-radius: 4px;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 
 .t-action-title {
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #FFFFFF;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .t-action-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 8.5px;
   color: #8E99A8;
-  margin-top: 4px;
+  margin-top: 2px;
   font-weight: 600;
 }
 
