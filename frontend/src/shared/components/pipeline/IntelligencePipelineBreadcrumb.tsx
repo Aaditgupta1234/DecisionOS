@@ -1,8 +1,30 @@
 import React from 'react';
-import { Check, Database, Table, Activity, AlertTriangle, GitMerge, CheckCircle2, FileText, Sparkles } from 'lucide-react';
+import {
+  Check,
+  Database,
+  Table,
+  Activity,
+  AlertTriangle,
+  GitMerge,
+  CheckCircle2,
+  FileText,
+  Sparkles,
+  PlayCircle,
+  TrendingUp,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-export type PipelineStepId = 'ingest' | 'schema' | 'metrics' | 'diagnostics' | 'rootcause' | 'recommendations' | 'reports' | 'ai';
+export type PipelineStepId =
+  | 'ingest'
+  | 'schema'
+  | 'metrics'
+  | 'diagnostics'
+  | 'rootcause'
+  | 'recommendations'
+  | 'reports'
+  | 'ai'
+  | 'execution'
+  | 'outcomes';
 
 interface Props {
   currentStep: PipelineStepId;
@@ -18,69 +40,69 @@ export const IntelligencePipelineBreadcrumb: React.FC<Props> = ({ currentStep })
     { id: 'recommendations', name: '06 Actions', to: '/recommendations', icon: CheckCircle2 },
     { id: 'reports', name: '07 Executive Brief', to: '/reports', icon: FileText },
     { id: 'ai', name: '08 AI Narrative', to: '/ai-insights', icon: Sparkles },
+    { id: 'execution', name: '09 Execution', to: '/execution', icon: PlayCircle },
+    { id: 'outcomes', name: '10 Outcomes', to: '/outcomes', icon: TrendingUp },
   ];
 
-  const currentIdx = steps.findIndex(s => s.id === currentStep);
+  const currentIdx = steps.findIndex((s) => s.id === currentStep);
 
   return (
-    <div style={{
-      background: 'rgba(8, 11, 16, 0.85)',
-      border: '1px solid #1A2230',
-      borderRadius: '10px',
-      padding: '8px 16px',
-      marginBottom: '20px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backdropFilter: 'blur(12px)',
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-        <span>Intelligence Pipeline:</span>
-      </div>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        background: '#070A0F',
+        border: '1px solid #141C28',
+        borderRadius: '10px',
+        padding: '8px 12px',
+        marginBottom: '24px',
+        overflowX: 'auto',
+        gap: '4px',
+      }}
+    >
+      {steps.map((step, idx) => {
+        const isCurrent = step.id === currentStep;
+        const isCompleted = idx < currentIdx;
+        const Icon = step.icon;
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', overflowX: 'auto' }}>
-        {steps.map((step, idx) => {
-          const isPassed = idx < currentIdx;
-          const isCurrent = idx === currentIdx;
-          const Icon = step.icon;
-
-          return (
-            <React.Fragment key={step.id}>
-              <Link
-                to={step.to}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  padding: '4px 8px',
-                  borderRadius: '5px',
-                  fontSize: '11px',
-                  fontWeight: isCurrent ? 800 : 600,
-                  color: isCurrent ? '#FFFFFF' : isPassed ? '#10B981' : '#64748B',
-                  background: isCurrent ? '#1D4ED8' : isPassed ? 'rgba(16, 185, 129, 0.08)' : 'transparent',
-                  border: `1px solid ${isCurrent ? '#3B82F6' : isPassed ? 'rgba(16, 185, 129, 0.2)' : 'transparent'}`,
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.15s ease',
-                  boxShadow: isCurrent ? '0 0 10px rgba(59, 130, 246, 0.4)' : 'none',
-                }}
-              >
-                {isPassed ? (
-                  <Check size={11} strokeWidth={3} />
-                ) : (
-                  <Icon size={11} />
-                )}
-                <span>{step.name}</span>
-              </Link>
-
-              {idx < steps.length - 1 && (
-                <span style={{ color: '#1E293B', fontSize: '10px', margin: '0 2px' }}>→</span>
+        return (
+          <React.Fragment key={step.id}>
+            <Link
+              to={step.to}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 10px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: isCurrent ? 800 : isCompleted ? 600 : 500,
+                color: isCurrent ? '#FFFFFF' : isCompleted ? '#38BDF8' : '#64748B',
+                background: isCurrent ? '#1D4ED8' : isCompleted ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
+                border: isCurrent
+                  ? '1px solid #3B82F6'
+                  : isCompleted
+                  ? '1px solid rgba(56, 189, 248, 0.2)'
+                  : '1px solid transparent',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {isCompleted ? (
+                <Check size={11} color="#38BDF8" />
+              ) : (
+                <Icon size={11} color={isCurrent ? '#FFFFFF' : '#64748B'} />
               )}
-            </React.Fragment>
-          );
-        })}
-      </div>
+              <span>{step.name}</span>
+            </Link>
+
+            {idx < steps.length - 1 && (
+              <span style={{ color: '#1E293B', fontSize: '10px', margin: '0 1px' }}>→</span>
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };

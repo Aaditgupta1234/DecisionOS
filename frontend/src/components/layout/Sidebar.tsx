@@ -12,6 +12,8 @@ import {
   ShieldCheck,
   FileText,
   History,
+  PlayCircle,
+  TrendingUp,
 } from 'lucide-react';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 
@@ -29,6 +31,8 @@ export const Sidebar: React.FC = () => {
     { to: '/history', label: 'Analysis History', icon: History },
     { to: '/ai-insights', label: 'AI Strategic Narrative', icon: Sparkles, badge: 'AI' },
     { to: '/chat', label: 'AI Chat Analyst', icon: MessageSquare, badge: 'AI' },
+    { to: '/execution', label: 'Execution Center', icon: PlayCircle },
+    { to: '/outcomes', label: 'Recovery Outcomes', icon: TrendingUp },
   ];
 
   return (

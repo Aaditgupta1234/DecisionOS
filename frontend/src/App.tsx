@@ -22,6 +22,9 @@ const ReportsView = React.lazy(() => import('./features/intelligence/ReportsView
 const HistoryView = React.lazy(() => import('./features/history/AnalysisHistoryView'));
 const AIInsightsView = React.lazy(() => import('./features/ai-insights/AIInsightsView'));
 const ChatView = React.lazy(() => import('./features/chat-analyst/ChatView'));
+const ExecutionCenterView = React.lazy(() => import('./features/execution/ExecutionCenterView'));
+const InitiativeDetailsView = React.lazy(() => import('./features/initiatives/InitiativeDetailsView'));
+const OutcomesView = React.lazy(() => import('./features/outcomes/OutcomesView'));
 const OrganizationSettingsView = React.lazy(() => import('./views/settings/OrganizationSettingsView').then(m => ({ default: m.OrganizationSettingsView })));
 
 import './styles/globals.css';
@@ -77,6 +80,9 @@ export function App() {
                       <Route path="/history" element={<HistoryView />} />
                       <Route path="/ai-insights" element={<AIInsightsView />} />
                       <Route path="/chat" element={<ChatView />} />
+                      <Route path="/execution" element={<ExecutionCenterView />} />
+                      <Route path="/initiatives/:id" element={<InitiativeDetailsView />} />
+                      <Route path="/outcomes" element={<OutcomesView />} />
                       <Route path="/settings/organization" element={<OrganizationSettingsView />} />
                       <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Route>
