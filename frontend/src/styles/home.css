@@ -576,7 +576,7 @@
    5. Why Traditional Dashboards Fail (The Paradigm Shift Table)
    ====================================================================== */
 .section-comparison-wrap {
-  padding: 8px 0 60px 0;
+  padding: 8px 0 0 0;
   border-top: 1px solid #14171E;
   background: #000000;
 }
@@ -620,12 +620,12 @@
   line-height: 1.6;
   color: #8E99A8;
   max-width: 640px;
-  margin: 0 auto 48px auto;
+  margin: 0 auto 24px auto;
   text-align: center;
 }
 
 .comparison-table-wrap {
-  margin-top: 0;
+  margin-top: 24px;
   background: #07090C;
   border: 1px solid #161A22;
   border-radius: 16px;
@@ -713,14 +713,14 @@
    6. Signature Intelligence Pipeline Section (DecisionOS Moat)
    ====================================================================== */
 .section-pipeline-wrap {
-  padding: 88px 0 96px 0;
+  padding: 0 0 16px 0;
   border-top: 1px solid #14171E;
   background: #000000;
   position: relative;
 }
 
 .pipeline-grid-container {
-  margin-top: 48px;
+  margin-top: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
