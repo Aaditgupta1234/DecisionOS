@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -26,31 +26,78 @@ import {
 import '../../styles/home.css';
 
 export const HomeView: React.FC = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollPos = 
+            window.scrollY || 
+            document.documentElement.scrollTop || 
+            document.body.scrollTop || 
+            0;
+          
+          const totalHeight = 
+            document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          
+          const progress = totalHeight > 0 ? (scrollPos / totalHeight) * 100 : 0;
+
+          setIsScrolled(scrollPos > 10);
+          setScrollProgress(Math.min(Math.max(progress, 0), 100));
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
+    document.addEventListener('scroll', handleScroll, { passive: true, capture: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('scroll', handleScroll, true);
+    };
+  }, []);
+
   return (
     <div className="page-root">
       
       {/* ======================================================================
-          1. Top Navigation Bar
+          1. Top Navigation Bar with Dynamic Scroll Progress Line
           ====================================================================== */}
-      <nav className="top-nav">
-        <div className="page-container top-nav-inner">
-          <Link to="/" className="nav-brand">
-            <span className="nav-brand-text">DecisionOS</span>
-          </Link>
+      <header className={`top-nav-wrapper ${isScrolled ? 'is-scrolled' : ''}`}>
+        {/* Dynamic Scroll Progress Line that increases in length on scroll */}
+        <div 
+          className="nav-scroll-progress-line" 
+          style={{ transform: `scaleX(${scrollProgress / 100})` }}
+          aria-hidden="true" 
+        />
 
-          <div className="nav-links">
-            <a href="#comparison" className="nav-link">Why DecisionOS</a>
-            <a href="#pipeline" className="nav-link">Signature Pipeline</a>
-            <a href="#intelligence" className="nav-link">Intelligence</a>
-            <a href="#solutions" className="nav-link">Solutions</a>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="nav-link">Docs</a>
+        <nav className="top-nav">
+          <div className="page-container top-nav-inner">
+            <Link to="/" className="nav-brand">
+              <span className="nav-brand-text">DecisionOS</span>
+            </Link>
+
+            <div className="nav-links">
+              <a href="#comparison" className="nav-link">Why DecisionOS</a>
+              <a href="#pipeline" className="nav-link">Signature Pipeline</a>
+              <a href="#intelligence" className="nav-link">Intelligence</a>
+              <a href="#solutions" className="nav-link">Solutions</a>
+              <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="nav-link">Docs</a>
+            </div>
+
+            <Link to="/dashboard" className="btn-nav-access">
+              Access Platform
+            </Link>
           </div>
-
-          <Link to="/dashboard" className="btn-nav-access">
-            Access Platform
-          </Link>
-        </div>
-      </nav>
+        </nav>
+      </header>
 
       {/* ======================================================================
           2. Hero Section with Spotlight, Pedestal & Symmetrical Telemetry
