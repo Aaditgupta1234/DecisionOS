@@ -36,6 +36,9 @@ const EnterpriseAdministrationView = React.lazy(() => import('./features/adminis
 const SecurityCenterView = React.lazy(() => import('./features/security-center/SecurityCenterView').then(m => ({ default: m.SecurityCenterView })));
 const PlatformOperationsView = React.lazy(() => import('./features/platform-ops/PlatformOperationsView').then(m => ({ default: m.PlatformOperationsView })));
 
+// Phase 9: Launch Certification & Production Hardening
+const ProductionCertificationCenterView = React.lazy(() => import('./features/production-readiness/ProductionCertificationCenterView').then(m => ({ default: m.ProductionCertificationCenterView })));
+
 // Existing Core Intelligence Engines
 const DatasetManagementCenterView = React.lazy(() => import('./features/data-management/DatasetManagementCenterView').then(m => ({ default: m.DatasetManagementCenterView })));
 const JobCenterView = React.lazy(() => import('./features/jobs/JobCenterView').then(m => ({ default: m.JobCenterView })));
@@ -119,6 +122,7 @@ function AppContent() {
             <Route path="/administration" element={<EnterpriseAdministrationView />} />
             <Route path="/security-center" element={<SecurityCenterView />} />
             <Route path="/platform-ops" element={<PlatformOperationsView />} />
+            <Route path="/production-readiness" element={<ProductionCertificationCenterView />} />
             <Route path="/agents" element={<AutonomousAgentsHubView />} />
             <Route path="/portfolio" element={<MetricsView />} />
             <Route path="/data-management" element={<DatasetManagementCenterView />} />
@@ -142,8 +146,14 @@ function AppContent() {
             <Route path="/dashboard" element={<Navigate to="/enterprise" replace />} />
             <Route path="/metrics" element={<Navigate to="/portfolio" replace />} />
             <Route path="/datasets" element={<Navigate to="/data-management" replace />} />
-            <Route path="/production-readiness" element={<Navigate to="/platform-ops" replace />} />
             <Route path="/tenant-admin" element={<Navigate to="/administration" replace />} />
+            <Route path="/performance" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="/security-certification" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="/reliability" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="/backup-recovery" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="/resilience" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="/observability" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="/launch-certification" element={<Navigate to="/production-readiness" replace />} />
           </Route>
         </Routes>
       </Suspense>

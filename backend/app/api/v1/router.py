@@ -38,6 +38,9 @@ from app.administration.api.endpoints import router as administration_router
 from app.security_center.api.endpoints import router as security_center_router
 from app.platform_ops.api.endpoints import router as platform_ops_router
 
+# Phase 9: Production Hardening, Launch Certification & Enterprise Reliability Platform
+from app.production_certification.api.endpoints import router as certification_router
+
 api_router = APIRouter()
 
 # Include endpoints
@@ -87,3 +90,6 @@ api_router.include_router(public_api_router)
 api_router.include_router(administration_router)
 api_router.include_router(security_center_router)
 api_router.include_router(platform_ops_router)
+
+# Phase 9: Launch Certification & Enterprise Reliability
+api_router.include_router(certification_router)
