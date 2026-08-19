@@ -1,10 +1,12 @@
 import React from 'react';
-import { GitBranch, CheckCircle2, PlayCircle, Clock, ArrowRight, ShieldAlert } from 'lucide-react';
+import { GitBranch, CheckCircle2, PlayCircle, Clock, ArrowRight, ShieldAlert, Lock, AlertCircle, Zap } from 'lucide-react';
+import { DependencyType } from '../../utils/InitiativeDependencyGuard';
 
-interface DependencyNode {
+export interface DependencyNode {
   id: string;
   code: string;
   title: string;
+  type?: DependencyType;
   status: 'COMPLETED' | 'IN_PROGRESS' | 'SCHEDULED';
   owner: string;
 }
@@ -15,12 +17,25 @@ interface Props {
 
 export const DependencyGraph: React.FC<Props> = ({
   nodes = [
-    { id: '1', code: 'PREREQ-1', title: 'Customer Churn Cohort Segmentation', status: 'COMPLETED', owner: 'Data Engineering' },
-    { id: '2', code: 'INIT-2026-001', title: 'Targeted Win-Back Campaign Launch', status: 'IN_PROGRESS', owner: 'VP Customer Success' },
-    { id: '3', code: 'DOWNSTREAM-1', title: 'SE Regional Courier SLA Enforcement', status: 'IN_PROGRESS', owner: 'Logistics Operations' },
-    { id: '4', code: 'OUTCOME', title: '+$180K ARR Retention Recovery Realized', status: 'SCHEDULED', owner: 'Executive Committee' },
+    { id: '1', code: 'PREREQ-1', title: 'Customer Churn Cohort Segmentation', type: 'HARD_BLOCKER', status: 'COMPLETED', owner: 'Data Engineering' },
+    { id: '2', code: 'INIT-2026-001', title: 'Targeted Win-Back Campaign Launch', type: 'HARD_BLOCKER', status: 'IN_PROGRESS', owner: 'VP Customer Success' },
+    { id: '3', code: 'DOWNSTREAM-1', title: 'SE Regional Courier SLA Concession', type: 'EXTERNAL', status: 'IN_PROGRESS', owner: 'Logistics Operations' },
+    { id: '4', code: 'OUTCOME', title: '+$180K ARR Retention Recovery Realized', type: 'SOFT_BLOCKER', status: 'SCHEDULED', owner: 'Executive Committee' },
   ],
 }) => {
+  const getBadgeColor = (type?: DependencyType) => {
+    switch (type) {
+      case 'HARD_BLOCKER':
+        return '#EF4444';
+      case 'SOFT_BLOCKER':
+        return '#F59E0B';
+      case 'EXTERNAL':
+        return '#A855F7';
+      default:
+        return '#38BDF8';
+    }
+  };
+
   return (
     <div style={{
       background: '#090C12',
@@ -37,9 +52,18 @@ export const DependencyGraph: React.FC<Props> = ({
             Initiative Dependency Graph & Execution Critical Path
           </h3>
         </div>
-        <span style={{ fontSize: '10.5px', color: '#10B981', fontWeight: 700, background: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
-          0 Unresolved Blockers
-        </span>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '10px', color: '#EF4444', background: 'rgba(239, 68, 68, 0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            HARD_BLOCKER: Enforced
+          </span>
+          <span style={{ fontSize: '10px', color: '#F59E0B', background: 'rgba(245, 158, 11, 0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            SOFT_BLOCKER: Warning
+          </span>
+          <span style={{ fontSize: '10px', color: '#A855F7', background: 'rgba(168, 85, 247, 0.1)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
+            EXTERNAL: Risk Flag
+          </span>
+        </div>
       </div>
 
       {/* Visual DAG Nodes Strip */}
@@ -54,6 +78,7 @@ export const DependencyGraph: React.FC<Props> = ({
         {nodes.map((node, idx) => {
           const isDone = node.status === 'COMPLETED';
           const isCurrent = node.status === 'IN_PROGRESS';
+          const typeColor = getBadgeColor(node.type);
 
           return (
             <React.Fragment key={node.id}>
@@ -62,7 +87,7 @@ export const DependencyGraph: React.FC<Props> = ({
                 border: `1px solid ${isCurrent ? '#38BDF8' : isDone ? '#10B981' : '#141C28'}`,
                 borderRadius: '8px',
                 padding: '12px 14px',
-                minWidth: '180px',
+                minWidth: '190px',
                 flex: 1,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
@@ -82,6 +107,19 @@ export const DependencyGraph: React.FC<Props> = ({
                     <span>{node.status}</span>
                   </span>
                 </div>
+
+                {node.type && (
+                  <span style={{
+                    fontSize: '8.5px',
+                    fontWeight: 800,
+                    color: typeColor,
+                    display: 'inline-block',
+                    marginBottom: '3px',
+                    textTransform: 'uppercase',
+                  }}>
+                    {node.type}
+                  </span>
+                )}
 
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.3, marginBottom: '6px' }}>
                   {node.title}

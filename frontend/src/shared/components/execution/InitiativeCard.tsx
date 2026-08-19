@@ -1,6 +1,7 @@
 import React from 'react';
-import { User, Calendar, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, CheckCircle2, Clock } from 'lucide-react';
+import { User, Calendar, TrendingUp, AlertCircle, ArrowRight, ShieldCheck, CheckCircle2, Clock, Lock, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { InitiativeDependency, DependencyType } from '../../utils/InitiativeDependencyGuard';
 
 export type InitiativeStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'BLOCKED' | 'COMPLETED' | 'DISMISSED';
 
@@ -17,6 +18,7 @@ export interface InitiativeItem {
   actualRecovery: string;
   achievementRate: number;
   blockedBy?: string;
+  dependencies?: InitiativeDependency[];
 }
 
 interface Props {
@@ -91,23 +93,38 @@ export const InitiativeCard: React.FC<Props> = ({ initiative, onMoveStatus }) =>
           {initiative.title}
         </Link>
 
-        {/* Dependency Blocker Tag if any */}
-        {initiative.blockedBy && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            borderRadius: '4px',
-            padding: '3px 6px',
-            fontSize: '10px',
-            color: '#F87171',
-            fontWeight: 600,
-            marginBottom: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-          }}>
-            <AlertCircle size={11} />
-            <span>Blocked by: {initiative.blockedBy}</span>
+        {/* Classified Dependency Badges */}
+        {initiative.dependencies && initiative.dependencies.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' }}>
+            {initiative.dependencies.map((dep) => {
+              const isHard = dep.type === 'HARD_BLOCKER';
+              const isSoft = dep.type === 'SOFT_BLOCKER';
+              const isExt = dep.type === 'EXTERNAL';
+
+              return (
+                <div
+                  key={dep.id}
+                  style={{
+                    background: isHard ? 'rgba(239, 68, 68, 0.1)' : isSoft ? 'rgba(245, 158, 11, 0.1)' : 'rgba(168, 85, 247, 0.1)',
+                    border: `1px solid ${isHard ? 'rgba(239, 68, 68, 0.3)' : isSoft ? 'rgba(245, 158, 11, 0.3)' : 'rgba(168, 85, 247, 0.3)'}`,
+                    borderRadius: '4px',
+                    padding: '3px 6px',
+                    fontSize: '9.5px',
+                    color: isHard ? '#F87171' : isSoft ? '#FBBF24' : '#C084FC',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {isHard ? <Lock size={10} /> : <AlertTriangle size={10} />}
+                    <span>{dep.code}: {dep.title}</span>
+                  </div>
+                  <span style={{ fontSize: '8.5px', fontWeight: 800 }}>{dep.type}</span>
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -134,27 +151,50 @@ export const InitiativeCard: React.FC<Props> = ({ initiative, onMoveStatus }) =>
           <div style={{ width: `${Math.min(100, initiative.achievementRate)}%`, height: '100%', background: statusColor }} />
         </div>
 
-        {/* Footer Target Date & Detail Link */}
+        {/* Footer Target Date & Status Move Selector */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '10.5px' }}>
           <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '3px' }}>
             <Calendar size={11} />
             <span>{initiative.targetDate}</span>
           </span>
 
-          <Link
-            to={`/initiatives/${initiative.id}`}
-            style={{
-              color: '#38BDF8',
-              fontWeight: 700,
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '2px',
-            }}
-          >
-            <span>Open</span>
-            <ArrowRight size={10} />
-          </Link>
+          {onMoveStatus ? (
+            <select
+              value={initiative.status}
+              onChange={(e) => onMoveStatus(initiative.id, e.target.value as InitiativeStatus)}
+              style={{
+                background: '#0F172A',
+                border: '1px solid #1E293B',
+                color: statusColor,
+                fontSize: '10px',
+                fontWeight: 700,
+                borderRadius: '4px',
+                padding: '2px 4px',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="NOT_STARTED">Not Started</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="BLOCKED">Blocked</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="DISMISSED">Dismissed</option>
+            </select>
+          ) : (
+            <Link
+              to={`/initiatives/${initiative.id}`}
+              style={{
+                color: '#38BDF8',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '2px',
+              }}
+            >
+              <span>Open</span>
+              <ArrowRight size={10} />
+            </Link>
+          )}
         </div>
       </div>
     </div>

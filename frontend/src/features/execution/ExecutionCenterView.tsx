@@ -8,12 +8,15 @@ import { InitiativeStatusBoard } from '../../shared/components/execution/Initiat
 import { InitiativeItem, InitiativeStatus } from '../../shared/components/execution/InitiativeCard';
 import { ExecutivePerformanceCard } from '../../shared/components/execution/ExecutivePerformanceCard';
 import { ExecutionAnalyticsTimeline } from '../../shared/components/execution/ExecutionAnalyticsTimeline';
-import { PlayCircle, Plus, Search, Filter, RefreshCw, CheckCircle2, TrendingUp } from 'lucide-react';
+import { InitiativeDependencyGuard } from '../../shared/utils/InitiativeDependencyGuard';
+import { PlayCircle, Plus, Search, Filter, RefreshCw, CheckCircle2, TrendingUp, AlertOctagon, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const ExecutionCenterView: React.FC = () => {
   const { activeDataset } = useDataset();
   const { status: healthStatus, checkHealth } = useBackendHealth();
+
+  const [guardAlertMessage, setGuardAlertMessage] = useState<string | null>(null);
 
   const [initiatives, setInitiatives] = useState<InitiativeItem[]>([
     {
@@ -28,6 +31,9 @@ export const ExecutionCenterView: React.FC = () => {
       predictedRecovery: '+$180K ARR',
       actualRecovery: '+$124K ARR',
       achievementRate: 68.8,
+      dependencies: [
+        { id: 'd1', code: 'PREREQ-1', title: 'Customer Churn Cohort Segmentation', type: 'HARD_BLOCKER', isResolved: true, owner: 'Data Engineering', resolutionRequirement: 'Cohort CSV ingested' },
+      ],
     },
     {
       id: 'init_2',
@@ -41,6 +47,9 @@ export const ExecutionCenterView: React.FC = () => {
       predictedRecovery: '+$140K ARR',
       actualRecovery: '$0',
       achievementRate: 20,
+      dependencies: [
+        { id: 'd2', code: 'DOWNSTREAM-1', title: 'SE Courier SLA Contract Concession', type: 'EXTERNAL', isResolved: false, owner: 'Logistics Legal', resolutionRequirement: 'Signed vendor amendment' },
+      ],
     },
     {
       id: 'init_3',
@@ -54,7 +63,10 @@ export const ExecutionCenterView: React.FC = () => {
       predictedRecovery: '+$85K ARR',
       actualRecovery: '$0',
       achievementRate: 0,
-      blockedBy: 'INIT-2026-001 Cohort Data',
+      dependencies: [
+        { id: 'd3', code: 'INIT-2026-001', title: 'Win-Back Customer Cohort Telemetry', type: 'HARD_BLOCKER', isResolved: false, owner: 'Growth Team', resolutionRequirement: 'Cohort conversion metrics frozen' },
+        { id: 'd4', code: 'MKT-01', title: 'Health & Beauty Creative Assets', type: 'SOFT_BLOCKER', isResolved: false, owner: 'Creative Director', resolutionRequirement: 'Approved banner copy' },
+      ],
     },
     {
       id: 'init_4',
@@ -113,6 +125,21 @@ export const ExecutionCenterView: React.FC = () => {
   }
 
   const handleMoveStatus = (id: string, newStatus: InitiativeStatus) => {
+    const targetItem = initiatives.find((i) => i.id === id);
+    if (!targetItem) return;
+
+    // Run Initiative Dependency Guard Validation
+    const validation = InitiativeDependencyGuard.validateTransition(
+      newStatus,
+      targetItem.dependencies || [],
+      true
+    );
+
+    if (!validation.allowed) {
+      setGuardAlertMessage(validation.message);
+      return;
+    }
+
     setInitiatives((prev) =>
       prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
     );
@@ -120,8 +147,6 @@ export const ExecutionCenterView: React.FC = () => {
 
   const inProgressCount = initiatives.filter((i) => i.status === 'IN_PROGRESS').length;
   const completedCount = initiatives.filter((i) => i.status === 'COMPLETED').length;
-  const notStartedCount = initiatives.filter((i) => i.status === 'NOT_STARTED').length;
-  const blockedCount = initiatives.filter((i) => i.status === 'BLOCKED').length;
 
   return (
     <div style={{ padding: '28px 32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
@@ -129,7 +154,37 @@ export const ExecutionCenterView: React.FC = () => {
       {/* 1. Pipeline Breadcrumb */}
       <IntelligencePipelineBreadcrumb currentStep="execution" />
 
-      {/* 2. Header & Action Controls */}
+      {/* 2. Dependency Guard Alert Modal / Toast if Blocked */}
+      {guardAlertMessage && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.15)',
+          border: '1px solid #EF4444',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          color: '#F87171',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <AlertOctagon size={16} />
+            <span style={{ fontSize: '12.5px', fontWeight: 700 }}>
+              {guardAlertMessage}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setGuardAlertMessage(null)}
+            style={{ background: 'transparent', border: 'none', color: '#F87171', cursor: 'pointer' }}
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* 3. Header & Action Controls */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -143,7 +198,7 @@ export const ExecutionCenterView: React.FC = () => {
             Executive Execution Command Center
           </h1>
           <p style={{ fontSize: '13px', color: '#94A3B8', marginTop: '4px' }}>
-            Track initiative lifecycles, assign ownership accountability, monitor progress velocity, and capture realized business recovery.
+            Track initiative lifecycles, enforce dependency guards, assign ownership accountability, and capture realized business recovery.
           </p>
         </div>
 
@@ -169,7 +224,7 @@ export const ExecutionCenterView: React.FC = () => {
         </Link>
       </div>
 
-      {/* 3. Executive Execution Summary Banner */}
+      {/* 4. Executive Execution Summary Banner */}
       <div style={{
         background: '#090C12',
         border: '1px solid #1A2230',
@@ -206,18 +261,23 @@ export const ExecutionCenterView: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. 5-Column Kanban Status Board */}
+      {/* 5. 5-Column Kanban Status Board */}
       <div style={{ marginBottom: '28px' }}>
-        <h3 style={{ fontSize: '14.5px', fontWeight: 800, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '14px' }}>
-          Initiative Lifecycle Kanban Workflow
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <h3 style={{ fontSize: '14.5px', fontWeight: 800, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0 }}>
+            Initiative Lifecycle Kanban Workflow (Dependency Enforced)
+          </h3>
+          <span style={{ fontSize: '10.5px', color: '#10B981', fontWeight: 700 }}>
+            Active Guards: HARD_BLOCKER • SOFT_BLOCKER • EXTERNAL
+          </span>
+        </div>
         <InitiativeStatusBoard initiatives={initiatives} onMoveStatus={handleMoveStatus} />
       </div>
 
-      {/* 5. Executive Accountability Scorecard */}
+      {/* 6. Executive Accountability Scorecard */}
       <ExecutivePerformanceCard />
 
-      {/* 6. Execution Velocity Analytics Timeline */}
+      {/* 7. Execution Velocity Analytics Timeline */}
       <ExecutionAnalyticsTimeline />
 
     </div>

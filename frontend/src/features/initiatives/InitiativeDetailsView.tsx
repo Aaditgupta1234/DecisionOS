@@ -7,6 +7,7 @@ import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetE
 import { IntelligencePipelineBreadcrumb } from '../../shared/components/pipeline/IntelligencePipelineBreadcrumb';
 import { InitiativeTracePanel } from '../../shared/components/execution/InitiativeTracePanel';
 import { DependencyGraph } from '../../shared/components/execution/DependencyGraph';
+import { KPIBaselineSnapshotCard } from '../../shared/components/execution/KPIBaselineSnapshotCard';
 import { ExecutionTimeline } from '../../shared/components/execution/ExecutionTimeline';
 import { KPIRecoveryChart } from '../../shared/components/execution/KPIRecoveryChart';
 import { ExecutionForecastCard } from '../../shared/components/execution/ExecutionForecastCard';
@@ -135,10 +136,13 @@ export const InitiativeDetailsView: React.FC = () => {
       {/* 4. 6-Stage Lineage Trace Panel */}
       <InitiativeTracePanel />
 
-      {/* 5. Visual Dependency Graph */}
+      {/* 5. Immutable Baseline KPI Telemetry Snapshot Card */}
+      <KPIBaselineSnapshotCard />
+
+      {/* 6. Visual Dependency Graph with Classified Badges */}
       <DependencyGraph />
 
-      {/* 6. Milestone Timeline & KPI Recovery Charts Split Grid */}
+      {/* 7. Milestone Timeline & KPI Recovery Charts Split Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '24px' }}>
         <ExecutionTimeline />
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -147,13 +151,13 @@ export const InitiativeDetailsView: React.FC = () => {
         </div>
       </div>
 
-      {/* 7. Risk Register & Executive Notes Split */}
+      {/* 8. Risk Register & Executive Notes Split */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
         <InitiativeRiskPanel />
         <ExecutiveNotesPanel />
       </div>
 
-      {/* 8. State Governance Audit History */}
+      {/* 9. Enterprise Append-Only Audit Trail */}
       <InitiativeAuditTimeline />
 
     </div>
