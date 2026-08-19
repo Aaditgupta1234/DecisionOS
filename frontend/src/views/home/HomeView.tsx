@@ -539,6 +539,7 @@ export const HomeView: React.FC = () => {
         <div className="page-container">
           
           <div className="section-heading-center">
+            <div className="section-badge">DECISIONOS COMMAND CENTER</div>
             <h2 className="section-title-main">Executive Intelligence Overview</h2>
             <p className="section-subtitle-main">
               A real-time command center for data-driven leaders.
@@ -547,64 +548,95 @@ export const HomeView: React.FC = () => {
 
           <div className="cockpit-container">
             
-            {/* Top 5 Stat / Summary Row */}
+            {/* Top Stat / Summary Row */}
             <div className="cockpit-top-row">
               
               {/* Stat 1: Total Revenue */}
               <div className="cockpit-stat-card">
                 <div className="c-stat-title">Total Revenue</div>
                 <div className="c-stat-num">$4.2M</div>
-                <div className="c-stat-delta">+12.4% vs last period</div>
+                <div className="c-stat-delta delta-pos">
+                  <span>+12.4%</span>
+                  <span className="delta-sub">vs last period ↗</span>
+                </div>
               </div>
 
               {/* Stat 2: Orders */}
               <div className="cockpit-stat-card">
                 <div className="c-stat-title">Orders</div>
                 <div className="c-stat-num">18,530</div>
-                <div className="c-stat-delta delta-pos">+8.7% vs last period ↗</div>
+                <div className="c-stat-delta delta-pos">
+                  <span>+8.7%</span>
+                  <span className="delta-sub">vs last period ↗</span>
+                </div>
               </div>
 
               {/* Stat 3: Customers */}
               <div className="cockpit-stat-card">
                 <div className="c-stat-title">Customers</div>
                 <div className="c-stat-num">6,842</div>
-                <div className="c-stat-delta delta-pos">+11.3% vs last period ↗</div>
+                <div className="c-stat-delta delta-pos">
+                  <span>+11.3%</span>
+                  <span className="delta-sub">vs last period ↗</span>
+                </div>
               </div>
 
-              {/* Stat 4: Business Health Score */}
-              <div className="cockpit-stat-card">
-                <div className="c-stat-title">Business Health Score</div>
+              {/* Stat 4: Business Health Score (Flagship Wide Anchor) */}
+              <div className="cockpit-stat-card cockpit-health-card">
+                <div className="c-stat-title-flex">
+                  <span className="c-stat-title">Business Health Score</span>
+                  <span className="badge-health-status">Excellent</span>
+                </div>
                 <div className="c-health-flex">
                   <div>
-                    <div className="c-stat-num">82 <span style={{ fontSize: '13px', color: '#727A86' }}>/100</span></div>
-                    <div className="c-stat-delta" style={{ color: '#B5BAC4' }}>Good Performance</div>
+                    <div className="c-stat-num">82 <span style={{ fontSize: '13px', color: '#727A86', fontWeight: 500 }}>/100</span></div>
+                    <div className="c-health-track-info">
+                      <div className="c-health-bar-wrap">
+                        <div className="c-health-bar-fill" style={{ width: '82%' }} />
+                      </div>
+                      <span className="c-health-label">Optimal Performance</span>
+                    </div>
                   </div>
                   <div className="c-ring-gauge">
-                    <svg width="34" height="34" viewBox="0 0 36 36">
+                    <svg width="44" height="44" viewBox="0 0 36 36">
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="rgba(255, 255, 255, 0.15)"
-                        strokeWidth="3"
+                        stroke="rgba(255, 255, 255, 0.10)"
+                        strokeWidth="3.2"
                       />
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
-                        stroke="#FFFFFF"
-                        strokeWidth="3"
+                        stroke="#10B981"
+                        strokeWidth="3.2"
                         strokeDasharray="82, 100"
+                        strokeLinecap="round"
                       />
                     </svg>
+                    <span className="gauge-center-text">82%</span>
                   </div>
                 </div>
               </div>
 
-              {/* Stat 5: Executive Summary Card */}
+              {/* Stat 5: Executive Summary Card (Structured DEX Synthesis) */}
               <div className="cockpit-summary-card">
-                <div className="c-sum-header">Executive Summary</div>
-                <p className="c-sum-text">
-                  Revenue increased 12.4% driven by higher AOV and returning customers. However, customer retention declined 4.3% due to increased churn in the last 30 days.
-                </p>
+                <div className="c-sum-header">
+                  <span>Executive Summary</span>
+                  <span className="c-ai-badge">DEX AI</span>
+                </div>
+                <div className="c-sum-structured">
+                  <div className="c-sum-lead">
+                    Revenue grew <strong className="text-emerald">+12.4% (+$463K)</strong> driven primarily by:
+                  </div>
+                  <ul className="c-sum-bullets">
+                    <li>• Returning customers <span className="text-emerald">(+6.2%)</span></li>
+                    <li>• Higher average order value <span className="text-emerald">(+4.8%)</span></li>
+                  </ul>
+                  <div className="c-sum-risk">
+                    <span className="risk-tag">Primary risk:</span> Retention declined <span className="text-crimson">4.3%</span>
+                  </div>
+                </div>
                 <Link to="/reports" className="btn-sum-action">
                   View Full Report
                 </Link>
@@ -699,13 +731,19 @@ export const HomeView: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right Root Cause Panel */}
+              {/* Right Root Cause Panel (Deterministic Diagnosis) */}
               <div className="cockpit-root-cause-card">
-                <div className="rc-tag">Top Root Cause</div>
+                <div className="rc-tag-row">
+                  <span className="rc-tag">Top Root Cause</span>
+                  <span className="rc-conf-badge">91% Confidence</span>
+                </div>
                 <div className="rc-heading">Customer Retention Decline</div>
-                <div className="rc-impact-badge">Impact: High</div>
+                <div className="rc-impact-row">
+                  <span className="rc-impact-badge">Impact: High</span>
+                  <span className="rc-loss-estimate">Est. Impact: -$218K / qtr</span>
+                </div>
                 <p className="rc-desc">
-                  Analysis shows churn increased due to late deliveries and reduced engagement in the last 30 days.
+                  Deterministic attribution isolated checkout latency spikes (+420ms) and shipping delays across tier-1 carriers.
                 </p>
                 <Link to="/root-causes" className="btn-rc-action">
                   Explore Root Cause

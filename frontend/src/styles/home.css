@@ -713,7 +713,7 @@
    6. Signature Intelligence Pipeline Section (DecisionOS Moat)
    ====================================================================== */
 .section-pipeline-wrap {
-  padding: 0 0 16px 0;
+  padding: 0;
   border-top: 1px solid #14171E;
   background: #000000;
   position: relative;
@@ -817,7 +817,7 @@
 
 /* 6. Executive Intelligence Overview Section */
 .section-overview-wrap {
-  padding: 80px 0;
+  padding: 0 0 64px 0;
   border-top: 1px solid #14171E;
 }
 
@@ -831,82 +831,222 @@
 /* Top Stat Row */
 .cockpit-top-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr) 1.2fr;
+  grid-template-columns: 1fr 1fr 1fr 1.45fr 1.45fr;
   gap: 14px;
   margin-bottom: 18px;
+}
+
+@media (max-width: 1100px) {
+  .cockpit-top-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .cockpit-top-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .cockpit-stat-card {
   background: #080A0E;
   border: 1px solid #1A1E26;
   border-radius: 10px;
-  padding: 16px;
+  padding: 13px 15px;
 }
 
 .c-stat-title {
   font-size: 11px;
   color: #727A86;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: 500;
 }
 
 .c-stat-num {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #FFFFFF;
   letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .c-stat-delta {
-  font-size: 10.5px;
+  font-size: 10px;
   color: #8E99A8;
-  margin-top: 4px;
+  margin-top: 3px;
   font-weight: 500;
 }
 
 .delta-pos {
-  color: #8E99A8;
+  color: #10B981;
+  font-weight: 600;
+}
+
+.delta-sub {
+  color: #64748B;
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+.text-emerald {
+  color: #10B981;
+  font-weight: 600;
+}
+
+.text-crimson {
+  color: #EF4444;
+  font-weight: 600;
+}
+
+/* Flagship Health Score Card with Radial Gauge */
+.cockpit-health-card {
+  background: linear-gradient(180deg, #0C0F15 0%, #07090D 100%);
+  border: 1px solid #222834;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.c-stat-title-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.badge-health-status {
+  font-size: 9px;
+  font-weight: 700;
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 1px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.03em;
 }
 
 .c-health-flex {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
-/* Summary Card */
+.c-health-track-info {
+  margin-top: 3px;
+}
+
+.c-health-bar-wrap {
+  width: 85px;
+  height: 3.5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 2px;
+}
+
+.c-health-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #34D399);
+  border-radius: 2px;
+}
+
+.c-health-label {
+  font-size: 9.5px;
+  color: #8E99A8;
+  font-weight: 500;
+}
+
+.c-ring-gauge {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.c-ring-gauge svg {
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.55));
+}
+
+.gauge-center-text {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* Summary Card with Structured Synthesis */
 .cockpit-summary-card {
   background: #080A0E;
   border: 1px solid #1A1E26;
   border-radius: 10px;
-  padding: 16px;
+  padding: 13px 15px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .c-sum-header {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   color: #FFFFFF;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.c-ai-badge {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #94A3B8;
+  background: #151922;
+  border: 1px solid #262D3D;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.c-sum-structured {
+  font-size: 9.5px;
+  line-height: 1.35;
+  color: #94A3B8;
   margin-bottom: 6px;
 }
 
-.c-sum-text {
-  font-size: 11px;
-  line-height: 1.5;
-  color: #8E99A8;
-  margin: 0 0 12px 0;
+.c-sum-lead {
+  margin-bottom: 2px;
+  color: #CBD5E1;
+}
+
+.c-sum-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3px 0;
+  color: #94A3B8;
+}
+
+.c-sum-risk {
+  font-size: 9px;
+  color: #94A3B8;
+  border-top: 1px solid #1A1F2B;
+  padding-top: 2px;
+}
+
+.risk-tag {
+  color: #EF4444;
+  font-weight: 600;
 }
 
 .btn-sum-action {
   width: 100%;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 5px;
   background: #11141C;
   border: 1px solid #1E232B;
   color: #FFFFFF;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   text-align: center;
   text-decoration: none;
@@ -970,7 +1110,7 @@
 .chart-svg-area {
   display: flex;
   gap: 10px;
-  height: 110px;
+  height: 140px;
   width: 100%;
 }
 
@@ -1020,7 +1160,7 @@
 }
 
 .forecast-svg-area {
-  height: 70px;
+  height: 90px;
   width: 100%;
 }
 
@@ -1046,32 +1186,67 @@
   justify-content: space-between;
 }
 
+.rc-tag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
 .rc-tag {
   font-size: 9.5px;
-  font-weight: 600;
-  color: #727A86;
+  font-weight: 700;
+  color: #A1AEC0;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  letter-spacing: 0.06em;
+}
+
+.rc-conf-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #38BDF8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  padding: 1px 6px;
+  border-radius: 4px;
 }
 
 .rc-heading {
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   color: #FFFFFF;
-  margin-bottom: 4px;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  margin-bottom: 6px;
 }
 
-.rc-impact-badge {
-  font-size: 10.5px;
-  color: #8E99A8;
+.rc-impact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 8px;
 }
 
+.rc-impact-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.rc-loss-estimate {
+  font-size: 10px;
+  font-weight: 600;
+  color: #CBD5E1;
+}
+
 .rc-desc {
-  font-size: 11px;
-  line-height: 1.5;
-  color: #727A86;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: #8E99A8;
   margin: 0 0 14px 0;
 }
 
