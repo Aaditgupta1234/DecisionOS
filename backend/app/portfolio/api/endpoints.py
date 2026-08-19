@@ -39,12 +39,14 @@ from app.portfolio.api.executive_endpoints import executive_router
 from app.portfolio.api.scenario_endpoints import scenario_router
 from app.portfolio.api.recommendation_endpoints import recommendation_router
 from app.portfolio.api.roadmap_endpoints import roadmap_router
+from app.portfolio.api.enterprise_endpoints import enterprise_portfolio_router
 
 portfolio_router = APIRouter(prefix="/portfolio", tags=["Portfolio Intelligence"])
 portfolio_router.include_router(executive_router)
 portfolio_router.include_router(scenario_router)
 portfolio_router.include_router(recommendation_router)
 portfolio_router.include_router(roadmap_router)
+portfolio_router.include_router(enterprise_portfolio_router)
 
 
 def _resolve_org_id(current_user: User, organization_id: Optional[uuid.UUID] = None) -> uuid.UUID:
