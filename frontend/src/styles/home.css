@@ -186,7 +186,7 @@
 .hero-headline {
   font-size: clamp(40px, 3.4vw, 48px);
   font-weight: 800;
-  line-height: 1.14;
+  line-height: 1.05;
   letter-spacing: -0.035em;
   color: #FFFFFF;
   margin: 0 0 18px 0;
@@ -194,10 +194,10 @@
 
 .hero-desc {
   font-size: 16px;
-  line-height: 1.62;
-  color: #C4CAD4;
+  line-height: 1.6;
+  color: #D4D4D8; /* Zinc-300 / 80% contrast for crystal-clear readability */
   margin: 0 0 24px 0;
-  max-width: 540px;
+  max-width: 38rem; /* 608px optimal reading measure */
 }
 
 .hero-btn-row {
@@ -296,7 +296,7 @@
 /* 4. Single-Tone Clean Cone Spotlight Beam */
 .stage-spotlight-cone {
   position: absolute;
-  top: -30px;
+  top: -50px;
   left: calc(50% - 12px);
   transform: translateX(-50%);
   width: 580px;
@@ -339,7 +339,7 @@
 /* Dominant Standalone 3D Spline Robot atop Pedestal */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 80px;
+  bottom: 98px;
   left: 50%;
   transform: translateX(calc(-50% + 36px)) scale(1.10);
   width: 430px;
@@ -366,7 +366,7 @@
 /* DEX Product Identity Core Tag */
 .dex-identity-tag {
   position: absolute;
-  bottom: 0px;
+  bottom: -32px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -558,7 +558,7 @@
    5. Why Traditional Dashboards Fail (The Paradigm Shift Table)
    ====================================================================== */
 .section-comparison-wrap {
-  padding: 56px 0 0 0;
+  padding: 96px 0 0 0;
   border-top: 1px solid #14171E;
   background: #000000;
 }

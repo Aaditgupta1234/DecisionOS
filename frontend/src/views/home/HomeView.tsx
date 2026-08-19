@@ -142,9 +142,9 @@ export const HomeView: React.FC = () => {
               <span className="strip-dot">•</span>
               <span className="strip-item">25+ Engines</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">14 Phases</span>
+              <span className="strip-item">Production Certified</span>
               <span className="strip-dot">•</span>
-              <span className="strip-item">Deterministic Intelligence</span>
+              <span className="strip-item">Explainable AI</span>
             </div>
           </div>
 
