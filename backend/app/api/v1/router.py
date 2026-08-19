@@ -23,6 +23,7 @@ from app.simulation.api.endpoints import simulation_router
 from app.knowledge_graph.api.endpoints import knowledge_graph_router
 from app.ai.api.endpoints import ai_analyst_router
 from app.workspace.api.endpoints import workspace_router
+from app.scenarios.api.endpoints import scenario_router as enterprise_scenario_router
 
 api_router = APIRouter()
 
@@ -58,6 +59,8 @@ api_router.include_router(knowledge_graph_router, tags=["Enterprise Knowledge Gr
 api_router.include_router(ai_analyst_router, tags=["Explainable AI Business Analyst & Decision Copilot"])
 api_router.include_router(workspace_router, tags=["Executive Intelligence Workspace & Enterprise UX Platform"])
 api_router.include_router(reporting_router, tags=["Executive Reporting & Boardroom Communication Platform"])
+api_router.include_router(enterprise_scenario_router, tags=["Enterprise Digital Twin & Scenario Intelligence Platform"])
+
 
 
 

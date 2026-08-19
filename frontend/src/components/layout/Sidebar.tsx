@@ -23,6 +23,7 @@ export const Sidebar: React.FC = () => {
   const navItems = [
     { to: '/command-center', label: 'Command Center', icon: LayoutDashboard },
     { to: '/monitoring', label: 'Continuous Monitoring', icon: Activity, badge: 'LIVE' },
+    { to: '/digital-twin', label: 'Digital Twin & Scenarios', icon: PlayCircle, badge: 'TWIN' },
     { to: '/simulations', label: 'Simulation Studio', icon: PlayCircle },
     { to: '/knowledge-graph', label: 'Knowledge Graph', icon: GitMerge, badge: 'V3' },
     { to: '/ai-analyst', label: 'AI Business Analyst', icon: Sparkles, badge: 'AI' },

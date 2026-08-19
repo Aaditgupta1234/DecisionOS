@@ -33,6 +33,14 @@ const ExecutionCenterView = React.lazy(() => import('./features/execution/Execut
 const InitiativeDetailsView = React.lazy(() => import('./features/initiatives/InitiativeDetailsView'));
 const OutcomesView = React.lazy(() => import('./features/outcomes/OutcomesView'));
 const OrganizationSettingsView = React.lazy(() => import('./views/settings/OrganizationSettingsView').then(m => ({ default: m.OrganizationSettingsView })));
+const DigitalTwinWorkspaceView = React.lazy(() => import('./features/scenarios/DigitalTwinWorkspaceView').then(m => ({ default: m.DigitalTwinWorkspaceView })));
+const ScenarioBuilderView = React.lazy(() => import('./features/scenarios/ScenarioBuilderView').then(m => ({ default: m.ScenarioBuilderView })));
+const ScenarioComparisonView = React.lazy(() => import('./features/scenarios/ScenarioComparisonView').then(m => ({ default: m.ScenarioComparisonView })));
+const ScenarioAccuracyTrackerView = React.lazy(() => import('./features/scenarios/ScenarioAccuracyTrackerView').then(m => ({ default: m.ScenarioAccuracyTrackerView })));
+const PortfolioOptimizerView = React.lazy(() => import('./features/scenarios/PortfolioOptimizerView').then(m => ({ default: m.PortfolioOptimizerView })));
+const StressTestingView = React.lazy(() => import('./features/scenarios/StressTestingView').then(m => ({ default: m.StressTestingView })));
+const SensitivityAnalysisView = React.lazy(() => import('./features/scenarios/SensitivityAnalysisView').then(m => ({ default: m.SensitivityAnalysisView })));
+
 
 import './styles/globals.css';
 
@@ -80,6 +88,13 @@ export function App() {
                       <Route path="/command-center" element={<ExecutiveCommandCenterView />} />
                       <Route path="/monitoring" element={<MonitoringCenterView />} />
                       <Route path="/simulations" element={<SimulationStudioView />} />
+                      <Route path="/digital-twin" element={<DigitalTwinWorkspaceView />} />
+                      <Route path="/scenarios/builder" element={<ScenarioBuilderView />} />
+                      <Route path="/scenarios/comparison" element={<ScenarioComparisonView />} />
+                      <Route path="/scenarios/accuracy" element={<ScenarioAccuracyTrackerView />} />
+                      <Route path="/scenarios/optimizer" element={<PortfolioOptimizerView />} />
+                      <Route path="/scenarios/stress-test" element={<StressTestingView />} />
+                      <Route path="/scenarios/sensitivity" element={<SensitivityAnalysisView />} />
                       <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />
                       <Route path="/ai-analyst" element={<AIAnalystWorkspaceView />} />
                       <Route path="/decision-copilot" element={<DecisionCopilotView />} />
