@@ -263,9 +263,26 @@
   transform: translateX(-24px);
 }
 
-/* Overhead Spotlight Cone (Removed as requested) */
-.stage-spotlight {
-  display: none;
+/* 4. Single-Tone Clean Cone Spotlight Beam */
+.stage-spotlight-cone {
+  position: absolute;
+  top: -30px;
+  left: calc(50% - 12px);
+  transform: translateX(-50%);
+  width: 580px;
+  height: 520px;
+  clip-path: polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.12) 35%,
+    rgba(255, 255, 255, 0.03) 75%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  filter: blur(22px);
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
 }
 
 /* 3D Glowing Pedestal Disc (620px Wide Anchor) */
@@ -413,22 +430,22 @@
 /* Dynamic Asymmetrical Diagonal Positioning with +30px Breathing Space */
 /* 1. Business Health Score (Top Left) */
 .card-pos-top-left {
-  top: 40px;
-  left: -15px;
+  top: 48px;
+  left: -35px;
   width: 190px;
 }
 
 /* 2. Forecast Confidence (Top Right) */
 .card-pos-top-right {
-  top: 40px;
+  top: 58px;
   right: 15px;
   width: 190px;
 }
 
 /* 3. Customer Retention (Lower Left) */
 .card-pos-bottom-left {
-  bottom: 115px;
-  left: -40px;
+  bottom: 132px;
+  left: -60px;
   width: 225px;
 }
 
