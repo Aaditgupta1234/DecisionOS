@@ -48,6 +48,11 @@ const ForecastAccuracyView = React.lazy(() => import('./features/strategy-execut
 const ExecutiveAccountabilityView = React.lazy(() => import('./features/strategy-execution/ExecutiveAccountabilityView').then(m => ({ default: m.ExecutiveAccountabilityView })));
 const ExecutivePerformanceView = React.lazy(() => import('./features/strategy-execution/ExecutivePerformanceView').then(m => ({ default: m.ExecutivePerformanceView })));
 const StrategyReviewCyclesView = React.lazy(() => import('./features/strategy-execution/StrategyReviewCyclesView').then(m => ({ default: m.StrategyReviewCyclesView })));
+const MonitoringCommandCenterView = React.lazy(() => import('./features/monitoring/MonitoringCommandCenterView').then(m => ({ default: m.MonitoringCommandCenterView })));
+const MonitoringCoverageView = React.lazy(() => import('./features/monitoring/MonitoringCoverageView').then(m => ({ default: m.MonitoringCoverageView })));
+const AlertAnalyticsView = React.lazy(() => import('./features/monitoring/AlertAnalyticsView').then(m => ({ default: m.AlertAnalyticsView })));
+const PredictiveRiskRadarView = React.lazy(() => import('./features/monitoring/PredictiveRiskRadarView').then(m => ({ default: m.PredictiveRiskRadarView })));
+
 
 
 
@@ -95,7 +100,11 @@ export function App() {
                     >
                       <Route path="/dashboard" element={<ExecutiveCommandCenterView />} />
                       <Route path="/command-center" element={<ExecutiveCommandCenterView />} />
-                      <Route path="/monitoring" element={<MonitoringCenterView />} />
+                      <Route path="/monitoring" element={<MonitoringCommandCenterView />} />
+                      <Route path="/monitoring-center" element={<MonitoringCommandCenterView />} />
+                      <Route path="/monitoring/coverage" element={<MonitoringCoverageView />} />
+                      <Route path="/monitoring/analytics" element={<AlertAnalyticsView />} />
+                      <Route path="/monitoring/radar" element={<PredictiveRiskRadarView />} />
                       <Route path="/simulations" element={<SimulationStudioView />} />
                       <Route path="/digital-twin" element={<DigitalTwinWorkspaceView />} />
                       <Route path="/scenarios/builder" element={<ScenarioBuilderView />} />

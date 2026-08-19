@@ -31,6 +31,26 @@ from app.monitoring.schemas.production_monitoring import (
     SuppressAlertRequest,
 )
 
+from app.monitoring.schemas.monitoring_schemas import (
+    EnterpriseAlertCreateRequest,
+    EnterpriseAlertUpdateRequest,
+    EnterpriseAlertResponse,
+    AlertPostmortemCreateRequest,
+    AlertPostmortemResponse,
+    AlertSLAResponse,
+    EscalationPolicyResponse,
+    NotificationDeliveryResponse,
+    AlertActionPlanCreateRequest,
+    AlertActionPlanResponse,
+    AlertLineageResponse,
+    AlertExplanationResponse,
+    AlertImpactEstimateResponse,
+    MonitoringCoverageReportResponse,
+    AlertEffectivenessRecordResponse,
+    MonitoringMaturityReportResponse,
+    AlertAnalyticsResponse,
+)
+
 __all__ = [
     # Legacy Phase 10.5
     "AuditOperationalSummary",
@@ -60,4 +80,23 @@ __all__ = [
     "ExecutiveMonitoringDashboardResponse",
     "GovernanceDashboardResponse",
     "PortfolioMonitoringDashboardResponse",
+    # Phase 6.6
+    "EnterpriseAlertCreateRequest",
+    "EnterpriseAlertUpdateRequest",
+    "EnterpriseAlertResponse",
+    "AlertPostmortemCreateRequest",
+    "AlertPostmortemResponse",
+    "AlertSLAResponse",
+    "EscalationPolicyResponse",
+    "NotificationDeliveryResponse",
+    "AlertActionPlanCreateRequest",
+    "AlertActionPlanResponse",
+    "AlertLineageResponse",
+    "AlertExplanationResponse",
+    "AlertImpactEstimateResponse",
+    "MonitoringCoverageReportResponse",
+    "AlertEffectivenessRecordResponse",
+    "MonitoringMaturityReportResponse",
+    "AlertAnalyticsResponse",
 ]
+

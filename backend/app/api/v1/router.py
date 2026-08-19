@@ -15,7 +15,7 @@ from app.jobs.api import jobs_router
 from app.notifications.api import notifications_router
 from app.audit.api import audit_router
 from app.schedules.api import schedules_router
-from app.monitoring.api import monitoring_router
+from app.monitoring.api import monitoring_router, enterprise_monitoring_router
 from app.admin.api import admin_router
 from app.portfolio.api import portfolio_router
 from app.execution.api.v1.router import execution_router
@@ -62,6 +62,8 @@ api_router.include_router(workspace_router, tags=["Executive Intelligence Worksp
 api_router.include_router(reporting_router, tags=["Executive Reporting & Boardroom Communication Platform"])
 api_router.include_router(enterprise_scenario_router, tags=["Enterprise Digital Twin & Scenario Intelligence Platform"])
 api_router.include_router(strategy_execution_router, tags=["Enterprise Strategy Execution & Value Realization Platform"])
+api_router.include_router(enterprise_monitoring_router, tags=["Enterprise Monitoring, Event Intelligence & Predictive Alerting Platform"])
+
 
 
 
