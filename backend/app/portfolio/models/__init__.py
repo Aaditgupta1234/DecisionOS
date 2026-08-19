@@ -1,4 +1,4 @@
-"""Models package for Phase 5.2 Enterprise Portfolio Intelligence."""
+"""Models package for Phase 5.2 Enterprise Portfolio Intelligence & Strategic Optimization."""
 
 from app.portfolio.models.portfolio_snapshot import PortfolioSnapshot
 from app.portfolio.models.workspace_benchmark import WorkspaceBenchmark
@@ -9,6 +9,14 @@ from app.portfolio.models.portfolio_entity import (
     PortfolioDataset,
     PortfolioIntelligenceReport,
 )
+from app.portfolio.models.portfolio_optimization import (
+    PortfolioOptimizationRun,
+    PortfolioResourceAllocationSnapshot,
+    PortfolioForecastSnapshot,
+    PortfolioScenarioResult,
+    PortfolioDecisionBrief,
+    PortfolioDecisionSession,
+)
 
 __all__ = [
     "PortfolioSnapshot",
@@ -18,4 +26,10 @@ __all__ = [
     "Department",
     "PortfolioDataset",
     "PortfolioIntelligenceReport",
+    "PortfolioOptimizationRun",
+    "PortfolioResourceAllocationSnapshot",
+    "PortfolioForecastSnapshot",
+    "PortfolioScenarioResult",
+    "PortfolioDecisionBrief",
+    "PortfolioDecisionSession",
 ]
