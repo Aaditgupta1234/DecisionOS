@@ -12,6 +12,13 @@ import { ErrorBoundary } from './shared/components/ErrorBoundary';
 const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
 const LoginPage = React.lazy(() => import('./features/auth/LoginPage'));
 const DashboardView = React.lazy(() => import('./features/dashboard/DashboardView'));
+const ExecutiveCommandCenterView = React.lazy(() => import('./features/workspace/ExecutiveCommandCenterView').then(m => ({ default: m.ExecutiveCommandCenterView })));
+const MonitoringCenterView = React.lazy(() => import('./features/monitoring/MonitoringCenterView').then(m => ({ default: m.MonitoringCenterView })));
+const SimulationStudioView = React.lazy(() => import('./features/simulation/SimulationStudioView').then(m => ({ default: m.SimulationStudioView })));
+const KnowledgeGraphExplorerView = React.lazy(() => import('./features/knowledge-graph/KnowledgeGraphExplorerView').then(m => ({ default: m.KnowledgeGraphExplorerView })));
+const AIAnalystWorkspaceView = React.lazy(() => import('./features/ai-analyst/AIAnalystWorkspaceView').then(m => ({ default: m.AIAnalystWorkspaceView })));
+const DecisionCopilotView = React.lazy(() => import('./features/decision-copilot/DecisionCopilotView').then(m => ({ default: m.DecisionCopilotView })));
+const ExecutiveReportsCenterView = React.lazy(() => import('./features/reports/ExecutiveReportsCenterView').then(m => ({ default: m.ExecutiveReportsCenterView })));
 const DatasetsView = React.lazy(() => import('./features/datasets/DatasetsView'));
 const SchemaMappingView = React.lazy(() => import('./features/datasets/SchemaMappingView'));
 const MetricsView = React.lazy(() => import('./features/kpis/MetricsView'));
@@ -69,14 +76,20 @@ export function App() {
                         </ProtectedRoute>
                       }
                     >
-                      <Route path="/dashboard" element={<DashboardView />} />
+                      <Route path="/dashboard" element={<ExecutiveCommandCenterView />} />
+                      <Route path="/command-center" element={<ExecutiveCommandCenterView />} />
+                      <Route path="/monitoring" element={<MonitoringCenterView />} />
+                      <Route path="/simulations" element={<SimulationStudioView />} />
+                      <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />
+                      <Route path="/ai-analyst" element={<AIAnalystWorkspaceView />} />
+                      <Route path="/decision-copilot" element={<DecisionCopilotView />} />
                       <Route path="/datasets" element={<DatasetsView />} />
                       <Route path="/datasets/:id/mapping" element={<SchemaMappingView />} />
                       <Route path="/metrics" element={<MetricsView />} />
                       <Route path="/diagnostics" element={<DiagnosticsView />} />
                       <Route path="/root-causes" element={<RootCausesView />} />
                       <Route path="/recommendations" element={<RecommendationsView />} />
-                      <Route path="/reports" element={<ReportsView />} />
+                      <Route path="/reports" element={<ExecutiveReportsCenterView />} />
                       <Route path="/history" element={<HistoryView />} />
                       <Route path="/ai-insights" element={<AIInsightsView />} />
                       <Route path="/chat" element={<ChatView />} />
@@ -84,7 +97,7 @@ export function App() {
                       <Route path="/initiatives/:id" element={<InitiativeDetailsView />} />
                       <Route path="/outcomes" element={<OutcomesView />} />
                       <Route path="/settings/organization" element={<OrganizationSettingsView />} />
-                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="*" element={<Navigate to="/command-center" replace />} />
                     </Route>
                   </Routes>
                 </Suspense>

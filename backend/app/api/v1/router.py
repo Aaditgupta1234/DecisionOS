@@ -22,6 +22,7 @@ from app.execution.api.v1.router import execution_router
 from app.simulation.api.endpoints import simulation_router
 from app.knowledge_graph.api.endpoints import knowledge_graph_router
 from app.ai.api.endpoints import ai_analyst_router
+from app.workspace.api.endpoints import workspace_router
 
 api_router = APIRouter()
 
@@ -55,6 +56,8 @@ api_router.include_router(execution_router, tags=["Strategic Execution Layer"])
 api_router.include_router(simulation_router, tags=["Enterprise Simulation & Autonomous Planning"])
 api_router.include_router(knowledge_graph_router, tags=["Enterprise Knowledge Graph & Causal Intelligence"])
 api_router.include_router(ai_analyst_router, tags=["Explainable AI Business Analyst & Decision Copilot"])
+api_router.include_router(workspace_router, tags=["Executive Intelligence Workspace & Enterprise UX Platform"])
+
 
 
 

@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useDataset } from '../../context/DatasetContext';
 import { useAuth } from '../../features/auth/AuthContext';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
-import { Database, Upload, RefreshCw, ChevronDown, Check, AlertCircle, LogOut, User, Activity, Plus } from 'lucide-react';
+import { Database, Upload, RefreshCw, ChevronDown, Check, AlertCircle, LogOut, User, Activity, Plus, Search } from 'lucide-react';
 import { DecisionApi } from '../../api';
 import { Link } from 'react-router-dom';
+import { ExecutiveNotificationPopover } from '../workspace/ExecutiveNotificationPopover';
+import { GlobalSearchModal } from '../workspace/GlobalSearchModal';
 
 export const TopNav: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
@@ -13,6 +15,7 @@ export const TopNav: React.FC = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -187,8 +190,35 @@ export const TopNav: React.FC = () => {
         )}
       </div>
 
-      {/* Right Controls: Backend Status, Upload, Refresh, User Profile */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      {/* Right Controls: Universal Search, Notifications, Backend Status, Upload, Refresh, User Profile */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Cmd+K Universal Search Button */}
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid #1E293B',
+            borderRadius: '6px',
+            padding: '5px 10px',
+            color: '#94A3B8',
+            fontSize: '12px',
+            cursor: 'pointer',
+          }}
+          title="Universal Search (Cmd+K)"
+        >
+          <Search size={13} color="#38BDF8" />
+          <span>Search...</span>
+          <kbd style={{ background: '#1E293B', color: '#64748B', padding: '1px 5px', borderRadius: '3px', fontSize: '9px', fontWeight: 800 }}>⌘K</kbd>
+        </button>
+
+        {/* Actionable Notification Popover */}
+        <ExecutiveNotificationPopover />
+
+        {/* Global Search Modal */}
+        <GlobalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         {/* Backend Heartbeat Pill */}
         <div
           title={healthStatus === 'connected' ? `FastAPI Gateway Connected (${latencyMs || '<10'}ms)` : 'Backend Gateway Offline on port 8000'}

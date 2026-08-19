@@ -21,16 +21,16 @@ export const Sidebar: React.FC = () => {
   const { status: healthStatus } = useBackendHealth();
 
   const navItems = [
-    { to: '/dashboard', label: 'Command Center', icon: LayoutDashboard },
+    { to: '/command-center', label: 'Command Center', icon: LayoutDashboard },
+    { to: '/monitoring', label: 'Continuous Monitoring', icon: Activity, badge: 'LIVE' },
+    { to: '/simulations', label: 'Simulation Studio', icon: PlayCircle },
+    { to: '/knowledge-graph', label: 'Knowledge Graph', icon: GitMerge, badge: 'V3' },
+    { to: '/ai-analyst', label: 'AI Business Analyst', icon: Sparkles, badge: 'AI' },
+    { to: '/decision-copilot', label: 'Decision Copilot', icon: CheckCircle2, badge: 'COPILOT' },
+    { to: '/reports', label: 'Executive Reports', icon: FileText },
     { to: '/datasets', label: 'Datasets', icon: Database },
-    { to: '/metrics', label: 'KPI Performance', icon: Activity },
-    { to: '/diagnostics', label: 'Diagnostic Findings', icon: AlertTriangle },
-    { to: '/root-causes', label: 'Root Causes', icon: GitMerge },
-    { to: '/recommendations', label: 'Recommendations', icon: CheckCircle2 },
-    { to: '/reports', label: 'Executive Intelligence', icon: FileText },
-    { to: '/history', label: 'Analysis History', icon: History },
-    { to: '/ai-insights', label: 'AI Strategic Narrative', icon: Sparkles, badge: 'AI' },
-    { to: '/chat', label: 'AI Chat Analyst', icon: MessageSquare, badge: 'AI' },
+    { to: '/metrics', label: 'KPI Performance', icon: TrendingUp },
+    { to: '/root-causes', label: 'Root Causes', icon: AlertTriangle },
     { to: '/execution', label: 'Execution Center', icon: PlayCircle },
     { to: '/outcomes', label: 'Recovery Outcomes', icon: TrendingUp },
   ];
