@@ -1,53 +1,24 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  Activity,
-  AlertTriangle,
-  GitMerge,
-  CheckCircle2,
-  Sparkles,
-  MessageSquare,
-  Database,
-  ShieldCheck,
-  FileText,
-  History,
-  PlayCircle,
-  TrendingUp,
-  Target,
-} from 'lucide-react';
+import { ShieldCheck, Command } from 'lucide-react';
+import { routesConfig } from '../../config/routesConfig';
+import { useTenantStore } from '../../store/useTenantStore';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 
-export const Sidebar: React.FC = () => {
-  const { status: healthStatus } = useBackendHealth();
+interface SidebarProps {
+  onOpenSearch?: () => void;
+}
 
-  const navItems = [
-    { to: '/enterprise', label: 'Enterprise OS Command', icon: LayoutDashboard, badge: 'OS v1' },
-    { to: '/governance', label: 'Decision Governance', icon: ShieldCheck, badge: 'GOV' },
-    { to: '/competitive-intelligence', label: 'Competitive Intelligence', icon: TrendingUp, badge: 'BENCH' },
-    { to: '/operating-system', label: 'Autonomous Playbooks', icon: PlayCircle, badge: 'PLAY' },
-    { to: '/command-center', label: 'Command Center', icon: LayoutDashboard },
-    { to: '/monitoring', label: 'Continuous Monitoring', icon: Activity, badge: 'LIVE' },
-    { to: '/strategy-execution', label: 'Strategy Execution', icon: Target, badge: 'VALUE' },
-    { to: '/digital-twin', label: 'Digital Twin & Scenarios', icon: PlayCircle, badge: 'TWIN' },
-    { to: '/simulations', label: 'Simulation Studio', icon: PlayCircle },
-    { to: '/knowledge-graph', label: 'Knowledge Graph', icon: GitMerge, badge: 'V3' },
-    { to: '/ai-analyst', label: 'AI Business Analyst', icon: Sparkles, badge: 'AI' },
-    { to: '/decision-copilot', label: 'Decision Copilot', icon: CheckCircle2, badge: 'COPILOT' },
-    { to: '/reports', label: 'Executive Reports', icon: FileText },
-    { to: '/datasets', label: 'Datasets', icon: Database },
-    { to: '/metrics', label: 'KPI Performance', icon: TrendingUp },
-    { to: '/root-causes', label: 'Root Causes', icon: AlertTriangle },
-    { to: '/execution', label: 'Execution Center', icon: PlayCircle },
-    { to: '/outcomes', label: 'Recovery Outcomes', icon: TrendingUp },
-  ];
+export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
+  const { status: healthStatus } = useBackendHealth();
+  const { activeOrg, activeWorkspace } = useTenantStore();
 
   return (
     <aside
       style={{
         width: 'var(--sidebar-width)',
-        backgroundColor: 'var(--bg-sidebar)',
-        borderRight: '1px solid var(--border-subtle)',
+        backgroundColor: '#090D14',
+        borderRight: '1px solid #1E293B',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -61,15 +32,15 @@ export const Sidebar: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
-          padding: '0 20px',
-          borderBottom: '1px solid var(--border-subtle)',
+          padding: '0 16px',
+          borderBottom: '1px solid #1E293B',
         }}
       >
         <div
           style={{
-            width: '30px',
-            height: '30px',
-            borderRadius: 'var(--radius-sm)',
+            width: '28px',
+            height: '28px',
+            borderRadius: '6px',
             background: 'linear-gradient(135deg, #1D4ED8, #0284C7)',
             display: 'flex',
             alignItems: 'center',
@@ -78,70 +49,99 @@ export const Sidebar: React.FC = () => {
             boxShadow: '0 0 12px rgba(56, 189, 248, 0.3)',
           }}
         >
-          <ShieldCheck size={18} />
+          <ShieldCheck size={16} />
         </div>
-        <div>
-          <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.02em', color: '#fff' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px' }}>
             Decision<span style={{ color: '#38BDF8' }}>OS</span>
-          </span>
-          <span
-            style={{
-              display: 'block',
-              fontSize: '0.66rem',
-              color: 'var(--text-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.06em',
-              fontWeight: 600,
-            }}
-          >
-            Executive SaaS Platform
-          </span>
+            <span style={{ fontSize: '0.65rem', padding: '1px 4px', borderRadius: '3px', background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8' }}>v1.0</span>
+          </div>
+          <div style={{ fontSize: '0.65rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {activeOrg.name}
+          </div>
         </div>
       </div>
 
-      {/* Navigation Links */}
-      <nav style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-          {navItems.map((item) => {
+      {/* Quick Search Button (Ctrl+K) */}
+      <div style={{ padding: '10px 12px 4px 12px' }}>
+        <button
+          onClick={onOpenSearch}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '7px 10px',
+            background: 'rgba(15, 23, 42, 0.6)',
+            border: '1px solid #1E293B',
+            borderRadius: '6px',
+            color: '#94A3B8',
+            fontSize: '0.78rem',
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Command size={13} color="#38BDF8" />
+            Quick Command
+          </span>
+          <kbd style={{ fontSize: '0.65rem', background: '#090D14', border: '1px solid #334155', padding: '1px 4px', borderRadius: '3px' }}>
+            Ctrl+K
+          </kbd>
+        </button>
+      </div>
+
+      {/* Navigation Links (21 Core Modules) */}
+      <nav style={{ flex: 1, padding: '10px 10px', overflowY: 'auto' }}>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '2px', padding: 0, margin: 0 }}>
+          {routesConfig.map((item) => {
             const Icon = item.icon;
             return (
-              <li key={item.to}>
+              <li key={item.path}>
                 <NavLink
-                  to={item.to}
+                  to={item.path}
                   style={({ isActive }) => ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '8px 12px',
+                    padding: '7px 10px',
                     borderRadius: '6px',
-                    color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                    color: isActive ? '#FFFFFF' : '#94A3B8',
                     backgroundColor: isActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
                     borderLeft: isActive ? '3px solid #38BDF8' : '3px solid transparent',
                     fontWeight: isActive ? 700 : 500,
-                    fontSize: '0.85rem',
-                    transition: 'all var(--transition-fast)',
+                    fontSize: '0.82rem',
+                    transition: 'all 0.15s ease',
                     textDecoration: 'none',
                   })}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Icon size={16} style={{ opacity: 0.9 }} />
-                    <span>{item.label}</span>
-                  </div>
-                  {item.badge && (
-                    <span
-                      style={{
-                        fontSize: '0.62rem',
-                        fontWeight: 700,
-                        padding: '1px 5px',
-                        borderRadius: '4px',
-                        backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                        color: '#38BDF8',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
-                      }}
-                    >
-                      {item.badge}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                    <Icon size={15} style={{ opacity: 0.9, flexShrink: 0 }} />
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.title}
                     </span>
-                  )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {item.shortcut && (
+                      <span style={{ fontSize: '0.6rem', color: '#475569', fontFamily: 'monospace' }}>
+                        {item.shortcut}
+                      </span>
+                    )}
+                    {item.badge && (
+                      <span
+                        style={{
+                          fontSize: '0.6rem',
+                          fontWeight: 800,
+                          padding: '1px 4px',
+                          borderRadius: '3px',
+                          backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                          color: item.badgeColor || '#38BDF8',
+                          border: `1px solid ${item.badgeColor || 'rgba(56, 189, 248, 0.3)'}`,
+                        }}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
                 </NavLink>
               </li>
             );
@@ -149,37 +149,30 @@ export const Sidebar: React.FC = () => {
         </ul>
       </nav>
 
-      {/* Platform Backend Connectivity Status Footer */}
+      {/* Backend & Workspace Health Footer */}
       <div
         style={{
-          padding: '12px 18px',
-          borderTop: '1px solid var(--border-subtle)',
-          fontSize: '0.75rem',
-          color: 'var(--text-dim)',
+          padding: '12px 14px',
+          borderTop: '1px solid #1E293B',
+          background: 'rgba(15, 23, 42, 0.4)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}
       >
-        <span>v7.0 SaaS Platform</span>
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '5px',
-          color: healthStatus === 'connected' ? '#10B981' : '#EF4444',
-          fontWeight: 600,
-          fontSize: '11px',
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#94A3B8' }}>
           <span
             style={{
-              width: '6px',
-              height: '6px',
+              width: '7px',
+              height: '7px',
               borderRadius: '50%',
-              backgroundColor: healthStatus === 'connected' ? '#10B981' : '#EF4444',
+              backgroundColor: healthStatus === 'connected' ? '#10B981' : '#F59E0B',
+              boxShadow: healthStatus === 'connected' ? '0 0 6px #10B981' : 'none',
             }}
           />
-          {healthStatus === 'connected' ? 'Connected' : 'Offline'}
-        </span>
+          <span style={{ fontWeight: 600 }}>{activeWorkspace.region}</span>
+        </div>
+        <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700 }}>v1.0 SaaS</span>
       </div>
     </aside>
   );

@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './features/auth/AuthContext';
@@ -7,60 +7,41 @@ import { OrganizationProvider } from './context/OrganizationContext';
 import { AppShell } from './components/layout/AppShell';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
 import { ErrorBoundary } from './shared/components/ErrorBoundary';
+import { FrontendTelemetryProvider } from './components/observability/FrontendTelemetryProvider';
+import { GlobalSearchModal } from './features/shared/GlobalSearchModal';
+import { OnboardingWizardModal } from './features/shared/OnboardingWizardModal';
+import { NotificationCenterDrawer } from './features/shared/NotificationCenterDrawer';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
-// Route Lazy Loading for Optimal Startup
+// 21 Flagship Route Lazy Loaders
 const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
 const LoginPage = React.lazy(() => import('./features/auth/LoginPage'));
-const DashboardView = React.lazy(() => import('./features/dashboard/DashboardView'));
-const ExecutiveCommandCenterView = React.lazy(() => import('./features/workspace/ExecutiveCommandCenterView').then(m => ({ default: m.ExecutiveCommandCenterView })));
-const MonitoringCenterView = React.lazy(() => import('./features/monitoring/MonitoringCenterView').then(m => ({ default: m.MonitoringCenterView })));
-const SimulationStudioView = React.lazy(() => import('./features/simulation/SimulationStudioView').then(m => ({ default: m.SimulationStudioView })));
-const KnowledgeGraphExplorerView = React.lazy(() => import('./features/knowledge-graph/KnowledgeGraphExplorerView').then(m => ({ default: m.KnowledgeGraphExplorerView })));
-const AIAnalystWorkspaceView = React.lazy(() => import('./features/ai-analyst/AIAnalystWorkspaceView').then(m => ({ default: m.AIAnalystWorkspaceView })));
-const DecisionCopilotView = React.lazy(() => import('./features/decision-copilot/DecisionCopilotView').then(m => ({ default: m.DecisionCopilotView })));
-const ExecutiveReportsCenterView = React.lazy(() => import('./features/reports/ExecutiveReportsCenterView').then(m => ({ default: m.ExecutiveReportsCenterView })));
-const DatasetsView = React.lazy(() => import('./features/datasets/DatasetsView'));
-const SchemaMappingView = React.lazy(() => import('./features/datasets/SchemaMappingView'));
-const MetricsView = React.lazy(() => import('./features/kpis/MetricsView'));
-const DiagnosticsView = React.lazy(() => import('./features/diagnostics/DiagnosticsView'));
-const RootCausesView = React.lazy(() => import('./features/root-causes/RootCausesView'));
-const RecommendationsView = React.lazy(() => import('./features/recommendations/RecommendationsView'));
-const ReportsView = React.lazy(() => import('./features/intelligence/ReportsView'));
-const HistoryView = React.lazy(() => import('./features/history/AnalysisHistoryView'));
-const AIInsightsView = React.lazy(() => import('./features/ai-insights/AIInsightsView'));
-const ChatView = React.lazy(() => import('./features/chat-analyst/ChatView'));
-const ExecutionCenterView = React.lazy(() => import('./features/execution/ExecutionCenterView'));
-const InitiativeDetailsView = React.lazy(() => import('./features/initiatives/InitiativeDetailsView'));
-const OutcomesView = React.lazy(() => import('./features/outcomes/OutcomesView'));
-const OrganizationSettingsView = React.lazy(() => import('./views/settings/OrganizationSettingsView').then(m => ({ default: m.OrganizationSettingsView })));
-const DigitalTwinWorkspaceView = React.lazy(() => import('./features/scenarios/DigitalTwinWorkspaceView').then(m => ({ default: m.DigitalTwinWorkspaceView })));
-const ScenarioBuilderView = React.lazy(() => import('./features/scenarios/ScenarioBuilderView').then(m => ({ default: m.ScenarioBuilderView })));
-const ScenarioComparisonView = React.lazy(() => import('./features/scenarios/ScenarioComparisonView').then(m => ({ default: m.ScenarioComparisonView })));
-const ScenarioAccuracyTrackerView = React.lazy(() => import('./features/scenarios/ScenarioAccuracyTrackerView').then(m => ({ default: m.ScenarioAccuracyTrackerView })));
-const PortfolioOptimizerView = React.lazy(() => import('./features/scenarios/PortfolioOptimizerView').then(m => ({ default: m.PortfolioOptimizerView })));
-const StressTestingView = React.lazy(() => import('./features/scenarios/StressTestingView').then(m => ({ default: m.StressTestingView })));
-const SensitivityAnalysisView = React.lazy(() => import('./features/scenarios/SensitivityAnalysisView').then(m => ({ default: m.SensitivityAnalysisView })));
-const StrategyExecutionCenterView = React.lazy(() => import('./features/strategy-execution/StrategyExecutionCenterView').then(m => ({ default: m.StrategyExecutionCenterView })));
-const InitiativeDetailView = React.lazy(() => import('./features/strategy-execution/InitiativeDetailView').then(m => ({ default: m.InitiativeDetailView })));
-const DependencyGraphView = React.lazy(() => import('./features/strategy-execution/DependencyGraphView').then(m => ({ default: m.DependencyGraphView })));
-const BenefitsRealizationView = React.lazy(() => import('./features/strategy-execution/BenefitsRealizationView').then(m => ({ default: m.BenefitsRealizationView })));
-const ForecastAccuracyView = React.lazy(() => import('./features/strategy-execution/ForecastAccuracyView').then(m => ({ default: m.ForecastAccuracyView })));
-const ExecutiveAccountabilityView = React.lazy(() => import('./features/strategy-execution/ExecutiveAccountabilityView').then(m => ({ default: m.ExecutiveAccountabilityView })));
-const ExecutivePerformanceView = React.lazy(() => import('./features/strategy-execution/ExecutivePerformanceView').then(m => ({ default: m.ExecutivePerformanceView })));
-const StrategyReviewCyclesView = React.lazy(() => import('./features/strategy-execution/StrategyReviewCyclesView').then(m => ({ default: m.StrategyReviewCyclesView })));
-const MonitoringCommandCenterView = React.lazy(() => import('./features/monitoring/MonitoringCommandCenterView').then(m => ({ default: m.MonitoringCommandCenterView })));
-const MonitoringCoverageView = React.lazy(() => import('./features/monitoring/MonitoringCoverageView').then(m => ({ default: m.MonitoringCoverageView })));
-const AlertAnalyticsView = React.lazy(() => import('./features/monitoring/AlertAnalyticsView').then(m => ({ default: m.AlertAnalyticsView })));
-const PredictiveRiskRadarView = React.lazy(() => import('./features/monitoring/PredictiveRiskRadarView').then(m => ({ default: m.PredictiveRiskRadarView })));
+
+// Core Phase 7 Studios & Control Centers
 const EnterpriseCommandCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseCommandCenterView').then(m => ({ default: m.EnterpriseCommandCenterView })));
+const PortfolioRollupView = React.lazy(() => import('./features/portfolio-rollup/PortfolioRollupView').then(m => ({ default: m.PortfolioRollupView })));
+const CapitalAllocationStudioView = React.lazy(() => import('./features/capital-allocation/CapitalAllocationStudioView').then(m => ({ default: m.CapitalAllocationStudioView })));
+const KPIDictionaryView = React.lazy(() => import('./features/kpi-dictionary/KPIDictionaryView').then(m => ({ default: m.KPIDictionaryView })));
+const RiskConcentrationRadarView = React.lazy(() => import('./features/risk-concentration/RiskConcentrationRadarView').then(m => ({ default: m.RiskConcentrationRadarView })));
+const AutonomousAgentsHubView = React.lazy(() => import('./features/agents/AutonomousAgentsHubView').then(m => ({ default: m.AutonomousAgentsHubView })));
+const DatasetManagementCenterView = React.lazy(() => import('./features/data-management/DatasetManagementCenterView').then(m => ({ default: m.DatasetManagementCenterView })));
+const JobCenterView = React.lazy(() => import('./features/jobs/JobCenterView').then(m => ({ default: m.JobCenterView })));
+const SystemAdminCenterView = React.lazy(() => import('./features/admin/SystemAdminCenterView').then(m => ({ default: m.SystemAdminCenterView })));
+
+// Existing Core Intelligence Engines
 const EnterpriseGovernanceCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseGovernanceCenterView').then(m => ({ default: m.EnterpriseGovernanceCenterView })));
 const CompetitiveIntelligenceCenterView = React.lazy(() => import('./features/enterprise-os/CompetitiveIntelligenceCenterView').then(m => ({ default: m.CompetitiveIntelligenceCenterView })));
 const EnterpriseOperatingSystemCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseOperatingSystemCenterView').then(m => ({ default: m.EnterpriseOperatingSystemCenterView })));
 const EnterpriseOSHealthView = React.lazy(() => import('./features/enterprise-os/EnterpriseOSHealthView').then(m => ({ default: m.EnterpriseOSHealthView })));
-
-
-
-
+const MonitoringCommandCenterView = React.lazy(() => import('./features/monitoring/MonitoringCommandCenterView').then(m => ({ default: m.MonitoringCommandCenterView })));
+const StrategyExecutionCenterView = React.lazy(() => import('./features/strategy-execution/StrategyExecutionCenterView').then(m => ({ default: m.StrategyExecutionCenterView })));
+const DigitalTwinWorkspaceView = React.lazy(() => import('./features/scenarios/DigitalTwinWorkspaceView').then(m => ({ default: m.DigitalTwinWorkspaceView })));
+const KnowledgeGraphExplorerView = React.lazy(() => import('./features/knowledge-graph/KnowledgeGraphExplorerView').then(m => ({ default: m.KnowledgeGraphExplorerView })));
+const DecisionCopilotView = React.lazy(() => import('./features/decision-copilot/DecisionCopilotView').then(m => ({ default: m.DecisionCopilotView })));
+const ExecutiveReportsCenterView = React.lazy(() => import('./features/reports/ExecutiveReportsCenterView').then(m => ({ default: m.ExecutiveReportsCenterView })));
+const MetricsView = React.lazy(() => import('./features/kpis/MetricsView'));
+const DiagnosticsView = React.lazy(() => import('./features/diagnostics/DiagnosticsView'));
+const RecommendationsView = React.lazy(() => import('./features/recommendations/RecommendationsView'));
 
 import './styles/globals.css';
 
@@ -80,6 +61,74 @@ const RouteFallback = () => (
   </div>
 );
 
+function AppContent() {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+  useKeyboardShortcuts(() => setIsSearchOpen(true));
+
+  return (
+    <>
+      <GlobalSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <OnboardingWizardModal isOpen={isOnboardingOpen} onClose={() => setIsOnboardingOpen(false)} />
+      <NotificationCenterDrawer isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} />
+
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          {/* Executive Marketing Landing Page */}
+          <Route path="/" element={<HomeView />} />
+
+          {/* Authentication Screen */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected In-App SaaS Routes (21 Flagship Modules) */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppShell
+                  onOpenSearch={() => setIsSearchOpen(true)}
+                  onOpenNotifications={() => setIsNotificationOpen(true)}
+                  onOpenOnboarding={() => setIsOnboardingOpen(true)}
+                />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/enterprise" element={<EnterpriseCommandCenterView />} />
+            <Route path="/portfolio-rollup" element={<PortfolioRollupView />} />
+            <Route path="/capital-allocation" element={<CapitalAllocationStudioView />} />
+            <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
+            <Route path="/risk-concentration" element={<RiskConcentrationRadarView />} />
+            <Route path="/agents" element={<AutonomousAgentsHubView />} />
+            <Route path="/portfolio" element={<MetricsView />} />
+            <Route path="/data-management" element={<DatasetManagementCenterView />} />
+            <Route path="/diagnostics" element={<DiagnosticsView />} />
+            <Route path="/recommendations" element={<RecommendationsView />} />
+            <Route path="/decision-copilot" element={<DecisionCopilotView />} />
+            <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />
+            <Route path="/reports" element={<ExecutiveReportsCenterView />} />
+            <Route path="/digital-twin" element={<DigitalTwinWorkspaceView />} />
+            <Route path="/strategy-execution" element={<StrategyExecutionCenterView />} />
+            <Route path="/monitoring" element={<MonitoringCommandCenterView />} />
+            <Route path="/governance" element={<EnterpriseGovernanceCenterView />} />
+            <Route path="/competitive-intelligence" element={<CompetitiveIntelligenceCenterView />} />
+            <Route path="/operating-system" element={<EnterpriseOperatingSystemCenterView />} />
+            <Route path="/os-health" element={<EnterpriseOSHealthView />} />
+            <Route path="/jobs" element={<JobCenterView />} />
+            <Route path="/admin" element={<SystemAdminCenterView />} />
+
+            {/* Aliases & Fallbacks */}
+            <Route path="/command-center" element={<Navigate to="/enterprise" replace />} />
+            <Route path="/dashboard" element={<Navigate to="/enterprise" replace />} />
+            <Route path="/metrics" element={<Navigate to="/portfolio" replace />} />
+            <Route path="/datasets" element={<Navigate to="/data-management" replace />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </>
+  );
+}
+
 export function App() {
   return (
     <ErrorBoundary>
@@ -88,71 +137,9 @@ export function App() {
           <OrganizationProvider>
             <DatasetProvider>
               <BrowserRouter>
-                <Suspense fallback={<RouteFallback />}>
-                  <Routes>
-                    {/* Executive Marketing Landing Page */}
-                    <Route path="/" element={<HomeView />} />
-
-                    {/* Authentication Screen */}
-                    <Route path="/login" element={<LoginPage />} />
-
-                    {/* Protected In-App SaaS Routes */}
-                    <Route
-                      element={
-                        <ProtectedRoute>
-                          <AppShell />
-                        </ProtectedRoute>
-                      }
-                    >
-                      <Route path="/dashboard" element={<ExecutiveCommandCenterView />} />
-                      <Route path="/command-center" element={<ExecutiveCommandCenterView />} />
-                      <Route path="/enterprise" element={<EnterpriseCommandCenterView />} />
-                      <Route path="/governance" element={<EnterpriseGovernanceCenterView />} />
-                      <Route path="/competitive-intelligence" element={<CompetitiveIntelligenceCenterView />} />
-                      <Route path="/operating-system" element={<EnterpriseOperatingSystemCenterView />} />
-                      <Route path="/os-health" element={<EnterpriseOSHealthView />} />
-                      <Route path="/monitoring" element={<MonitoringCommandCenterView />} />
-                      <Route path="/monitoring-center" element={<MonitoringCommandCenterView />} />
-                      <Route path="/monitoring/coverage" element={<MonitoringCoverageView />} />
-                      <Route path="/monitoring/analytics" element={<AlertAnalyticsView />} />
-                      <Route path="/monitoring/radar" element={<PredictiveRiskRadarView />} />
-                      <Route path="/simulations" element={<SimulationStudioView />} />
-                      <Route path="/digital-twin" element={<DigitalTwinWorkspaceView />} />
-                      <Route path="/scenarios/builder" element={<ScenarioBuilderView />} />
-                      <Route path="/scenarios/comparison" element={<ScenarioComparisonView />} />
-                      <Route path="/scenarios/accuracy" element={<ScenarioAccuracyTrackerView />} />
-                      <Route path="/scenarios/optimizer" element={<PortfolioOptimizerView />} />
-                      <Route path="/scenarios/stress-test" element={<StressTestingView />} />
-                      <Route path="/scenarios/sensitivity" element={<SensitivityAnalysisView />} />
-                      <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />
-                      <Route path="/ai-analyst" element={<AIAnalystWorkspaceView />} />
-                      <Route path="/decision-copilot" element={<DecisionCopilotView />} />
-                      <Route path="/strategy-execution" element={<StrategyExecutionCenterView />} />
-                      <Route path="/strategy-execution/:id" element={<InitiativeDetailView />} />
-                      <Route path="/strategy-execution/dependencies" element={<DependencyGraphView />} />
-                      <Route path="/strategy-execution/benefits" element={<BenefitsRealizationView />} />
-                      <Route path="/strategy-execution/calibration" element={<ForecastAccuracyView />} />
-                      <Route path="/strategy-execution/accountability" element={<ExecutiveAccountabilityView />} />
-                      <Route path="/strategy-execution/performance" element={<ExecutivePerformanceView />} />
-                      <Route path="/strategy-execution/reviews" element={<StrategyReviewCyclesView />} />
-                      <Route path="/datasets" element={<DatasetsView />} />
-                      <Route path="/datasets/:id/mapping" element={<SchemaMappingView />} />
-                      <Route path="/metrics" element={<MetricsView />} />
-                      <Route path="/diagnostics" element={<DiagnosticsView />} />
-                      <Route path="/root-causes" element={<RootCausesView />} />
-                      <Route path="/recommendations" element={<RecommendationsView />} />
-                      <Route path="/reports" element={<ExecutiveReportsCenterView />} />
-                      <Route path="/history" element={<HistoryView />} />
-                      <Route path="/ai-insights" element={<AIInsightsView />} />
-                      <Route path="/chat" element={<ChatView />} />
-                      <Route path="/execution" element={<ExecutionCenterView />} />
-                      <Route path="/initiatives/:id" element={<InitiativeDetailsView />} />
-                      <Route path="/outcomes" element={<OutcomesView />} />
-                      <Route path="/settings/organization" element={<OrganizationSettingsView />} />
-                      <Route path="*" element={<Navigate to="/command-center" replace />} />
-                    </Route>
-                  </Routes>
-                </Suspense>
+                <FrontendTelemetryProvider>
+                  <AppContent />
+                </FrontendTelemetryProvider>
               </BrowserRouter>
             </DatasetProvider>
           </OrganizationProvider>
