@@ -20,6 +20,7 @@ from app.admin.api import admin_router
 from app.portfolio.api import portfolio_router
 from app.execution.api.v1.router import execution_router
 from app.simulation.api.endpoints import simulation_router
+from app.knowledge_graph.api.endpoints import knowledge_graph_router
 
 api_router = APIRouter()
 
@@ -51,6 +52,8 @@ api_router.include_router(admin_router, tags=["Platform Administration & Governa
 api_router.include_router(portfolio_router, tags=["Portfolio Intelligence Foundation"])
 api_router.include_router(execution_router, tags=["Strategic Execution Layer"])
 api_router.include_router(simulation_router, tags=["Enterprise Simulation & Autonomous Planning"])
+api_router.include_router(knowledge_graph_router, tags=["Enterprise Knowledge Graph & Causal Intelligence"])
+
 
 
 
