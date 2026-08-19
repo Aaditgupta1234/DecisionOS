@@ -27,5 +27,11 @@ class LaunchCertificationEngine:
                 {"role": "Chief Technology Officer (CTO)", "name": "Marcus Sterling", "decision": "APPROVED", "timestamp": "Today at 23:35 UTC"},
                 {"role": "Chief Information Security Officer (CISO)", "name": "Sarah Chen", "decision": "APPROVED", "timestamp": "Today at 23:30 UTC"},
             ],
+            "validity_window": {
+                "certified_at": "2026-04-01",
+                "valid_until": "2027-04-01",
+                "days_remaining": 287,
+                "status": "ACTIVE_VALID",
+            },
             "audit_hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         }

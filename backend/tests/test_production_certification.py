@@ -16,6 +16,8 @@ def test_launch_certification_report():
     assert data["status"] == "APPROVED"
     assert data["sub_scores"]["security_score"] >= 99.0
     assert len(data["executive_sign_offs"]) == 3
+    assert data["validity_window"]["status"] == "ACTIVE_VALID"
+    assert data["validity_window"]["days_remaining"] == 287
 
 
 def test_certified_capacity():

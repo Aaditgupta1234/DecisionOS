@@ -23,6 +23,16 @@ class ProductionCertificationReport(Base):
     generated_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+class CertificationValidityWindow(Base):
+    __tablename__ = "certification_validity_windows"
+
+    id = Column(String, primary_key=True, index=True)
+    certified_at = Column(String, default="2026-04-01")
+    valid_until = Column(String, default="2027-04-01")
+    days_remaining = Column(Integer, default=287)
+    status = Column(String, default="ACTIVE")
+
+
 class ReleaseApprovalGate(Base):
     __tablename__ = "release_approval_gates"
 

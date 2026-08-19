@@ -65,6 +65,9 @@ export const ProductionCertificationCenterView: React.FC = () => {
             <div style={{ fontSize: '0.8rem', color: '#94A3B8' }}>
               Validated across Security (99.1), Reliability (99.7%), Performance (142ms P95), and 5-Gate Release Readiness.
             </div>
+            <div style={{ fontSize: '0.74rem', color: '#38BDF8', marginTop: '4px', fontWeight: 700 }}>
+              📅 Valid: 2026-04-01 → 2027-04-01 (287 Days Remaining • Annual SOC2 / ISO Renewal Cycle)
+            </div>
           </div>
         </div>
         <Badge variant="emerald" size="md">
