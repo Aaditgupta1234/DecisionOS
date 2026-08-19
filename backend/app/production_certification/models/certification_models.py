@@ -30,7 +30,7 @@ class CertificationValidityWindow(Base):
     certified_at = Column(String, default="2026-04-01")
     valid_until = Column(String, default="2027-04-01")
     days_remaining = Column(Integer, default=287)
-    status = Column(String, default="ACTIVE")
+    status = Column(String, default="ACTIVE_VALID")  # ACTIVE_VALID, EXPIRING_SOON, EXPIRED, REVOKED
 
 
 class ReleaseApprovalGate(Base):
