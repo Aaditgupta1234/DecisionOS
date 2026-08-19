@@ -52,6 +52,12 @@ const MonitoringCommandCenterView = React.lazy(() => import('./features/monitori
 const MonitoringCoverageView = React.lazy(() => import('./features/monitoring/MonitoringCoverageView').then(m => ({ default: m.MonitoringCoverageView })));
 const AlertAnalyticsView = React.lazy(() => import('./features/monitoring/AlertAnalyticsView').then(m => ({ default: m.AlertAnalyticsView })));
 const PredictiveRiskRadarView = React.lazy(() => import('./features/monitoring/PredictiveRiskRadarView').then(m => ({ default: m.PredictiveRiskRadarView })));
+const EnterpriseCommandCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseCommandCenterView').then(m => ({ default: m.EnterpriseCommandCenterView })));
+const EnterpriseGovernanceCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseGovernanceCenterView').then(m => ({ default: m.EnterpriseGovernanceCenterView })));
+const CompetitiveIntelligenceCenterView = React.lazy(() => import('./features/enterprise-os/CompetitiveIntelligenceCenterView').then(m => ({ default: m.CompetitiveIntelligenceCenterView })));
+const EnterpriseOperatingSystemCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseOperatingSystemCenterView').then(m => ({ default: m.EnterpriseOperatingSystemCenterView })));
+const EnterpriseOSHealthView = React.lazy(() => import('./features/enterprise-os/EnterpriseOSHealthView').then(m => ({ default: m.EnterpriseOSHealthView })));
+
 
 
 
@@ -100,6 +106,11 @@ export function App() {
                     >
                       <Route path="/dashboard" element={<ExecutiveCommandCenterView />} />
                       <Route path="/command-center" element={<ExecutiveCommandCenterView />} />
+                      <Route path="/enterprise" element={<EnterpriseCommandCenterView />} />
+                      <Route path="/governance" element={<EnterpriseGovernanceCenterView />} />
+                      <Route path="/competitive-intelligence" element={<CompetitiveIntelligenceCenterView />} />
+                      <Route path="/operating-system" element={<EnterpriseOperatingSystemCenterView />} />
+                      <Route path="/os-health" element={<EnterpriseOSHealthView />} />
                       <Route path="/monitoring" element={<MonitoringCommandCenterView />} />
                       <Route path="/monitoring-center" element={<MonitoringCommandCenterView />} />
                       <Route path="/monitoring/coverage" element={<MonitoringCoverageView />} />

@@ -22,6 +22,10 @@ export const Sidebar: React.FC = () => {
   const { status: healthStatus } = useBackendHealth();
 
   const navItems = [
+    { to: '/enterprise', label: 'Enterprise OS Command', icon: LayoutDashboard, badge: 'OS v1' },
+    { to: '/governance', label: 'Decision Governance', icon: ShieldCheck, badge: 'GOV' },
+    { to: '/competitive-intelligence', label: 'Competitive Intelligence', icon: TrendingUp, badge: 'BENCH' },
+    { to: '/operating-system', label: 'Autonomous Playbooks', icon: PlayCircle, badge: 'PLAY' },
     { to: '/command-center', label: 'Command Center', icon: LayoutDashboard },
     { to: '/monitoring', label: 'Continuous Monitoring', icon: Activity, badge: 'LIVE' },
     { to: '/strategy-execution', label: 'Strategy Execution', icon: Target, badge: 'VALUE' },

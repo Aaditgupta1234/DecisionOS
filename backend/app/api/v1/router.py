@@ -25,6 +25,7 @@ from app.ai.api.endpoints import ai_analyst_router
 from app.workspace.api.endpoints import workspace_router
 from app.scenarios.api.endpoints import scenario_router as enterprise_scenario_router
 from app.strategy_execution.api.endpoints import strategy_execution_router
+from app.enterprise_os.api import enterprise_os_router
 
 api_router = APIRouter()
 
@@ -63,6 +64,8 @@ api_router.include_router(reporting_router, tags=["Executive Reporting & Boardro
 api_router.include_router(enterprise_scenario_router, tags=["Enterprise Digital Twin & Scenario Intelligence Platform"])
 api_router.include_router(strategy_execution_router, tags=["Enterprise Strategy Execution & Value Realization Platform"])
 api_router.include_router(enterprise_monitoring_router, tags=["Enterprise Monitoring, Event Intelligence & Predictive Alerting Platform"])
+api_router.include_router(enterprise_os_router, tags=["Enterprise Intelligence Operating System (Governance, Benchmarking & Orchestration)"])
+
 
 
 
