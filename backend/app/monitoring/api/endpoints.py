@@ -43,8 +43,10 @@ from app.monitoring.schemas.production_monitoring import (
 from app.monitoring.services.monitoring_cache import monitoring_cache
 from app.monitoring.services.monitoring_service import MonitoringService
 from app.monitoring.services.operational_monitoring_service import OperationalMonitoringService
+from app.monitoring.api.continuous_endpoints import continuous_monitoring_router
 
 router = APIRouter(prefix="/monitoring", tags=["Operational Monitoring & Production Governance"])
+router.include_router(continuous_monitoring_router)
 
 
 def _resolve_org_id(current_user: User, organization_id: Optional[uuid.UUID] = None) -> uuid.UUID:
