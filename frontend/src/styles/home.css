@@ -290,7 +290,7 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
-  transform: translateX(-24px);
+  transform: translate(-24px, 36px);
 }
 
 /* 4. Single-Tone Clean Cone Spotlight Beam */
