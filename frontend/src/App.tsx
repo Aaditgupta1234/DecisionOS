@@ -20,8 +20,8 @@ const RootCausesView = React.lazy(() => import('./features/root-causes/RootCause
 const RecommendationsView = React.lazy(() => import('./features/recommendations/RecommendationsView'));
 const ReportsView = React.lazy(() => import('./features/intelligence/ReportsView'));
 const HistoryView = React.lazy(() => import('./features/history/AnalysisHistoryView'));
-const AIInsightsView = React.lazy(() => import('./views/aiInsights/AIInsightsView').then(m => ({ default: m.AIInsightsView })));
-const ChatView = React.lazy(() => import('./views/chat/ChatView').then(m => ({ default: m.ChatView })));
+const AIInsightsView = React.lazy(() => import('./features/ai-insights/AIInsightsView'));
+const ChatView = React.lazy(() => import('./features/chat-analyst/ChatView'));
 const OrganizationSettingsView = React.lazy(() => import('./views/settings/OrganizationSettingsView').then(m => ({ default: m.OrganizationSettingsView })));
 
 import './styles/globals.css';
