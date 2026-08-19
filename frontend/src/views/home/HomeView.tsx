@@ -322,38 +322,30 @@ export const HomeView: React.FC = () => {
               <div className="t-confidence-sub">Trusted Analysis</div>
             </div>
 
-            {/* Orbiting Telemetry Card 3: Bottom-Left Top Risk */}
+            {/* Orbiting Telemetry Card 3: Bottom-Left Retention Risk */}
             <div className="telemetry-card card-pos-bottom-left">
-              <div className="t-risk-header">
-                <span className="t-card-label">TOP RISK</span>
-                <span className="t-risk-badge">
-                  <AlertTriangle size={9} className="t-risk-icon" />
-                  <span>High</span>
-                </span>
+              <div className="t-card-header-flex">
+                <span className="t-card-label">RETENTION RISK</span>
+                <span className="t-status-pill">High</span>
               </div>
-              <div className="t-risk-title">Customer Retention</div>
-              <div className="t-risk-exposure">14.2% Churn</div>
-              <div className="t-risk-loss">
-                <span className="t-loss-label">Potential Revenue Impact</span>
-                <span className="t-loss-val">-$218K / Quarter</span>
+              <div className="t-card-metric-row">
+                <span className="t-val-lg">14.2%</span>
+                <span className="t-val-sub">Churn</span>
               </div>
+              <div className="t-confidence-sub">Customer Retention</div>
             </div>
 
             {/* Orbiting Telemetry Card 4: Bottom-Right Recommended Action */}
             <div className="telemetry-card card-pos-bottom-right">
-              <div className="t-action-header">
-                <span className="t-card-label">RECOMMENDED ACTION</span>
-                <span className="t-action-pill">High Priority</span>
+              <div className="t-card-header-flex">
+                <span className="t-card-label">RECOMMENDED</span>
+                <span className="t-status-pill">Active</span>
               </div>
-              <div className="t-action-title">Win-Back Campaign</div>
-              <div className="t-action-impact">
-                <span className="t-impact-label">Expected Impact</span>
-                <span className="t-impact-val">+$180K ARR</span>
+              <div className="t-card-metric-row">
+                <span className="t-val-lg">+$180K</span>
+                <span className="t-val-sub">ARR</span>
               </div>
-              <div className="t-action-footer">
-                <span className="t-conf-sub">Confidence: 91%</span>
-                <ArrowUpRight size={11} style={{ color: '#FFFFFF' }} />
-              </div>
+              <div className="t-confidence-sub">Win-Back Campaign</div>
             </div>
 
           </div>

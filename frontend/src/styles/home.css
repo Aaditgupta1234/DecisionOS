@@ -511,15 +511,15 @@
 /* 3. Customer Retention (Lower Left) */
 .card-pos-bottom-left {
   bottom: 132px;
-  left: -35px;
-  width: 155px;
+  left: -25px;
+  width: 145px;
 }
 
 /* 4. Win-Back Campaign (Bottom Right) */
 .card-pos-bottom-right {
   bottom: 148px;
-  right: 12px;
-  width: 160px;
+  right: 20px;
+  width: 145px;
 }
 
 /* Card internals */
@@ -532,122 +532,21 @@
   margin-top: 2px;
 }
 
-.t-risk-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1px;
-}
-
-.t-risk-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 7px;
-  color: #E2E8F0;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  padding: 1px 4px;
-  border-radius: 3px;
+/* Minimal Two-Line Problem / Solution SaaS Format */
+.t-simple-title {
+  font-size: 9.5px;
   font-weight: 600;
-}
-
-.t-risk-icon {
-  color: #E2E8F0;
-}
-
-.t-risk-title {
-  font-size: 10px;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-top: 1px;
-}
-
-.t-risk-exposure {
-  font-size: 8px;
   color: #8E99A8;
-  margin-top: 1px;
-  font-weight: 500;
+  letter-spacing: 0.01em;
+  margin-bottom: 3px;
 }
 
-.t-risk-loss {
-  margin-top: 2px;
-  padding-top: 2px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  display: flex;
-  flex-direction: column;
-}
-
-.t-loss-label {
-  font-size: 6.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #64748B;
-  font-weight: 600;
-}
-
-.t-loss-val {
-  font-size: 8px;
-  font-weight: 700;
+.t-simple-val {
+  font-size: 14.5px;
+  font-weight: 800;
   color: #FFFFFF;
-  margin-top: 1px;
-}
-
-.t-action-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1px;
-}
-
-.t-action-pill {
-  font-size: 7px;
-  color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  padding: 1px 5px;
-  border-radius: 3px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-.t-action-title {
-  font-size: 10px;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-top: 1px;
-}
-
-.t-action-impact {
-  margin-top: 2px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.t-impact-label {
-  font-size: 7px;
-  color: #64748B;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.t-impact-val {
-  font-size: 8px;
-  font-weight: 700;
-  color: #FFFFFF;
-}
-
-.t-action-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 7.5px;
-  color: #8E99A8;
-  margin-top: 2px;
-  padding-top: 2px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .t-conf-sub {
