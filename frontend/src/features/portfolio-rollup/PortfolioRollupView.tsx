@@ -1,9 +1,43 @@
 import React from 'react';
-import { Globe, TrendingUp, AlertTriangle, ArrowRight, ShieldCheck, PieChart, Layers } from 'lucide-react';
+import { Globe, TrendingUp, AlertTriangle, ArrowRight, ShieldCheck, PieChart, Layers, GitMerge, Link2 } from 'lucide-react';
 import { Card, Badge, Button, MetricTile } from '../../design-system';
 import { Link } from 'react-router-dom';
 
+export interface CrossPortfolioDependency {
+  id: string;
+  sourceUnit: string;
+  sourceRegion: string;
+  targetUnit: string;
+  targetRegion: string;
+  dependencyType: 'BLOCKS' | 'ACCELERATES' | 'REQUIRES_CAPITAL_FROM';
+  impactDescription: string;
+  status: 'BLOCKED' | 'ALIGNED' | 'RESOLVING';
+}
+
 export const PortfolioRollupView: React.FC = () => {
+  const dependencies: CrossPortfolioDependency[] = [
+    {
+      id: 'dep-1',
+      sourceUnit: 'APAC Regional Logistics Automation',
+      sourceRegion: 'APAC',
+      targetUnit: 'North America Enterprise SaaS Rollout',
+      targetRegion: 'North America',
+      dependencyType: 'BLOCKS',
+      impactDescription: 'APAC transit latency (-$140K drag) delays enterprise multi-regional SLA guarantees.',
+      status: 'BLOCKED',
+    },
+    {
+      id: 'dep-2',
+      sourceUnit: 'Cloud Infrastructure Migration',
+      sourceRegion: 'North America',
+      targetUnit: 'Europe Retail Fulfillment Scale',
+      targetRegion: 'Europe',
+      dependencyType: 'ACCELERATES',
+      impactDescription: 'Unified data ingestion reduces European fulfillment sync latency by 45%.',
+      status: 'ALIGNED',
+    },
+  ];
+
   const regions = [
     {
       name: 'North America Enterprise',
@@ -61,7 +95,7 @@ export const PortfolioRollupView: React.FC = () => {
         <MetricTile label="TOTAL ENTERPRISE ARR" value="$12.4M" sublabel="Across 3 Global Operating Regions" valueColor="#10B981" />
         <MetricTile label="PORTFOLIO COMPOSITE HEALTH" value="85.0 / 100" sublabel="↑ +11.0 pts Since Q4 Rebalancing" valueColor="#38BDF8" />
         <MetricTile label="PRIMARY ENTERPRISE DRAG" value="APAC Logistics" sublabel="-$140K Dragging Regional ARR" valueColor="#EF4444" />
-        <MetricTile label="ACTIVE BUSINESS DIVISIONS" value="8 Units" sublabel="Retail, Logistics, Cloud, SaaS" valueColor="#A855F7" />
+        <MetricTile label="CROSS-PORTFOLIO DEPENDENCIES" value="2 Blockers" sublabel="Cross-Regional Strategy Alignment" valueColor="#A855F7" />
       </div>
 
       {/* Automated Drag Warning Banner */}
@@ -83,6 +117,57 @@ export const PortfolioRollupView: React.FC = () => {
           </Button>
         </Link>
       </div>
+
+      {/* Cross-Portfolio Dependencies Intelligence */}
+      <Card style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF' }}>
+            Cross-Portfolio Dependency Intelligence
+          </span>
+          <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Multi-Division Strategy Alignment</span>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {dependencies.map((d) => (
+            <div
+              key={d.id}
+              style={{
+                background: 'rgba(15, 23, 42, 0.6)',
+                border: '1px solid #1E293B',
+                borderRadius: '10px',
+                padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Link2 size={16} color={d.status === 'BLOCKED' ? '#EF4444' : '#10B981'} />
+                  <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF' }}>
+                    {d.sourceUnit} ({d.sourceRegion})
+                  </span>
+                  <Badge variant={d.dependencyType === 'BLOCKS' ? 'rose' : 'emerald'} size="sm">
+                    {d.dependencyType}
+                  </Badge>
+                  <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF' }}>
+                    {d.targetUnit} ({d.targetRegion})
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#94A3B8', marginTop: '4px' }}>
+                  {d.impactDescription}
+                </div>
+              </div>
+
+              <Badge variant={d.status === 'BLOCKED' ? 'rose' : 'emerald'} size="sm">
+                STATUS: {d.status}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       {/* Regional Portfolios Table */}
       <Card style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>

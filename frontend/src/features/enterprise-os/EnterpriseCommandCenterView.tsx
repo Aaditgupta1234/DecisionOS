@@ -16,12 +16,29 @@ import {
   Bot,
   BookOpen,
   ShieldAlert,
+  Calendar,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, Badge, MetricTile } from '../../design-system';
 import { ActivityFeed } from '../shared/ActivityFeed';
 
+export interface EnterpriseScoreSnapshot {
+  month: string;
+  score: number;
+  health: number;
+  operating: number;
+  governance: number;
+  realizedArr: string;
+}
+
 export const EnterpriseCommandCenterView: React.FC = () => {
+  const scoreSnapshots: EnterpriseScoreSnapshot[] = [
+    { month: 'Jan 2026', score: 81.2, health: 74.0, operating: 86.4, governance: 88.0, realizedArr: '+$84,000' },
+    { month: 'Feb 2026', score: 84.5, health: 78.2, operating: 89.1, governance: 92.5, realizedArr: '+$162,000' },
+    { month: 'Mar 2026', score: 89.4, health: 82.5, operating: 92.4, governance: 96.0, realizedArr: '+$248,000' },
+    { month: 'Apr 2026 (Live)', score: 93.1, health: 85.0, operating: 94.8, governance: 98.4, realizedArr: '+$312,000' },
+  ];
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       {/* Header */}
@@ -78,7 +95,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
         <MetricTile
           label="ENTERPRISE INTELLIGENCE SCORE"
           value="93.1"
-          sublabel="Composite of Health, OS & Governance"
+          sublabel="↑ +11.9 pts Trailing 4-Month Trend"
           valueColor="#10B981"
         />
         <MetricTile
@@ -100,6 +117,45 @@ export const EnterpriseCommandCenterView: React.FC = () => {
           valueColor="#A855F7"
         />
       </div>
+
+      {/* Enterprise Score Historical Evolution Sparkline / Timeline */}
+      <Card style={{ padding: '20px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF' }}>
+            Enterprise Intelligence Score Evolution (Historical Snapshots)
+          </span>
+          <span style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700 }}>
+            +14.6% Total Continuous Optimization
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+          {scoreSnapshots.map((s, idx) => (
+            <div
+              key={idx}
+              style={{
+                background: idx === scoreSnapshots.length - 1 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(15, 23, 42, 0.6)',
+                border: `1px solid ${idx === scoreSnapshots.length - 1 ? '#10B981' : '#1E293B'}`,
+                borderRadius: '8px',
+                padding: '12px 14px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.74rem', color: '#94A3B8', fontWeight: 600 }}>{s.month}</span>
+                <Badge variant={idx === scoreSnapshots.length - 1 ? 'emerald' : 'slate'} size="sm">
+                  {s.score}
+                </Badge>
+              </div>
+              <div style={{ fontSize: '0.76rem', color: '#64748B' }}>
+                Realized ARR: <strong style={{ color: '#38BDF8' }}>{s.realizedArr}</strong>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
 
       {/* Grid: Closed Loop Overview & Platform Activity Feed */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
