@@ -19,6 +19,7 @@ from app.monitoring.api import monitoring_router
 from app.admin.api import admin_router
 from app.portfolio.api import portfolio_router
 from app.execution.api.v1.router import execution_router
+from app.simulation.api.endpoints import simulation_router
 
 api_router = APIRouter()
 
@@ -49,6 +50,7 @@ api_router.include_router(monitoring_router, tags=["Operational Monitoring & Hea
 api_router.include_router(admin_router, tags=["Platform Administration & Governance Center"])
 api_router.include_router(portfolio_router, tags=["Portfolio Intelligence Foundation"])
 api_router.include_router(execution_router, tags=["Strategic Execution Layer"])
+api_router.include_router(simulation_router, tags=["Enterprise Simulation & Autonomous Planning"])
 
 
 
