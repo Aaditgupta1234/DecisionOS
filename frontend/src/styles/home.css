@@ -296,20 +296,20 @@
 /* 4. Single-Tone Clean Cone Spotlight Beam */
 .stage-spotlight-cone {
   position: absolute;
-  top: -60px;
+  top: -30px;
   left: calc(50% - 12px);
   transform: translateX(-50%);
-  width: 620px;
-  height: 560px;
-  clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+  width: 580px;
+  height: 520px;
+  clip-path: polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%);
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.28) 0%,
-    rgba(255, 255, 255, 0.13) 35%,
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.12) 35%,
     rgba(255, 255, 255, 0.03) 75%,
     rgba(255, 255, 255, 0) 100%
   );
-  filter: blur(24px);
+  filter: blur(22px);
   pointer-events: none;
   z-index: 1;
   overflow: visible;
@@ -318,7 +318,7 @@
 /* 3D Glowing Pedestal Disc (620px Wide Anchor) */
 .stage-pedestal-wrap {
   position: absolute;
-  bottom: -15px;
+  bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
   width: 620px;
@@ -339,7 +339,7 @@
 /* Dominant Standalone 3D Spline Robot atop Pedestal */
 .dex-bot-standalone {
   position: absolute;
-  bottom: 125px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(calc(-50% + 36px)) scale(1.10);
   width: 430px;
@@ -366,7 +366,7 @@
 /* DEX Product Identity Core Tag */
 .dex-identity-tag {
   position: absolute;
-  bottom: -32px;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -406,6 +406,7 @@
   font-weight: 500;
 }
 
+/* Generic Telemetry Card Shell - Floating Telemetry Status Badges */
 /* Generic Telemetry Card Shell - Floating Telemetry Status Badges */
 .telemetry-card {
   position: absolute;
@@ -495,29 +496,29 @@
 /* Dynamic Asymmetrical Diagonal Positioning */
 /* 1. Business Health Score (Top Left) */
 .card-pos-top-left {
-  top: 15px;
-  left: -20px;
+  top: 36px;
+  left: 5px;
   width: 145px;
 }
 
 /* 2. Forecast Confidence (Top Right) */
 .card-pos-top-right {
-  top: 10px;
-  right: 10px;
+  top: 30px;
+  right: 35px;
   width: 145px;
 }
 
 /* 3. Customer Retention (Lower Left) */
 .card-pos-bottom-left {
-  bottom: 160px;
-  left: -50px;
+  bottom: 132px;
+  left: -25px;
   width: 145px;
 }
 
 /* 4. Win-Back Campaign (Bottom Right) */
 .card-pos-bottom-right {
-  bottom: 175px;
-  right: -5px;
+  bottom: 148px;
+  right: 20px;
   width: 145px;
 }
 
