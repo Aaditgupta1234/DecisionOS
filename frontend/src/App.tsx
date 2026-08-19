@@ -1,59 +1,93 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { OrganizationProvider } from './context/OrganizationContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './features/auth/AuthContext';
 import { DatasetProvider } from './context/DatasetContext';
+import { OrganizationProvider } from './context/OrganizationContext';
 import { AppShell } from './components/layout/AppShell';
+import { ProtectedRoute } from './features/auth/ProtectedRoute';
+import { ErrorBoundary } from './shared/components/ErrorBoundary';
 
-import { DashboardView } from './views/dashboard/DashboardView';
-import { MetricsView } from './views/metrics/MetricsView';
-import { DiagnosticsView } from './views/diagnostics/DiagnosticsView';
-import { RootCausesView } from './views/rootCauses/RootCausesView';
-import { RecommendationsView } from './views/recommendations/RecommendationsView';
-import { AIInsightsView } from './views/aiInsights/AIInsightsView';
-import { StrategyPlannerView } from './views/strategy/StrategyPlannerView';
-import { ScenariosView } from './views/scenarios/ScenariosView';
-import { ForecastsView } from './views/forecasts/ForecastsView';
-import { ChatView } from './views/chat/ChatView';
-import { ReportsView } from './views/reports/ReportsView';
-import { OrganizationSettingsView } from './views/settings/OrganizationSettingsView';
-import { DatasetsView } from './views/datasets/DatasetsView';
-import { HomeView } from './views/home/HomeView';
+// Route Lazy Loading for Optimal Startup
+const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
+const LoginPage = React.lazy(() => import('./features/auth/LoginPage'));
+const DashboardView = React.lazy(() => import('./features/dashboard/DashboardView'));
+const DatasetsView = React.lazy(() => import('./features/datasets/DatasetsView'));
+const SchemaMappingView = React.lazy(() => import('./features/datasets/SchemaMappingView'));
+const MetricsView = React.lazy(() => import('./views/metrics/MetricsView').then(m => ({ default: m.MetricsView })));
+const DiagnosticsView = React.lazy(() => import('./views/diagnostics/DiagnosticsView').then(m => ({ default: m.DiagnosticsView })));
+const RootCausesView = React.lazy(() => import('./views/rootCauses/RootCausesView').then(m => ({ default: m.RootCausesView })));
+const RecommendationsView = React.lazy(() => import('./views/recommendations/RecommendationsView').then(m => ({ default: m.RecommendationsView })));
+const ReportsView = React.lazy(() => import('./views/reports/ReportsView').then(m => ({ default: m.ReportsView })));
+const HistoryView = React.lazy(() => import('./features/history/HistoryView'));
+const AIInsightsView = React.lazy(() => import('./views/aiInsights/AIInsightsView').then(m => ({ default: m.AIInsightsView })));
+const ChatView = React.lazy(() => import('./views/chat/ChatView').then(m => ({ default: m.ChatView })));
+const OrganizationSettingsView = React.lazy(() => import('./views/settings/OrganizationSettingsView').then(m => ({ default: m.OrganizationSettingsView })));
 
 import './styles/globals.css';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const RouteFallback = () => (
+  <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: '28px', height: '28px', border: '3px solid #1E293B', borderTopColor: '#38BDF8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+  </div>
+);
+
 export function App() {
   return (
-    <AuthProvider>
-      <OrganizationProvider>
-        <DatasetProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Executive Landing Page & Command Center Showcase */}
-              <Route path="/" element={<HomeView />} />
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <OrganizationProvider>
+            <DatasetProvider>
+              <BrowserRouter>
+                <Suspense fallback={<RouteFallback />}>
+                  <Routes>
+                    {/* Executive Marketing Landing Page */}
+                    <Route path="/" element={<HomeView />} />
 
-              {/* In-App Command Center Views */}
-              <Route element={<AppShell />}>
-                <Route path="/dashboard" element={<DashboardView />} />
-                <Route path="/metrics" element={<MetricsView />} />
-                <Route path="/diagnostics" element={<DiagnosticsView />} />
-                <Route path="/root-causes" element={<RootCausesView />} />
-                <Route path="/recommendations" element={<RecommendationsView />} />
-                <Route path="/ai-insights" element={<AIInsightsView />} />
-                <Route path="/strategy" element={<StrategyPlannerView />} />
-                <Route path="/scenarios" element={<ScenariosView />} />
-                <Route path="/forecasts" element={<ForecastsView />} />
-                <Route path="/chat" element={<ChatView />} />
-                <Route path="/reports" element={<ReportsView />} />
-                <Route path="/settings/organization" element={<OrganizationSettingsView />} />
-                <Route path="/datasets" element={<DatasetsView />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </DatasetProvider>
-      </OrganizationProvider>
-    </AuthProvider>
+                    {/* Authentication Screen */}
+                    <Route path="/login" element={<LoginPage />} />
+
+                    {/* Protected In-App SaaS Routes */}
+                    <Route
+                      element={
+                        <ProtectedRoute>
+                          <AppShell />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="/dashboard" element={<DashboardView />} />
+                      <Route path="/datasets" element={<DatasetsView />} />
+                      <Route path="/datasets/:id/mapping" element={<SchemaMappingView />} />
+                      <Route path="/metrics" element={<MetricsView />} />
+                      <Route path="/diagnostics" element={<DiagnosticsView />} />
+                      <Route path="/root-causes" element={<RootCausesView />} />
+                      <Route path="/recommendations" element={<RecommendationsView />} />
+                      <Route path="/reports" element={<ReportsView />} />
+                      <Route path="/history" element={<HistoryView />} />
+                      <Route path="/ai-insights" element={<AIInsightsView />} />
+                      <Route path="/chat" element={<ChatView />} />
+                      <Route path="/settings/organization" element={<OrganizationSettingsView />} />
+                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    </Route>
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </DatasetProvider>
+          </OrganizationProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

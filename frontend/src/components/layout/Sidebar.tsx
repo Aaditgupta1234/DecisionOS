@@ -7,31 +7,28 @@ import {
   GitMerge,
   CheckCircle2,
   Sparkles,
-  Compass,
-  Sliders,
-  TrendingUp,
   MessageSquare,
   Database,
   ShieldCheck,
   FileText,
-  Building2,
+  History,
 } from 'lucide-react';
+import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 
 export const Sidebar: React.FC = () => {
+  const { status: healthStatus } = useBackendHealth();
+
   const navItems = [
-    { to: '/', label: 'Overview', icon: LayoutDashboard },
-    { to: '/metrics', label: 'KPI Metrics', icon: Activity },
-    { to: '/diagnostics', label: 'Diagnostics', icon: AlertTriangle },
+    { to: '/dashboard', label: 'Command Center', icon: LayoutDashboard },
+    { to: '/datasets', label: 'Datasets', icon: Database },
+    { to: '/metrics', label: 'KPI Performance', icon: Activity },
+    { to: '/diagnostics', label: 'Diagnostic Findings', icon: AlertTriangle },
     { to: '/root-causes', label: 'Root Causes', icon: GitMerge },
     { to: '/recommendations', label: 'Recommendations', icon: CheckCircle2 },
-    { to: '/ai-insights', label: 'AI Insights', icon: Sparkles, badge: 'AI' },
-    { to: '/strategy', label: 'Strategy Planner', icon: Compass, badge: 'AI' },
-    { to: '/scenarios', label: 'Scenarios', icon: Sliders },
-    { to: '/forecasts', label: 'Forecasting', icon: TrendingUp },
-    { to: '/chat', label: 'AI Analyst', icon: MessageSquare, badge: 'AI' },
-    { to: '/reports', label: 'Executive Reports', icon: FileText },
-    { to: '/settings/organization', label: 'Organization', icon: Building2 },
-    { to: '/datasets', label: 'Datasets', icon: Database },
+    { to: '/reports', label: 'Executive Intelligence', icon: FileText },
+    { to: '/history', label: 'Analysis History', icon: History },
+    { to: '/ai-insights', label: 'AI Strategic Narrative', icon: Sparkles, badge: 'AI' },
+    { to: '/chat', label: 'AI Chat Analyst', icon: MessageSquare, badge: 'AI' },
   ];
 
   return (
@@ -59,40 +56,41 @@ export const Sidebar: React.FC = () => {
       >
         <div
           style={{
-            width: '32px',
-            height: '32px',
+            width: '30px',
+            height: '30px',
             borderRadius: 'var(--radius-sm)',
-            backgroundColor: 'var(--color-primary-subtle)',
-            border: '1px solid rgba(37, 99, 235, 0.3)',
+            background: 'linear-gradient(135deg, #1D4ED8, #0284C7)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--color-primary-light)',
+            color: '#FFFFFF',
+            boxShadow: '0 0 12px rgba(56, 189, 248, 0.3)',
           }}
         >
-          <ShieldCheck size={20} />
+          <ShieldCheck size={18} />
         </div>
         <div>
-          <span style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em', color: '#fff' }}>
-            Decision<span style={{ color: 'var(--color-primary-light)' }}>OS</span>
+          <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.02em', color: '#fff' }}>
+            Decision<span style={{ color: '#38BDF8' }}>OS</span>
           </span>
           <span
             style={{
               display: 'block',
-              fontSize: '0.68rem',
+              fontSize: '0.66rem',
               color: 'var(--text-muted)',
               textTransform: 'uppercase',
               letterSpacing: '0.06em',
+              fontWeight: 600,
             }}
           >
-            Decision Intelligence
+            Executive SaaS Platform
           </span>
         </div>
       </div>
 
       {/* Navigation Links */}
-      <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <nav style={{ flex: 1, padding: '14px 10px', overflowY: 'auto' }}>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '3px' }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -103,30 +101,31 @@ export const Sidebar: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '9px 12px',
-                    borderRadius: 'var(--radius-sm)',
-                    color: isActive ? '#fff' : 'var(--text-secondary)',
-                    backgroundColor: isActive ? 'var(--bg-surface-elevated)' : 'transparent',
-                    borderLeft: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
-                    fontWeight: isActive ? 600 : 400,
-                    fontSize: '0.875rem',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
+                    backgroundColor: isActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
+                    borderLeft: isActive ? '3px solid #38BDF8' : '3px solid transparent',
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: '0.85rem',
                     transition: 'all var(--transition-fast)',
+                    textDecoration: 'none',
                   })}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Icon size={18} style={{ opacity: 0.85 }} />
+                    <Icon size={16} style={{ opacity: 0.9 }} />
                     <span>{item.label}</span>
                   </div>
                   {item.badge && (
                     <span
                       style={{
-                        fontSize: '0.65rem',
+                        fontSize: '0.62rem',
                         fontWeight: 700,
-                        padding: '1px 6px',
-                        borderRadius: 'var(--radius-full)',
-                        backgroundColor: 'var(--color-ai-subtle)',
-                        color: 'var(--color-ai-light)',
-                        border: '1px solid var(--color-ai-border)',
+                        padding: '1px 5px',
+                        borderRadius: '4px',
+                        backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                        color: '#38BDF8',
+                        border: '1px solid rgba(56, 189, 248, 0.3)',
                       }}
                     >
                       {item.badge}
@@ -139,10 +138,10 @@ export const Sidebar: React.FC = () => {
         </ul>
       </nav>
 
-      {/* Platform Version Footer */}
+      {/* Platform Backend Connectivity Status Footer */}
       <div
         style={{
-          padding: '14px 20px',
+          padding: '12px 18px',
           borderTop: '1px solid var(--border-subtle)',
           fontSize: '0.75rem',
           color: 'var(--text-dim)',
@@ -151,17 +150,24 @@ export const Sidebar: React.FC = () => {
           justifyContent: 'space-between',
         }}
       >
-        <span>v7.0 Executive</span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--color-success)' }}>
+        <span>v7.0 SaaS Platform</span>
+        <span style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '5px',
+          color: healthStatus === 'connected' ? '#10B981' : '#EF4444',
+          fontWeight: 600,
+          fontSize: '11px',
+        }}>
           <span
             style={{
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              backgroundColor: 'var(--color-success)',
+              backgroundColor: healthStatus === 'connected' ? '#10B981' : '#EF4444',
             }}
           />
-          Online
+          {healthStatus === 'connected' ? 'Connected' : 'Offline'}
         </span>
       </div>
     </aside>

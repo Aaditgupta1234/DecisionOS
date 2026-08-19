@@ -100,10 +100,13 @@ export const DecisionApi = {
     }),
 
   // ------------------------------------------------------------------------
-  // KPI Metrics
+  // KPI Metrics & Diagnostics
   // ------------------------------------------------------------------------
   listMetrics: (datasetId: string) =>
     apiClient<DatasetMetric[]>(`/datasets/${datasetId}/metrics`),
+
+  listDiagnostics: (datasetId: string) =>
+    apiClient<any[]>(`/datasets/${datasetId}/diagnostics`),
 
   // ------------------------------------------------------------------------
   // Root Causes & Recommendations

@@ -1,0 +1,49 @@
+/**
+ * Centralized React Query Key Factory for DecisionOS
+ */
+
+export const queryKeys = {
+  health: ['backend', 'health'] as const,
+  auth: {
+    user: ['auth', 'user'] as const,
+  },
+  organizations: {
+    all: ['organizations'] as const,
+    current: ['organizations', 'current'] as const,
+    detail: (id: string) => ['organizations', id] as const,
+    members: (id: string) => ['organizations', id, 'members'] as const,
+  },
+  datasets: {
+    all: (orgId?: string) => ['datasets', orgId || 'all'] as const,
+    detail: (id: string) => ['datasets', id] as const,
+    mapping: (id: string) => ['datasets', id, 'mapping'] as const,
+  },
+  metrics: {
+    all: (datasetId: string) => ['datasets', datasetId, 'metrics'] as const,
+    detail: (datasetId: string, metric: string) => ['datasets', datasetId, 'metrics', metric] as const,
+  },
+  diagnostics: {
+    all: (datasetId: string) => ['datasets', datasetId, 'diagnostics'] as const,
+  },
+  rootCauses: {
+    all: (datasetId: string) => ['datasets', datasetId, 'root-causes'] as const,
+  },
+  recommendations: {
+    all: (datasetId: string) => ['datasets', datasetId, 'recommendations'] as const,
+  },
+  reports: {
+    executive: (datasetId: string) => ['datasets', datasetId, 'report'] as const,
+    healthScore: (datasetId: string) => ['datasets', datasetId, 'health-score'] as const,
+    executiveSummary: (datasetId: string) => ['datasets', datasetId, 'executive-summary'] as const,
+  },
+  history: {
+    all: (datasetId?: string) => ['history', datasetId || 'all'] as const,
+  },
+  aiInsights: {
+    all: (datasetId: string) => ['datasets', datasetId, 'ai-insights'] as const,
+  },
+  chat: {
+    sessions: ['chat', 'sessions'] as const,
+    messages: (sessionId: string) => ['chat', sessionId, 'messages'] as const,
+  },
+};
