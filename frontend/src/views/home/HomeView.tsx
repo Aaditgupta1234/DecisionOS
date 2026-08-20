@@ -57,14 +57,14 @@ export const HomeView: React.FC = () => {
             </p>
 
             <div className="hero-btn-row">
-              <Link to="/dashboard" className="btn-hero-primary">
+              <Link to="/enterprise" className="btn-hero-primary">
                 <span>Start Analysis</span>
                 <ArrowRight size={16} />
               </Link>
-              <a href="#intelligence" className="btn-hero-secondary">
-                <span>Watch Demo</span>
+              <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="btn-hero-secondary">
+                <span>API Docs</span>
                 <div className="btn-play-circle">
-                  <Play size={10} style={{ fill: '#FFFFFF', marginLeft: '1px' }} />
+                  <ArrowUpRight size={12} style={{ color: '#FFFFFF', marginLeft: '1px' }} />
                 </div>
               </a>
             </div>
@@ -720,16 +720,20 @@ export const HomeView: React.FC = () => {
             </div>
 
             <div className="cta-right-btns">
-              <Link to="/dashboard" className="btn-cta-primary">
+              <Link to="/enterprise" className="btn-cta-primary">
                 <span>Start Analysis</span>
                 <ArrowRight size={15} />
               </Link>
-              <button 
-                onClick={() => alert("Briefing request sent. Our team will contact you shortly.")} 
+              <a 
+                href="http://localhost:8000/docs" 
+                target="_blank" 
+                rel="noreferrer"
                 className="btn-cta-secondary"
+                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                <span>Request Demo</span>
-              </button>
+                <span>API Docs</span>
+                <ArrowUpRight size={13} />
+              </a>
             </div>
           </div>
 

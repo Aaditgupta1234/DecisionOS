@@ -54,6 +54,16 @@ export const routesConfig: RouteMetadata[] = [
     description: 'Flagship executive decision mission control and intelligence rollup',
   },
   {
+    path: '/enterprise-data',
+    title: 'Enterprise Data Hub',
+    category: 'EXECUTIVE_COMMAND',
+    icon: Database,
+    badge: 'DATA',
+    badgeColor: '#10B981',
+    shortcut: 'G+D',
+    description: 'Universal CSV ingestion, automated column schema mapping & pipeline engine',
+  },
+  {
     path: '/boardroom',
     title: 'Executive Boardroom',
     category: 'EXECUTIVE_COMMAND',
@@ -115,7 +125,7 @@ export const routesConfig: RouteMetadata[] = [
     description: 'Salesforce, SAP, Oracle, Jira, ServiceNow, Slack, Teams Connectors',
   },
   {
-    path: '/enterprise-data',
+    path: '/data-reliability',
     title: 'Data Reliability Center',
     category: 'ADMINISTRATION',
     icon: Database,

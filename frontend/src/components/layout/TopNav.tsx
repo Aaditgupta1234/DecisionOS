@@ -154,6 +154,99 @@ export const TopNav: React.FC<TopNavProps> = ({
           )}
         </div>
 
+        {/* Universal Dataset Context Switcher */}
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={() => setIsDatasetDropdownOpen(!isDatasetDropdownOpen)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 10px',
+              background: '#080A0F',
+              border: '1px solid #14171E',
+              borderRadius: '6px',
+              color: '#FFFFFF',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            <Database size={13} color="#10B981" />
+            <span style={{ color: '#64748B', fontWeight: 500 }}>Dataset:</span>
+            <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {activeDataset?.name || 'SaaS Telemetry Q1'}
+            </span>
+            <ChevronDown size={12} color="#64748B" />
+          </button>
+
+          {isDatasetDropdownOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: '6px',
+                width: '280px',
+                background: '#080A0F',
+                border: '1px solid #14171E',
+                borderRadius: '8px',
+                padding: '6px',
+                zIndex: 100,
+                boxShadow: '0 20px 40px rgba(0,0,0,0.85)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px' }}>
+                <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 800 }}>ACTIVE TELEMETRY DATASET</span>
+                <Link
+                  to="/enterprise-data"
+                  onClick={() => setIsDatasetDropdownOpen(false)}
+                  style={{ fontSize: '0.68rem', color: '#38BDF8', fontWeight: 700, textDecoration: 'none' }}
+                >
+                  + Open Data Hub
+                </Link>
+              </div>
+              {datasets.length === 0 ? (
+                <div style={{ padding: '8px 10px', fontSize: '0.76rem', color: '#94A3B8' }}>
+                  <span>Default benchmark active.</span>{' '}
+                  <Link
+                    to="/enterprise-data"
+                    onClick={() => setIsDatasetDropdownOpen(false)}
+                    style={{ color: '#38BDF8', fontWeight: 700 }}
+                  >
+                    Upload CSV
+                  </Link>
+                </div>
+              ) : (
+                datasets.map((ds) => (
+                  <div
+                    key={ds.id}
+                    onClick={() => {
+                      setActiveDataset(ds);
+                      setIsDatasetDropdownOpen(false);
+                    }}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.78rem',
+                      color: activeDataset?.id === ds.id ? '#10B981' : '#F1F5F9',
+                      background: activeDataset?.id === ds.id ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ds.name}</span>
+                    {activeDataset?.id === ds.id && <span style={{ fontSize: '0.65rem', color: '#10B981' }}>ACTIVE</span>}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Time Travel Controls */}
         <TimeTravelControls />
       </div>

@@ -15,6 +15,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 // Landing Page & Auth
 const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
+const PlatformShowcaseView = React.lazy(() => import('./views/platform/PlatformShowcaseView').then(m => ({ default: m.PlatformShowcaseView })));
 const LoginPage = React.lazy(() => import('./features/auth/LoginPage'));
 
 // Core Multi-Portfolio & Executive Studios
@@ -90,8 +91,9 @@ function AppContent() {
 
       <Suspense fallback={<RouteFallback />}>
         <Routes>
-          {/* Executive Marketing & Public Intelligence Pages */}
+          {/* Executive Marketing & Public Showcase Pages */}
           <Route path="/" element={<HomeView />} />
+          <Route path="/platform" element={<PlatformShowcaseView />} />
           <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
 
           {/* Authentication Screen */}
@@ -110,12 +112,14 @@ function AppContent() {
             }
           >
             <Route path="/enterprise" element={<EnterpriseCommandCenterView />} />
+            <Route path="/enterprise-data" element={<DatasetManagementCenterView />} />
+            <Route path="/data-hub" element={<DatasetManagementCenterView />} />
             <Route path="/boardroom" element={<BoardroomCenterView />} />
             <Route path="/portfolio-rollup" element={<PortfolioRollupView />} />
             <Route path="/capital-allocation" element={<CapitalAllocationStudioView />} />
             <Route path="/risk-concentration" element={<RiskConcentrationRadarView />} />
             <Route path="/integrations" element={<IntegrationsCenterView />} />
-            <Route path="/enterprise-data" element={<EnterpriseDataReliabilityView />} />
+            <Route path="/data-reliability" element={<EnterpriseDataReliabilityView />} />
             <Route path="/ai-governance" element={<AIGovernanceCenterView />} />
             <Route path="/intelligence-delivery" element={<ScheduledReportsView />} />
             <Route path="/api-platform" element={<ApiPlatformView />} />
