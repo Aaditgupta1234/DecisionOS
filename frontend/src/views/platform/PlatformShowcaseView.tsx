@@ -135,7 +135,7 @@ export const PlatformShowcaseView: React.FC = () => {
   ];
 
   return (
-    <div className="home-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#040507' }}>
+    <div className="home-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#000000' }}>
       
       {/* Top Navbar */}
       <MarketingNavbar activeTab="platform" />
@@ -146,7 +146,7 @@ export const PlatformShowcaseView: React.FC = () => {
           flex: 1,
           paddingTop: '108px',
           paddingBottom: '80px',
-          backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%)',
+          backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 65%)',
         }}
       >
         <div className="page-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', flexDirection: 'column', gap: '36px' }}>
@@ -158,27 +158,27 @@ export const PlatformShowcaseView: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                background: 'rgba(255, 255, 255, 0.03)',
+                background: 'rgba(255, 255, 255, 0.04)',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
-                color: '#38BDF8',
+                color: '#C5CCD6',
                 borderRadius: '9999px',
                 padding: '4px 14px',
                 fontSize: '11px',
-                fontWeight: 800,
+                fontWeight: 700,
                 letterSpacing: '0.12em',
                 textTransform: 'uppercase',
                 marginBottom: '14px',
               }}
             >
-              <Sparkles size={13} color="#38BDF8" />
+              <Sparkles size={13} color="#FFFFFF" />
               <span>ENTERPRISE OPERATING SYSTEM CAPABILITIES</span>
             </div>
 
-            <h1 style={{ fontSize: '2.6rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 10px 0', lineHeight: 1.15 }}>
+            <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 10px 0', lineHeight: 1.15 }}>
               The Full DecisionOS Platform
             </h1>
 
-            <p style={{ color: '#94A3B8', fontSize: '1rem', lineHeight: 1.5, margin: 0 }}>
+            <p style={{ color: '#8E99A8', fontSize: '1rem', lineHeight: 1.55, margin: 0 }}>
               Explore every connected module powering the world's most advanced deterministic executive intelligence platform.
             </p>
           </div>
@@ -193,8 +193,8 @@ export const PlatformShowcaseView: React.FC = () => {
                   key={i}
                   to={mod.path}
                   style={{
-                    background: 'linear-gradient(180deg, #0B0E14 0%, #06080C 100%)',
-                    border: '1px solid #14171E',
+                    background: '#080A0E',
+                    border: '1px solid #161A22',
                     borderRadius: '14px',
                     padding: '24px',
                     textDecoration: 'none',
@@ -202,43 +202,47 @@ export const PlatformShowcaseView: React.FC = () => {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     gap: '16px',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
                     transition: 'all 0.2s ease',
                     position: 'relative',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+                    e.currentTarget.style.borderColor = '#2D333F';
+                    e.currentTarget.style.background = '#0C0F14';
                     e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.8)';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '#14171E';
+                    e.currentTarget.style.borderColor = '#161A22';
+                    e.currentTarget.style.background = '#080A0E';
                     e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
                   }}
                 >
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <IconComponent size={20} color={mod.color} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#11141B', border: '1px solid #1E232E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
+                        <IconComponent size={19} />
                       </div>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.05)', color: mod.color, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                      <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.04)', color: '#8E99A8', border: '1px solid rgba(255, 255, 255, 0.08)', letterSpacing: '0.04em' }}>
                         {mod.badge}
                       </span>
                     </div>
 
-                    <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '0.72rem', color: '#616B78', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
                       {mod.category}
                     </div>
 
-                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '6px' }}>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '6px' }}>
                       {mod.title}
                     </div>
 
-                    <p style={{ color: '#94A3B8', fontSize: '0.86rem', lineHeight: 1.45, margin: 0 }}>
+                    <p style={{ color: '#8E99A8', fontSize: '0.86rem', lineHeight: 1.5, margin: 0 }}>
                       {mod.desc}
                     </p>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 800, color: '#38BDF8', paddingTop: '10px', borderTop: '1px solid #14171E' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 700, color: '#E2E8F0', paddingTop: '12px', borderTop: '1px solid #14171E' }}>
                     <span>Launch Module</span>
                     <ArrowRight size={14} />
                   </div>
@@ -252,8 +256,8 @@ export const PlatformShowcaseView: React.FC = () => {
             style={{
               padding: '32px',
               borderRadius: '16px',
-              background: 'linear-gradient(135deg, #0B0F19 0%, #06080D 100%)',
-              border: '1px solid #14171E',
+              background: 'linear-gradient(135deg, #090C12 0%, #040508 100%)',
+              border: '1px solid #1E232F',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -262,10 +266,10 @@ export const PlatformShowcaseView: React.FC = () => {
             }}
           >
             <div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF' }}>
                 Ready to experience the unified operating system?
               </div>
-              <div style={{ color: '#94A3B8', fontSize: '0.88rem', marginTop: '2px' }}>
+              <div style={{ color: '#8E99A8', fontSize: '0.88rem', marginTop: '3px' }}>
                 Jump directly into the Enterprise Command Center with live telemetry and scenario digital twins.
               </div>
             </div>
@@ -279,10 +283,12 @@ export const PlatformShowcaseView: React.FC = () => {
                 padding: '12px 24px',
                 background: '#FFFFFF',
                 color: '#000000',
-                borderRadius: '8px',
-                fontWeight: 800,
+                borderRadius: '24px',
+                fontWeight: 700,
                 fontSize: '0.9rem',
                 textDecoration: 'none',
+                boxShadow: '0 2px 10px rgba(255, 255, 255, 0.15)',
+                transition: 'all 0.2s ease',
               }}
             >
               <span>Launch Platform</span>
@@ -316,3 +322,4 @@ export const PlatformShowcaseView: React.FC = () => {
 };
 
 export default PlatformShowcaseView;
+

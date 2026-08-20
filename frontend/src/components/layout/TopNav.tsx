@@ -64,24 +64,26 @@ export const TopNav: React.FC<TopNavProps> = ({
         top: 0,
         zIndex: 50,
         gap: '6px',
-        overflow: 'visible',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+        width: '100%',
       }}
     >
       {/* Left: Organization & Workspace Switcher + Time Travel */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 1, minWidth: 0 }}>
         {/* Back to Marketing Home Link */}
         <Link
           to="/"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
-            padding: '4px 8px',
+            gap: '3px',
+            padding: '3px 7px',
             background: '#080A0F',
             border: '1px solid #14171E',
             borderRadius: '5px',
             color: '#94A3B8',
-            fontSize: '0.72rem',
+            fontSize: '0.7rem',
             fontWeight: 700,
             textDecoration: 'none',
             whiteSpace: 'nowrap',
@@ -99,21 +101,23 @@ export const TopNav: React.FC<TopNavProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '5px',
-              padding: '4px 8px',
+              gap: '4px',
+              padding: '3px 7px',
               background: '#080A0F',
               border: '1px solid #14171E',
               borderRadius: '5px',
               color: '#FFFFFF',
-              fontSize: '0.74rem',
+              fontSize: '0.72rem',
               fontWeight: 700,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
             }}
           >
-            <Building2 size={12} color="#38BDF8" />
-            <span>{activeOrg.name}</span>
-            <ChevronDown size={11} color="#64748B" />
+            <Building2 size={11} color="#38BDF8" />
+            <span style={{ maxWidth: '105px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {activeOrg.name}
+            </span>
+            <ChevronDown size={10} color="#64748B" />
           </button>
 
           {isOrgDropdownOpen && (
@@ -166,24 +170,24 @@ export const TopNav: React.FC<TopNavProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '5px',
-              padding: '4px 8px',
+              gap: '4px',
+              padding: '3px 7px',
               background: '#080A0F',
               border: '1px solid #14171E',
               borderRadius: '5px',
               color: '#FFFFFF',
-              fontSize: '0.74rem',
+              fontSize: '0.72rem',
               fontWeight: 700,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
             }}
           >
-            <Database size={12} color="#10B981" />
+            <Database size={11} color="#10B981" />
             <span style={{ color: '#64748B', fontWeight: 500 }}>Dataset:</span>
-            <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {activeDataset?.name || 'SaaS Telemetry Q1'}
             </span>
-            <ChevronDown size={11} color="#64748B" />
+            <ChevronDown size={10} color="#64748B" />
           </button>
 
           {isDatasetDropdownOpen && (

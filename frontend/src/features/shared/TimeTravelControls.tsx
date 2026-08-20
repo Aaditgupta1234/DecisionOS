@@ -17,16 +17,16 @@ export const TimeTravelControls: React.FC = () => {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '5px',
+        gap: '4px',
         background: 'rgba(15, 23, 42, 0.8)',
         border: '1px solid #1E293B',
         borderRadius: '5px',
-        padding: '3px 8px',
+        padding: '3px 6px',
         flexShrink: 0,
       }}
     >
-      <Clock size={12} color="#38BDF8" />
-      <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 800 }}>TIME-TRAVEL:</span>
+      <Clock size={11} color="#38BDF8" />
+      <span style={{ fontSize: '0.65rem', color: '#64748B', fontWeight: 800, whiteSpace: 'nowrap' }}>TIME-TRAVEL:</span>
       <select
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
@@ -34,10 +34,12 @@ export const TimeTravelControls: React.FC = () => {
           background: 'transparent',
           border: 'none',
           color: selectedDate.startsWith('LIVE') ? '#10B981' : '#F59E0B',
-          fontSize: '0.72rem',
+          fontSize: '0.7rem',
           fontWeight: 800,
           outline: 'none',
           cursor: 'pointer',
+          maxWidth: '115px',
+          textOverflow: 'ellipsis',
         }}
       >
         {snapshots.map((s) => (

@@ -329,40 +329,38 @@ export const KPIDictionaryView: React.FC = () => {
       >
         <div className="page-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
-          {/* Header with Eyebrow Badge & Title */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <div>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  color: '#38BDF8',
-                  borderRadius: '9999px',
-                  padding: '4px 12px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  marginBottom: '12px',
-                }}
-              >
-                <ShieldCheck size={13} color="#38BDF8" />
-                <span>ENTERPRISE METRIC GOVERNANCE & FORMULA LINEAGE</span>
-              </div>
-
-              <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 8px 0', lineHeight: 1.15 }}>
-                Enterprise KPI Dictionary & Metadata Registry
-              </h1>
-
-              <p style={{ color: '#94A3B8', fontSize: '0.96rem', margin: 0, maxWidth: '820px', lineHeight: 1.5 }}>
-                Deterministic metric formulas, authoritative data provenance lineage, and automated mathematical integrity checking enforced for board reporting.
-              </p>
+          {/* Header with Eyebrow Badge & Title (Centered) */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                color: '#38BDF8',
+                borderRadius: '9999px',
+                padding: '4px 14px',
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                marginBottom: '4px',
+              }}
+            >
+              <ShieldCheck size={13} color="#38BDF8" />
+              <span>ENTERPRISE METRIC GOVERNANCE & FORMULA LINEAGE</span>
             </div>
 
-            {/* Global Search Input */}
+            <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 6px 0', lineHeight: 1.15, textAlign: 'center' }}>
+              Enterprise KPI Dictionary & Metadata Registry
+            </h1>
+
+            <p style={{ color: '#94A3B8', fontSize: '0.96rem', margin: '0 auto', maxWidth: '820px', lineHeight: 1.5, textAlign: 'center' }}>
+              Deterministic metric formulas, authoritative data provenance lineage, and automated mathematical integrity checking enforced for board reporting.
+            </p>
+
+            {/* Global Search Input (Centered) */}
             <div
               style={{
                 display: 'flex',
@@ -372,7 +370,9 @@ export const KPIDictionaryView: React.FC = () => {
                 border: '1px solid #14171E',
                 borderRadius: '10px',
                 padding: '10px 16px',
-                width: '320px',
+                width: '100%',
+                maxWidth: '440px',
+                marginTop: '12px',
                 boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
                 transition: 'border-color 0.2s ease',
               }}
