@@ -53,9 +53,9 @@ export const TopNav: React.FC<TopNavProps> = ({
     <header
       style={{
         height: 'var(--header-height)',
-        backgroundColor: 'rgba(6, 8, 13, 0.9)',
+        backgroundColor: 'rgba(6, 8, 13, 0.95)',
         backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid #14171E',
+        borderBottom: '1px solid #161A22',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -63,14 +63,13 @@ export const TopNav: React.FC<TopNavProps> = ({
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        gap: '6px',
-        overflow: 'hidden',
+        gap: '8px',
         boxSizing: 'border-box',
         width: '100%',
       }}
     >
       {/* Left: Organization & Workspace Switcher + Time Travel */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 1, minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0 }}>
         {/* Back to Marketing Home Link */}
         <Link
           to="/"
@@ -78,12 +77,12 @@ export const TopNav: React.FC<TopNavProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '3px',
-            padding: '3px 7px',
+            padding: '3px 6px',
             background: '#080A0F',
-            border: '1px solid #14171E',
+            border: '1px solid #161A22',
             borderRadius: '5px',
             color: '#94A3B8',
-            fontSize: '0.7rem',
+            fontSize: '0.68rem',
             fontWeight: 700,
             textDecoration: 'none',
             whiteSpace: 'nowrap',
@@ -102,19 +101,19 @@ export const TopNav: React.FC<TopNavProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              padding: '3px 7px',
+              padding: '3px 6px',
               background: '#080A0F',
-              border: '1px solid #14171E',
+              border: '1px solid #161A22',
               borderRadius: '5px',
               color: '#FFFFFF',
-              fontSize: '0.72rem',
+              fontSize: '0.70rem',
               fontWeight: 700,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
             }}
           >
             <Building2 size={11} color="#38BDF8" />
-            <span style={{ maxWidth: '105px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {activeOrg.name}
             </span>
             <ChevronDown size={10} color="#64748B" />
@@ -129,7 +128,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 marginTop: '6px',
                 width: '260px',
                 background: '#080A0F',
-                border: '1px solid #14171E',
+                border: '1px solid #161A22',
                 borderRadius: '8px',
                 padding: '6px',
                 zIndex: 100,
@@ -171,21 +170,20 @@ export const TopNav: React.FC<TopNavProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              padding: '3px 7px',
+              padding: '3px 6px',
               background: '#080A0F',
-              border: '1px solid #14171E',
+              border: '1px solid #161A22',
               borderRadius: '5px',
               color: '#FFFFFF',
-              fontSize: '0.72rem',
+              fontSize: '0.70rem',
               fontWeight: 700,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
             }}
           >
             <Database size={11} color="#10B981" />
-            <span style={{ color: '#64748B', fontWeight: 500 }}>Dataset:</span>
-            <span style={{ maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {activeDataset?.name || 'SaaS Telemetry Q1'}
+            <span style={{ maxWidth: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {activeDataset?.name || 'SaaS Telemetry'}
             </span>
             <ChevronDown size={10} color="#64748B" />
           </button>
@@ -199,7 +197,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 marginTop: '6px',
                 width: '280px',
                 background: '#080A0F',
-                border: '1px solid #14171E',
+                border: '1px solid #161A22',
                 borderRadius: '8px',
                 padding: '6px',
                 zIndex: 100,
@@ -270,19 +268,20 @@ export const TopNav: React.FC<TopNavProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            padding: '4px 8px',
+            padding: '3px 7px',
             background: 'rgba(168, 85, 247, 0.1)',
             border: '1px solid rgba(168, 85, 247, 0.3)',
             borderRadius: '5px',
-            color: '#A855F7',
-            fontSize: '0.72rem',
+            color: '#C084FC',
+            fontSize: '0.68rem',
             fontWeight: 700,
             cursor: 'pointer',
             whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
-          <Sparkles size={12} />
-          <span>SaaS Setup Wizard</span>
+          <Sparkles size={11} />
+          <span>Setup Wizard</span>
         </button>
 
         {/* Notifications Drawer Trigger */}
@@ -290,7 +289,7 @@ export const TopNav: React.FC<TopNavProps> = ({
           onClick={onOpenNotifications}
           style={{
             background: '#080A0F',
-            border: '1px solid #14171E',
+            border: '1px solid #161A22',
             borderRadius: '5px',
             padding: '4px 6px',
             color: '#F59E0B',
@@ -299,10 +298,11 @@ export const TopNav: React.FC<TopNavProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative',
+            flexShrink: 0,
           }}
           title="Audit & System Notifications"
         >
-          <Bell size={13} />
+          <Bell size={12} />
           <div
             style={{
               position: 'absolute',
@@ -317,37 +317,48 @@ export const TopNav: React.FC<TopNavProps> = ({
         </button>
 
         {/* User / Profile Menu */}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              padding: '2px 4px',
+              gap: '5px',
+              padding: '2px 6px',
               background: '#080A0F',
-              border: '1px solid #14171E',
+              border: '1px solid #161A22',
               borderRadius: '5px',
               cursor: 'pointer',
+              transition: 'all 0.15s ease',
+              flexShrink: 0,
             }}
           >
             <div
               style={{
-                width: '22px',
-                height: '22px',
+                width: '20px',
+                height: '20px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #1D4ED8, #0284C7)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#FFFFFF',
-                fontSize: '10px',
+                fontSize: '9.5px',
                 fontWeight: 800,
+                flexShrink: 0,
               }}
             >
-              {user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'E'}
+              {user?.full_name ? user.full_name.charAt(0).toUpperCase() : user?.email ? user.email.charAt(0).toUpperCase() : 'E'}
             </div>
-            <ChevronDown size={10} color="#64748B" />
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left', minWidth: 0 }}>
+              <span style={{ fontSize: '0.70rem', fontWeight: 700, color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '85px' }}>
+                {user?.full_name || (user?.email ? user.email.split('@')[0] : 'Executive Admin')}
+              </span>
+              <span style={{ fontSize: '0.56rem', color: '#64748B', lineHeight: 1 }}>
+                {user?.role || 'admin'}
+              </span>
+            </div>
+            <ChevronDown size={9} color="#64748B" />
           </button>
 
           {isUserMenuOpen && (
@@ -357,7 +368,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                 top: '100%',
                 right: 0,
                 marginTop: '8px',
-                width: '180px',
+                width: '200px',
                 background: '#080A0F',
                 border: '1px solid #14171E',
                 borderRadius: '8px',
@@ -366,8 +377,13 @@ export const TopNav: React.FC<TopNavProps> = ({
                 boxShadow: '0 20px 40px rgba(0,0,0,0.9)',
               }}
             >
-              <div style={{ padding: '8px 10px', fontSize: '0.72rem', color: '#64748B', borderBottom: '1px solid #141A24' }}>
-                {user?.email || 'executive@decisionos.ai'}
+              <div style={{ padding: '8px 10px', borderBottom: '1px solid #141A24' }}>
+                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#FFFFFF' }}>
+                  {user?.full_name || 'Executive User'}
+                </div>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user?.email || 'executive@decisionos.ai'}
+                </div>
               </div>
               <button
                 onClick={() => {
@@ -388,6 +404,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                   cursor: 'pointer',
                   borderRadius: '4px',
                   textAlign: 'left',
+                  marginTop: '4px',
                 }}
               >
                 Sign Out

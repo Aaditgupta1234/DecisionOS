@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, History, Calendar, RotateCcw } from 'lucide-react';
-import { Button } from '../../design-system/Button';
+import { Clock } from 'lucide-react';
 
 export const TimeTravelControls: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState('LIVE (Current Telemetry)');
@@ -8,8 +7,8 @@ export const TimeTravelControls: React.FC = () => {
   const snapshots = [
     'LIVE (Current Telemetry)',
     '2026-03-15 (Q1 Strategy Review)',
-    '2026-02-01 (Pre-Courier Failure Baseline)',
-    '2025-12-31 (Year-End Board Snapshot)',
+    '2026-02-01 (Pre-Courier Baseline)',
+    '2025-12-31 (Year-End Snapshot)',
   ];
 
   return (
@@ -26,7 +25,7 @@ export const TimeTravelControls: React.FC = () => {
       }}
     >
       <Clock size={11} color="#38BDF8" />
-      <span style={{ fontSize: '0.65rem', color: '#64748B', fontWeight: 800, whiteSpace: 'nowrap' }}>TIME-TRAVEL:</span>
+      <span style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 800, whiteSpace: 'nowrap' }}>TIME:</span>
       <select
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
@@ -34,11 +33,11 @@ export const TimeTravelControls: React.FC = () => {
           background: 'transparent',
           border: 'none',
           color: selectedDate.startsWith('LIVE') ? '#10B981' : '#F59E0B',
-          fontSize: '0.7rem',
+          fontSize: '0.68rem',
           fontWeight: 800,
           outline: 'none',
           cursor: 'pointer',
-          maxWidth: '115px',
+          maxWidth: '90px',
           textOverflow: 'ellipsis',
         }}
       >
@@ -51,3 +50,4 @@ export const TimeTravelControls: React.FC = () => {
     </div>
   );
 };
+
