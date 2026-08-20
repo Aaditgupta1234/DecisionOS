@@ -290,7 +290,7 @@
   align-items: center;
   justify-content: center;
   overflow: visible;
-  transform: translate(-24px, 36px);
+  transform: translate(20px, 36px);
 }
 
 /* 4. Single-Tone Clean Cone Spotlight Beam */
@@ -511,7 +511,7 @@
 /* 3. Customer Retention (Lower Left) */
 .card-pos-bottom-left {
   bottom: 132px;
-  left: -25px;
+  left: -10px;
   width: 145px;
 }
 

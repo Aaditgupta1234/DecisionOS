@@ -30,8 +30,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: 'Universal CSV ingestion, automated column datatype inference, and live schema validation.',
       path: '/enterprise-data',
       icon: Database,
-      badge: 'INGESTION',
-      color: '#10B981',
+      badge: 'DATA HUB',
     },
     {
       category: 'DATA & INGESTION',
@@ -39,8 +38,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: '32 deterministic metric formulas, mathematical provenance lineage, and verified owners.',
       path: '/kpi-dictionary',
       icon: BookOpen,
-      badge: 'DICT',
-      color: '#F59E0B',
+      badge: 'KPI DICTIONARY',
     },
     {
       category: 'EXECUTIVE & BOARD',
@@ -48,8 +46,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: 'Presentation-ready quarterly briefings, CEO sign-off ledger, and board report generation.',
       path: '/boardroom',
       icon: FileText,
-      badge: 'BOARD',
-      color: '#F59E0B',
+      badge: 'BOARDROOM',
     },
     {
       category: 'EXECUTIVE & BOARD',
@@ -58,7 +55,6 @@ export const PlatformShowcaseView: React.FC = () => {
       path: '/decision-copilot',
       icon: Bot,
       badge: 'COPILOT',
-      color: '#38BDF8',
     },
     {
       category: 'STRATEGY & SIMULATION',
@@ -66,8 +62,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: 'Dynamic enterprise simulation dials, stress-test forecasting, and Monte Carlo revenue modeling.',
       path: '/digital-twin',
       icon: PlayCircle,
-      badge: 'TWIN',
-      color: '#A855F7',
+      badge: 'DIGITAL TWIN',
     },
     {
       category: 'STRATEGY & SIMULATION',
@@ -75,8 +70,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: 'Strategic initiatives, target milestones, and quarterly value realization attribution.',
       path: '/strategy-execution',
       icon: Activity,
-      badge: 'VALUE',
-      color: '#10B981',
+      badge: 'STRATEGY',
     },
     {
       category: 'PORTFOLIO & CAPITAL',
@@ -85,7 +79,6 @@ export const PlatformShowcaseView: React.FC = () => {
       path: '/portfolio-rollup',
       icon: Layers,
       badge: 'PORTFOLIO',
-      color: '#38BDF8',
     },
     {
       category: 'PORTFOLIO & CAPITAL',
@@ -93,8 +86,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: 'Mathematical ROI curve optimization and $1M capital budget deployment simulator.',
       path: '/capital-allocation',
       icon: DollarSign,
-      badge: 'ROI CURVE',
-      color: '#A855F7',
+      badge: 'CAPITAL',
     },
     {
       category: 'GOVERNANCE & TRUST',
@@ -103,7 +95,6 @@ export const PlatformShowcaseView: React.FC = () => {
       path: '/governance',
       icon: Scale,
       badge: 'GOVERNANCE',
-      color: '#10B981',
     },
     {
       category: 'GOVERNANCE & TRUST',
@@ -111,8 +102,7 @@ export const PlatformShowcaseView: React.FC = () => {
       desc: 'Customer ARR and geographic revenue concentration risk detector with automated triggers.',
       path: '/risk-concentration',
       icon: ShieldAlert,
-      badge: 'RADAR',
-      color: '#EF4444',
+      badge: 'RISK RADAR',
     },
     {
       category: 'AUTONOMOUS & INFRA',
@@ -121,7 +111,6 @@ export const PlatformShowcaseView: React.FC = () => {
       path: '/agents',
       icon: Cpu,
       badge: 'AGENTS',
-      color: '#818CF8',
     },
     {
       category: 'AUTONOMOUS & INFRA',
@@ -130,7 +119,6 @@ export const PlatformShowcaseView: React.FC = () => {
       path: '/api-platform',
       icon: Key,
       badge: 'API GATEWAY',
-      color: '#38BDF8',
     },
   ];
 
@@ -144,43 +132,104 @@ export const PlatformShowcaseView: React.FC = () => {
       <main
         style={{
           flex: 1,
-          paddingTop: '108px',
+          paddingTop: '80px',
           paddingBottom: '80px',
           backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 65%)',
         }}
       >
-        <div className="page-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', flexDirection: 'column', gap: '36px' }}>
+        <div className="page-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
           
-          {/* Header */}
-          <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
+          {/* Header with Subtle Connected Enterprise Architecture Blueprint */}
+          <div style={{ position: 'relative', textAlign: 'center', maxWidth: '880px', margin: '0 auto', width: '100%', padding: '10px 0 0 0' }}>
+            
+            {/* Subtle Radial Cyan Intelligence Glow & Core Beacon ◉ */}
             <div
               style={{
-                display: 'inline-flex',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '640px',
+                height: '240px',
+                pointerEvents: 'none',
+                zIndex: 0,
+                display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                color: '#C5CCD6',
-                borderRadius: '9999px',
-                padding: '4px 14px',
-                fontSize: '11px',
-                fontWeight: 700,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                marginBottom: '14px',
+                justifyContent: 'center',
               }}
+              aria-hidden="true"
             >
-              <Sparkles size={13} color="#FFFFFF" />
-              <span>ENTERPRISE OPERATING SYSTEM CAPABILITIES</span>
+              {/* Soft Ambient Cyan Intelligence Radial Glow */}
+              <div
+                style={{
+                  position: 'absolute',
+                  width: '520px',
+                  height: '200px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(ellipse at center, rgba(56, 189, 248, 0.12) 0%, rgba(56, 189, 248, 0.03) 45%, transparent 72%)',
+                  filter: 'blur(32px)',
+                }}
+              />
+
+              {/* Central Intelligence Core Beacon ◉ */}
+              <div
+                style={{
+                  position: 'absolute',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  border: '1px solid rgba(56, 189, 248, 0.22)',
+                  background: 'radial-gradient(circle, rgba(56, 189, 248, 0.14) 0%, transparent 70%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 0 24px rgba(56, 189, 248, 0.2)',
+                  opacity: 0.65,
+                }}
+              >
+                <div
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: '#38BDF8',
+                    boxShadow: '0 0 10px #38BDF8',
+                  }}
+                />
+              </div>
             </div>
 
-            <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 10px 0', lineHeight: 1.15 }}>
-              The Full DecisionOS Platform
-            </h1>
+            {/* Foreground Content */}
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  color: '#C5CCD6',
+                  borderRadius: '9999px',
+                  padding: '4px 14px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  marginBottom: '10px',
+                }}
+              >
+                <Sparkles size={13} color="#FFFFFF" />
+                <span>ENTERPRISE OPERATING SYSTEM CAPABILITIES</span>
+              </div>
 
-            <p style={{ color: '#8E99A8', fontSize: '1rem', lineHeight: 1.55, margin: 0 }}>
-              Explore every connected module powering the world's most advanced deterministic executive intelligence platform.
-            </p>
+              <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', margin: '0 0 8px 0', lineHeight: 1.15 }}>
+                The Full DecisionOS Platform
+              </h1>
+
+              <p style={{ color: '#8E99A8', fontSize: '1rem', lineHeight: 1.55, margin: 0 }}>
+                Explore every connected module powering the world's most advanced deterministic executive intelligence platform.
+              </p>
+            </div>
           </div>
 
           {/* Module Cards Grid */}
@@ -224,7 +273,7 @@ export const PlatformShowcaseView: React.FC = () => {
                       <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#11141B', border: '1px solid #1E232E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
                         <IconComponent size={19} />
                       </div>
-                      <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '3px 8px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.04)', color: '#8E99A8', border: '1px solid rgba(255, 255, 255, 0.08)', letterSpacing: '0.04em' }}>
+                      <span style={{ fontSize: '0.66rem', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#0F172A', color: '#CBD5E1', border: '1px solid #334155', letterSpacing: '0.06em' }}>
                         {mod.badge}
                       </span>
                     </div>
