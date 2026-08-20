@@ -23,7 +23,15 @@ export const AppShell: React.FC<AppShellProps> = ({
           onOpenNotifications={onOpenNotifications}
           onOpenOnboarding={onOpenOnboarding}
         />
-        <main style={{ flex: 1, padding: '24px', overflowY: 'auto', backgroundColor: '#030712' }}>
+        <main 
+          style={{ 
+            flex: 1, 
+            padding: '28px 32px 64px 32px', 
+            overflowY: 'auto', 
+            backgroundColor: '#040507',
+            backgroundImage: 'radial-gradient(circle at 50% -12%, rgba(56, 189, 248, 0.08) 0%, transparent 60%)',
+          }}
+        >
           <Outlet />
         </main>
       </div>

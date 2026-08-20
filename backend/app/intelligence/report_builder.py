@@ -1,16 +1,20 @@
 """IntelligenceReportBuilder compiling unified multi-domain business intelligence reports."""
 
+from __future__ import annotations
+
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from app.intelligence.constants import CANONICAL_REPORT_VERSION
 from app.intelligence.executive_summary import ExecutiveSummaryBuilder
 from app.intelligence.models import IntelligenceReport
-from app.models.dataset import Dataset
-from app.models.dataset_metric import DatasetMetric
-from app.models.diagnostic_finding import DiagnosticFinding
-from app.models.recommendation import Recommendation
-from app.models.root_cause_analysis import RootCauseAnalysis
+
+if TYPE_CHECKING:
+    from app.models.dataset import Dataset
+    from app.models.dataset_metric import DatasetMetric
+    from app.models.diagnostic_finding import DiagnosticFinding
+    from app.models.recommendation import Recommendation
+    from app.models.root_cause_analysis import RootCauseAnalysis
 
 
 class IntelligenceReportBuilder:

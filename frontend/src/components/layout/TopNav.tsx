@@ -7,6 +7,8 @@ import { Database, Upload, RefreshCw, ChevronDown, Bell, Search, Sparkles, Build
 import { DecisionApi } from '../../api';
 import { TimeTravelControls } from '../../features/shared/TimeTravelControls';
 
+import { Link } from 'react-router-dom';
+
 interface TopNavProps {
   onOpenSearch?: () => void;
   onOpenNotifications?: () => void;
@@ -51,19 +53,41 @@ export const TopNav: React.FC<TopNavProps> = ({
     <header
       style={{
         height: 'var(--header-height)',
-        backgroundColor: '#090D14',
-        borderBottom: '1px solid #1E293B',
+        backgroundColor: 'rgba(6, 8, 13, 0.85)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid #14171E',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px',
+        padding: '0 24px',
         position: 'sticky',
         top: 0,
         zIndex: 50,
       }}
     >
-      {/* Left: Organization & Workspace Switcher + Dataset */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      {/* Left: Organization & Workspace Switcher + Time Travel */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Back to Marketing Home Link */}
+        <Link
+          to="/"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '5px 10px',
+            background: '#080A0F',
+            border: '1px solid #14171E',
+            borderRadius: '6px',
+            color: '#94A3B8',
+            fontSize: '0.74rem',
+            fontWeight: 700,
+            textDecoration: 'none',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <span>← Overview</span>
+        </Link>
+
         {/* Org Switcher */}
         <div style={{ position: 'relative' }}>
           <button
@@ -73,8 +97,8 @@ export const TopNav: React.FC<TopNavProps> = ({
               alignItems: 'center',
               gap: '6px',
               padding: '5px 10px',
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid #1E293B',
+              background: '#080A0F',
+              border: '1px solid #14171E',
               borderRadius: '6px',
               color: '#FFFFFF',
               fontSize: '0.78rem',
@@ -95,8 +119,8 @@ export const TopNav: React.FC<TopNavProps> = ({
                 left: 0,
                 marginTop: '6px',
                 width: '260px',
-                background: '#090D14',
-                border: '1px solid #1E293B',
+                background: '#080A0F',
+                border: '1px solid #14171E',
                 borderRadius: '8px',
                 padding: '6px',
                 zIndex: 100,
@@ -161,8 +185,8 @@ export const TopNav: React.FC<TopNavProps> = ({
         <button
           onClick={onOpenNotifications}
           style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid #1E293B',
+            background: '#080A0F',
+            border: '1px solid #14171E',
             borderRadius: '6px',
             padding: '6px 8px',
             color: '#F59E0B',
@@ -226,8 +250,8 @@ export const TopNav: React.FC<TopNavProps> = ({
                 right: 0,
                 marginTop: '8px',
                 width: '180px',
-                background: '#090D14',
-                border: '1px solid #1E293B',
+                background: '#080A0F',
+                border: '1px solid #14171E',
                 borderRadius: '8px',
                 padding: '6px',
                 zIndex: 100,

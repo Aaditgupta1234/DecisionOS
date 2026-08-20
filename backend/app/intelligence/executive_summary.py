@@ -1,15 +1,19 @@
 """ExecutiveSummaryBuilder synthesizing high-level executive insights, risk rankings, and health scoring."""
 
+from __future__ import annotations
+
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 from uuid import UUID
 
 from app.core.constants import FindingSeverity, RecommendationPriority
 from app.intelligence.health_score import BusinessHealthScoreEngine
 from app.intelligence.models import ExecutiveSummary
-from app.models.diagnostic_finding import DiagnosticFinding
-from app.models.recommendation import Recommendation
-from app.models.root_cause_analysis import RootCauseAnalysis
+
+if TYPE_CHECKING:
+    from app.models.diagnostic_finding import DiagnosticFinding
+    from app.models.recommendation import Recommendation
+    from app.models.root_cause_analysis import RootCauseAnalysis
 
 SEVERITY_RANK = {
     FindingSeverity.CRITICAL: 4,

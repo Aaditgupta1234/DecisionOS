@@ -90,8 +90,9 @@ function AppContent() {
 
       <Suspense fallback={<RouteFallback />}>
         <Routes>
-          {/* Executive Marketing Landing Page */}
+          {/* Executive Marketing & Public Intelligence Pages */}
           <Route path="/" element={<HomeView />} />
+          <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
 
           {/* Authentication Screen */}
           <Route path="/login" element={<LoginPage />} />
@@ -112,7 +113,6 @@ function AppContent() {
             <Route path="/boardroom" element={<BoardroomCenterView />} />
             <Route path="/portfolio-rollup" element={<PortfolioRollupView />} />
             <Route path="/capital-allocation" element={<CapitalAllocationStudioView />} />
-            <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
             <Route path="/risk-concentration" element={<RiskConcentrationRadarView />} />
             <Route path="/integrations" element={<IntegrationsCenterView />} />
             <Route path="/enterprise-data" element={<EnterpriseDataReliabilityView />} />

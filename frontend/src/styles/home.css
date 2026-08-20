@@ -298,7 +298,7 @@
   position: absolute;
   top: -50px;
   left: calc(50% - 12px);
-  transform: translateX(-50%);git
+  transform: translateX(-50%);
   width: 580px;
   height: 520px;
   clip-path: polygon(36% 0%, 64% 0%, 100% 100%, 0% 100%);

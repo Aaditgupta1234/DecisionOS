@@ -17,8 +17,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
     <aside
       style={{
         width: 'var(--sidebar-width)',
-        backgroundColor: '#090D14',
-        borderRight: '1px solid #1E293B',
+        backgroundColor: '#06080D',
+        borderRight: '1px solid #14171E',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -26,14 +26,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
       }}
     >
       {/* Brand Header */}
-      <div
+      <NavLink
+        to="/"
         style={{
           height: 'var(--header-height)',
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
           padding: '0 16px',
-          borderBottom: '1px solid #1E293B',
+          borderBottom: '1px solid #14171E',
+          textDecoration: 'none',
+          cursor: 'pointer',
         }}
       >
         <div
@@ -46,24 +49,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#FFFFFF',
-            boxShadow: '0 0 12px rgba(56, 189, 248, 0.3)',
+            boxShadow: '0 0 14px rgba(56, 189, 248, 0.35)',
           }}
         >
           <ShieldCheck size={16} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div style={{ fontWeight: 900, fontSize: '0.94rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '-0.02em' }}>
             Decision<span style={{ color: '#38BDF8' }}>OS</span>
-            <span style={{ fontSize: '0.65rem', padding: '1px 4px', borderRadius: '3px', background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8' }}>v1.0</span>
+            <span style={{ fontSize: '0.65rem', padding: '1px 4px', borderRadius: '3px', background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', fontWeight: 800 }}>v1.0</span>
           </div>
           <div style={{ fontSize: '0.65rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {activeOrg.name}
           </div>
         </div>
-      </div>
+      </NavLink>
 
       {/* Quick Search Button (Ctrl+K) */}
-      <div style={{ padding: '10px 12px 4px 12px' }}>
+      <div style={{ padding: '10px 12px 6px 12px' }}>
         <button
           onClick={onOpenSearch}
           style={{
@@ -71,28 +74,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '7px 10px',
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid #1E293B',
-            borderRadius: '6px',
+            padding: '8px 10px',
+            background: '#080A0F',
+            border: '1px solid #14171E',
+            borderRadius: '8px',
             color: '#94A3B8',
             fontSize: '0.78rem',
             cursor: 'pointer',
+            transition: 'border-color 0.15s ease',
           }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Command size={13} color="#38BDF8" />
             Quick Command
           </span>
-          <kbd style={{ fontSize: '0.65rem', background: '#090D14', border: '1px solid #334155', padding: '1px 4px', borderRadius: '3px' }}>
+          <kbd style={{ fontSize: '0.65rem', background: '#040507', border: '1px solid #14171E', padding: '2px 5px', borderRadius: '4px', color: '#64748B' }}>
             Ctrl+K
           </kbd>
         </button>
       </div>
 
       {/* Navigation Links (21 Core Modules) */}
-      <nav style={{ flex: 1, padding: '10px 10px', overflowY: 'auto' }}>
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '2px', padding: 0, margin: 0 }}>
+      <nav style={{ flex: 1, padding: '8px 10px', overflowY: 'auto' }}>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '3px', padding: 0, margin: 0 }}>
           {routesConfig.map((item) => {
             const Icon = item.icon;
             return (
@@ -103,11 +107,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '7px 10px',
-                    borderRadius: '6px',
+                    padding: '8px 10px',
+                    borderRadius: '8px',
                     color: isActive ? '#FFFFFF' : '#94A3B8',
-                    backgroundColor: isActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-                    borderLeft: isActive ? '3px solid #38BDF8' : '3px solid transparent',
+                    backgroundColor: isActive ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
+                    border: isActive ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid transparent',
+                    borderLeft: isActive ? '3px solid #38BDF8' : '1px solid transparent',
                     fontWeight: isActive ? 700 : 500,
                     fontSize: '0.82rem',
                     transition: 'all 0.15s ease',
@@ -131,11 +136,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
                         style={{
                           fontSize: '0.6rem',
                           fontWeight: 800,
-                          padding: '1px 4px',
-                          borderRadius: '3px',
-                          backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                          padding: '1px 5px',
+                          borderRadius: '4px',
+                          backgroundColor: 'rgba(56, 189, 248, 0.12)',
                           color: item.badgeColor || '#38BDF8',
-                          border: `1px solid ${item.badgeColor || 'rgba(56, 189, 248, 0.3)'}`,
+                          border: `1px solid ${item.badgeColor || 'rgba(56, 189, 248, 0.25)'}`,
                         }}
                       >
                         {item.badge}
@@ -153,8 +158,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
       <div
         style={{
           padding: '12px 14px',
-          borderTop: '1px solid #1E293B',
-          background: 'rgba(15, 23, 42, 0.4)',
+          borderTop: '1px solid #14171E',
+          background: '#06080D',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -167,7 +172,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
               height: '7px',
               borderRadius: '50%',
               backgroundColor: healthStatus === 'connected' ? '#10B981' : '#F59E0B',
-              boxShadow: healthStatus === 'connected' ? '0 0 6px #10B981' : 'none',
+              boxShadow: healthStatus === 'connected' ? '0 0 8px #10B981' : 'none',
             }}
           />
           <span style={{ fontWeight: 600 }}>{activeWorkspace.region}</span>

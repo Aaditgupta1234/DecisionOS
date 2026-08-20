@@ -1,6 +1,8 @@
 """Business Health Score Engine calculating deterministic 0-100 enterprise health index."""
 
-from typing import List, Optional, Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from app.core.constants import BusinessHealthStatus, RecommendationPriority
 from app.intelligence.constants import (
@@ -15,9 +17,13 @@ from app.intelligence.constants import (
     RECOMMENDATION_RECOVERY_BONUS_PER_ITEM,
     health_score_to_status,
 )
-from app.models.diagnostic_finding import DiagnosticFinding
-from app.models.recommendation import Recommendation
-from app.models.root_cause_analysis import RootCauseAnalysis
+
+if TYPE_CHECKING:
+    from app.models.diagnostic_finding import DiagnosticFinding
+    from app.models.recommendation import Recommendation
+    from app.models.root_cause_analysis import RootCauseAnalysis
+
+
 
 
 class BusinessHealthScoreEngine:

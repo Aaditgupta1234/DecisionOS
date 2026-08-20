@@ -55,31 +55,52 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // First try JSON login endpoint, fallback to OAuth2 password form
       let loginData: any;
       try {
-        loginData = await axiosInstance.post('/auth/login', { email, password });
-      } catch {
+        loginData = await axiosInstance.post('/auth/login/json', { email, password });
+      } catch (jsonErr) {
         const formData = new URLSearchParams();
         formData.append('username', email);
         formData.append('password', password);
-        loginData = await axiosInstance.post('/auth/access-token', formData, {
+        loginData = await axiosInstance.post('/auth/login', formData, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
       }
 
-      const receivedToken = loginData.access_token || loginData.token;
-      const userData: User = loginData.user || {
-        id: 'usr_exec',
-        email: email,
-        full_name: email.split('@')[0],
-        is_active: true,
-        role: 'executive',
-      };
+      const receivedToken = loginData?.access_token || loginData?.token;
+      if (!receivedToken) {
+        throw new Error('Authentication failed: no access token returned.');
+      }
 
+      // Save token first
       setToken(receivedToken);
-      setUser(userData);
       localStorage.setItem('decisionos_token', receivedToken);
+
+      // Fetch user profile from /auth/me
+      let userData: User;
+      try {
+        const profile: any = await axiosInstance.get('/auth/me', {
+          headers: { Authorization: `Bearer ${receivedToken}` },
+        });
+        userData = {
+          id: profile.id || profile.user_id || 'usr_1',
+          email: profile.email || email,
+          full_name: profile.full_name || email.split('@')[0],
+          is_active: profile.is_active ?? true,
+          role: profile.role || (email.includes('admin') || email.includes('executive') ? 'executive' : 'analyst'),
+          organization_id: profile.organization_id,
+        };
+      } catch {
+        userData = {
+          id: 'usr_exec',
+          email: email,
+          full_name: email.split('@')[0],
+          is_active: true,
+          role: email.includes('admin') || email.includes('executive') ? 'executive' : 'analyst',
+        };
+      }
+
+      setUser(userData);
       localStorage.setItem('decisionos_user', JSON.stringify(userData));
     } catch (err: any) {
       throw err;
