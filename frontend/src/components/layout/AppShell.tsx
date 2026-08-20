@@ -26,7 +26,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         <main 
           style={{ 
             flex: 1, 
-            padding: '28px 32px 64px 32px', 
+            padding: '16px 20px 36px 20px', 
             overflowY: 'auto', 
             backgroundColor: '#040507',
             backgroundImage: 'radial-gradient(circle at 50% -12%, rgba(56, 189, 248, 0.08) 0%, transparent 60%)',

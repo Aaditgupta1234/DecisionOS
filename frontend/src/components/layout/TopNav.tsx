@@ -53,35 +53,39 @@ export const TopNav: React.FC<TopNavProps> = ({
     <header
       style={{
         height: 'var(--header-height)',
-        backgroundColor: 'rgba(6, 8, 13, 0.85)',
+        backgroundColor: 'rgba(6, 8, 13, 0.9)',
         backdropFilter: 'blur(16px)',
         borderBottom: '1px solid #14171E',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 24px',
+        padding: '0 12px',
         position: 'sticky',
         top: 0,
         zIndex: 50,
+        gap: '6px',
+        overflow: 'visible',
       }}
     >
       {/* Left: Organization & Workspace Switcher + Time Travel */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 1, minWidth: 0 }}>
         {/* Back to Marketing Home Link */}
         <Link
           to="/"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '5px',
-            padding: '5px 10px',
+            gap: '4px',
+            padding: '4px 8px',
             background: '#080A0F',
             border: '1px solid #14171E',
-            borderRadius: '6px',
+            borderRadius: '5px',
             color: '#94A3B8',
-            fontSize: '0.74rem',
+            fontSize: '0.72rem',
             fontWeight: 700,
             textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
             transition: 'all 0.15s ease',
           }}
         >
@@ -89,26 +93,27 @@ export const TopNav: React.FC<TopNavProps> = ({
         </Link>
 
         {/* Org Switcher */}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setIsOrgDropdownOpen(!isOrgDropdownOpen)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '5px 10px',
+              gap: '5px',
+              padding: '4px 8px',
               background: '#080A0F',
               border: '1px solid #14171E',
-              borderRadius: '6px',
+              borderRadius: '5px',
               color: '#FFFFFF',
-              fontSize: '0.78rem',
+              fontSize: '0.74rem',
               fontWeight: 700,
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
             }}
           >
-            <Building2 size={13} color="#38BDF8" />
+            <Building2 size={12} color="#38BDF8" />
             <span>{activeOrg.name}</span>
-            <ChevronDown size={12} color="#64748B" />
+            <ChevronDown size={11} color="#64748B" />
           </button>
 
           {isOrgDropdownOpen && (
@@ -155,29 +160,30 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
 
         {/* Universal Dataset Context Switcher */}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setIsDatasetDropdownOpen(!isDatasetDropdownOpen)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '5px 10px',
+              gap: '5px',
+              padding: '4px 8px',
               background: '#080A0F',
               border: '1px solid #14171E',
-              borderRadius: '6px',
+              borderRadius: '5px',
               color: '#FFFFFF',
-              fontSize: '0.78rem',
+              fontSize: '0.74rem',
               fontWeight: 700,
               cursor: 'pointer',
+              whiteSpace: 'nowrap',
             }}
           >
-            <Database size={13} color="#10B981" />
+            <Database size={12} color="#10B981" />
             <span style={{ color: '#64748B', fontWeight: 500 }}>Dataset:</span>
-            <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {activeDataset?.name || 'SaaS Telemetry Q1'}
             </span>
-            <ChevronDown size={12} color="#64748B" />
+            <ChevronDown size={11} color="#64748B" />
           </button>
 
           {isDatasetDropdownOpen && (
@@ -252,25 +258,26 @@ export const TopNav: React.FC<TopNavProps> = ({
       </div>
 
       {/* Right Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
         {/* Onboarding Wizard Trigger */}
         <button
           onClick={onOpenOnboarding}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '5px 10px',
+            gap: '4px',
+            padding: '4px 8px',
             background: 'rgba(168, 85, 247, 0.1)',
             border: '1px solid rgba(168, 85, 247, 0.3)',
-            borderRadius: '6px',
+            borderRadius: '5px',
             color: '#A855F7',
-            fontSize: '0.74rem',
+            fontSize: '0.72rem',
             fontWeight: 700,
             cursor: 'pointer',
+            whiteSpace: 'nowrap',
           }}
         >
-          <Sparkles size={13} />
+          <Sparkles size={12} />
           <span>SaaS Setup Wizard</span>
         </button>
 
@@ -280,59 +287,63 @@ export const TopNav: React.FC<TopNavProps> = ({
           style={{
             background: '#080A0F',
             border: '1px solid #14171E',
-            borderRadius: '6px',
-            padding: '6px 8px',
+            borderRadius: '5px',
+            padding: '4px 6px',
             color: '#F59E0B',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
             position: 'relative',
           }}
+          title="Audit & System Notifications"
         >
-          <Bell size={14} />
-          <span
+          <Bell size={13} />
+          <div
             style={{
               position: 'absolute',
               top: '3px',
               right: '3px',
-              width: '6px',
-              height: '6px',
+              width: '5px',
+              height: '5px',
               borderRadius: '50%',
               background: '#EF4444',
             }}
           />
         </button>
 
-        {/* User Profile Menu */}
+        {/* User / Profile Menu */}
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              background: 'transparent',
-              border: 'none',
+              gap: '4px',
+              padding: '2px 4px',
+              background: '#080A0F',
+              border: '1px solid #14171E',
+              borderRadius: '5px',
               cursor: 'pointer',
             }}
           >
             <div
               style={{
-                width: '26px',
-                height: '26px',
+                width: '22px',
+                height: '22px',
                 borderRadius: '50%',
                 background: 'linear-gradient(135deg, #1D4ED8, #0284C7)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#FFFFFF',
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: 800,
               }}
             >
               {user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'E'}
             </div>
-            <ChevronDown size={11} color="#64748B" />
+            <ChevronDown size={10} color="#64748B" />
           </button>
 
           {isUserMenuOpen && (

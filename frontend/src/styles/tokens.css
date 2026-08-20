@@ -62,8 +62,8 @@
   --shadow-glow-ai: 0 0 20px rgba(139, 92, 246, 0.25);
 
   /* Layout */
-  --sidebar-width: 260px;
-  --header-height: 64px;
+  --sidebar-width: 236px;
+  --header-height: 52px;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;

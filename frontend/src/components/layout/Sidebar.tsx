@@ -66,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
       </NavLink>
 
       {/* Quick Search Button (Ctrl+K) */}
-      <div style={{ padding: '10px 12px 6px 12px' }}>
+      <div style={{ padding: '6px 10px 4px 10px' }}>
         <button
           onClick={onOpenSearch}
           style={{
@@ -74,29 +74,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '8px 10px',
+            padding: '6px 8px',
             background: '#080A0F',
             border: '1px solid #14171E',
-            borderRadius: '8px',
+            borderRadius: '6px',
             color: '#94A3B8',
-            fontSize: '0.78rem',
+            fontSize: '0.74rem',
             cursor: 'pointer',
             transition: 'border-color 0.15s ease',
           }}
         >
-          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Command size={13} color="#38BDF8" />
+          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Command size={12} color="#38BDF8" />
             Quick Command
           </span>
-          <kbd style={{ fontSize: '0.65rem', background: '#040507', border: '1px solid #14171E', padding: '2px 5px', borderRadius: '4px', color: '#64748B' }}>
+          <kbd style={{ fontSize: '0.62rem', background: '#040507', border: '1px solid #14171E', padding: '1px 4px', borderRadius: '3px', color: '#64748B' }}>
             Ctrl+K
           </kbd>
         </button>
       </div>
 
       {/* Navigation Links (21 Core Modules) */}
-      <nav style={{ flex: 1, padding: '8px 10px', overflowY: 'auto' }}>
-        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '3px', padding: 0, margin: 0 }}>
+      <nav style={{ flex: 1, padding: '4px 8px', overflowY: 'auto' }}>
+        <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '2px', padding: 0, margin: 0 }}>
           {routesConfig.map((item) => {
             const Icon = item.icon;
             return (
@@ -107,45 +107,54 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '8px 10px',
-                    borderRadius: '8px',
+                    padding: '5px 8px',
+                    borderRadius: '6px',
                     color: isActive ? '#FFFFFF' : '#94A3B8',
                     backgroundColor: isActive ? 'rgba(56, 189, 248, 0.08)' : 'transparent',
                     border: isActive ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid transparent',
                     borderLeft: isActive ? '3px solid #38BDF8' : '1px solid transparent',
                     fontWeight: isActive ? 700 : 500,
-                    fontSize: '0.82rem',
+                    fontSize: '0.76rem',
                     transition: 'all 0.15s ease',
                     textDecoration: 'none',
                   })}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                    <Icon size={15} style={{ opacity: 0.9, flexShrink: 0 }} />
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px', minWidth: 0, flex: 1 }}>
+                    <Icon size={14} style={{ opacity: 0.9, flexShrink: 0 }} />
+                    <span 
+                      title={item.title}
+                      style={{ 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis', 
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.76rem',
+                        letterSpacing: '-0.01em',
+                      }}
+                    >
                       {item.title}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {item.shortcut && (
-                      <span style={{ fontSize: '0.6rem', color: '#475569', fontFamily: 'monospace' }}>
-                        {item.shortcut}
-                      </span>
-                    )}
-                    {item.badge && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0, marginLeft: '4px' }}>
+                    {item.badge ? (
                       <span
                         style={{
-                          fontSize: '0.6rem',
+                          fontSize: '0.54rem',
                           fontWeight: 800,
-                          padding: '1px 5px',
-                          borderRadius: '4px',
+                          padding: '1px 4px',
+                          borderRadius: '3px',
                           backgroundColor: 'rgba(56, 189, 248, 0.12)',
                           color: item.badgeColor || '#38BDF8',
                           border: `1px solid ${item.badgeColor || 'rgba(56, 189, 248, 0.25)'}`,
+                          letterSpacing: '0.02em',
                         }}
                       >
                         {item.badge}
                       </span>
-                    )}
+                    ) : item.shortcut ? (
+                      <span style={{ fontSize: '0.58rem', color: '#475569', fontFamily: 'monospace' }}>
+                        {item.shortcut}
+                      </span>
+                    ) : null}
                   </div>
                 </NavLink>
               </li>

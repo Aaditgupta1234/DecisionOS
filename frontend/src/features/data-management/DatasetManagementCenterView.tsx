@@ -99,42 +99,42 @@ export const DatasetManagementCenterView: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '32px' }}>
       
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#10B981', fontWeight: 800 }}>
-            <Database size={13} color="#10B981" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#10B981', fontWeight: 800 }}>
+            <Database size={12} color="#10B981" />
             <span>ENTERPRISE INGESTION PIPELINE & SCHEMA MAPPING</span>
           </div>
-          <h1 style={{ fontSize: '1.9rem', fontWeight: 900, color: '#FFFFFF', margin: '4px 0 0 0', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '1.55rem', fontWeight: 900, color: '#FFFFFF', margin: '2px 0 0 0', letterSpacing: '-0.02em' }}>
             Enterprise Data Hub
           </h1>
-          <p style={{ color: '#94A3B8', fontSize: '0.88rem', margin: '4px 0 0 0' }}>
+          <p style={{ color: '#94A3B8', fontSize: '0.8rem', margin: '2px 0 0 0' }}>
             Universal CSV ingestion, automated column schema inference, and one-click intelligence synthesis.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', flexShrink: 0 }}>
           <button
             onClick={handleLoadDemoDataset}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '9px 14px',
+              gap: '5px',
+              padding: '7px 12px',
               background: 'rgba(56, 189, 248, 0.1)',
               border: '1px solid rgba(56, 189, 248, 0.35)',
-              borderRadius: '8px',
+              borderRadius: '6px',
               color: '#38BDF8',
-              fontSize: '0.82rem',
+              fontSize: '0.78rem',
               fontWeight: 700,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
           >
-            <Sparkles size={14} />
+            <Sparkles size={13} />
             <span>Load Benchmark Demo Data</span>
           </button>
 
@@ -142,19 +142,19 @@ export const DatasetManagementCenterView: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '9px 16px',
+              gap: '5px',
+              padding: '7px 14px',
               background: '#FFFFFF',
               border: '1px solid #FFFFFF',
-              borderRadius: '8px',
+              borderRadius: '6px',
               color: '#000000',
-              fontSize: '0.82rem',
+              fontSize: '0.78rem',
               fontWeight: 800,
               cursor: isUploading ? 'not-allowed' : 'pointer',
               transition: 'all 0.15s ease',
             }}
           >
-            <Upload size={14} />
+            <Upload size={13} />
             <span>{isUploading ? 'Ingesting CSV...' : 'Upload CSV Dataset'}</span>
             <input
               type="file"
@@ -169,21 +169,21 @@ export const DatasetManagementCenterView: React.FC = () => {
 
       {/* Feedback Banners */}
       {successMsg && (
-        <div style={{ padding: '12px 18px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.35)', borderRadius: '10px', color: '#10B981', fontSize: '0.86rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <CheckCircle2 size={16} />
+        <div style={{ padding: '10px 14px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.35)', borderRadius: '8px', color: '#10B981', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <CheckCircle2 size={15} />
           <span>{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div style={{ padding: '12px 18px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '10px', color: '#EF4444', fontSize: '0.86rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <AlertTriangle size={16} />
+        <div style={{ padding: '10px 14px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '8px', color: '#EF4444', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <AlertTriangle size={15} />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Cockpit Telemetry Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
         <MetricTile 
           label="REGISTERED DATASETS" 
           value={`${datasets.length > 0 ? datasets.length : 3} Datasets`} 
@@ -215,14 +215,14 @@ export const DatasetManagementCenterView: React.FC = () => {
         style={{
           background: 'linear-gradient(180deg, #0B0E14 0%, #06080C 100%)',
           border: '2px dashed #1E293B',
-          borderRadius: '14px',
-          padding: '36px 24px',
+          borderRadius: '10px',
+          padding: '18px 20px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          gap: '12px',
+          gap: '8px',
         }}
       >
         <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -257,18 +257,18 @@ export const DatasetManagementCenterView: React.FC = () => {
       </div>
 
       {/* SECTION 2: Managed & Uploaded Datasets Table */}
-      <Card style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <Card style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF' }}>Ingested Datasets & Active Analytical Context</div>
-            <div style={{ fontSize: '0.78rem', color: '#64748B' }}>Select an active dataset to broadcast its context across all DecisionOS studios.</div>
+            <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF' }}>Ingested Datasets & Active Analytical Context</div>
+            <div style={{ fontSize: '0.72rem', color: '#64748B' }}>Select an active dataset to broadcast its context across all DecisionOS studios.</div>
           </div>
           <Badge variant="emerald" size="sm">
             {datasets.length > 0 ? `${datasets.length} REGISTERED` : '3 BENCHMARKS LOADED'}
           </Badge>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {(datasets.length > 0 ? datasets : demoBenchmarks).map((ds: any) => {
             const isActive = activeDataset?.id === ds.id || (!activeDataset && ds.id === 'demo-saas-arr');
 
@@ -278,76 +278,76 @@ export const DatasetManagementCenterView: React.FC = () => {
                 style={{
                   background: isActive ? 'rgba(56, 189, 248, 0.06)' : '#080A0F',
                   border: isActive ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid #14171E',
-                  borderRadius: '10px',
-                  padding: '18px 20px',
+                  borderRadius: '8px',
+                  padding: '10px 14px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '14px',
+                  gap: '10px',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div
                     onClick={() => setActiveDataset(ds)}
                     style={{
-                      width: '18px',
-                      height: '18px',
+                      width: '16px',
+                      height: '16px',
                       borderRadius: '50%',
-                      border: isActive ? '5px solid #38BDF8' : '2px solid #64748B',
+                      border: isActive ? '4px solid #38BDF8' : '2px solid #64748B',
                       background: '#040507',
                       cursor: 'pointer',
                     }}
                     title="Set as Active Context"
                   />
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Database size={15} color={isActive ? '#38BDF8' : '#64748B'} />
-                      <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#FFFFFF' }}>{ds.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Database size={14} color={isActive ? '#38BDF8' : '#64748B'} />
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF' }}>{ds.name}</span>
                       {isActive && (
-                        <span style={{ fontSize: '0.66rem', fontWeight: 800, background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
+                        <span style={{ fontSize: '0.62rem', fontWeight: 800, background: 'rgba(56, 189, 248, 0.15)', color: '#38BDF8', padding: '1px 5px', borderRadius: '3px', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
                           ACTIVE CONTEXT
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: '0.78rem', color: '#94A3B8', marginTop: '4px' }}>
+                    <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '2px' }}>
                       Rows: <strong style={{ color: '#FFFFFF' }}>{ds.rows || '1.42M events'}</strong> • Status: <span style={{ color: '#10B981', fontWeight: 700 }}>PROCESSED</span> • Lineage: {ds.validationRating || '100% Conformance'}
                     </div>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <button
                     onClick={() => handleRunPipeline(ds.id)}
                     disabled={isProcessing === ds.id}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
-                      padding: '7px 12px',
+                      gap: '5px',
+                      padding: '5px 10px',
                       background: '#040507',
                       border: '1px solid #1E293B',
-                      borderRadius: '6px',
+                      borderRadius: '5px',
                       color: '#10B981',
-                      fontSize: '0.78rem',
+                      fontSize: '0.74rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                     }}
                   >
-                    <Play size={12} fill="#10B981" />
+                    <Play size={11} fill="#10B981" />
                     <span>{isProcessing === ds.id ? 'Running Calculus...' : 'Run Pipeline'}</span>
                   </button>
 
                   <button
                     onClick={() => setActiveDataset(ds)}
                     style={{
-                      padding: '7px 12px',
+                      padding: '5px 10px',
                       background: isActive ? '#38BDF8' : '#040507',
                       border: '1px solid #1E293B',
-                      borderRadius: '6px',
+                      borderRadius: '5px',
                       color: isActive ? '#000000' : '#94A3B8',
-                      fontSize: '0.78rem',
+                      fontSize: '0.74rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                     }}
@@ -362,38 +362,38 @@ export const DatasetManagementCenterView: React.FC = () => {
       </Card>
 
       {/* SECTION 3: Automated Column & Schema Mapping */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '12px' }}>
         
         {/* Mapping Preview */}
-        <Card style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <Card style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Cpu size={15} color="#38BDF8" />
+            <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Cpu size={14} color="#38BDF8" />
               Automated Schema & Column Mapping
             </span>
-            <span style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700 }}>● 100% Inferred</span>
+            <span style={{ fontSize: '0.68rem', color: '#10B981', fontWeight: 700 }}>● 100% Inferred</span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: '#040507', border: '1px solid #14171E', borderRadius: '6px', fontSize: '0.78rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: '#040507', border: '1px solid #14171E', borderRadius: '5px', fontSize: '0.74rem' }}>
               <span style={{ color: '#FFFFFF', fontWeight: 700 }}>revenue / contract_arr</span>
               <span style={{ color: '#64748B' }}>→</span>
               <span style={{ color: '#38BDF8', fontWeight: 700 }}>Float (Financial Currency)</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: '#040507', border: '1px solid #14171E', borderRadius: '6px', fontSize: '0.78rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: '#040507', border: '1px solid #14171E', borderRadius: '5px', fontSize: '0.74rem' }}>
               <span style={{ color: '#FFFFFF', fontWeight: 700 }}>churn_status / retained</span>
               <span style={{ color: '#64748B' }}>→</span>
               <span style={{ color: '#10B981', fontWeight: 700 }}>Boolean / Cohort Flag</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: '#040507', border: '1px solid #14171E', borderRadius: '6px', fontSize: '0.78rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: '#040507', border: '1px solid #14171E', borderRadius: '5px', fontSize: '0.74rem' }}>
               <span style={{ color: '#FFFFFF', fontWeight: 700 }}>customer_id / account_uuid</span>
               <span style={{ color: '#64748B' }}>→</span>
               <span style={{ color: '#818CF8', fontWeight: 700 }}>Unique Dimension Key</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: '#040507', border: '1px solid #14171E', borderRadius: '6px', fontSize: '0.78rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', background: '#040507', border: '1px solid #14171E', borderRadius: '5px', fontSize: '0.74rem' }}>
               <span style={{ color: '#FFFFFF', fontWeight: 700 }}>timestamp / ingestion_date</span>
               <span style={{ color: '#64748B' }}>→</span>
               <span style={{ color: '#F59E0B', fontWeight: 700 }}>ISO-8601 Temporal Timestamp</span>
@@ -402,79 +402,79 @@ export const DatasetManagementCenterView: React.FC = () => {
         </Card>
 
         {/* SECTION 4: One-Click Pipeline Execution Flow */}
-        <Card style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Zap size={15} color="#F59E0B" />
+        <Card style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Zap size={14} color="#F59E0B" />
             DecisionOS Downstream Pipeline Triggers
           </span>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             <Link
-              to="/portfolio"
+              to="/portfolio-rollup"
               style={{
-                padding: '12px',
+                padding: '9px 10px',
                 background: '#040507',
                 border: '1px solid #14171E',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 textDecoration: 'none',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '4px',
+                gap: '2px',
               }}
             >
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38BDF8' }}>1. Calculate KPIs →</span>
-              <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Compute 32 deterministic KPIs</span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38BDF8' }}>1. Calculate KPIs →</span>
+              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>Compute 32 deterministic KPIs</span>
             </Link>
 
             <Link
               to="/diagnostics"
               style={{
-                padding: '12px',
+                padding: '9px 10px',
                 background: '#040507',
                 border: '1px solid #14171E',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 textDecoration: 'none',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '4px',
+                gap: '2px',
               }}
             >
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#EF4444' }}>2. Run Diagnostics →</span>
-              <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Identify 4 root causes</span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#EF4444' }}>2. Run Diagnostics →</span>
+              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>Identify 4 root causes</span>
             </Link>
 
             <Link
               to="/boardroom"
               style={{
-                padding: '12px',
+                padding: '9px 10px',
                 background: '#040507',
                 border: '1px solid #14171E',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 textDecoration: 'none',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '4px',
+                gap: '2px',
               }}
             >
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#F59E0B' }}>3. Boardroom Report →</span>
-              <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Executive briefing deck</span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#F59E0B' }}>3. Boardroom Report →</span>
+              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>Executive briefing deck</span>
             </Link>
 
             <Link
               to="/digital-twin"
               style={{
-                padding: '12px',
+                padding: '9px 10px',
                 background: '#040507',
                 border: '1px solid #14171E',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 textDecoration: 'none',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '4px',
+                gap: '2px',
               }}
             >
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#A855F7' }}>4. Digital Twin →</span>
-              <span style={{ fontSize: '0.72rem', color: '#64748B' }}>Scenario stress test</span>
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#A855F7' }}>4. Digital Twin →</span>
+              <span style={{ fontSize: '0.68rem', color: '#64748B' }}>Scenario stress test</span>
             </Link>
           </div>
         </Card>

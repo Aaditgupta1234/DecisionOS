@@ -14,23 +14,23 @@ export const BoardroomCenterView: React.FC = () => {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '32px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F59E0B', fontWeight: 800 }}>
+          <div style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#F59E0B', fontWeight: 800 }}>
             C-Suite & Board of Directors Executive Layer
           </div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '4px 0 0 0' }}>
+          <h1 style={{ fontSize: '1.55rem', fontWeight: 900, color: '#FFFFFF', margin: '2px 0 0 0', letterSpacing: '-0.02em' }}>
             Executive Boardroom Intelligence & Meeting Packs
           </h1>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
           <Button
             variant="primary"
             size="sm"
-            icon={<Download size={14} />}
+            icon={<Download size={13} />}
             onClick={() => setDownloadSuccess(true)}
           >
             Export Complete Board Pack (PDF + Markdown)
@@ -38,8 +38,8 @@ export const BoardroomCenterView: React.FC = () => {
         </div>
       </div>
 
-      {/* Hero Metrics */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      {/* Hero Metrics (4 Columns Single Row) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
         <MetricTile label="ENTERPRISE INTELLIGENCE SCORE" value="93.1" sublabel="Grade A+ Certified Platform" valueColor="#10B981" />
         <MetricTile label="Q1 REALIZED VALUE (ARR)" value="+$312,000" sublabel="91.8% Decision Accuracy" valueColor="#38BDF8" />
         <MetricTile label="CAPITAL DEPLOYMENT ROI" value="6.02x" sublabel="$1M Investment Model" valueColor="#A855F7" />
