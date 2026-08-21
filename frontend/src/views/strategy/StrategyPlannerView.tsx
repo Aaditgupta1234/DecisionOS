@@ -45,14 +45,17 @@ export const StrategyPlannerView: React.FC = () => {
   };
 
   const handleToggleAction = async (milestoneIdx: number, actionIdx: number) => {
-    if (!strategy) return;
+    if (!strategy || !strategy.strategic_milestones) return;
     const milestone = strategy.strategic_milestones[milestoneIdx];
+    if (!milestone || !milestone.actions) return;
     const action = milestone.actions[actionIdx];
     const newStatus = !action.is_completed;
 
     // Optimistic UI update
     const updated = JSON.parse(JSON.stringify(strategy)) as StrategyPlan;
-    updated.strategic_milestones[milestoneIdx].actions[actionIdx].is_completed = newStatus;
+    if (updated.strategic_milestones?.[milestoneIdx]?.actions?.[actionIdx]) {
+      updated.strategic_milestones[milestoneIdx].actions![actionIdx].is_completed = newStatus;
+    }
     setStrategy(updated);
 
     try {
@@ -160,7 +163,7 @@ export const StrategyPlannerView: React.FC = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <Target size={14} color="var(--color-primary-light)" />
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Target KPIs:</span>
-                      {m.target_metrics.map((t) => (
+                      {m.target_metrics.map((t: string) => (
                         <span key={t} className="badge badge-neutral" style={{ fontSize: '0.65rem' }}>
                           {t}
                         </span>
@@ -171,7 +174,7 @@ export const StrategyPlannerView: React.FC = () => {
 
                 {/* Actions Checklist */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {m.actions.map((act, aIdx) => (
+                  {(m.actions || []).map((act: any, aIdx: number) => (
                     <div
                       key={act.id || aIdx}
                       onClick={() => handleToggleAction(mIdx, aIdx)}

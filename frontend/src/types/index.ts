@@ -218,29 +218,66 @@ export interface AIInsight {
 }
 
 export interface StrategicAction {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   time_horizon: string;
   owner_role?: string;
-  is_completed: boolean;
+  is_completed?: boolean;
 }
 
 export interface StrategicMilestone {
-  horizon: string;
-  theme: string;
-  target_metrics: string[];
-  actions: StrategicAction[];
+  horizon?: string;
+  theme?: string;
+  title?: string;
+  target_metrics?: string[];
+  actions?: StrategicAction[];
+}
+
+export interface StrategicPriorityItem {
+  title: string;
+  priority: RecommendationPriority | string;
+  source_recommendation_ids?: string[];
+  rationale?: string;
+}
+
+export interface StrategyActionItem {
+  title: string;
+  description: string;
+  time_horizon: string;
+  source_recommendation_id?: string;
+  dependencies?: string[];
+}
+
+export interface StrategyMilestoneItem {
+  title: string;
+  time_horizon: string;
+  focus_area?: string;
+  key_deliverables?: string[];
+  success_criteria?: string[];
+}
+
+export interface SuccessCriterionItem {
+  metric_key: string;
+  target_direction: string;
+  source?: string;
+  rationale?: string;
 }
 
 export interface StrategyPlan {
   id: string;
   dataset_id: string;
   plan_version: string;
-  status: StrategyPlanStatus;
+  status: StrategyPlanStatus | string;
+  title?: string;
+  objective?: string;
   executive_summary: string;
-  strategic_milestones: StrategicMilestone[];
-  model_name: string;
+  strategic_priorities?: StrategicPriorityItem[];
+  action_items?: StrategyActionItem[];
+  milestones?: StrategyMilestoneItem[];
+  strategic_milestones?: StrategicMilestone[];
+  success_criteria?: SuccessCriterionItem[];
+  model_name?: string;
   created_at: string;
 }
 

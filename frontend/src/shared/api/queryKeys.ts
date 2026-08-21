@@ -46,4 +46,7 @@ export const queryKeys = {
     sessions: ['chat', 'sessions'] as const,
     messages: (sessionId: string) => ['chat', sessionId, 'messages'] as const,
   },
+  strategy: {
+    latest: (datasetId: string) => ['datasets', datasetId, 'strategy', 'latest'] as const,
+  },
 };

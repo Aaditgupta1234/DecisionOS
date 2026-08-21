@@ -364,14 +364,14 @@ export const ExecutiveReportDocument = forwardRef<HTMLDivElement, ExecutiveRepor
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {(strategyPlan.strategic_milestones || []).map((m, idx) => (
+              {(strategyPlan.strategic_milestones || []).map((m: any, idx: number) => (
                 <div key={idx} className="card" style={{ padding: '12px 16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <span className="badge badge-primary">{m.horizon}</span>
                     <strong style={{ color: '#ffffff' }}>{m.theme}</strong>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '6px' }}>
-                    {m.actions.map((act, aIdx) => (
+                    {(m.actions || []).map((act: any, aIdx: number) => (
                       <div key={aIdx} style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                         • <strong>{act.title}:</strong> {act.description}
                       </div>
