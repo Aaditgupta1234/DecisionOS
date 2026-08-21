@@ -38,27 +38,54 @@ export const EnterpriseCommandCenterView: React.FC = () => {
 
   // In-place CSV Dataset Upload Handler
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const csvFiles = Array.from(files).filter(f => f.name.toLowerCase().endsWith('.csv') || f.type === 'text/csv' || !f.name.includes('.'));
+    if (csvFiles.length === 0) {
+      setUploadError('Please select valid .csv dataset file(s).');
+      return;
+    }
 
     try {
       setIsUploading(true);
       setUploadError(null);
-      setQuickNotice(`Uploading & parsing "${file.name}"... Initializing 8-stage intelligence pipeline.`);
       
-      const newDataset = await DecisionApi.uploadDataset(file);
-      if (newDataset) {
-        setActiveDataset(newDataset);
+      let lastDataset = null;
+      let count = 0;
+
+      for (let i = 0; i < csvFiles.length; i++) {
+        const file = csvFiles[i];
+        if (csvFiles.length > 1) {
+          setQuickNotice(`Uploading & parsing file ${i + 1} of ${csvFiles.length}: "${file.name}"... Initializing 8-stage intelligence pipeline.`);
+        } else {
+          setQuickNotice(`Uploading & parsing "${file.name}"... Initializing 8-stage intelligence pipeline.`);
+        }
+
+        const newDataset = await DecisionApi.uploadDataset(file);
+        if (newDataset) {
+          lastDataset = newDataset;
+          count++;
+        }
+      }
+
+      if (lastDataset) {
+        setActiveDataset(lastDataset);
         await refreshDatasets();
         await queryClient.invalidateQueries();
-        await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(newDataset.id) });
-        await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(newDataset.id) });
-        setQuickNotice(`Dataset "${newDataset.name}" uploaded and active! Real intelligence pipeline computed.`);
+        await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(lastDataset.id) });
+        await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(lastDataset.id) });
+        
+        if (count === 1) {
+          setQuickNotice(`Dataset "${lastDataset.name}" uploaded and active! Real intelligence pipeline computed.`);
+        } else {
+          setQuickNotice(`Successfully uploaded ${count} datasets! Dataset "${lastDataset.name}" is now active.`);
+        }
         setTimeout(() => setQuickNotice(null), 5000);
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
-      setUploadError(err?.message || 'Failed to upload CSV dataset.');
+      setUploadError(err?.message || 'Failed to upload CSV dataset(s).');
       setQuickNotice(null);
     } finally {
       setIsUploading(false);
@@ -158,10 +185,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
           }}
         >
           {isUploading ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
-          <span>{isUploading ? 'Ingesting Dataset...' : 'Upload CSV Dataset Directly'}</span>
+          <span>{isUploading ? 'Ingesting Dataset(s)...' : 'Upload CSV Dataset(s) Directly'}</span>
           <input
             type="file"
             accept=".csv"
+            multiple
             style={{ display: 'none' }}
             onChange={handleFileUpload}
             disabled={isUploading}
@@ -305,10 +333,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             }}
           >
             {isUploading ? <RefreshCw size={12} className="animate-spin" /> : <Upload size={12} />}
-            <span>{isUploading ? 'Ingesting Dataset...' : 'Upload Enterprise Dataset'}</span>
+            <span>{isUploading ? 'Ingesting Dataset(s)...' : 'Upload Enterprise Dataset(s)'}</span>
             <input
               type="file"
               accept=".csv"
+              multiple
               style={{ display: 'none' }}
               onChange={handleFileUpload}
               disabled={isUploading}

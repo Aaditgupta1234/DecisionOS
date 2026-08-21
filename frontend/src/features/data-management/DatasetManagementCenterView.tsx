@@ -28,6 +28,8 @@ export const DatasetManagementCenterView: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -77,27 +79,88 @@ export const DatasetManagementCenterView: React.FC = () => {
     },
   ];
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const processFiles = async (files: File[]) => {
+    const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv') || f.type === 'text/csv' || !f.name.includes('.'));
+    if (csvFiles.length === 0) {
+      setErrorMsg('Please select or drop valid .csv dataset file(s).');
+      return;
+    }
 
     try {
       setIsUploading(true);
       setErrorMsg(null);
       setSuccessMsg(null);
-      const newDataset = await DecisionApi.uploadDataset(file);
-      if (newDataset) {
-        setActiveDataset(newDataset);
-        await refreshDatasets();
-        await queryClient.invalidateQueries();
-        setSuccessMsg(`Dataset "${newDataset.name}" ingested successfully! Schema mapped and intelligence computed.`);
+
+      let lastDataset = null;
+      let successCount = 0;
+
+      for (let i = 0; i < csvFiles.length; i++) {
+        const file = csvFiles[i];
+        if (csvFiles.length > 1) {
+          setUploadProgress(`Ingesting file ${i + 1} of ${csvFiles.length}: "${file.name}"...`);
+        } else {
+          setUploadProgress(`Ingesting dataset "${file.name}"... Computing deterministic intelligence.`);
+        }
+
+        try {
+          const newDataset = await DecisionApi.uploadDataset(file);
+          if (newDataset) {
+            lastDataset = newDataset;
+            successCount++;
+          }
+        } catch (err: any) {
+          console.error(`Error uploading ${file.name}:`, err);
+        }
+      }
+
+      await refreshDatasets();
+      await queryClient.invalidateQueries();
+
+      if (lastDataset) {
+        setActiveDataset(lastDataset);
+      }
+
+      if (successCount === 1 && lastDataset) {
+        setSuccessMsg(`Dataset "${lastDataset.name}" ingested successfully! Schema mapped and intelligence computed.`);
+      } else if (successCount > 1) {
+        setSuccessMsg(`Successfully uploaded and processed ${successCount} datasets! Schema mapped and intelligence pipelines computed.`);
+      } else {
+        setErrorMsg('Failed to process uploaded file(s). Please verify the CSV format.');
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
-      setErrorMsg(err?.message || 'Failed to upload CSV dataset.');
+      setErrorMsg(err?.message || 'Failed to upload CSV dataset(s).');
     } finally {
       setIsUploading(false);
-      e.target.value = '';
+      setUploadProgress(null);
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    processFiles(Array.from(files));
+    e.target.value = '';
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(Array.from(e.dataTransfer.files));
     }
   };
 
@@ -180,11 +243,12 @@ export const DatasetManagementCenterView: React.FC = () => {
               transition: 'all 0.15s ease',
             }}
           >
-            <Upload size={13} />
-            <span>{isUploading ? 'Ingesting CSV...' : 'Upload CSV Dataset'}</span>
+            {isUploading ? <RefreshCw size={13} className="animate-spin" /> : <Upload size={13} />}
+            <span>{isUploading ? 'Ingesting Dataset(s)...' : 'Upload CSV Dataset(s)'}</span>
             <input
               type="file"
               accept=".csv"
+              multiple
               onChange={handleFileUpload}
               disabled={isUploading}
               style={{ display: 'none' }}
@@ -193,7 +257,14 @@ export const DatasetManagementCenterView: React.FC = () => {
         </div>
       </div>
 
-      {/* Feedback Banners */}
+      {/* Progress & Feedback Banners */}
+      {uploadProgress && (
+        <div style={{ padding: '10px 14px', background: 'rgba(56, 189, 248, 0.12)', border: '1px solid rgba(56, 189, 248, 0.35)', borderRadius: '8px', color: '#38BDF8', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <RefreshCw size={15} className="animate-spin" />
+          <span>{uploadProgress}</span>
+        </div>
+      )}
+
       {successMsg && (
         <div style={{ padding: '10px 14px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.35)', borderRadius: '8px', color: '#10B981', fontSize: '0.8rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
           <CheckCircle2 size={15} />
@@ -238,28 +309,35 @@ export const DatasetManagementCenterView: React.FC = () => {
 
       {/* SECTION 1: Drag & Drop CSV Ingestion Box */}
       <div
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
         style={{
-          background: 'linear-gradient(180deg, #0B0E14 0%, #06080C 100%)',
-          border: '2px dashed #1E293B',
+          background: isDragging 
+            ? 'linear-gradient(180deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.08) 100%)' 
+            : 'linear-gradient(180deg, #0B0E14 0%, #06080C 100%)',
+          border: isDragging ? '2px dashed #38BDF8' : '2px dashed #1E293B',
           borderRadius: '10px',
-          padding: '18px 20px',
+          padding: '20px 24px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
           gap: '8px',
+          transition: 'all 0.2s ease',
+          boxShadow: isDragging ? '0 0 25px rgba(56, 189, 248, 0.2)' : 'none',
         }}
       >
-        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Upload size={22} color="#38BDF8" />
+        <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: isDragging ? 'rgba(56, 189, 248, 0.2)' : 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Upload size={22} color="#38BDF8" className={isUploading ? 'animate-bounce' : ''} />
         </div>
         <div>
           <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF' }}>
-            Upload Business CSV Dataset
+            {isDragging ? 'Drop CSV File(s) to Upload' : 'Upload Business CSV Dataset(s)'}
           </div>
-          <div style={{ fontSize: '0.82rem', color: '#94A3B8', marginTop: '2px', maxWidth: '520px' }}>
-            Drop your company's revenue, order, retention, or telemetry CSV here. Schema and column datatypes are automatically inferred and mapped.
+          <div style={{ fontSize: '0.82rem', color: '#94A3B8', marginTop: '2px', maxWidth: '540px' }}>
+            Drop single or multiple company revenue, order, retention, or telemetry CSVs here. Schemas and column datatypes are automatically inferred and mapped in parallel.
           </div>
         </div>
 
@@ -272,15 +350,28 @@ export const DatasetManagementCenterView: React.FC = () => {
               borderRadius: '6px',
               fontWeight: 800,
               fontSize: '0.82rem',
-              cursor: 'pointer',
+              cursor: isUploading ? 'not-allowed' : 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 10px rgba(56, 189, 248, 0.3)',
             }}
           >
-            Select CSV File
-            <input type="file" accept=".csv" onChange={handleFileUpload} style={{ display: 'none' }} />
+            {isUploading ? <RefreshCw size={13} className="animate-spin" /> : <Upload size={13} />}
+            <span>{isUploading ? 'Ingesting File(s)...' : 'Select CSV File(s)'}</span>
+            <input 
+              type="file" 
+              accept=".csv" 
+              multiple 
+              onChange={handleFileUpload} 
+              disabled={isUploading}
+              style={{ display: 'none' }} 
+            />
           </label>
-          <span style={{ fontSize: '0.78rem', color: '#64748B' }}>or drop files directly</span>
+          <span style={{ fontSize: '0.78rem', color: '#64748B' }}>or drag & drop multiple files directly</span>
         </div>
       </div>
+
 
       {/* SECTION 2: Managed & Uploaded Datasets Table */}
       <Card style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
