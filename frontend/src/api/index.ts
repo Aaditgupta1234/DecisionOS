@@ -22,6 +22,21 @@ import {
   ScenarioComparisonResponse,
   StrategyPlan,
 } from '../types';
+import {
+  GovernanceScorecardResponse,
+  AIGovernanceReportResponse,
+  AIProvidersResponse,
+  SecurityPostureResponse,
+} from '../types/governance';
+import {
+  PortfolioSummaryResponse,
+  PortfolioRiskSummary,
+} from '../types/portfolio';
+import {
+  CompetitiveSnapshotResponse,
+  CompetitiveBenchmarkResponse,
+  BenchmarkOpportunityResponse,
+} from '../types/competitiveIntelligence';
 
 export const DecisionApi = {
   // ------------------------------------------------------------------------
@@ -504,6 +519,71 @@ export const reportingApi = {
 
   downloadReportUrl: (reportId: string) =>
     `/api/v1/reports/download/${reportId}`,
+};
+
+export const competitiveIntelligenceApi = {
+  /**
+   * GET /api/v1/os/benchmarks/market-position
+   * Org-scoped. Returns market rank, percentile, tracked competitors, and live SWOT quadrants.
+   */
+  getMarketPosition: () =>
+    apiClient<CompetitiveSnapshotResponse>('/os/benchmarks/market-position'),
+
+  /**
+   * GET /api/v1/os/benchmarks/comparisons
+   * Org-scoped. Returns metric-by-metric gaps vs industry median, top quartile, best-in-class.
+   */
+  getComparisons: () =>
+    apiClient<CompetitiveBenchmarkResponse[]>('/os/benchmarks/comparisons'),
+
+  /**
+   * GET /api/v1/os/benchmarks/opportunities
+   * Org-scoped. Returns ARR opportunity candidates derived from benchmark gaps.
+   * Includes auto_scenario_id when a Digital Twin scenario has been auto-generated.
+   */
+  getOpportunities: () =>
+    apiClient<BenchmarkOpportunityResponse[]>('/os/benchmarks/opportunities'),
+};
+
+export const portfolioApi = {
+  /**
+   * GET /api/v1/portfolio/summary
+   * Org-scoped. Returns executive portfolio summary across all workspaces.
+   * Used by: CapitalAllocationStudioView, PortfolioRollupView, RiskConcentrationRadarView
+   */
+  getSummary: () =>
+    apiClient<PortfolioSummaryResponse>('/portfolio/summary'),
+
+  /**
+   * GET /api/v1/portfolio/executive/risk
+   * Org-scoped. Returns risk concentration metrics across the organization portfolio.
+   * Used by: RiskConcentrationRadarView
+   */
+  getExecutiveRisk: () =>
+    apiClient<PortfolioRiskSummary>('/portfolio/executive/risk'),
+};
+
+export const governanceApi = {
+  /**
+   * GET /api/v1/os/governance/scorecard
+   * Auth-protected. Returns enterprise governance health scorecard.
+   */
+  getScorecard: () =>
+    apiClient<GovernanceScorecardResponse>('/os/governance/scorecard'),
+
+  /**
+   * GET /api/v1/ai-governance/report
+   * Returns AI usage governance report including interactions, cost, and trust score.
+   */
+  getAIGovernanceReport: () =>
+    apiClient<AIGovernanceReportResponse>('/ai-governance/report'),
+
+  /**
+   * GET /api/v1/security-center/posture
+   * Returns security posture scorecard with controls and compliance status.
+   */
+  getSecurityPosture: () =>
+    apiClient<SecurityPostureResponse>('/security-center/posture'),
 };
 
 export const dashboardApi = {

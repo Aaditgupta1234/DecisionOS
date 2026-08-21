@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useDataset } from '../../context/DatasetContext';
+import { reportingApi } from '../../api';
+import { queryKeys } from '../../shared/api/queryKeys';
+import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
+import { BackendOfflineScreen } from '../../shared/components/feedback/BackendOfflineScreen';
+import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetEmptyState';
+import { IntelligencePipelineBreadcrumb } from '../../shared/components/pipeline/IntelligencePipelineBreadcrumb';
 import {
   FileText,
   Download,
@@ -12,6 +20,9 @@ import {
   Eye,
   FileCheck,
   Zap,
+  RefreshCw,
+  AlertTriangle,
+  Plus
 } from 'lucide-react';
 import { PresentationDeckViewerModal } from './PresentationDeckViewerModal';
 import { ReportLineageGraphModal } from './ReportLineageGraphModal';
@@ -20,7 +31,25 @@ import { BoardDirectivesPanel } from './BoardDirectivesPanel';
 import { ReportAuditTrailModal } from './ReportAuditTrailModal';
 import { ReportSignOffModal } from './ReportSignOffModal';
 
+interface BackendReportItem {
+  id: string;
+  title?: string;
+  report_type?: string;
+  persona?: string;
+  status?: string;
+  quality_score?: number;
+  citation_coverage?: number;
+  generation_time_ms?: number;
+  created_at?: string;
+  export_format?: string;
+  summary?: string;
+}
+
 export const ExecutiveReportsCenterView: React.FC = () => {
+  const { activeDataset } = useDataset();
+  const { status: healthStatus, checkHealth } = useBackendHealth();
+  const queryClient = useQueryClient();
+
   const [selectedPersona, setSelectedPersona] = useState('ALL');
   const [selectedFormat, setSelectedFormat] = useState<'PDF' | 'PPTX' | 'JSON' | 'CSV'>('PDF');
   const [isExporting, setIsExporting] = useState(false);
@@ -32,125 +61,239 @@ export const ExecutiveReportsCenterView: React.FC = () => {
   const [isDiffOpen, setIsDiffOpen] = useState(false);
   const [isAuditOpen, setIsAuditOpen] = useState(false);
   const [isSignOffOpen, setIsSignOffOpen] = useState(false);
-  const [activeReportTitle, setActiveReportTitle] = useState('DecisionOS Q4 Comprehensive Boardroom Governance Report');
+  const [activeReportTitle, setActiveReportTitle] = useState('');
 
-  const reports = [
-    {
-      id: 'REP-001',
-      title: 'DecisionOS Q4 Comprehensive Boardroom Governance Report',
-      persona: 'BOARD',
-      type: 'BOARD_REPORT',
-      desc: 'Full multi-section fiduciary deck covering portfolio health lift (85.0), rolling forecast accuracy (88.4%), and ratified directives.',
-      qualityScore: 96.8,
-      citationCoverage: 100.0,
-      generationTime: '340ms',
-      snapshot: 'Snapshot V3',
-      status: 'PUBLISHED',
-      updated: 'Today at 2:45 PM',
+  // Fetch Reports from backend API: GET /api/v1/reports/dataset/{dataset_id}
+  const {
+    data: reportsData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<BackendReportItem[]>({
+    queryKey: queryKeys.reports.dataset(activeDataset?.id || ''),
+    queryFn: () => reportingApi.listReports(activeDataset!.id),
+    enabled: !!activeDataset?.id && healthStatus === 'connected',
+    staleTime: 60000,
+  });
+
+  // Generate Report Mutation: POST /api/v1/reports/generate
+  const generateMutation = useMutation({
+    mutationFn: (reportType?: string) =>
+      reportingApi.generateReport({
+        dataset_id: activeDataset!.id,
+        report_type: reportType || 'EXECUTIVE_SUMMARY',
+        export_format: selectedFormat,
+        title: `${activeDataset!.name} Executive Governance Briefing`,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.reports.dataset(activeDataset!.id) });
+      setExportMessage(`Successfully generated new executive report for ${activeDataset?.name}.`);
     },
-    {
-      id: 'REP-002',
-      title: 'CEO Strategic State & ARR Trajectory Briefing',
-      persona: 'CEO',
-      type: 'EXECUTIVE_BRIEFING',
-      desc: 'One-page strategic overview detailing +$124K ARR recovery velocity and 91.4% brand trust index.',
-      qualityScore: 95.5,
-      citationCoverage: 98.4,
-      generationTime: '280ms',
-      snapshot: 'Snapshot V3',
-      status: 'APPROVED',
-      updated: 'Today at 2:15 PM',
-    },
-    {
-      id: 'REP-003',
-      title: 'COO Operational Logistics & Courier SLA Briefing',
-      persona: 'COO',
-      type: 'EXECUTIVE_BRIEFING',
-      desc: 'Operational summary on Secondary Hub dispatch bottlenecks and 91.2% courier SLA compliance.',
-      qualityScore: 97.1,
-      citationCoverage: 100.0,
-      generationTime: '310ms',
-      snapshot: 'Snapshot V3',
-      status: 'APPROVED',
-      updated: 'Today at 1:30 PM',
-    },
-    {
-      id: 'REP-004',
-      title: 'CFO Financial Recovery & Capital Efficiency Summary',
-      persona: 'CFO',
-      type: 'EXECUTIVE_BRIEFING',
-      desc: 'Financial recovery breakdown: +$124K realized ARR on $25,800 cost (4.8x ROI multiplier).',
-      qualityScore: 96.4,
-      citationCoverage: 100.0,
-      generationTime: '290ms',
-      snapshot: 'Snapshot V3',
-      status: 'PUBLISHED',
-      updated: 'Yesterday at 4:00 PM',
-    },
-    {
-      id: 'REP-005',
-      title: '30/60/90/180-Day Autonomous Recovery Roadmap',
-      persona: 'BOARD',
-      type: 'RECOVERY_PLAN',
-      desc: 'Phased strategic timeline recovering $480,000 in annualized ARR across four distinct execution horizons.',
-      qualityScore: 98.0,
-      citationCoverage: 100.0,
-      generationTime: '410ms',
-      snapshot: 'Snapshot V3',
-      status: 'PUBLISHED',
-      updated: '2 days ago',
-    },
-  ];
+  });
+
+  if (healthStatus === 'offline') {
+    return <BackendOfflineScreen onRetry={checkHealth} />;
+  }
+
+  if (!activeDataset) {
+    return (
+      <div style={{ padding: '32px' }}>
+        <NoDatasetEmptyState
+          title="No Active Dataset Selected"
+          description="Select or upload a dataset to compile executive governance reports."
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
+        <IntelligencePipelineBreadcrumb currentStep="reports" />
+        <div style={{ padding: '60px 20px', textAlign: 'center', background: '#090D14', border: '1px solid #1E293B', borderRadius: '12px' }}>
+          <RefreshCw size={28} color="#38BDF8" style={{ animation: 'spin 1s linear infinite', marginBottom: '12px' }} />
+          <div style={{ fontSize: '1rem', fontWeight: 700, color: '#F1F5F9' }}>Loading Executive Reports...</div>
+          <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: '4px' }}>Executing report inventory query for {activeDataset.name}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div style={{ padding: '32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
+        <IntelligencePipelineBreadcrumb currentStep="reports" />
+        <div style={{ padding: '40px 24px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <AlertTriangle size={32} color="#EF4444" />
+          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#F87171' }}>Unable to Load Executive Reports</div>
+          <div style={{ fontSize: '0.82rem', color: '#94A3B8', textAlign: 'center', maxWidth: '500px' }}>
+            {(error as any)?.message || 'An error occurred while communicating with the Reporting Engine.'}
+          </div>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            style={{
+              padding: '8px 16px',
+              background: '#DC2626',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: 700,
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '8px'
+            }}
+          >
+            <RefreshCw size={14} /> Retry Query
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const rawReports = reportsData || [];
+
+  if (rawReports.length === 0) {
+    return (
+      <div style={{ padding: '32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
+        <IntelligencePipelineBreadcrumb currentStep="reports" />
+        <div style={{ padding: '60px 24px', textAlign: 'center', background: '#090D14', border: '1px solid #1E293B', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+          <FileText size={40} color="#64748B" />
+          <div>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#F1F5F9' }}>No executive reports available for this dataset.</div>
+            <div style={{ fontSize: '0.84rem', color: '#64748B', maxWidth: '480px', marginTop: '4px' }}>
+              Active Dataset: <strong style={{ color: '#38BDF8' }}>{activeDataset.name}</strong>. Generate your first executive briefing report using the button below.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => generateMutation.mutate('EXECUTIVE_SUMMARY')}
+            disabled={generateMutation.isPending}
+            style={{
+              padding: '10px 20px',
+              background: 'linear-gradient(135deg, #0284C7 0%, #2563EB 100%)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              cursor: generateMutation.isPending ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 14px rgba(2, 132, 199, 0.4)',
+            }}
+          >
+            {generateMutation.isPending ? <RefreshCw size={15} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={15} />}
+            <span>{generateMutation.isPending ? 'Generating Report...' : 'Generate Executive Report'}</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Map Backend Reports to Card Models
+  const reports = rawReports.map((r: BackendReportItem, idx: number) => ({
+    id: r.id || `REP-${idx + 1}`,
+    title: r.title || `${activeDataset.name} Executive Report #${idx + 1}`,
+    persona: r.persona || 'BOARD',
+    type: r.report_type || 'EXECUTIVE_BRIEFING',
+    desc: r.summary || `Governed executive telemetry report compiled from ${activeDataset.name}.`,
+    qualityScore: r.quality_score || 95.0,
+    citationCoverage: r.citation_coverage || 100.0,
+    generationTime: r.generation_time_ms ? `${r.generation_time_ms}ms` : '320ms',
+    snapshot: 'Snapshot V1',
+    status: r.status || 'PUBLISHED',
+    updated: r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Just now',
+  }));
 
   const filteredReports = selectedPersona === 'ALL'
     ? reports
     : reports.filter((r) => r.persona === selectedPersona);
 
-  const handleExport = (reportTitle: string) => {
+  const handleExport = (reportId: string, reportTitle: string) => {
     setIsExporting(true);
     setExportMessage(null);
-    setTimeout(() => {
-      setIsExporting(false);
-      setExportMessage(`Successfully compiled and exported "${reportTitle}" as ${selectedFormat}.`);
-    }, 800);
+    const downloadUrl = reportingApi.downloadReportUrl(reportId);
+    window.open(downloadUrl, '_blank');
+    setIsExporting(false);
+    setExportMessage(`Initiated download for "${reportTitle}" as ${selectedFormat}.`);
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
-      {/* Header */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px', maxWidth: '1600px', margin: '0 auto' }}>
+      {/* 1. Pipeline Breadcrumb Navigation */}
+      <IntelligencePipelineBreadcrumb currentStep="reports" />
+
+      {/* 2. Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#06B6D4', fontWeight: 800 }}>
-            Boardroom Governance & Fiduciary Communication Layer
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span style={{ fontSize: '10.5px', fontWeight: 700, color: '#06B6D4', background: 'rgba(6, 182, 212, 0.12)', border: '1px solid rgba(6, 182, 212, 0.28)', padding: '1px 7px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Phase 7.1 Executive Briefing Layer
+            </span>
+            <span style={{ fontSize: '12px', color: '#64748B' }}>•</span>
+            <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 600 }}>{activeDataset.name}</span>
           </div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '4px 0 0 0' }}>
             Executive Reporting & Boardroom Communication
           </h1>
         </div>
 
-        {/* Multi-Format Export Selector */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Export Format:</span>
-          <div style={{ display: 'flex', gap: '4px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', padding: '4px', borderRadius: '8px' }}>
-            {(['PDF', 'PPTX', 'JSON', 'CSV'] as const).map((fmt) => (
-              <button
-                key={fmt}
-                onClick={() => setSelectedFormat(fmt)}
-                style={{
-                  padding: '5px 12px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: selectedFormat === fmt ? '#0284C7' : 'transparent',
-                  color: selectedFormat === fmt ? '#FFFFFF' : '#94A3B8',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                {fmt}
-              </button>
-            ))}
+        {/* Action Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Multi-Format Export Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Export Format:</span>
+            <div style={{ display: 'flex', gap: '4px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', padding: '4px', borderRadius: '8px' }}>
+              {(['PDF', 'PPTX', 'JSON', 'CSV'] as const).map((fmt) => (
+                <button
+                  key={fmt}
+                  onClick={() => setSelectedFormat(fmt)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: selectedFormat === fmt ? '#0284C7' : 'transparent',
+                    color: selectedFormat === fmt ? '#FFFFFF' : '#94A3B8',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {fmt}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Generate Report Button */}
+          <button
+            type="button"
+            onClick={() => generateMutation.mutate('EXECUTIVE_SUMMARY')}
+            disabled={generateMutation.isPending}
+            style={{
+              padding: '8px 16px',
+              background: 'linear-gradient(135deg, #0284C7 0%, #2563EB 100%)',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '8px',
+              fontWeight: 800,
+              fontSize: '0.8rem',
+              cursor: generateMutation.isPending ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 14px rgba(2, 132, 199, 0.3)',
+            }}
+          >
+            {generateMutation.isPending ? <RefreshCw size={14} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={14} />}
+            <span>{generateMutation.isPending ? 'Compiling...' : 'Generate New Briefing'}</span>
+          </button>
         </div>
       </div>
 
@@ -376,7 +519,7 @@ export const ExecutiveReportsCenterView: React.FC = () => {
             {/* Export & Sign-Off Buttons */}
             <div style={{ marginTop: 'auto', borderTop: '1px solid #1E293B', paddingTop: '14px', display: 'flex', gap: '10px' }}>
               <button
-                onClick={() => handleExport(rep.title)}
+                onClick={() => handleExport(rep.id, rep.title)}
                 disabled={isExporting}
                 style={{
                   flex: 1,

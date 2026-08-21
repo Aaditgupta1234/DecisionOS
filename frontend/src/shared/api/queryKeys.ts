@@ -32,6 +32,7 @@ export const queryKeys = {
     all: (datasetId: string) => ['datasets', datasetId, 'recommendations'] as const,
   },
   reports: {
+    dataset: (datasetId: string) => ['datasets', datasetId, 'reports'] as const,
     executive: (datasetId: string) => ['datasets', datasetId, 'report'] as const,
     healthScore: (datasetId: string) => ['datasets', datasetId, 'health-score'] as const,
     executiveSummary: (datasetId: string) => ['datasets', datasetId, 'executive-summary'] as const,
@@ -54,5 +55,30 @@ export const queryKeys = {
   },
   strategyExecution: {
     initiatives: (datasetId: string) => ['datasets', datasetId, 'strategy-execution', 'initiatives'] as const,
+  },
+  digitalTwin: {
+    scenarios: (datasetId: string) => ['datasets', datasetId, 'digital-twin', 'scenarios'] as const,
+    comparison: (datasetId: string) => ['datasets', datasetId, 'digital-twin', 'comparison'] as const,
+  },
+  governance: {
+    scorecard: () => ['enterprise-os', 'governance', 'scorecard'] as const,
+  },
+  aiGovernance: {
+    report: () => ['ai-governance', 'report'] as const,
+    providers: () => ['ai', 'providers'] as const,
+  },
+  securityCenter: {
+    posture: () => ['security-center', 'posture'] as const,
+  },
+  portfolio: {
+    // Org-scoped — not dataset-scoped. Same cache entry shared by all three portfolio views.
+    summary: () => ['portfolio', 'summary'] as const,
+    riskSummary: () => ['portfolio', 'executive', 'risk'] as const,
+  },
+  competitiveIntelligence: {
+    // Org-scoped. All three queries power CompetitiveIntelligenceCenterView.
+    marketPosition: () => ['competitive-intelligence', 'market-position'] as const,
+    comparisons: () => ['competitive-intelligence', 'comparisons'] as const,
+    opportunities: () => ['competitive-intelligence', 'opportunities'] as const,
   },
 };
