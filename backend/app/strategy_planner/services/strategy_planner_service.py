@@ -169,47 +169,10 @@ class StrategyPlannerService:
                 logger.warning(f"Could not auto-generate recommendations for dataset {dataset_id}: {r_err}")
 
         if not recommendations:
-            # Create a baseline finding and fallback recommendation if upstream diagnostics found no issues
-            from app.models.diagnostic_finding import DiagnosticFinding
-            from app.models.recommendation import Recommendation
-            from app.core.constants import FindingSeverity, FindingType, RecommendationPriority, RecommendationType, RecommendationStatus, RecommendationSource
-            from app.repositories.diagnostic_repository import DiagnosticRepository
-
-            diag_repo = DiagnosticRepository(self.db)
-            existing_findings = await diag_repo.get_dataset_findings(dataset_id)
-            if existing_findings:
-                finding = existing_findings[0]
-            else:
-                finding = await diag_repo.create(
-                    dataset_id=dataset_id,
-                    finding_type=FindingType.DATA_QUALITY_RISK,
-                    severity=FindingSeverity.LOW,
-                    title="Steady Baseline Operations",
-                    description="Telemetry metrics indicate stable baseline operations across core performance dimensions.",
-                    business_impact="Maintains current operational stability with low revenue disruption risk.",
-                    confidence_score=0.90,
-                )
-
-            baseline_rec = Recommendation(
-                dataset_id=dataset_id,
-                finding_id=finding.id,
-                title="Sustain Current Operational & Growth Momentum",
-                description="Continuously monitor high-performing KPIs and maintain current operational velocity.",
-                why_recommended="Operational telemetry indicates steady performance across baseline metrics.",
-                recommendation_type=RecommendationType.CUSTOMER_RETENTION,
-                priority=RecommendationPriority.MEDIUM,
-                status=RecommendationStatus.ACCEPTED,
-                source=RecommendationSource.RULE_ENGINE,
-                confidence_score=0.85,
-                estimated_impact_score=0.80,
-                estimated_effort_score=0.30,
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Dataset {dataset_id} has no recommendations. No approved recommendations found to synthesize a StrategyPlan.",
             )
-            self.db.add(baseline_rec)
-            if self._is_async():
-                await self.db.commit()
-            else:
-                self.db.commit()
-            recommendations = [baseline_rec]
 
         # 3. Load Deterministic Intelligence Report
         report = await self.intel_service.get_intelligence_report(dataset_id)
@@ -238,7 +201,7 @@ class StrategyPlannerService:
         prompt = StrategyPromptBuilder.build_strategy_prompt(context=context)
         system_prompt = StrategyPromptBuilder.get_system_prompt()
 
-        # 7. Execute LLM Provider with automatic deterministic fallback
+        # 7. Execute LLM Provider
         provider = self._get_provider(provider_name=provider_name, model_name=model_name)
         try:
             raw_json = await provider.generate_json(
@@ -246,14 +209,12 @@ class StrategyPlannerService:
                 system_prompt=system_prompt,
             )
         except Exception as exc:
-            logger.warning(
-                f"Strategy Planner LLM invocation ({provider.provider_name}) failed: {exc}. "
-                "Degrading gracefully to deterministic MockLLMProvider."
+            logger.error(
+                f"Strategy Planner LLM invocation ({provider.provider_name}) failed: {exc}."
             )
-            fallback = MockLLMProvider(model_name="deterministic-mock-v1")
-            raw_json = await fallback.generate_json(
-                prompt=prompt,
-                system_prompt=system_prompt,
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=f"Strategy Planner LLM provider invocation failed: {str(exc)}",
             )
 
         # 8. Strict Reject-Only Deterministic Validation (Trust Boundary)

@@ -59,6 +59,7 @@ class RecommendationEngine:
 
         candidates: List[Recommendation] = []
         seen_keys = set()
+        covered_finding_ids = set()
 
         for finding in findings:
             finding_subtype = self._extract_subtype(finding)
@@ -83,6 +84,11 @@ class RecommendationEngine:
                         if dedup_key in seen_keys:
                             continue
                         seen_keys.add(dedup_key)
+                        covered_finding_ids.add(finding.id)
+                        if rca.root_cause_finding_id:
+                            covered_finding_ids.add(rca.root_cause_finding_id)
+                        if rca.root_cause_finding:
+                            covered_finding_ids.add(rca.root_cause_finding.id)
 
                         rec = RecommendationBuilder.build(
                             template=tmpl,
@@ -104,6 +110,7 @@ class RecommendationEngine:
                     if dedup_key in seen_keys:
                         continue
                     seen_keys.add(dedup_key)
+                    covered_finding_ids.add(finding.id)
 
                     rec = RecommendationBuilder.build(
                         template=tmpl,
@@ -122,7 +129,7 @@ class RecommendationEngine:
             ExpectedTimeToValue,
         )
         for finding in findings:
-            finding_has_rec = any(r.finding_id == finding.id for r in candidates)
+            finding_has_rec = finding.id in covered_finding_ids or any(r.finding_id == finding.id for r in candidates)
             if not finding_has_rec:
                 title_clean = finding.title.replace("Excessive ", "Resolve ").replace("High ", "Optimize ").replace("Decline in ", "Reverse Decline in ")
                 sev_val = finding.severity.value if hasattr(finding.severity, "value") else str(finding.severity)

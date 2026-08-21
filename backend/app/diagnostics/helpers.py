@@ -118,7 +118,7 @@ def compute_time_series_aggregates(
         timespan_days = (max_dt - min_dt).days
 
         if months_span >= 1:
-            effective_freq = "M"
+            effective_freq = "ME"
         elif timespan_days >= 14:
             effective_freq = "W"
         else:
@@ -133,7 +133,7 @@ def compute_time_series_aggregates(
                 .reset_index()
             )
         except ValueError:
-            effective_freq = "ME" if effective_freq == "M" else effective_freq
+            effective_freq = "M" if effective_freq == "ME" else effective_freq
             grouped = (
                 working.set_index(date_col)
                 .resample(effective_freq)[value_col]

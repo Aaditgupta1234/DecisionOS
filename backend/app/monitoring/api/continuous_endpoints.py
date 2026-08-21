@@ -138,17 +138,18 @@ async def get_operational_risks(
 # --- 7. Executive Alert Lifecycle ---
 
 @continuous_monitoring_router.get(
-    "/alerts",
+    "/executive-alerts",
     response_model=ExecutiveAlertListResponse,
     summary="Get executive alert queue and warning notices",
 )
 async def get_executive_alerts(
-    portfolio_id: uuid.UUID = Query(...),
+    portfolio_id: Optional[uuid.UUID] = Query(None, description="Portfolio ID override"),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ) -> ExecutiveAlertListResponse:
     """Retrieve active alert queue with 5-state lifecycle governance."""
-    return ExecutiveAlertEngine.get_alerts(portfolio_id)
+    effective_id = portfolio_id or uuid.uuid4()
+    return ExecutiveAlertEngine.get_alerts(effective_id)
 
 
 @continuous_monitoring_router.patch(

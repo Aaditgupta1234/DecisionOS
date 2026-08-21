@@ -46,7 +46,6 @@ from app.monitoring.services.operational_monitoring_service import OperationalMo
 from app.monitoring.api.continuous_endpoints import continuous_monitoring_router
 
 router = APIRouter(prefix="/monitoring", tags=["Operational Monitoring & Production Governance"])
-router.include_router(continuous_monitoring_router)
 
 
 def _resolve_org_id(current_user: User, organization_id: Optional[uuid.UUID] = None) -> uuid.UUID:
@@ -431,3 +430,7 @@ async def clear_monitoring_cache(
         return {"status": "success", "message": f"Cache invalidated for organization {organization_id}"}
     monitoring_cache.clear()
     return {"status": "success", "message": "All monitoring cache purged"}
+
+
+# Mount continuous intelligence sub-router
+router.include_router(continuous_monitoring_router)

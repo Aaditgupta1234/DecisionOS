@@ -146,7 +146,7 @@ class CustomerDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
             first_orders.columns = ["customer_id", "first_date"]
 
             timespan_days = (first_orders["first_date"].max() - first_orders["first_date"].min()).days
-            freq = "W" if timespan_days <= 60 else "M"
+            freq = "W" if timespan_days <= 60 else "ME"
 
             try:
                 period_acquisitions = (
@@ -156,7 +156,7 @@ class CustomerDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                     .reset_index()
                 )
             except ValueError:
-                freq = "ME" if freq == "M" else freq
+                freq = "M" if freq == "ME" else freq
                 period_acquisitions = (
                     first_orders.set_index("first_date")
                     .resample(freq)["customer_id"]

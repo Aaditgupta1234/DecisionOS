@@ -150,7 +150,7 @@ class OperationalDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                 timespan_days = (max_dt - min_dt).days
 
                 if months_span >= 1:
-                    freq = "M"
+                    freq = "ME"
                 elif timespan_days >= 14:
                     freq = "W"
                 else:
@@ -160,7 +160,7 @@ class OperationalDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                     rev_grouped = working.set_index("order_date").resample(freq)["revenue"].sum()
                     cost_grouped = working.set_index("order_date").resample(freq)["cost"].sum()
                 except ValueError:
-                    freq = "ME" if freq == "M" else freq
+                    freq = "M" if freq == "ME" else freq
                     rev_grouped = working.set_index("order_date").resample(freq)["revenue"].sum()
                     cost_grouped = working.set_index("order_date").resample(freq)["cost"].sum()
 
