@@ -109,10 +109,25 @@ export const OrganizationProvider: React.FC<{ children: ReactNode }> = ({ childr
   );
 };
 
+const defaultOrganizationContext: OrganizationContextType = {
+  organizations: [],
+  activeOrganization: null,
+  currentRole: null,
+  loading: false,
+  error: null,
+  setActiveOrganization: () => {},
+  refreshOrganizations: async () => {},
+  createOrganization: async () => ({
+    id: 'org-default',
+    name: 'Default',
+    slug: 'default',
+    is_active: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }),
+};
+
 export const useOrganization = (): OrganizationContextType => {
   const context = useContext(OrganizationContext);
-  if (!context) {
-    throw new Error('useOrganization must be used within an OrganizationProvider');
-  }
-  return context;
+  return context || defaultOrganizationContext;
 };

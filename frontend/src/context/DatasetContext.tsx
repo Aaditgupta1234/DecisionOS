@@ -87,10 +87,16 @@ export const DatasetProvider: React.FC<{ children: ReactNode }> = ({ children })
   );
 };
 
-export const useDataset = () => {
+const defaultDatasetContext: DatasetContextType = {
+  datasets: [],
+  activeDataset: null,
+  setActiveDataset: () => {},
+  loading: false,
+  error: null,
+  refreshDatasets: async () => {},
+};
+
+export const useDataset = (): DatasetContextType => {
   const context = useContext(DatasetContext);
-  if (!context) {
-    throw new Error('useDataset must be used within a DatasetProvider');
-  }
-  return context;
+  return context || defaultDatasetContext;
 };

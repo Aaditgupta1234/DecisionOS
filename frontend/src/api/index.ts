@@ -153,15 +153,15 @@ export const DecisionApi = {
   // Strategy Planner
   // ------------------------------------------------------------------------
   getLatestStrategy: (datasetId: string) =>
-    apiClient<StrategyPlan>(`/datasets/${datasetId}/strategy/latest`),
+    apiClient<StrategyPlan>(`/datasets/${datasetId}/strategy-plan`),
 
   generateStrategy: (datasetId: string) =>
-    apiClient<StrategyPlan>(`/datasets/${datasetId}/strategy/generate`, {
+    apiClient<StrategyPlan>(`/datasets/${datasetId}/strategy-plan/regenerate`, {
       method: 'POST',
     }),
 
   updateActionStatus: (planId: string, actionId: string, isCompleted: boolean) =>
-    apiClient<any>(`/strategy/${planId}/actions/${actionId}`, {
+    apiClient<any>(`/strategy-plans/${planId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ is_completed: isCompleted }),
     }),
@@ -169,8 +169,12 @@ export const DecisionApi = {
   // ------------------------------------------------------------------------
   // Scenario Simulation
   // ------------------------------------------------------------------------
-  listScenarios: (datasetId: string) =>
-    apiClient<Scenario[]>(`/datasets/${datasetId}/scenarios`),
+  listScenarios: async (datasetId: string): Promise<Scenario[]> => {
+    const res = await apiClient<any>(`/datasets/${datasetId}/scenarios`);
+    if (Array.isArray(res)) return res as Scenario[];
+    if (res && Array.isArray(res.scenarios)) return res.scenarios as Scenario[];
+    return [] as Scenario[];
+  },
 
   createScenario: (
     datasetId: string,

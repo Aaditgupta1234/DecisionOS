@@ -142,6 +142,7 @@ function AppContent() {
             <Route path="/monitoring" element={<MonitoringCommandCenterView />} />
             <Route path="/governance" element={<EnterpriseGovernanceCenterView />} />
             <Route path="/competitive-intelligence" element={<CompetitiveIntelligenceCenterView />} />
+            <Route path="/competitive-intel" element={<CompetitiveIntelligenceCenterView />} />
             <Route path="/operating-system" element={<EnterpriseOperatingSystemCenterView />} />
             <Route path="/os-health" element={<EnterpriseOSHealthView />} />
             <Route path="/jobs" element={<JobCenterView />} />
@@ -160,7 +161,9 @@ function AppContent() {
             <Route path="/resilience" element={<Navigate to="/production-readiness" replace />} />
             <Route path="/observability" element={<Navigate to="/production-readiness" replace />} />
             <Route path="/launch-certification" element={<Navigate to="/production-readiness" replace />} />
+            <Route path="*" element={<Navigate to="/enterprise" replace />} />
           </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </>

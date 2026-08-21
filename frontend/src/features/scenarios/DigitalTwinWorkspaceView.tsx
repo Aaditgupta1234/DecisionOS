@@ -110,7 +110,9 @@ export const DigitalTwinWorkspaceView: React.FC = () => {
     );
   }
 
-  const rawScenarios = scenariosData || [];
+  const rawScenarios: Scenario[] = Array.isArray(scenariosData)
+    ? scenariosData
+    : (scenariosData as any)?.scenarios ?? [];
   const totalScenarios = rawScenarios.length;
   const activeSimulations = rawScenarios.filter((s: Scenario) => (s.status || '').toUpperCase() === 'ACTIVE').length;
   const governedAssumptions = rawScenarios.reduce((count: number, s: Scenario) => count + (s.assumptions || []).length, 0);
