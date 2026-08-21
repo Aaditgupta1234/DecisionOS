@@ -42,6 +42,7 @@ class ExecutiveSummary:
     business_health_score: int
     business_health_status: BusinessHealthStatus
     expected_business_impact: str
+    health_score_explanation: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes executive summary to dictionary."""

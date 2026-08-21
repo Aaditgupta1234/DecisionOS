@@ -126,3 +126,53 @@ def test_business_health_score_critical_and_mitigation_bonus():
         recommendations=recs,
     )
     assert score_with_recs == score_without_recs + 6
+
+
+def test_catastrophic_finding_modifier():
+    """Verifies that catastrophic findings add +6 penalty (18 + 6 = 24)."""
+    f_normal = make_finding(FindingSeverity.CRITICAL)
+    f_catastrophic = make_finding(FindingSeverity.CRITICAL)
+    f_catastrophic.supporting_data = {"catastrophic_flag": True}
+
+    score_normal, _ = BusinessHealthScoreEngine.calculate(findings=[f_normal])
+    score_cat, _ = BusinessHealthScoreEngine.calculate(findings=[f_catastrophic])
+
+    # Normal: 100 - 18 = 82
+    assert score_normal == 82
+    # Catastrophic: 100 - (18 + 6) = 76
+    assert score_cat == 76
+
+
+def test_systemic_failure_penalty():
+    """Verifies that 3 or more critical findings trigger a -10 systemic failure penalty."""
+    findings = [make_finding(FindingSeverity.CRITICAL) for _ in range(3)]
+    # 3 critical: -18 * 3 = -54. Plus systemic failure: -10 = -64. Score = 36 (CRITICAL)
+    score, status, explanation = BusinessHealthScoreEngine.calculate_with_explanation(findings=findings)
+
+    assert explanation["critical_findings"] == 3
+    assert explanation["systemic_failure_penalty"] == 10
+    assert explanation["finding_deduction"] == 54
+    assert score == 36
+    assert status == BusinessHealthStatus.CRITICAL
+
+
+def test_stress_test_catastrophic_scenario():
+    """Verifies that severe operational collapse (100% canc, 22d delivery, 1.2 review) scores below 50."""
+    f1 = make_finding(FindingSeverity.CRITICAL)
+    f1.title = "High Order Cancellation Rate (100.0%)"
+    f1.supporting_data = {"catastrophic_flag": True, "escalation_multiplier": 1.5}
+
+    f2 = make_finding(FindingSeverity.CRITICAL)
+    f2.title = "Excessive Delivery Lead Time (22.0 Days)"
+    f2.supporting_data = {"catastrophic_flag": True, "escalation_multiplier": 1.5}
+
+    f3 = make_finding(FindingSeverity.CRITICAL)
+    f3.title = "Severe Customer Dissatisfaction (Avg Review: 1.2 / 5.0)"
+    f3.supporting_data = {"catastrophic_flag": True}
+
+    score, status, explanation = BusinessHealthScoreEngine.calculate_with_explanation(findings=[f1, f2, f3])
+
+    assert score <= 50
+    assert status in (BusinessHealthStatus.AT_RISK, BusinessHealthStatus.CRITICAL)
+    assert status != BusinessHealthStatus.WATCH_LIST
+    assert explanation["systemic_failure_penalty"] == 10

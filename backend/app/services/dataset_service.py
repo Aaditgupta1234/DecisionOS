@@ -112,6 +112,14 @@ def upload_dataset(
     db.commit()
     db.refresh(dataset)
     logger.info(f"Dataset '{dataset.name}' ({dataset.id}) successfully processed with {dataset.record_count} records.")
+
+    # 7. Immediately generate KPIs for instant analytics availability
+    try:
+        from app.services.kpi_engine import run_kpi_engine
+        run_kpi_engine(db=db, dataset_id=dataset.id, current_user=current_user)
+    except Exception as err:
+        logger.warning(f"Immediate KPI generation deferred for dataset {dataset.id}: {err}")
+
     return dataset
 
 

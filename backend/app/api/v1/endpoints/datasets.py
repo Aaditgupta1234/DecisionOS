@@ -165,12 +165,12 @@ def confirm_schema_mapping(
 @router.delete(
     "/{dataset_id}",
     response_model=SuccessResponse[dict],
-    summary="Soft Delete Dataset (Admin Only)",
+    summary="Soft Delete Dataset",
 )
 def delete_dataset(
     dataset_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(get_current_active_user),
 ) -> Any:
     """Soft deletes a dataset, hiding it from listings while preserving relational integrity."""
     soft_delete_dataset(db=db, dataset_id=dataset_id, current_user=current_user)

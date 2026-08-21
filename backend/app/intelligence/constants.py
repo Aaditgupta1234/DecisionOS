@@ -17,6 +17,11 @@ FINDING_SEVERITY_PENALTIES: Dict[str, int] = {
     FindingSeverity.LOW.value: 2,
 }
 
+# Catastrophic Finding & Systemic Failure Modifiers
+CATASTROPHIC_EXTRA_PENALTY = 6
+SYSTEMIC_FAILURE_THRESHOLD = 3
+SYSTEMIC_FAILURE_PENALTY = 10
+
 # Root Cause Impact Deductions
 RCA_HIGH_IMPACT_THRESHOLD = 0.80
 RCA_HIGH_IMPACT_PENALTY = 8

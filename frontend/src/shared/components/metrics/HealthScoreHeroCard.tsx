@@ -11,12 +11,12 @@ interface Props {
 }
 
 export const HealthScoreHeroCard: React.FC<Props> = ({
-  score = 82,
-  status = 'EXCELLENT',
-  confidence = 95,
-  financialScore = 84,
-  customerScore = 79,
-  operationalScore = 88,
+  score = 0,
+  status = 'HEALTHY',
+  confidence = 90,
+  financialScore = 0,
+  customerScore = 0,
+  operationalScore = 0,
 }) => {
   return (
     <div style={{

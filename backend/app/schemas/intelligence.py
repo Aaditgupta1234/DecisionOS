@@ -16,6 +16,7 @@ class BusinessHealthResponse(BaseModel):
     score: int = Field(..., ge=0, le=100, description="Composite health index [0 - 100].")
     status: BusinessHealthStatus = Field(..., description="Discrete classification (EXCELLENT, HEALTHY, WATCH_LIST, AT_RISK, CRITICAL).")
     description: str = Field(..., description="High-level health condition description.")
+    health_score_explanation: Optional[Dict[str, Any]] = Field(None, description="Detailed penalty and bonus arithmetic breakdown.")
 
 
 class ExecutiveSummaryResponse(BaseModel):
@@ -34,6 +35,7 @@ class ExecutiveSummaryResponse(BaseModel):
     business_health_score: int = Field(..., description="Health score index [0 - 100].")
     business_health_status: BusinessHealthStatus = Field(..., description="Health status classification.")
     expected_business_impact: str = Field(..., description="Narrative summary of projected performance recovery.")
+    health_score_explanation: Optional[Dict[str, Any]] = Field(None, description="Detailed penalty and bonus arithmetic breakdown.")
 
 
 class IntelligenceReportResponse(BaseModel):

@@ -328,10 +328,14 @@ STANDARD_BUSINESS_FIELDS: Dict[str, List[str]] = {
     ],
     "product_category": [
         "product_category", "category", "product_type", "item_category",
-        "department", "genre", "product_group", "business_segment", "segment"
+        "department", "genre", "product_group", "business_segment", "segment", "product_line"
     ],
     "cancellation_rate": [
-        "cancellation_rate", "cancel_rate", "cancellation_percentage", "order_cancellation_rate"
+        "cancellation_rate", "cancel_rate", "cancellation_percentage", "order_cancellation_rate",
+        "cancellations", "cancellation_count", "num_cancellations", "cancelled"
+    ],
+    "cancellations": [
+        "cancellations", "cancellation_count", "num_cancellations", "cancelled_orders"
     ],
     "churn_rate": [
         "churn_rate", "customer_churn_rate", "attrition_rate"

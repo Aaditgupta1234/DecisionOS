@@ -47,6 +47,49 @@ def calculate_severity(
     return FindingSeverity.MEDIUM
 
 
+def evaluate_catastrophic_escalation(
+    metric_key: str,
+    observed_value: float,
+) -> tuple[FindingSeverity, bool, float]:
+    """
+    Evaluates catastrophic severity escalation, flagging existential business risks.
+    
+    Returns:
+        tuple of (FindingSeverity, catastrophic_flag: bool, escalation_multiplier: float)
+    """
+    key_lower = metric_key.lower() if metric_key else ""
+    
+    # 1. Cancellation Rate (0 - 100 or 0.0 - 1.0)
+    if "cancel" in key_lower or "completion" in key_lower:
+        val_pct = observed_value * 100.0 if observed_value <= 1.0 else float(observed_value)
+        if val_pct >= 90.0:
+            return FindingSeverity.CRITICAL, True, 1.5
+        elif val_pct >= 75.0:
+            return FindingSeverity.CRITICAL, True, 1.0
+        elif val_pct >= 50.0:
+            return FindingSeverity.CRITICAL, False, 1.0
+
+    # 2. Delivery Lead Time (Days)
+    elif "delivery" in key_lower or "shipping" in key_lower or "lead_time" in key_lower:
+        val_days = float(observed_value)
+        if val_days >= 20.0:
+            return FindingSeverity.CRITICAL, True, 1.5
+        elif val_days >= 15.0:
+            return FindingSeverity.CRITICAL, True, 1.0
+        elif val_days >= 10.0:
+            return FindingSeverity.CRITICAL, False, 1.0
+
+    # 3. Review Score / NPS / CSAT (0 - 5.0)
+    elif "review" in key_lower or "rating" in key_lower or "satisfaction" in key_lower:
+        val_stars = float(observed_value)
+        if val_stars <= 1.5:
+            return FindingSeverity.CRITICAL, True, 1.0
+        elif val_stars <= 2.0:
+            return FindingSeverity.CRITICAL, False, 1.0
+
+    return FindingSeverity.MEDIUM, False, 1.0
+
+
 def calculate_confidence(
     sample_size: int,
     variance: float | None = None,

@@ -96,10 +96,18 @@ class RecommendationService:
                 summaries=[],
             )
 
-        # 3. Generate candidate recommendations
+        # 3. Compute preliminary health score and generate candidate recommendations
+        from app.intelligence.health_score import BusinessHealthScoreEngine
+        prelim_score, _ = BusinessHealthScoreEngine.calculate(
+            findings=findings,
+            root_causes=root_causes,
+            recommendations=[],
+        )
+
         rec_models = self.engine.generate_recommendations(
             findings=findings,
             root_causes=root_causes,
+            health_score=prelim_score,
         )
 
         # 4. Bulk persist

@@ -274,35 +274,45 @@ class KPICalculator:
                     metric_value=completion_rate,
                 ),
             ])
-        elif "cancellation_rate" in self.available_fields:
-            cxl_s = pd.to_numeric(self.working_df["cancellation_rate"], errors="coerce").dropna()
-            if len(cxl_s) > 0:
-                mean_cxl = float(cxl_s.mean())
-                cxl_pct = mean_cxl * 100.0 if mean_cxl <= 1.0 else mean_cxl
-                cancelled_orders = int(round(total_orders * (cxl_pct / 100.0)))
+        elif "cancellations" in self.available_fields or "cancellation_rate" in self.available_fields:
+            if "cancellations" in self.available_fields:
+                cxl_s = pd.to_numeric(self.working_df["cancellations"], errors="coerce").dropna()
+                cancelled_orders = int(cxl_s.sum()) if len(cxl_s) > 0 else 0
                 completed_orders = max(0, total_orders - cancelled_orders)
-                completion_rate = round(max(0.0, min(100.0, 100.0 - cxl_pct)), 2)
+                completion_rate = round((completed_orders / total_orders * 100.0), 2) if total_orders > 0 else 0.0
+            else:
+                cxl_s = pd.to_numeric(self.working_df["cancellation_rate"], errors="coerce").dropna()
+                if len(cxl_s) > 0:
+                    mean_cxl = float(cxl_s.mean())
+                    cxl_pct = mean_cxl * 100.0 if mean_cxl <= 1.0 else mean_cxl
+                    cancelled_orders = int(round(total_orders * (cxl_pct / 100.0)))
+                    completed_orders = max(0, total_orders - cancelled_orders)
+                    completion_rate = round(max(0.0, min(100.0, 100.0 - cxl_pct)), 2)
+                else:
+                    cancelled_orders = 0
+                    completed_orders = total_orders
+                    completion_rate = 100.0
 
-                metrics.extend([
-                    CalculatedMetric(
-                        metric_key="completed_orders",
-                        metric_name="Completed Orders",
-                        metric_category=MetricCategory.ORDERS,
-                        metric_value=completed_orders,
-                    ),
-                    CalculatedMetric(
-                        metric_key="cancelled_orders",
-                        metric_name="Cancelled Orders",
-                        metric_category=MetricCategory.ORDERS,
-                        metric_value=cancelled_orders,
-                    ),
-                    CalculatedMetric(
-                        metric_key="completion_rate",
-                        metric_name="Completion Rate (%)",
-                        metric_category=MetricCategory.ORDERS,
-                        metric_value=completion_rate,
-                    ),
-                ])
+            metrics.extend([
+                CalculatedMetric(
+                    metric_key="completed_orders",
+                    metric_name="Completed Orders",
+                    metric_category=MetricCategory.ORDERS,
+                    metric_value=completed_orders,
+                ),
+                CalculatedMetric(
+                    metric_key="cancelled_orders",
+                    metric_name="Cancelled Orders",
+                    metric_category=MetricCategory.ORDERS,
+                    metric_value=cancelled_orders,
+                ),
+                CalculatedMetric(
+                    metric_key="completion_rate",
+                    metric_name="Completion Rate (%)",
+                    metric_category=MetricCategory.ORDERS,
+                    metric_value=completion_rate,
+                ),
+            ])
 
         return metrics
 

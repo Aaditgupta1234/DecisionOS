@@ -15,7 +15,11 @@ from app.diagnostics.helpers import (
     load_lightweight_columns,
 )
 from app.diagnostics.metric_keys import MetricKeys
-from app.diagnostics.severity import calculate_confidence, calculate_severity
+from app.diagnostics.severity import (
+    calculate_confidence,
+    calculate_severity,
+    evaluate_catastrophic_escalation,
+)
 from app.models.dataset import Dataset
 from app.models.dataset_metric import DatasetMetric
 from app.models.diagnostic_finding import DiagnosticFinding
@@ -268,15 +272,31 @@ class OperationalDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                     high_multiplier=2.0,
                     critical_multiplier=3.0,
                 )
+                catastrophic_flag = False
+                escalation_multiplier = 1.0
+
+                # Catastrophic escalation (10d -> CRITICAL, 15d -> CRITICAL+catastrophic, 20d -> 1.5x)
+                cat_sev, cat_flag, cat_mult = evaluate_catastrophic_escalation(
+                    MetricKeys.AVERAGE_DELIVERY_TIME, avg_delivery
+                )
+                if cat_sev == FindingSeverity.CRITICAL:
+                    severity = FindingSeverity.CRITICAL
+                    catastrophic_flag = cat_flag
+                    escalation_multiplier = cat_mult
+
                 evidence = EvidenceBuilder.build_metric_evidence(
                     category=FindingCategory.OPERATIONAL.value,
-                    subtype=FindingSubtype.OPERATIONAL_INEFFICIENCY.value,
+                    subtype=FindingSubtype.DELIVERY_DELAY.value,
                     metric_name=MetricKeys.AVERAGE_DELIVERY_TIME,
                     observed=round(float(avg_delivery), 2),
                     threshold=round(float(delay_threshold), 2),
                     confidence=0.92,
                     sample_size=metrics_map.get(MetricKeys.TOTAL_ORDERS, 10),
                     recommendation="Reallocate orders to regional fulfillment hubs and partner with expedited local courier networks.",
+                    extra_context={
+                        "catastrophic_flag": catastrophic_flag,
+                        "escalation_multiplier": escalation_multiplier,
+                    },
                 )
 
                 findings.append(
@@ -308,6 +328,18 @@ class OperationalDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                     high_multiplier=1.75,
                     critical_multiplier=2.5,
                 )
+                catastrophic_flag = False
+                escalation_multiplier = 1.0
+
+                # Catastrophic escalation (50% -> CRITICAL, 75% -> CRITICAL+catastrophic, 90% -> 1.5x)
+                cat_sev, cat_flag, cat_mult = evaluate_catastrophic_escalation(
+                    MetricKeys.CANCELLATION_RATE, canc_rate
+                )
+                if cat_sev == FindingSeverity.CRITICAL:
+                    severity = FindingSeverity.CRITICAL
+                    catastrophic_flag = cat_flag
+                    escalation_multiplier = cat_mult
+
                 evidence = EvidenceBuilder.build_metric_evidence(
                     category=FindingCategory.OPERATIONAL.value,
                     subtype=FindingSubtype.OPERATIONAL_INEFFICIENCY.value,
@@ -320,6 +352,8 @@ class OperationalDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                     extra_context={
                         "completion_rate": round(comp_val * 100.0, 2),
                         "cancelled_orders": metrics_map.get(MetricKeys.CANCELLED_ORDERS),
+                        "catastrophic_flag": catastrophic_flag,
+                        "escalation_multiplier": escalation_multiplier,
                     },
                 )
 

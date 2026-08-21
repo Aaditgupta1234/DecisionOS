@@ -102,4 +102,30 @@ class IntelligenceRepository:
         root_causes = list(r_res.scalars().all())
         recommendations = list(rec_res.scalars().all())
 
+        if dataset.status.value == "READY":
+            try:
+                if not findings:
+                    from app.diagnostics.diagnostic_engine import DiagnosticEngine
+                    diag_engine = DiagnosticEngine(self.db)
+                    findings = await diag_engine.run(dataset_id)
+
+                if (not root_causes or not recommendations) and len(findings) >= 2:
+                    from app.services.root_cause_service import RootCauseService
+                    from app.services.recommendation_service import RecommendationService
+                    rca_svc = RootCauseService(self.db)
+                    await rca_svc.generate_root_causes(dataset_id, recalculate_diagnostics=False)
+                    rec_svc = RecommendationService(self.db)
+                    await rec_svc.generate_recommendations(dataset_id)
+
+                    if self._is_async():
+                        r_res = await self.db.execute(rca_stmt)
+                        rec_res = await self.db.execute(recs_stmt)
+                    else:
+                        r_res = self.db.execute(rca_stmt)
+                        rec_res = self.db.execute(recs_stmt)
+                    root_causes = list(r_res.scalars().all())
+                    recommendations = list(rec_res.scalars().all())
+            except Exception:
+                pass
+
         return dataset, metrics, findings, root_causes, recommendations

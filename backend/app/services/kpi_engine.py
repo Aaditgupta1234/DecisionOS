@@ -138,10 +138,21 @@ def get_dataset_metrics(
     current_user: User,
 ) -> List[DatasetMetric]:
     """Retrieves all computed metrics for a dataset with role-based access scoping."""
-    get_dataset_by_id(db=db, dataset_id=dataset_id, current_user=current_user)
-    return db.query(DatasetMetric).filter(
+    dataset = get_dataset_by_id(db=db, dataset_id=dataset_id, current_user=current_user)
+    metrics = db.query(DatasetMetric).filter(
         DatasetMetric.dataset_id == dataset_id
     ).order_by(DatasetMetric.metric_category, DatasetMetric.metric_key).all()
+
+    if not metrics and dataset.status == DatasetStatus.READY:
+        try:
+            run_kpi_engine(db=db, dataset_id=dataset_id, current_user=current_user)
+            metrics = db.query(DatasetMetric).filter(
+                DatasetMetric.dataset_id == dataset_id
+            ).order_by(DatasetMetric.metric_category, DatasetMetric.metric_key).all()
+        except Exception as e:
+            logger.warning(f"On-demand KPI generation failed for {dataset_id}: {e}")
+
+    return metrics
 
 
 def get_dataset_metrics_summary(

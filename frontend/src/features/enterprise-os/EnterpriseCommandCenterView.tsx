@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Activity,
   Award,
@@ -29,9 +29,42 @@ import { ActivityFeed } from '../shared/ActivityFeed';
 import { BusinessHealthResponse, IntelligenceReportResponse } from '../../types';
 
 export const EnterpriseCommandCenterView: React.FC = () => {
-  const { datasets, activeDataset, setActiveDataset } = useDataset();
+  const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
+  const queryClient = useQueryClient();
   const { status: healthStatus, checkHealth } = useBackendHealth();
   const [quickNotice, setQuickNotice] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // In-place CSV Dataset Upload Handler
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      setUploadError(null);
+      setQuickNotice(`Uploading & parsing "${file.name}"... Initializing 8-stage intelligence pipeline.`);
+      
+      const newDataset = await DecisionApi.uploadDataset(file);
+      if (newDataset) {
+        setActiveDataset(newDataset);
+        await refreshDatasets();
+        await queryClient.invalidateQueries();
+        await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(newDataset.id) });
+        await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(newDataset.id) });
+        setQuickNotice(`Dataset "${newDataset.name}" uploaded and active! Real intelligence pipeline computed.`);
+        setTimeout(() => setQuickNotice(null), 5000);
+      }
+    } catch (err: any) {
+      console.error('Upload failed:', err);
+      setUploadError(err?.message || 'Failed to upload CSV dataset.');
+      setQuickNotice(null);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
 
   // 1. Fetch Real Intelligence Report (contains executive summary, artifact counts, metrics, findings, recommendations)
   const {
@@ -44,7 +77,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
     queryKey: queryKeys.reports.executive(activeDataset?.id || ''),
     queryFn: () => DecisionApi.getIntelligenceReport(activeDataset!.id),
     enabled: !!activeDataset?.id && healthStatus === 'connected',
-    staleTime: 60000,
+    staleTime: 0,
   });
 
   // 2. Fetch Real Business Health Score
@@ -57,42 +90,14 @@ export const EnterpriseCommandCenterView: React.FC = () => {
     queryKey: queryKeys.reports.healthScore(activeDataset?.id || ''),
     queryFn: () => DecisionApi.getHealthScore(activeDataset!.id),
     enabled: !!activeDataset?.id && healthStatus === 'connected',
-    staleTime: 60000,
+    staleTime: 0,
   });
 
-  if (healthStatus === 'offline') {
-    return <BackendOfflineScreen onRetry={checkHealth} />;
-  }
-
-  if (!activeDataset) {
-    return (
-      <div style={{ padding: '32px' }}>
-        <NoDatasetEmptyState
-          title="No Active Dataset Selected"
-          description="Select or upload an enterprise dataset to view autonomous decision intelligence, health score, and executive telemetry."
-        />
-      </div>
-    );
-  }
-
-  const handleLoadDemoDataset = () => {
-    if (datasets.length > 0) {
-      setActiveDataset(datasets[0]);
-      setQuickNotice(`Loaded active dataset context: "${datasets[0].name}". Real intelligence pipeline engaged.`);
-      setTimeout(() => setQuickNotice(null), 4000);
-    }
-  };
-
-  const handleRefreshAll = () => {
-    refetchReport();
-    refetchHealth();
-  };
-
-  // Derive Real Values from Backend APIs (No Hardcoded Fallbacks)
-  const rawHealthScore = healthData?.score ?? reportData?.executive_summary?.business_health_score;
+  // Canonical Unified Intelligence payload is the Single Source of Truth
+  const rawHealthScore = reportData?.executive_summary?.business_health_score ?? healthData?.score;
   const healthScore = rawHealthScore !== undefined && rawHealthScore !== null ? Math.round(rawHealthScore) : '--';
-  const healthStatusStr = healthData?.status ?? reportData?.executive_summary?.business_health_status ?? 'NEUTRAL';
-  
+  const healthStatusStr = reportData?.executive_summary?.business_health_status ?? healthData?.status ?? 'NEUTRAL';
+
   const metricCount = reportData?.artifact_counts?.metrics ?? reportData?.metrics?.length ?? 0;
   const findingCount = reportData?.artifact_counts?.findings ?? reportData?.findings?.length ?? 0;
   const rootCauseCount = reportData?.artifact_counts?.root_causes ?? reportData?.root_causes?.length ?? 0;
@@ -100,11 +105,109 @@ export const EnterpriseCommandCenterView: React.FC = () => {
 
   const primaryIssue = reportData?.executive_summary?.primary_issue || 'No Critical Issues Identified';
   const topRecommendation = reportData?.executive_summary?.top_recommendation || 'No Immediate Corrective Actions Prescribed';
+  const primaryBusinessImpact = reportData?.findings?.[0]?.business_impact || (reportData?.executive_summary?.key_risks?.[0] ?? 'Operational telemetry within normal limits');
+  const topBenefitImpact = (reportData?.recommendations?.[0] as any)?.expected_benefits?.primary_kpi_impact || 'Operational Stabilization';
   const financialImpact = reportData?.executive_summary?.expected_business_impact || '--';
 
-  const recordCount = (activeDataset as any).record_count ?? activeDataset.row_count ?? '--';
-  const columnCount = (activeDataset as any).column_count ?? activeDataset.columns?.length ?? '--';
+  const recordCount = activeDataset ? ((activeDataset as any).record_count ?? activeDataset.row_count ?? '--') : '--';
+  const columnCount = activeDataset ? ((activeDataset as any).column_count ?? activeDataset.columns?.length ?? '--') : '--';
 
+  // Runtime Integrity Guard: declared unconditionally at top level
+  React.useEffect(() => {
+    if (typeof rawHealthScore === 'number' && rawHealthScore <= 60 && recommendationCount === 0) {
+      console.warn(
+        '[INTELLIGENCE_INTEGRITY] Critical logic contradiction: Health score <= 60 with 0 recommendations.',
+        { rawHealthScore, recommendationCount, findingCount }
+      );
+    }
+    if (healthStatusStr === 'CRITICAL' && financialImpact.toLowerCase().includes('stable')) {
+      console.warn(
+        '[INTELLIGENCE_INTEGRITY] Narrative contradiction: CRITICAL status narrative contains "stable".',
+        { healthStatusStr, financialImpact }
+      );
+    }
+  }, [rawHealthScore, recommendationCount, findingCount, healthStatusStr, financialImpact]);
+
+  if (healthStatus === 'offline') {
+    return <BackendOfflineScreen onRetry={checkHealth} />;
+  }
+
+  if (!activeDataset) {
+    return (
+      <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <NoDatasetEmptyState
+          title="No Active Dataset Selected"
+          description="Select or upload an enterprise CSV dataset directly on this page to view autonomous decision intelligence, health score, and executive telemetry."
+          actionText="Or Select Existing Dataset"
+          actionTo="/enterprise-data"
+        />
+        <label
+          style={{
+            marginTop: '-16px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: '#FFFFFF',
+            color: '#000000',
+            padding: '10px 22px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: 800,
+            cursor: isUploading ? 'not-allowed' : 'pointer',
+            boxShadow: '0 0 20px rgba(255,255,255,0.2)',
+          }}
+        >
+          {isUploading ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
+          <span>{isUploading ? 'Ingesting Dataset...' : 'Upload CSV Dataset Directly'}</span>
+          <input
+            type="file"
+            accept=".csv"
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+            disabled={isUploading}
+          />
+        </label>
+      </div>
+    );
+  }
+
+  const handleLoadDemoDataset = async () => {
+    if (datasets.length > 0) {
+      setActiveDataset(datasets[0]);
+      setQuickNotice(`Loaded active dataset context: "${datasets[0].name}". Real intelligence pipeline engaged.`);
+      await queryClient.invalidateQueries();
+      setTimeout(() => setQuickNotice(null), 4000);
+    }
+  };
+
+  const handleRefreshAll = async () => {
+    setQuickNotice('Refreshing live intelligence telemetry...');
+    await queryClient.invalidateQueries();
+    if (activeDataset?.id) {
+      await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(activeDataset.id) });
+      await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(activeDataset.id) });
+    }
+    setTimeout(() => setQuickNotice(null), 3000);
+  };
+
+  const getHealthStatusColor = (status: string) => {
+    switch (String(status).toUpperCase()) {
+      case 'EXCELLENT':
+        return { text: '#10B981', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.28)' };
+      case 'HEALTHY':
+        return { text: '#38BDF8', bg: 'rgba(56, 189, 248, 0.12)', border: 'rgba(56, 189, 248, 0.28)' };
+      case 'WATCH_LIST':
+        return { text: '#F59E0B', bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.28)' };
+      case 'AT_RISK':
+        return { text: '#FB923C', bg: 'rgba(251, 146, 60, 0.12)', border: 'rgba(251, 146, 60, 0.28)' };
+      case 'CRITICAL':
+        return { text: '#EF4444', bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.28)' };
+      default:
+        return { text: '#94A3B8', bg: 'rgba(148, 163, 184, 0.12)', border: 'rgba(148, 163, 184, 0.28)' };
+    }
+  };
+
+  const statusColors = getHealthStatusColor(healthStatusStr);
   const isLoading = isReportLoading || isHealthLoading;
   const isError = isReportError || isHealthError;
 
@@ -138,12 +241,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             Enterprise Decision Intelligence Command Center
           </h1>
           <p style={{ color: '#8E99A8', fontSize: '0.78rem', margin: '2px 0 0 0' }}>
-            Autonomous deterministic intelligence, dataset telemetry ingestion, and boardroom scenario control.
+            Autonomous business diagnosis, algorithmic root causes, prioritized initiatives, and deterministic health scoring.
           </p>
         </div>
 
         {/* Primary Action Buttons */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <button
             onClick={handleRefreshAll}
             style={{
@@ -184,8 +287,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             <span>Select Active Dataset</span>
           </button>
 
-          <Link
-            to="/enterprise-data"
+          <label
             style={{
               padding: '6px 14px',
               background: '#FFFFFF',
@@ -194,17 +296,42 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               color: '#000000',
               fontSize: '0.75rem',
               fontWeight: 700,
-              textDecoration: 'none',
+              cursor: isUploading ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
+              opacity: isUploading ? 0.7 : 1,
+              transition: 'all 0.15s ease',
             }}
           >
-            <Upload size={12} />
-            <span>Upload Enterprise Dataset</span>
-          </Link>
+            {isUploading ? <RefreshCw size={12} className="animate-spin" /> : <Upload size={12} />}
+            <span>{isUploading ? 'Ingesting Dataset...' : 'Upload Enterprise Dataset'}</span>
+            <input
+              type="file"
+              accept=".csv"
+              style={{ display: 'none' }}
+              onChange={handleFileUpload}
+              disabled={isUploading}
+            />
+          </label>
         </div>
       </div>
+
+      {/* Upload Error Banner */}
+      {uploadError && (
+        <div style={{ padding: '8px 12px', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '8px', color: '#EF4444', fontSize: '0.78rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <AlertTriangle size={14} />
+            <span>Upload Failed: {uploadError}</span>
+          </div>
+          <button
+            onClick={() => setUploadError(null)}
+            style={{ background: 'transparent', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 800 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Quick Notice Banner */}
       {quickNotice && (
@@ -258,7 +385,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               Active Dataset: <strong style={{ color: '#FFFFFF' }}>{activeDataset.name}</strong> • Primary Issue: <strong style={{ color: '#F87171' }}>{primaryIssue}</strong> • Top Action: <strong style={{ color: '#10B981' }}>{topRecommendation}</strong>
             </span>
           </div>
-          <span style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 7px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.12)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.28)', letterSpacing: '0.04em' }}>
+          <span style={{ fontSize: '0.64rem', fontWeight: 700, padding: '2px 7px', borderRadius: '4px', background: statusColors.bg, color: statusColors.text, border: `1px solid ${statusColors.border}`, letterSpacing: '0.04em' }}>
             HEALTH STATUS: {healthStatusStr}
           </span>
         </div>
@@ -345,17 +472,17 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 <span style={{ fontSize: '0.66rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   BUSINESS HEALTH SCORE
                 </span>
-                <Activity size={13} color="#10B981" />
+                <Activity size={13} color={statusColors.text} />
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.02em', marginTop: '2px' }}>
                 {healthScore} <span style={{ fontSize: '0.82rem', color: '#64748B' }}>/ 100</span>
               </div>
               <div style={{ fontSize: '0.70rem', color: '#8E99A8', marginTop: '1px' }}>
-                <span style={{ color: '#10B981', fontWeight: 700 }}>{healthStatusStr}</span> • Evaluated Deterministically
+                <span style={{ color: statusColors.text, fontWeight: 700 }}>{healthStatusStr}</span> • Evaluated Deterministically
               </div>
             </div>
             <Link
-              to="/portfolio"
+              to="/kpis"
               style={{
                 fontSize: '0.72rem',
                 fontWeight: 700,
@@ -444,10 +571,14 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 <Zap size={13} color="#10B981" />
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.02em', marginTop: '2px' }}>
-                {recommendationCount} Actions
+                {recommendationCount} {recommendationCount === 1 ? 'Action' : 'Actions'}
               </div>
               <div style={{ fontSize: '0.70rem', color: '#8E99A8', marginTop: '1px' }}>
-                Impact: <span style={{ color: '#F87171', fontWeight: 700 }}>{financialImpact}</span>
+                {recommendationCount > 0 ? (
+                  <>Target: <span style={{ color: '#10B981', fontWeight: 700 }}>{topBenefitImpact}</span></>
+                ) : (
+                  <>Target: <span style={{ color: '#64748B', fontWeight: 700 }}>—</span></>
+                )}
               </div>
             </div>
             <Link
@@ -494,7 +625,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 {primaryIssue}
               </div>
               <div style={{ fontSize: '0.75rem', color: '#94A3B8', lineHeight: 1.5 }}>
-                Estimated Financial Impact: <strong style={{ color: '#EF4444' }}>{financialImpact}</strong>. Identified through rule-based evaluation of consecutive revenue decline periods.
+                Business Impact: <strong style={{ color: '#F87171' }}>{primaryBusinessImpact}</strong>
               </div>
             </div>
 
@@ -502,11 +633,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               <div style={{ fontSize: '0.70rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>
                 TOP PRESCRIBED ACTION
               </div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#10B981', marginBottom: '6px' }}>
-                {topRecommendation}
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: recommendationCount > 0 ? '#10B981' : '#94A3B8', marginBottom: '6px' }}>
+                {recommendationCount > 0 ? topRecommendation : 'No Prescribed Actions Available'}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94A3B8', lineHeight: 1.5 }}>
-                Actionable intervention targeted at reversing negative revenue trajectory and reducing magnitude of contraction.
+              <div style={{ fontSize: '0.75rem', color: '#CBD5E1', lineHeight: 1.5 }}>
+                Strategic Guidance: {financialImpact}
               </div>
             </div>
           </div>

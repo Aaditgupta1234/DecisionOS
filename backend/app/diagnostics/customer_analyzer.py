@@ -13,7 +13,11 @@ from app.diagnostics.helpers import (
     load_lightweight_columns,
 )
 from app.diagnostics.metric_keys import MetricKeys
-from app.diagnostics.severity import calculate_confidence, calculate_severity
+from app.diagnostics.severity import (
+    calculate_confidence,
+    calculate_severity,
+    evaluate_catastrophic_escalation,
+)
 from app.models.dataset import Dataset
 from app.models.dataset_metric import DatasetMetric
 from app.models.diagnostic_finding import DiagnosticFinding
@@ -69,7 +73,10 @@ class CustomerDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
         df: pd.DataFrame,
     ) -> Optional[DiagnosticFinding]:
         """Calculates repeat purchase frequency and flags low customer retention."""
-        cust_counts = df["customer_id"].dropna().value_counts()
+        cust_col = df["customer_id"]
+        if isinstance(cust_col, pd.DataFrame):
+            cust_col = cust_col.iloc[:, 0]
+        cust_counts = cust_col.dropna().value_counts()
         total_unique = len(cust_counts)
 
         if total_unique < 5:
@@ -288,6 +295,48 @@ class CustomerDiagnosticAnalyzer(BaseDiagnosticAnalyzer):
                         business_impact="Accelerated customer attrition degrades lifetime value and inflates net replacement costs.",
                         metric_key=MetricKeys.CHURN_RATE,
                         confidence_score=0.92,
+                        supporting_data=evidence,
+                    )
+                )
+
+        # 2. Customer Satisfaction / Review Score Alert Check
+        avg_review = metrics_map.get(MetricKeys.AVERAGE_REVIEW_SCORE)
+        if avg_review is not None and isinstance(avg_review, (int, float)):
+            review_val = float(avg_review)
+            if review_val < 3.5:
+                cat_sev, cat_flag, cat_mult = evaluate_catastrophic_escalation(
+                    MetricKeys.AVERAGE_REVIEW_SCORE, review_val
+                )
+                severity = FindingSeverity.CRITICAL if review_val <= 2.0 else (
+                    FindingSeverity.HIGH if review_val < 3.0 else FindingSeverity.MEDIUM
+                )
+                catastrophic_flag = cat_flag or (review_val <= 1.5)
+
+                evidence = EvidenceBuilder.build_metric_evidence(
+                    category=FindingCategory.CUSTOMER.value,
+                    subtype=FindingSubtype.CHURN_INCREASE.value,
+                    metric_name=MetricKeys.AVERAGE_REVIEW_SCORE,
+                    observed=round(review_val, 2),
+                    threshold=4.0,
+                    confidence=0.90,
+                    sample_size=metrics_map.get(MetricKeys.TOTAL_ORDERS, 20),
+                    recommendation="Investigate root causes of customer dissatisfaction and deploy post-purchase recovery workflows.",
+                    extra_context={
+                        "catastrophic_flag": catastrophic_flag,
+                        "escalation_multiplier": cat_mult,
+                    },
+                )
+
+                findings.append(
+                    create_diagnostic_finding(
+                        dataset=dataset,
+                        finding_type=FindingType.CUSTOMER_CONCENTRATION,
+                        severity=severity,
+                        title=f"Severe Customer Dissatisfaction (Avg Review: {round(review_val, 1)} / 5.0)",
+                        description=f"Average customer review score dropped to {round(review_val, 1)} / 5.0, reflecting severe customer dissatisfaction.",
+                        business_impact="Poor customer sentiment severely impairs retention and long-term brand equity.",
+                        metric_key=MetricKeys.AVERAGE_REVIEW_SCORE,
+                        confidence_score=0.90,
                         supporting_data=evidence,
                     )
                 )

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { 
   Database, 
   Upload, 
@@ -16,7 +17,8 @@ import {
   Cpu, 
   ShieldCheck, 
   BarChart3, 
-  Zap 
+  Zap,
+  Trash2
 } from 'lucide-react';
 import { useDataset } from '../../context/DatasetContext';
 import { DecisionApi } from '../../api';
@@ -24,10 +26,32 @@ import { Card, Badge, Button, MetricTile } from '../../design-system';
 
 export const DatasetManagementCenterView: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
+  const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleDeleteDataset = async (datasetId: string, datasetName: string) => {
+    const confirmed = window.confirm(`Are you sure you want to delete dataset "${datasetName}"? This action will remove it from the platform.`);
+    if (!confirmed) return;
+
+    try {
+      setIsDeleting(datasetId);
+      setErrorMsg(null);
+      setSuccessMsg(null);
+      await DecisionApi.deleteDataset(datasetId);
+      await refreshDatasets();
+      await queryClient.invalidateQueries();
+      setSuccessMsg(`Dataset "${datasetName}" deleted successfully.`);
+    } catch (err: any) {
+      console.error('Delete failed:', err);
+      setErrorMsg(err?.message || `Failed to delete dataset "${datasetName}".`);
+    } finally {
+      setIsDeleting(null);
+    }
+  };
 
   // Demo benchmark datasets for 1-click recruiter walkthrough
   const demoBenchmarks = [
@@ -62,10 +86,11 @@ export const DatasetManagementCenterView: React.FC = () => {
       setErrorMsg(null);
       setSuccessMsg(null);
       const newDataset = await DecisionApi.uploadDataset(file);
-      await refreshDatasets();
       if (newDataset) {
         setActiveDataset(newDataset);
-        setSuccessMsg(`Dataset "${newDataset.name}" ingested successfully! Schema mapped.`);
+        await refreshDatasets();
+        await queryClient.invalidateQueries();
+        setSuccessMsg(`Dataset "${newDataset.name}" ingested successfully! Schema mapped and intelligence computed.`);
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
@@ -82,6 +107,7 @@ export const DatasetManagementCenterView: React.FC = () => {
       setErrorMsg(null);
       setSuccessMsg(null);
       await DecisionApi.generateIntelligence(datasetId);
+      await queryClient.invalidateQueries();
       setSuccessMsg('DecisionOS Intelligence Pipeline computed! Deterministic KPIs, Root Causes & Scenarios generated.');
     } catch (err: any) {
       console.error('Pipeline failed:', err);
@@ -353,6 +379,29 @@ export const DatasetManagementCenterView: React.FC = () => {
                     }}
                   >
                     {isActive ? '✓ Active' : 'Switch Context'}
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteDataset(ds.id, ds.name)}
+                    disabled={isDeleting === ds.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '5px 9px',
+                      background: 'rgba(239, 68, 68, 0.08)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '5px',
+                      color: '#EF4444',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      cursor: isDeleting === ds.id ? 'not-allowed' : 'pointer',
+                      transition: 'all 0.15s ease',
+                    }}
+                    title={`Delete ${ds.name}`}
+                  >
+                    <Trash2 size={12} color="#EF4444" />
+                    <span>{isDeleting === ds.id ? 'Deleting...' : 'Delete'}</span>
                   </button>
                 </div>
               </div>

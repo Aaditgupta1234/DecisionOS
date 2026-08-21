@@ -1,48 +1,88 @@
 import React from 'react';
-import { Activity, Sparkles, CheckCircle2, TrendingUp, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Activity, Sparkles, CheckCircle2, TrendingUp, AlertTriangle, ShieldCheck, Database, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useDataset } from '../../context/DatasetContext';
+import { useQuery } from '@tanstack/react-query';
+import { DecisionApi } from '../../api';
+import { queryKeys } from '../../shared/api/queryKeys';
+import { IntelligenceReportResponse } from '../../types';
 
 export const ActivityFeed: React.FC = () => {
+  const { activeDataset } = useDataset();
+
+  const { data: reportData } = useQuery<IntelligenceReportResponse>({
+    queryKey: queryKeys.reports.executive(activeDataset?.id || ''),
+    queryFn: () => DecisionApi.getIntelligenceReport(activeDataset!.id),
+    enabled: !!activeDataset?.id,
+    staleTime: 60000,
+  });
+
+  const datasetName = activeDataset?.name || 'Active Dataset';
+  const recordCount = activeDataset?.row_count ?? (activeDataset as any)?.record_count ?? 0;
+  const findings = reportData?.findings || [];
+  const recs = reportData?.recommendations || [];
+  const metrics = reportData?.metrics || [];
+  const healthScore = reportData?.executive_summary?.business_health_score;
+
   const activities = [
     {
-      id: 'act-1',
-      title: 'Initiative INIT-2026-051 Realized +$312,000 ARR',
-      time: '12m ago',
-      type: 'OUTCOME',
-      icon: <TrendingUp size={14} color="#10B981" />,
-      route: '/strategy-execution',
+      id: 'act-dataset',
+      title: `Dataset "${datasetName}" ingested (${recordCount.toLocaleString()} rows verified)`,
+      time: 'Live context',
+      icon: <Database size={14} color="#38BDF8" />,
+      route: '/data-management',
     },
-    {
-      id: 'act-2',
-      title: 'Autonomous Strategy Agent dispatched Scenario SIM-018',
-      time: '34m ago',
-      type: 'AGENT',
-      icon: <Sparkles size={14} color="#A855F7" />,
-      route: '/agents',
-    },
-    {
-      id: 'act-3',
-      title: 'Q1 Boardroom Strategic Briefing Deck Approved by CEO',
-      time: '2h ago',
-      type: 'GOVERNANCE',
-      icon: <ShieldCheck size={14} color="#38BDF8" />,
-      route: '/reports',
-    },
-    {
-      id: 'act-4',
-      title: 'SaaS Capital Benchmark Index data refreshed (98% freshness)',
-      time: '4h ago',
-      type: 'BENCHMARK',
-      icon: <Activity size={14} color="#F59E0B" />,
-      route: '/competitive-intelligence',
-    },
+    ...(findings.length > 0
+      ? [
+          {
+            id: 'act-finding',
+            title: `Diagnostic Engine: ${findings[0].title || 'Anomaly identified'}`,
+            time: 'Diagnosed',
+            icon: <AlertTriangle size={14} color="#F59E0B" />,
+            route: '/diagnostics',
+          },
+        ]
+      : []),
+    ...(metrics.length > 0
+      ? [
+          {
+            id: 'act-kpi',
+            title: `KPI Calculation Engine: ${metrics.length} business metrics computed`,
+            time: 'Evaluated',
+            icon: <Activity size={14} color="#10B981" />,
+            route: '/kpis',
+          },
+        ]
+      : []),
+    ...(recs.length > 0
+      ? [
+          {
+            id: 'act-rec',
+            title: `Prescriptive Action: ${recs[0].title || 'Strategic initiative formulated'}`,
+            time: 'Ready',
+            icon: <TrendingUp size={14} color="#A855F7" />,
+            route: '/recommendations',
+          },
+        ]
+      : []),
+    ...(healthScore !== undefined
+      ? [
+          {
+            id: 'act-gov',
+            title: `Health Index: ${healthScore}/100 (${reportData?.executive_summary?.business_health_status || 'HEALTHY'})`,
+            time: 'Verified',
+            icon: <ShieldCheck size={14} color="#10B981" />,
+            route: '/reports',
+          },
+        ]
+      : []),
   ];
 
   return (
     <div style={{ background: '#090D14', border: '1px solid #1E293B', borderRadius: '14px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF' }}>Platform Activity Feed</span>
-        <span style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700 }}>● LIVE PULSE</span>
+        <span style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700 }}>● {activeDataset?.name || 'LIVE CONTEXT'}</span>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

@@ -1,0 +1,501 @@
+date,region,segment,product_line,revenue,orders,customers,review_score,cancellations,delivery_time_days,returning_customer
+2026-06-13,LATAM,Enterprise,Platform,2114.3,5,2,3.1,2,2.1,0
+2026-01-24,Europe,Mid-Market,AI Suite,3670.25,9,5,2.6,1,8.9,1
+2026-07-27,North America,Enterprise,Operations,13104.85,3,4,3.4,0,3.4,1
+2026-01-25,LATAM,Enterprise,AI Suite,5705.2,6,5,3.2,0,9.0,0
+2026-08-01,APAC,Enterprise,Analytics,9615.28,6,5,3.0,0,1.5,0
+2026-08-10,Europe,SMB,AI Suite,1964.52,5,4,4.1,1,2.8,1
+2026-06-29,APAC,SMB,Analytics,14081.49,2,5,4.1,0,2.8,1
+2026-06-25,Europe,SMB,AI Suite,5202.1,1,2,4.6,0,5.4,0
+2026-02-24,LATAM,SMB,Operations,10003.86,7,4,2.9,1,3.7,1
+2026-04-03,Europe,SMB,Operations,3680.15,3,5,3.7,0,10.5,0
+2026-06-02,North America,SMB,AI Suite,1421.15,7,5,5.0,2,11.7,0
+2026-07-16,Europe,SMB,Platform,9793.95,2,3,3.6,1,1.0,1
+2026-08-11,APAC,Mid-Market,Platform,9566.85,9,5,3.0,2,9.4,0
+2026-01-29,LATAM,Enterprise,Analytics,13971.93,5,2,2.6,2,11.4,0
+2026-02-02,Europe,SMB,AI Suite,10066.39,9,2,3.2,4,5.7,0
+2026-04-13,North America,Mid-Market,Platform,14929.67,6,4,4.7,3,2.3,0
+2026-05-31,North America,Enterprise,AI Suite,8531.86,10,2,2.5,5,7.9,0
+2026-01-19,Europe,Mid-Market,Operations,7955.26,5,4,3.0,0,9.0,1
+2026-02-18,North America,Enterprise,Operations,1867.72,7,3,3.6,3,10.5,0
+2026-07-06,APAC,Mid-Market,Analytics,5419.89,2,2,3.0,1,2.5,0
+2026-08-12,Europe,Enterprise,Operations,13887.35,8,5,2.7,4,10.2,0
+2026-05-05,LATAM,Mid-Market,Operations,7479.7,7,1,2.9,0,11.8,1
+2026-06-28,North America,SMB,AI Suite,14381.11,9,4,2.9,2,3.4,0
+2026-01-15,Europe,Enterprise,Platform,1227.06,8,5,4.8,4,2.7,0
+2026-06-22,North America,Mid-Market,AI Suite,12996.38,7,1,4.9,1,7.4,0
+2026-08-28,LATAM,Mid-Market,Platform,4281.1,6,2,3.2,1,8.4,1
+2026-01-03,APAC,Enterprise,Analytics,7145.14,10,1,2.7,1,6.6,0
+2026-04-05,APAC,SMB,Platform,4632.32,8,5,4.3,4,11.8,0
+2026-08-29,APAC,SMB,Analytics,13232.84,5,1,4.7,2,7.1,1
+2026-07-03,APAC,Enterprise,Platform,5471.76,5,5,3.7,0,2.0,1
+2026-03-27,North America,Enterprise,Analytics,11681.23,5,2,4.4,2,8.8,0
+2026-05-20,APAC,Enterprise,AI Suite,1022.41,6,5,3.9,3,2.4,1
+2026-02-23,Europe,Enterprise,Analytics,10389.97,2,3,4.5,1,11.7,0
+2026-08-14,APAC,Enterprise,Platform,6478.27,3,3,4.5,1,9.8,0
+2026-04-08,Europe,Enterprise,Analytics,13146.42,8,2,3.0,3,4.8,0
+2026-04-13,North America,Enterprise,AI Suite,5259.8,2,3,3.4,1,8.5,1
+2026-02-15,LATAM,SMB,Platform,8918.55,5,1,2.8,1,4.8,1
+2026-04-09,APAC,Mid-Market,Platform,13542.82,4,3,2.6,1,1.0,0
+2026-06-20,APAC,SMB,Operations,13851.18,10,3,4.2,0,8.9,1
+2026-03-25,Europe,SMB,AI Suite,6334.81,5,5,2.8,1,8.3,1
+2026-04-14,LATAM,Mid-Market,Operations,8445.09,1,3,3.2,0,9.6,1
+2026-06-22,North America,Enterprise,AI Suite,3598.67,8,2,4.1,2,6.7,1
+2026-02-27,LATAM,Mid-Market,Analytics,12195.16,3,1,2.6,1,7.7,0
+2026-07-03,LATAM,Enterprise,Analytics,10597.14,8,4,3.1,0,10.8,0
+2026-07-25,LATAM,Enterprise,Operations,14390.51,9,4,2.6,1,11.1,0
+2026-06-20,LATAM,Enterprise,Operations,8201.41,9,5,3.3,3,7.7,1
+2026-04-26,APAC,Mid-Market,Platform,4258.28,4,3,4.4,2,6.3,0
+2026-07-02,Europe,Mid-Market,Analytics,4643.06,5,3,3.3,2,1.9,0
+2026-06-30,LATAM,Mid-Market,Platform,3602.32,7,4,3.3,3,5.6,0
+2026-08-08,LATAM,SMB,Analytics,13269.52,10,4,3.7,2,4.3,1
+2026-05-05,Europe,Mid-Market,Analytics,3681.61,7,4,2.6,2,8.4,1
+2026-06-09,Europe,Mid-Market,Analytics,8244.79,7,5,3.9,0,1.9,1
+2026-01-13,APAC,Mid-Market,AI Suite,4272.27,6,2,3.6,2,9.4,1
+2026-08-02,North America,Enterprise,Analytics,1687.64,1,5,2.6,0,3.5,0
+2026-02-21,LATAM,SMB,AI Suite,12668.82,10,2,3.1,3,8.4,0
+2026-07-16,APAC,Enterprise,Platform,5848.98,10,5,4.9,5,2.3,0
+2026-08-26,North America,SMB,AI Suite,5023.38,7,4,4.9,1,1.8,0
+2026-08-06,North America,SMB,AI Suite,10421.76,2,5,4.5,1,6.9,1
+2026-01-04,Europe,Mid-Market,Analytics,12818.85,8,1,3.6,2,8.0,1
+2026-07-07,LATAM,SMB,AI Suite,8065.33,5,5,4.5,2,9.5,1
+2026-03-24,APAC,Enterprise,Operations,12849.84,2,3,4.7,0,9.3,1
+2026-08-06,North America,SMB,Analytics,5212.71,8,2,3.4,2,4.7,1
+2026-01-22,LATAM,Enterprise,Platform,3999.66,7,4,3.9,1,8.6,1
+2026-03-17,LATAM,SMB,AI Suite,3713.15,4,3,4.2,1,6.2,1
+2026-04-01,North America,SMB,Analytics,10691.4,5,3,3.1,0,8.9,1
+2026-02-19,Europe,Mid-Market,Analytics,3637.58,8,3,4.3,4,7.6,0
+2026-04-03,Europe,SMB,Operations,3101.9,1,5,2.8,0,11.7,1
+2026-01-27,APAC,Mid-Market,Platform,13154.44,10,3,3.7,3,4.7,0
+2026-07-30,North America,Enterprise,Platform,1447.48,8,1,3.9,0,2.7,1
+2026-05-23,LATAM,Mid-Market,AI Suite,11584.43,10,5,4.5,1,9.5,1
+2026-08-09,Europe,SMB,Analytics,9033.61,7,3,3.9,0,7.7,0
+2026-03-09,LATAM,SMB,Operations,10076.21,3,2,2.9,0,2.7,1
+2026-03-16,APAC,SMB,Analytics,973.28,5,3,4.3,1,1.8,0
+2026-04-19,APAC,SMB,AI Suite,2164.26,4,2,4.8,0,1.8,0
+2026-04-23,North America,SMB,Platform,2303.13,5,4,4.9,2,6.9,1
+2026-08-16,APAC,SMB,Platform,6764.42,6,5,3.1,0,3.5,0
+2026-07-15,LATAM,Enterprise,Operations,11465.9,8,5,4.1,2,3.0,1
+2026-03-31,APAC,SMB,Operations,6421.05,6,1,4.6,2,5.5,1
+2026-07-28,North America,SMB,Operations,11527.25,1,4,2.7,0,4.6,1
+2026-04-16,Europe,Mid-Market,Analytics,1285.96,9,3,4.1,3,7.9,0
+2026-08-26,APAC,SMB,Platform,4676.42,8,1,2.6,4,9.8,0
+2026-05-22,LATAM,SMB,AI Suite,6415.86,4,1,3.7,0,8.1,0
+2026-05-11,LATAM,Enterprise,Analytics,10728.47,7,4,5.0,1,6.0,0
+2026-08-10,APAC,SMB,Operations,1512.25,7,3,4.8,2,10.0,1
+2026-08-10,LATAM,Mid-Market,Analytics,2654.63,9,4,3.4,4,9.4,1
+2026-06-28,LATAM,Mid-Market,Analytics,3962.68,7,2,4.6,3,1.5,1
+2026-05-07,North America,SMB,Operations,14489.95,3,5,4.9,1,10.6,1
+2026-01-04,North America,Mid-Market,Operations,10975.44,7,2,2.7,2,4.7,1
+2026-03-23,Europe,SMB,Platform,9588.59,8,5,2.6,0,3.6,1
+2026-04-22,APAC,Enterprise,AI Suite,14685.9,2,4,2.9,1,10.9,0
+2026-04-02,LATAM,SMB,Analytics,5935.2,3,2,3.8,0,2.9,0
+2026-05-08,LATAM,Mid-Market,Analytics,13736.02,3,2,3.7,1,6.1,0
+2026-01-19,APAC,Enterprise,Operations,6905.08,6,5,3.2,3,8.6,1
+2026-08-07,North America,SMB,Operations,7506.52,4,4,3.9,2,4.3,1
+2026-03-12,APAC,Enterprise,Analytics,617.42,1,5,4.4,0,9.5,0
+2026-06-08,North America,SMB,AI Suite,4134.09,3,1,4.8,0,4.4,1
+2026-07-07,APAC,Enterprise,AI Suite,2405.47,5,3,4.4,0,3.2,1
+2026-08-22,North America,Enterprise,Analytics,12458.0,8,3,4.4,2,9.8,1
+2026-08-09,LATAM,Mid-Market,AI Suite,10306.69,7,5,3.4,3,1.2,0
+2026-05-30,Europe,SMB,Platform,6024.87,6,1,4.2,3,1.3,1
+2026-06-12,LATAM,Enterprise,Platform,12445.9,5,4,2.8,0,11.4,1
+2026-03-02,LATAM,SMB,Platform,13365.26,3,4,3.6,1,7.5,0
+2026-08-02,Europe,Mid-Market,Platform,7595.53,7,3,2.6,2,3.4,1
+2026-06-25,North America,SMB,Analytics,5826.36,6,1,3.5,1,11.7,1
+2026-06-14,North America,SMB,Analytics,9772.65,1,1,4.5,0,11.9,0
+2026-05-31,Europe,SMB,AI Suite,3631.29,4,3,4.4,2,1.0,0
+2026-07-24,Europe,Mid-Market,Platform,3030.21,1,2,2.5,0,7.5,0
+2026-02-02,North America,Mid-Market,Analytics,11254.91,9,1,4.4,3,5.9,1
+2026-06-07,LATAM,Mid-Market,Platform,1128.79,9,3,3.6,0,1.7,1
+2026-05-06,Europe,Mid-Market,AI Suite,10829.82,8,1,4.7,2,7.7,0
+2026-04-08,Europe,Mid-Market,Operations,14922.1,9,3,3.6,4,5.7,0
+2026-08-16,APAC,Mid-Market,Analytics,3813.16,6,4,3.5,0,4.4,1
+2026-06-25,Europe,SMB,Platform,13883.28,2,1,4.6,0,5.8,1
+2026-05-31,North America,Mid-Market,AI Suite,14371.06,9,3,4.2,3,4.9,1
+2026-04-01,APAC,SMB,AI Suite,2002.21,9,2,2.9,3,3.5,0
+2026-01-30,APAC,Enterprise,Analytics,11557.78,10,2,4.5,4,11.7,0
+2026-03-11,North America,Enterprise,Platform,10689.13,5,3,3.4,0,10.6,1
+2026-01-24,APAC,SMB,Platform,11318.62,4,4,3.5,1,2.7,1
+2026-08-15,LATAM,SMB,Operations,1262.83,3,5,2.6,0,4.0,1
+2026-04-17,APAC,Enterprise,Analytics,4460.92,9,1,3.4,0,4.1,1
+2026-04-12,APAC,Mid-Market,Platform,14774.46,1,1,3.0,0,9.4,1
+2026-01-02,North America,Mid-Market,Platform,7712.09,7,2,2.8,1,6.5,1
+2026-04-22,APAC,Enterprise,Operations,771.75,2,3,3.9,1,8.8,1
+2026-01-06,Europe,Mid-Market,Operations,14509.9,3,5,3.7,1,2.0,0
+2026-05-15,Europe,Mid-Market,AI Suite,1640.38,5,3,3.1,0,1.8,0
+2026-07-06,North America,Enterprise,Operations,14394.24,3,2,2.8,1,3.2,0
+2026-04-29,APAC,Enterprise,Operations,11439.46,10,4,4.2,4,8.1,1
+2026-01-18,LATAM,Mid-Market,Platform,7299.36,5,3,4.0,1,6.6,1
+2026-01-15,LATAM,SMB,Platform,5846.7,5,1,4.1,0,7.8,1
+2026-04-26,LATAM,Enterprise,AI Suite,13681.22,10,2,3.3,3,6.5,0
+2026-07-02,APAC,Mid-Market,AI Suite,1722.77,3,1,3.1,1,11.9,0
+2026-04-10,LATAM,Mid-Market,AI Suite,6427.16,6,5,2.6,2,1.7,0
+2026-07-05,APAC,SMB,Operations,12847.71,10,2,3.3,4,8.3,1
+2026-02-03,LATAM,SMB,AI Suite,9128.1,2,3,3.9,1,9.9,0
+2026-01-05,Europe,Enterprise,AI Suite,5757.67,3,2,3.4,1,3.1,0
+2026-08-05,Europe,SMB,Operations,11927.74,9,5,4.6,4,1.4,1
+2026-02-09,LATAM,SMB,AI Suite,2852.58,10,2,4.3,0,5.5,0
+2026-07-12,Europe,Mid-Market,Operations,11353.78,8,2,3.8,2,11.6,1
+2026-04-29,APAC,Enterprise,Operations,11656.86,7,5,3.8,1,10.0,0
+2026-08-12,APAC,Mid-Market,Analytics,5882.58,2,5,4.6,1,1.9,0
+2026-08-01,APAC,Enterprise,Operations,6843.35,4,4,4.7,0,5.6,1
+2026-01-21,North America,Mid-Market,Operations,5936.23,1,3,4.8,0,9.7,0
+2026-06-28,Europe,SMB,Operations,12551.1,8,4,4.0,0,1.2,0
+2026-01-29,North America,Enterprise,Operations,11754.5,4,3,2.8,0,5.6,1
+2026-06-02,APAC,Enterprise,Operations,8272.78,9,5,3.1,1,4.2,0
+2026-02-17,LATAM,Mid-Market,Platform,10133.38,2,5,4.9,0,11.5,0
+2026-06-12,Europe,SMB,Platform,6109.78,6,3,4.4,2,9.7,1
+2026-07-17,LATAM,SMB,Operations,8937.6,6,2,2.6,2,9.9,0
+2026-06-11,North America,Enterprise,Platform,3143.03,3,1,4.3,1,1.4,0
+2026-03-22,Europe,Mid-Market,AI Suite,14033.88,9,4,5.0,4,6.2,0
+2026-08-09,LATAM,Mid-Market,AI Suite,11822.2,6,3,2.8,2,5.8,1
+2026-02-17,LATAM,Enterprise,Operations,7694.95,8,3,4.8,4,3.9,0
+2026-06-04,APAC,Mid-Market,Operations,14928.92,3,5,3.2,0,1.9,1
+2026-02-12,APAC,SMB,Platform,10501.59,6,4,2.6,2,7.8,1
+2026-01-20,LATAM,Enterprise,Analytics,10232.17,7,3,3.8,1,11.5,0
+2026-01-18,APAC,Mid-Market,Operations,3921.93,6,3,3.5,0,7.7,1
+2026-07-15,North America,Enterprise,Analytics,1614.84,3,5,3.4,1,8.1,0
+2026-05-08,APAC,SMB,Operations,8007.31,9,1,3.2,2,8.7,0
+2026-02-21,APAC,SMB,Platform,2278.24,2,4,2.9,1,12.0,1
+2026-05-21,Europe,Enterprise,Analytics,8361.48,5,2,4.3,2,8.0,1
+2026-07-22,North America,Enterprise,AI Suite,2513.71,8,1,3.4,4,5.1,0
+2026-04-12,Europe,Mid-Market,Platform,14994.13,8,5,3.5,3,10.1,0
+2026-04-26,Europe,Mid-Market,Platform,7254.58,9,3,2.8,4,8.0,0
+2026-08-01,APAC,SMB,AI Suite,2300.34,3,3,2.9,1,11.3,0
+2026-08-05,Europe,SMB,Analytics,1643.47,4,5,3.2,2,4.3,0
+2026-02-13,North America,Enterprise,AI Suite,10051.63,10,3,4.6,4,1.5,0
+2026-06-16,APAC,Mid-Market,Analytics,3556.72,10,4,4.0,0,6.5,1
+2026-07-26,LATAM,Mid-Market,Analytics,12206.57,7,3,3.6,0,2.7,1
+2026-03-29,APAC,SMB,Platform,9296.57,6,3,4.3,2,11.7,0
+2026-03-23,LATAM,SMB,Operations,4005.2,2,3,3.6,0,2.1,1
+2026-03-05,LATAM,SMB,Operations,14458.94,3,3,4.8,1,3.1,0
+2026-05-08,Europe,SMB,AI Suite,13246.6,8,1,2.7,3,6.6,0
+2026-01-13,North America,Mid-Market,Analytics,1232.84,8,5,4.7,3,4.1,0
+2026-08-14,APAC,SMB,AI Suite,4334.86,6,4,3.4,3,1.6,0
+2026-01-19,Europe,Enterprise,Operations,6102.06,8,5,3.2,4,8.5,0
+2026-04-06,North America,Enterprise,Platform,12026.01,6,5,4.8,1,3.2,1
+2026-02-05,APAC,SMB,AI Suite,10847.08,8,5,3.6,4,10.8,0
+2026-02-11,APAC,Mid-Market,Platform,6197.84,10,3,4.0,4,10.1,1
+2026-04-05,Europe,SMB,Platform,5302.97,2,4,4.0,0,7.6,1
+2026-05-30,North America,SMB,Platform,7466.51,9,5,4.4,3,2.6,0
+2026-02-18,North America,SMB,Analytics,774.59,6,4,2.9,1,5.5,1
+2026-05-13,APAC,SMB,AI Suite,3506.45,6,4,3.8,2,11.5,1
+2026-06-23,Europe,Mid-Market,AI Suite,11693.85,5,5,3.7,0,4.1,1
+2026-06-30,APAC,Enterprise,Operations,3505.53,8,3,3.7,4,11.3,1
+2026-08-18,APAC,Mid-Market,AI Suite,14712.33,6,2,3.2,2,11.5,0
+2026-07-11,North America,SMB,Analytics,7446.65,4,5,3.2,2,8.7,0
+2026-03-04,LATAM,Enterprise,Analytics,1236.1,9,2,4.1,0,2.1,1
+2026-01-02,APAC,Mid-Market,AI Suite,14485.52,3,4,4.1,1,6.3,0
+2026-06-15,LATAM,Enterprise,Platform,1357.86,2,5,3.1,0,11.0,0
+2026-08-03,APAC,SMB,Platform,6256.42,8,2,4.8,2,10.6,0
+2026-08-26,LATAM,Mid-Market,Analytics,14753.41,5,4,5.0,2,6.8,0
+2026-07-27,APAC,SMB,Analytics,2133.38,3,4,4.1,0,1.2,1
+2026-02-14,Europe,Enterprise,Operations,9358.84,7,4,3.8,0,5.4,0
+2026-03-24,APAC,SMB,Platform,14069.47,1,3,3.5,0,9.3,1
+2026-03-08,APAC,SMB,Platform,9978.41,4,1,4.2,1,4.4,1
+2026-06-13,Europe,Mid-Market,AI Suite,13783.89,5,3,4.0,0,11.5,1
+2026-04-17,LATAM,SMB,AI Suite,10678.14,8,5,4.5,1,9.4,0
+2026-01-20,Europe,Mid-Market,Operations,13800.05,2,1,4.6,0,7.3,0
+2026-01-30,LATAM,Enterprise,Operations,10364.28,10,4,2.7,4,5.9,0
+2026-04-27,APAC,Enterprise,Analytics,8676.71,9,4,4.2,2,9.0,1
+2026-05-29,LATAM,Enterprise,AI Suite,1558.93,7,3,4.3,0,11.3,0
+2026-04-15,LATAM,Enterprise,Analytics,3109.73,3,4,3.4,1,5.9,1
+2026-06-17,North America,Enterprise,AI Suite,12974.16,2,2,5.0,1,6.8,0
+2026-04-29,Europe,Mid-Market,Analytics,10265.75,9,4,3.8,1,3.7,1
+2026-08-28,Europe,Enterprise,Platform,13190.52,2,1,4.5,1,7.8,0
+2026-01-26,LATAM,Mid-Market,Analytics,9112.19,8,5,4.2,0,3.7,0
+2026-05-19,APAC,Enterprise,AI Suite,3650.4,1,2,3.8,0,3.6,1
+2026-08-13,LATAM,SMB,Operations,2577.28,9,2,3.5,2,1.7,0
+2026-01-13,LATAM,Enterprise,Operations,14598.21,7,5,3.3,3,5.5,1
+2026-03-03,Europe,Mid-Market,Analytics,12815.44,5,2,4.5,0,7.2,1
+2026-03-07,North America,Mid-Market,Operations,3448.38,2,4,4.6,0,6.9,0
+2026-06-22,APAC,Enterprise,Analytics,9272.06,1,1,3.0,0,6.3,1
+2026-08-28,APAC,Mid-Market,Operations,3255.34,2,4,4.8,0,5.4,0
+2026-04-30,APAC,Enterprise,AI Suite,8237.93,6,3,3.2,3,6.1,1
+2026-03-22,APAC,Enterprise,Analytics,6501.99,10,2,4.4,0,3.9,1
+2026-03-26,APAC,Mid-Market,Operations,3835.27,10,2,3.7,5,11.4,1
+2026-04-28,North America,Enterprise,Platform,2939.39,6,2,2.8,3,3.0,0
+2026-07-15,APAC,Enterprise,Operations,592.57,3,2,2.7,0,1.1,1
+2026-06-18,APAC,Enterprise,Operations,7573.89,1,5,3.9,0,1.2,1
+2026-07-26,APAC,Mid-Market,Operations,14125.82,3,1,4.8,0,3.7,1
+2026-01-21,North America,Enterprise,Operations,5909.25,7,4,3.9,1,4.3,0
+2026-04-08,APAC,SMB,Platform,5968.96,8,1,4.1,1,1.9,1
+2026-08-18,APAC,SMB,Platform,8158.31,1,2,3.0,0,4.0,0
+2026-02-15,North America,Mid-Market,Analytics,13967.11,6,1,4.9,1,9.3,1
+2026-05-25,APAC,Enterprise,Platform,3986.85,7,5,3.3,1,9.7,0
+2026-04-22,North America,SMB,AI Suite,3866.09,2,3,4.0,1,11.7,1
+2026-07-20,North America,SMB,AI Suite,14892.5,8,2,3.4,3,5.8,1
+2026-07-24,LATAM,Mid-Market,AI Suite,4073.52,2,1,3.2,1,8.8,0
+2026-01-28,Europe,Mid-Market,Operations,1827.05,5,4,3.4,1,2.1,0
+2026-05-23,LATAM,Enterprise,AI Suite,8543.73,7,1,2.6,2,7.1,1
+2026-04-16,LATAM,Enterprise,Analytics,6123.09,2,5,4.8,0,7.3,0
+2026-03-10,LATAM,Enterprise,AI Suite,4866.4,8,2,2.7,3,4.0,1
+2026-03-06,North America,Mid-Market,AI Suite,14191.22,8,5,4.0,3,2.2,1
+2026-08-04,LATAM,Mid-Market,Analytics,9492.79,6,4,3.3,1,4.3,0
+2026-04-12,LATAM,Mid-Market,Platform,14546.52,5,4,4.9,0,4.6,1
+2026-08-27,Europe,Mid-Market,AI Suite,8675.83,10,5,2.9,4,1.3,1
+2026-08-01,LATAM,Mid-Market,Platform,10546.11,7,4,2.8,2,3.7,0
+2026-04-25,North America,Mid-Market,Platform,14865.16,8,5,3.5,4,11.2,1
+2026-01-28,APAC,Mid-Market,Platform,11649.83,6,2,4.1,0,7.2,1
+2026-01-03,LATAM,Mid-Market,Operations,1929.8,4,5,4.4,2,7.4,0
+2026-04-29,LATAM,Enterprise,Platform,11698.96,10,5,2.9,0,6.3,1
+2026-08-01,APAC,Mid-Market,Platform,14139.8,3,3,3.3,1,9.6,1
+2026-04-23,North America,Mid-Market,Platform,10968.91,8,3,2.7,0,9.9,0
+2026-06-23,LATAM,Enterprise,Operations,12100.73,4,5,2.9,0,4.6,1
+2026-06-11,LATAM,Enterprise,Analytics,3174.55,7,4,2.6,1,5.9,1
+2026-02-22,LATAM,Enterprise,AI Suite,4536.0,2,5,2.8,0,5.0,0
+2026-06-21,APAC,Mid-Market,Operations,13008.23,9,3,4.0,4,5.3,0
+2026-06-08,Europe,Mid-Market,Platform,3001.65,5,5,4.0,2,2.5,0
+2026-02-16,Europe,Mid-Market,Analytics,5912.94,3,5,3.5,0,7.3,1
+2026-05-23,North America,Mid-Market,Analytics,2919.55,5,2,3.0,1,7.8,1
+2026-02-19,LATAM,Mid-Market,Analytics,12320.63,9,5,4.1,3,8.5,1
+2026-01-22,LATAM,SMB,Operations,8698.27,4,3,2.6,0,6.9,0
+2026-05-21,North America,SMB,Operations,7906.69,10,1,3.2,4,10.1,1
+2026-05-20,LATAM,Mid-Market,AI Suite,3668.86,7,1,4.3,1,4.3,0
+2026-08-09,LATAM,Enterprise,Analytics,12342.56,8,1,4.4,1,3.3,1
+2026-07-20,APAC,SMB,AI Suite,3495.99,4,1,3.9,2,4.1,0
+2026-03-16,Europe,SMB,Analytics,8804.67,9,1,2.8,3,11.1,1
+2026-03-05,LATAM,Mid-Market,Operations,2620.53,6,2,4.4,3,6.4,1
+2026-01-20,LATAM,Mid-Market,AI Suite,9687.6,2,4,3.8,1,8.6,1
+2026-05-29,Europe,Mid-Market,Analytics,535.86,2,4,4.1,1,10.4,1
+2026-05-07,APAC,SMB,Platform,4393.78,5,3,3.9,0,7.2,1
+2026-01-12,LATAM,Enterprise,Analytics,1943.83,8,1,2.8,1,5.9,0
+2026-08-14,Europe,Enterprise,Operations,9924.96,3,3,2.7,1,3.8,1
+2026-06-10,LATAM,Enterprise,Analytics,4929.88,4,4,4.1,2,2.0,0
+2026-06-01,Europe,Mid-Market,Platform,3779.77,8,1,2.5,2,10.0,1
+2026-02-28,Europe,Enterprise,Platform,6054.51,2,1,3.3,1,2.5,0
+2026-06-06,Europe,Enterprise,Platform,9925.29,8,3,4.3,1,11.1,1
+2026-02-05,Europe,Mid-Market,Platform,11410.46,10,4,3.4,3,4.5,0
+2026-03-05,Europe,SMB,Analytics,8524.25,10,5,3.2,5,1.3,1
+2026-07-11,North America,Mid-Market,AI Suite,6180.39,1,2,3.7,0,3.7,0
+2026-02-03,North America,Enterprise,Platform,6109.15,10,4,3.4,5,2.9,1
+2026-01-04,LATAM,SMB,Operations,4301.69,1,1,4.9,0,6.6,1
+2026-01-22,Europe,SMB,AI Suite,9787.79,9,5,2.9,0,4.4,0
+2026-04-11,LATAM,Enterprise,Operations,9003.34,2,3,4.2,0,1.6,0
+2026-06-06,Europe,Mid-Market,AI Suite,9328.07,5,2,2.8,2,2.5,0
+2026-05-14,North America,Enterprise,AI Suite,7999.73,5,2,3.4,2,9.6,1
+2026-07-26,LATAM,SMB,AI Suite,6725.21,9,1,3.2,4,7.9,1
+2026-01-15,Europe,SMB,Platform,7744.35,10,2,3.4,2,9.5,0
+2026-01-12,Europe,Enterprise,Operations,12950.99,1,2,2.6,0,5.2,0
+2026-02-27,North America,Enterprise,Analytics,5166.13,7,3,3.2,0,7.3,0
+2026-07-25,APAC,Enterprise,Operations,7978.72,1,4,2.7,0,10.5,1
+2026-01-03,APAC,SMB,Operations,5849.33,5,5,4.5,2,7.8,1
+2026-07-17,North America,Mid-Market,Platform,11750.35,9,2,2.9,3,1.3,1
+2026-07-14,Europe,SMB,AI Suite,10030.91,5,1,3.0,0,5.6,0
+2026-01-24,North America,SMB,Analytics,1136.55,4,5,3.5,1,6.0,0
+2026-06-13,Europe,Mid-Market,AI Suite,12389.46,2,5,3.9,1,8.3,0
+2026-08-06,Europe,SMB,Platform,5067.63,7,3,3.3,2,3.6,0
+2026-02-09,LATAM,Mid-Market,Operations,2032.04,8,4,3.3,0,6.9,0
+2026-03-09,Europe,Mid-Market,Analytics,12860.99,2,2,4.5,1,10.1,0
+2026-01-24,North America,Mid-Market,Operations,10811.78,6,4,3.8,2,3.9,0
+2026-05-23,Europe,Enterprise,Analytics,11347.14,4,1,3.7,0,2.3,0
+2026-07-30,Europe,SMB,Operations,6308.44,2,5,4.0,0,1.2,0
+2026-07-27,LATAM,Mid-Market,Platform,2367.48,6,1,2.6,3,1.6,1
+2026-04-08,Europe,Enterprise,Analytics,10406.59,3,3,3.0,0,4.0,1
+2026-06-15,LATAM,Enterprise,Analytics,4779.02,7,5,3.7,0,4.1,0
+2026-06-11,APAC,SMB,AI Suite,14914.27,9,1,5.0,2,6.3,1
+2026-04-10,North America,Mid-Market,AI Suite,4421.32,1,3,4.0,0,10.9,1
+2026-07-16,Europe,SMB,Operations,8967.84,4,2,2.8,2,3.7,0
+2026-04-01,North America,SMB,AI Suite,14060.49,3,2,3.1,1,9.9,1
+2026-05-26,LATAM,Enterprise,Platform,8672.29,10,2,4.6,3,7.0,0
+2026-01-15,Europe,Mid-Market,Analytics,3873.04,4,1,3.8,0,4.6,0
+2026-08-24,North America,Mid-Market,Operations,12135.15,6,1,2.6,1,9.5,1
+2026-05-31,LATAM,SMB,AI Suite,1964.97,5,3,2.8,0,9.1,1
+2026-02-14,LATAM,Mid-Market,AI Suite,10754.15,9,5,4.5,1,8.3,0
+2026-02-02,Europe,SMB,Platform,3076.77,1,5,3.5,0,3.0,1
+2026-08-28,APAC,Mid-Market,Platform,7694.68,6,1,3.1,2,2.8,0
+2026-03-09,LATAM,Mid-Market,Operations,3540.42,2,3,3.1,0,8.9,0
+2026-02-12,Europe,Enterprise,Operations,13326.0,8,4,3.4,3,2.1,1
+2026-01-19,APAC,Enterprise,Operations,12088.32,1,3,2.6,0,11.5,0
+2026-02-11,LATAM,SMB,Analytics,11113.78,9,1,3.3,4,10.8,0
+2026-06-05,APAC,SMB,AI Suite,13401.42,3,1,2.8,0,11.7,1
+2026-03-18,North America,Mid-Market,Platform,3944.45,1,4,3.9,0,2.7,1
+2026-03-17,North America,Mid-Market,Platform,12446.51,10,4,3.0,0,3.3,1
+2026-03-20,Europe,Mid-Market,Operations,11880.71,8,4,4.7,2,2.0,1
+2026-04-05,North America,Enterprise,Platform,3205.45,1,3,3.6,0,3.5,1
+2026-01-22,LATAM,SMB,Operations,10188.05,9,4,4.9,4,3.5,0
+2026-05-18,North America,SMB,Analytics,10462.49,8,5,4.7,3,4.3,1
+2026-01-31,Europe,Enterprise,Operations,14264.19,8,2,4.9,1,11.7,0
+2026-01-21,APAC,SMB,Platform,14830.06,7,2,5.0,1,10.2,1
+2026-01-23,LATAM,Enterprise,Operations,6127.44,7,5,3.3,2,6.7,0
+2026-02-08,APAC,SMB,AI Suite,2648.9,10,5,4.4,0,11.2,0
+2026-08-13,LATAM,Enterprise,Operations,6457.91,7,4,3.9,3,1.4,1
+2026-01-10,North America,Mid-Market,AI Suite,6238.99,6,2,2.6,3,11.1,1
+2026-03-21,APAC,Mid-Market,Operations,4565.03,8,1,4.9,1,2.5,1
+2026-06-04,North America,SMB,Analytics,9860.54,4,4,3.0,1,9.2,1
+2026-01-17,Europe,Enterprise,Analytics,5011.28,9,4,2.8,4,10.7,0
+2026-08-03,APAC,Mid-Market,Operations,1335.6,1,4,2.6,0,8.8,1
+2026-06-12,APAC,Mid-Market,Analytics,13884.57,1,2,3.4,0,3.0,1
+2026-08-03,Europe,SMB,Analytics,13470.13,2,3,2.6,0,2.8,0
+2026-06-23,Europe,SMB,Platform,3497.6,7,5,2.6,0,6.2,0
+2026-02-27,APAC,Enterprise,Operations,4159.66,5,3,3.6,1,10.4,1
+2026-03-19,APAC,Mid-Market,Platform,10319.34,10,4,4.0,0,6.6,1
+2026-05-04,Europe,Enterprise,Analytics,1425.64,5,3,4.7,1,8.2,1
+2026-08-19,LATAM,Mid-Market,AI Suite,1323.23,10,4,4.2,5,2.5,0
+2026-08-21,LATAM,SMB,AI Suite,6569.2,7,1,4.0,1,4.8,0
+2026-05-10,Europe,SMB,AI Suite,4852.83,3,5,3.0,0,6.2,1
+2026-06-17,APAC,Mid-Market,AI Suite,1794.85,6,2,4.4,2,5.6,1
+2026-04-29,LATAM,Enterprise,Platform,12842.6,8,1,4.7,4,7.4,0
+2026-08-11,APAC,Mid-Market,Operations,10370.12,9,3,3.5,1,2.5,0
+2026-02-06,North America,Mid-Market,AI Suite,5087.56,3,1,3.7,0,4.4,0
+2026-02-23,Europe,SMB,Operations,11537.3,3,5,4.4,1,9.6,0
+2026-06-12,North America,Mid-Market,Analytics,6726.44,7,4,3.5,0,6.9,1
+2026-01-05,LATAM,SMB,AI Suite,10312.85,4,2,4.2,1,4.4,0
+2026-02-12,LATAM,SMB,Analytics,1446.66,1,3,4.9,0,9.0,1
+2026-03-29,North America,Enterprise,Analytics,14944.01,8,3,4.4,1,11.4,1
+2026-07-06,LATAM,SMB,AI Suite,14780.75,4,1,4.0,0,2.4,0
+2026-07-17,North America,SMB,Platform,8253.63,1,5,5.0,0,8.2,0
+2026-04-17,APAC,Mid-Market,Platform,6942.56,2,5,3.1,0,3.3,0
+2026-06-19,North America,Mid-Market,Platform,8044.48,10,5,4.3,3,10.1,0
+2026-07-20,APAC,SMB,Operations,2040.82,4,5,3.0,1,10.1,0
+2026-03-17,North America,SMB,Platform,2825.42,9,4,4.8,3,4.6,0
+2026-08-21,North America,Mid-Market,Analytics,2101.25,10,4,2.9,0,9.6,0
+2026-04-27,APAC,Mid-Market,AI Suite,14835.66,5,3,3.7,0,9.9,0
+2026-04-20,APAC,Mid-Market,Operations,11208.83,2,1,2.5,0,8.3,0
+2026-06-09,LATAM,Mid-Market,Operations,4390.49,2,3,4.5,0,2.3,1
+2026-06-26,North America,Mid-Market,Operations,12834.74,7,2,2.8,0,11.8,0
+2026-07-25,LATAM,Mid-Market,Platform,8749.68,8,2,4.0,2,7.7,0
+2026-08-16,APAC,SMB,Platform,6463.62,1,1,3.2,0,1.1,0
+2026-04-21,North America,Enterprise,Analytics,10094.84,4,4,3.4,2,8.1,0
+2026-05-10,APAC,Enterprise,Analytics,12808.26,8,2,2.7,3,4.5,1
+2026-05-21,North America,Mid-Market,Operations,9828.1,7,2,2.7,3,9.8,1
+2026-03-22,North America,SMB,AI Suite,2221.25,8,1,2.8,3,1.4,0
+2026-08-16,LATAM,Mid-Market,Operations,7870.9,4,4,4.9,1,10.1,0
+2026-07-03,APAC,SMB,AI Suite,10028.92,8,1,2.7,1,1.0,1
+2026-06-29,Europe,Enterprise,Operations,2041.67,3,4,2.9,1,2.2,0
+2026-02-25,LATAM,Mid-Market,Analytics,7127.17,4,3,2.8,1,1.5,0
+2026-05-08,Europe,SMB,Analytics,562.9,1,5,4.8,0,11.2,0
+2026-01-27,Europe,Mid-Market,Operations,6117.38,10,5,4.7,4,10.7,1
+2026-03-29,APAC,SMB,Analytics,14572.13,8,2,2.8,4,8.7,1
+2026-02-21,APAC,SMB,Platform,3540.83,5,3,4.8,0,11.8,0
+2026-07-14,LATAM,Enterprise,Platform,5607.45,8,5,3.9,3,8.4,1
+2026-01-07,Europe,Enterprise,AI Suite,6022.62,1,1,3.0,0,11.8,1
+2026-02-22,LATAM,Enterprise,AI Suite,11427.11,1,3,4.5,0,7.8,0
+2026-06-27,North America,SMB,AI Suite,10135.16,7,4,3.5,2,11.6,0
+2026-02-21,Europe,Mid-Market,Operations,9498.14,8,2,4.8,2,9.3,0
+2026-02-15,APAC,SMB,AI Suite,14760.07,2,2,4.9,0,5.1,1
+2026-02-03,Europe,Mid-Market,Platform,2833.47,5,1,3.3,2,11.3,0
+2026-07-18,APAC,SMB,Analytics,14019.54,10,3,3.7,4,7.1,0
+2026-02-17,Europe,Enterprise,AI Suite,8048.79,9,2,3.5,4,5.4,1
+2026-03-26,North America,SMB,AI Suite,5731.57,4,5,3.8,2,10.1,0
+2026-04-25,LATAM,Enterprise,Operations,3985.04,10,5,3.1,0,8.5,1
+2026-03-07,LATAM,Enterprise,AI Suite,8333.44,5,1,4.8,1,6.7,1
+2026-08-18,North America,Enterprise,Analytics,9947.16,6,5,2.7,0,2.8,0
+2026-08-10,Europe,Enterprise,Operations,10438.38,2,2,3.8,1,8.1,0
+2026-07-03,APAC,Mid-Market,Operations,5309.87,2,1,2.6,1,7.1,0
+2026-04-26,North America,SMB,Platform,9638.15,7,3,2.5,0,6.9,0
+2026-04-02,LATAM,Mid-Market,Operations,13956.69,2,3,4.5,1,7.7,1
+2026-07-30,Europe,Mid-Market,AI Suite,10080.49,8,2,3.8,1,9.2,1
+2026-01-03,North America,Mid-Market,Analytics,8526.1,9,2,2.8,0,7.3,1
+2026-07-11,APAC,Enterprise,Platform,11250.74,6,2,3.5,1,2.8,0
+2026-02-16,APAC,SMB,Platform,10229.18,10,1,4.6,4,6.1,0
+2026-03-06,North America,Mid-Market,Platform,1923.93,10,4,4.9,2,2.4,0
+2026-08-19,APAC,Mid-Market,Operations,3305.73,8,4,3.3,2,8.6,0
+2026-02-13,Europe,SMB,AI Suite,570.06,4,2,4.3,2,5.8,1
+2026-08-13,North America,Mid-Market,Analytics,7459.33,8,3,4.4,3,7.1,0
+2026-08-17,LATAM,SMB,Analytics,8309.96,5,1,4.3,0,10.3,0
+2026-08-21,APAC,Mid-Market,Analytics,1031.52,5,5,4.7,2,6.2,0
+2026-08-17,North America,SMB,Analytics,11696.1,5,2,3.7,2,2.0,1
+2026-08-06,Europe,SMB,Operations,14478.0,10,2,4.4,1,5.9,0
+2026-08-29,Europe,SMB,AI Suite,5702.54,4,4,3.1,1,5.1,0
+2026-04-10,APAC,SMB,Analytics,7310.28,8,1,2.6,2,2.1,1
+2026-04-07,Europe,SMB,Operations,9978.29,6,5,4.1,0,6.7,1
+2026-04-01,LATAM,Enterprise,Analytics,12349.93,6,4,4.5,0,6.5,0
+2026-01-20,Europe,Mid-Market,AI Suite,7960.85,5,2,2.9,0,5.0,0
+2026-07-04,North America,Enterprise,Platform,2143.41,8,4,3.0,1,8.1,1
+2026-02-02,North America,Enterprise,AI Suite,8815.55,3,2,4.1,0,10.8,0
+2026-08-25,North America,Enterprise,Operations,3110.54,7,5,4.9,0,10.7,1
+2026-06-05,APAC,Enterprise,AI Suite,14895.25,8,2,3.0,3,7.6,0
+2026-08-25,Europe,SMB,Operations,7075.32,10,1,3.1,3,2.5,0
+2026-07-31,North America,Mid-Market,Analytics,2668.64,2,2,3.7,0,10.7,0
+2026-08-19,Europe,Mid-Market,Operations,9250.38,1,4,3.8,0,10.6,1
+2026-03-31,North America,Mid-Market,Operations,9041.2,10,1,3.6,2,6.2,0
+2026-03-07,APAC,Mid-Market,AI Suite,3240.8,1,5,3.8,0,5.1,0
+2026-01-28,APAC,SMB,Operations,2744.29,10,3,3.2,4,5.7,1
+2026-07-13,APAC,Mid-Market,AI Suite,3453.56,9,5,3.7,2,7.2,1
+2026-07-18,North America,Enterprise,Operations,10729.67,3,1,4.4,1,9.6,0
+2026-07-21,North America,Enterprise,Operations,5407.35,9,5,4.2,0,2.8,0
+2026-08-26,LATAM,Mid-Market,AI Suite,9203.56,2,1,3.2,1,1.9,0
+2026-07-02,Europe,Enterprise,Analytics,14471.18,1,2,4.1,0,1.1,1
+2026-06-07,APAC,Mid-Market,AI Suite,2957.5,1,3,3.1,0,11.7,0
+2026-06-21,APAC,SMB,AI Suite,6229.58,10,2,3.8,5,8.7,0
+2026-03-30,North America,Mid-Market,Analytics,14467.67,5,2,4.0,0,6.0,1
+2026-04-15,APAC,SMB,Operations,7840.45,9,1,3.8,2,11.4,1
+2026-04-07,LATAM,Enterprise,AI Suite,8665.94,4,3,4.9,1,8.5,0
+2026-01-18,APAC,Enterprise,AI Suite,6048.76,4,2,4.5,1,11.5,0
+2026-01-24,Europe,SMB,AI Suite,6284.49,6,1,3.9,1,6.2,1
+2026-02-16,Europe,Enterprise,Analytics,14233.21,4,4,4.3,0,9.1,1
+2026-08-02,LATAM,SMB,Platform,4120.58,10,3,2.9,0,2.3,0
+2026-07-15,LATAM,Enterprise,AI Suite,12927.8,1,4,3.4,0,6.4,1
+2026-04-12,APAC,Mid-Market,Analytics,3720.35,10,2,2.6,3,6.3,0
+2026-04-28,LATAM,SMB,Platform,14659.35,9,4,3.3,0,1.1,0
+2026-03-25,APAC,Enterprise,Operations,5743.23,5,2,3.9,0,4.0,1
+2026-04-19,Europe,Enterprise,AI Suite,3552.72,6,3,4.6,2,6.0,0
+2026-07-25,Europe,Mid-Market,Operations,3919.18,7,4,3.0,1,6.2,0
+2026-02-04,LATAM,Enterprise,Analytics,14935.65,9,5,4.3,3,4.3,0
+2026-01-16,APAC,Mid-Market,AI Suite,3624.28,5,4,4.6,0,5.9,1
+2026-05-24,Europe,Mid-Market,AI Suite,8583.63,5,3,2.5,0,4.9,0
+2026-03-25,Europe,Enterprise,AI Suite,10261.3,8,4,4.7,3,7.8,1
+2026-04-18,Europe,Mid-Market,AI Suite,9653.46,10,4,4.6,0,1.9,1
+2026-06-17,LATAM,Mid-Market,Analytics,4724.67,5,5,4.1,1,10.8,1
+2026-02-17,North America,Enterprise,Platform,12886.07,3,2,4.2,0,3.3,1
+2026-08-28,North America,Mid-Market,Analytics,13241.02,9,1,2.6,3,6.8,0
+2026-01-22,Europe,SMB,Analytics,9995.07,7,3,3.1,2,5.9,0
+2026-01-08,LATAM,Enterprise,Analytics,1009.75,6,3,4.7,3,11.7,1
+2026-06-01,LATAM,SMB,Analytics,9164.97,10,4,3.8,5,6.9,1
+2026-07-26,Europe,Mid-Market,AI Suite,1798.53,5,3,3.5,0,4.3,0
+2026-05-01,North America,SMB,AI Suite,8258.93,8,4,3.2,3,9.8,0
+2026-02-18,LATAM,Enterprise,AI Suite,6470.17,9,4,3.5,1,8.9,1
+2026-01-21,APAC,SMB,AI Suite,6622.47,4,5,4.4,2,9.9,1
+2026-04-16,APAC,SMB,Operations,3226.01,2,2,2.8,0,8.0,1
+2026-02-18,APAC,Mid-Market,Analytics,5149.33,3,1,4.9,0,3.0,0
+2026-07-03,LATAM,Mid-Market,Operations,6857.04,1,2,2.7,0,6.4,1
+2026-04-06,North America,SMB,Operations,7223.42,1,3,2.7,0,1.6,1
+2026-02-16,LATAM,Mid-Market,Analytics,3286.79,5,4,4.6,0,11.7,0
+2026-07-08,LATAM,Mid-Market,AI Suite,14920.76,4,4,4.3,0,6.7,0
+2026-08-28,Europe,Mid-Market,Platform,5184.42,1,5,3.8,0,6.3,1
+2026-08-10,North America,Mid-Market,Analytics,10167.07,2,2,4.1,1,1.2,1
+2026-01-03,Europe,Enterprise,Operations,14548.11,10,4,4.2,1,5.1,0
+2026-01-24,Europe,Mid-Market,Analytics,10446.2,6,1,2.6,1,8.7,0
+2026-03-23,Europe,Mid-Market,Platform,14734.3,6,4,4.3,0,8.6,1
+2026-05-05,APAC,Mid-Market,Operations,10746.08,9,3,3.9,3,3.1,0
+2026-03-12,APAC,SMB,AI Suite,13081.1,10,5,2.9,4,2.7,1
+2026-04-27,Europe,Mid-Market,Platform,510.44,9,4,4.3,0,7.8,1
+2026-06-18,APAC,Mid-Market,Operations,14523.87,7,2,3.8,3,9.4,0
+2026-06-14,Europe,Enterprise,Analytics,5169.35,2,5,4.1,0,10.2,0
+2026-01-28,North America,Mid-Market,Analytics,7537.87,2,1,3.9,1,8.2,1
+2026-06-05,APAC,SMB,Operations,10908.76,1,2,4.1,0,6.1,0
+2026-07-30,North America,Enterprise,Platform,5851.5,1,5,3.2,0,9.1,1
+2026-01-26,LATAM,SMB,Platform,11014.99,9,4,3.0,4,8.2,0
+2026-07-16,Europe,SMB,Operations,9760.05,6,4,4.3,3,10.7,0
+2026-05-10,APAC,Mid-Market,Operations,5393.94,3,5,5.0,1,11.3,1
+2026-07-15,APAC,Mid-Market,Operations,9681.99,6,5,3.1,1,5.1,1
+2026-04-12,North America,Mid-Market,Analytics,502.84,1,3,4.0,0,11.9,1
+2026-02-24,APAC,Enterprise,Analytics,12907.95,1,3,4.8,0,2.0,1
+2026-03-09,Europe,SMB,Platform,5822.7,10,2,3.1,2,2.0,1
+2026-07-05,APAC,Enterprise,Operations,5208.03,8,2,3.7,4,10.0,0
+2026-01-21,Europe,SMB,Platform,11811.77,6,3,4.7,3,5.6,0
+2026-06-12,APAC,SMB,Analytics,11772.57,7,1,3.3,0,4.5,0
+2026-02-09,LATAM,Enterprise,Analytics,1232.54,7,4,4.4,0,3.4,1
+2026-03-28,Europe,Enterprise,Operations,1696.9,10,1,3.9,2,1.9,1
+2026-05-24,LATAM,Mid-Market,Platform,3372.57,7,5,3.0,1,3.7,1
+2026-01-29,APAC,Enterprise,AI Suite,10240.34,7,3,3.4,2,4.8,0
+2026-06-07,Europe,SMB,AI Suite,12412.97,8,5,2.9,0,11.2,0
+2026-02-09,APAC,Enterprise,AI Suite,11487.14,2,1,4.3,0,11.4,0
+2026-06-27,Europe,SMB,AI Suite,12162.07,5,4,3.7,1,3.3,0
+2026-05-21,APAC,Enterprise,AI Suite,7503.88,3,1,3.4,0,3.8,0
+2026-01-14,North America,Enterprise,AI Suite,7241.93,1,1,3.5,0,8.3,1
+2026-08-11,North America,Enterprise,Analytics,13309.33,7,2,4.9,0,10.9,1
+2026-05-09,LATAM,SMB,Analytics,14518.47,9,1,2.6,4,4.4,1
+2026-01-05,North America,SMB,AI Suite,5528.31,6,3,4.1,1,12.0,1
+2026-08-13,Europe,Enterprise,Operations,6113.97,1,5,4.9,0,2.7,1
+2026-05-14,APAC,Mid-Market,Analytics,14428.78,10,2,3.5,4,2.7,1
+2026-02-22,Europe,Mid-Market,Analytics,9960.85,10,5,4.2,1,10.5,1
+2026-06-17,North America,Mid-Market,Operations,14028.93,3,3,2.7,0,3.0,0
+2026-04-16,APAC,SMB,Analytics,4898.55,5,2,4.4,0,2.4,0
+2026-06-02,APAC,Enterprise,Operations,3866.65,1,3,2.7,0,2.5,1
+2026-05-06,APAC,Mid-Market,Analytics,7370.78,3,2,3.1,1,9.4,0
+2026-07-10,APAC,Mid-Market,Analytics,10234.42,4,2,2.7,1,10.5,1
+2026-04-20,North America,SMB,Platform,6370.57,1,5,4.3,0,8.9,1
+2026-04-26,LATAM,SMB,Platform,7125.06,1,2,3.8,0,11.8,0

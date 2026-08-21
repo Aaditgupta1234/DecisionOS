@@ -121,11 +121,29 @@ class RootCauseRuleRegistry:
                 cause_subtype=FindingSubtype.DELIVERY_DELAY,
                 effect_subtype=FindingSubtype.OPERATIONAL_INEFFICIENCY,
                 relationship_type=RelationshipType.CAUSES,
-                relationship_strength=0.85,
-                description="Fulfillment transit bottlenecks increase order cancellation rates and operational backlogs.",
+                relationship_strength=0.90,
+                description="Fulfillment transit bottlenecks and delivery delays directly drive order cancellation spikes and operational friction.",
                 expected_correlation="POSITIVE",
             ),
-            # 8. Product Concentration Risk -> Revenue Volatility
+            # 8. Customer Churn / Dissatisfaction -> Order Cancellations
+            RootCauseRule(
+                cause_subtype=FindingSubtype.CHURN_INCREASE,
+                effect_subtype=FindingSubtype.OPERATIONAL_INEFFICIENCY,
+                relationship_type=RelationshipType.CONTRIBUTES_TO,
+                relationship_strength=0.80,
+                description="Severe customer dissatisfaction and negative reviews drive elevated checkout abandonment and order cancellations.",
+                expected_correlation="POSITIVE",
+            ),
+            # 9. Low Retention -> Order Inefficiency
+            RootCauseRule(
+                cause_subtype=FindingSubtype.RETENTION_PROBLEM,
+                effect_subtype=FindingSubtype.OPERATIONAL_INEFFICIENCY,
+                relationship_type=RelationshipType.CONTRIBUTES_TO,
+                relationship_strength=0.70,
+                description="Weak customer retention dynamics correlate with operational friction and elevated order cancellation rates.",
+                expected_correlation="POSITIVE",
+            ),
+            # 10. Product Concentration Risk -> Revenue Volatility
             RootCauseRule(
                 cause_subtype=FindingSubtype.PRODUCT_CONCENTRATION_RISK,
                 effect_subtype=FindingSubtype.VOLATILITY,
@@ -134,7 +152,7 @@ class RootCauseRuleRegistry:
                 description="Heavy revenue concentration in few products amplifies overall business revenue volatility.",
                 expected_correlation="POSITIVE",
             ),
-            # 9. Underperforming Products -> Margin Compression
+            # 11. Underperforming Products -> Margin Compression
             RootCauseRule(
                 cause_subtype=FindingSubtype.UNDERPERFORMING_PRODUCT,
                 effect_subtype=FindingSubtype.MARGIN_COMPRESSION,
@@ -143,7 +161,7 @@ class RootCauseRuleRegistry:
                 description="Low-velocity or deeply discounted product inventory drags down blended gross margin margins.",
                 expected_correlation="POSITIVE",
             ),
-            # 10. Customer Growth Slowdown -> Revenue Stagnation
+            # 12. Customer Growth Slowdown -> Revenue Stagnation
             RootCauseRule(
                 cause_subtype=FindingSubtype.CUSTOMER_GROWTH_SLOWDOWN,
                 effect_subtype=FindingSubtype.STAGNATION,

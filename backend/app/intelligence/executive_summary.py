@@ -141,30 +141,84 @@ class ExecutiveSummaryBuilder:
             4,
         )
 
-        # 6. Calculate Business Health Score
-        health_score, health_status = BusinessHealthScoreEngine.calculate(
+        # 6. Calculate Business Health Score with Full Explanation
+        health_score, health_status, health_explanation = BusinessHealthScoreEngine.calculate_with_explanation(
             findings=finding_list,
             root_causes=rca_list,
             recommendations=rec_list,
         )
 
-        # 7. Formulate Strategic Business Impact Narrative
+        # 7. Formulate Status-Driven Strategic Business Impact Narrative
+        status_val = health_status.value if hasattr(health_status, "value") else str(health_status)
+
         if top_rca_title and top_rec_title:
-            expected_impact = (
-                f"Primary business risk '{primary_issue}' is driven by '{top_rca_title}'. "
-                f"Immediate execution of '{top_rec_title}' is projected to mitigate ongoing operational exposure "
-                f"and restore business health (Current Health Score: {health_score}/100 - {health_status.value})."
-            )
+            if status_val in ("CRITICAL", "AT_RISK"):
+                expected_impact = (
+                    f"Business performance is severely degraded across multiple dimensions (Health Score: {health_score}/100 - {status_val}). "
+                    f"Primary operational risk '{primary_issue}' is driven by '{top_rca_title}'. "
+                    f"Immediate emergency execution of '{top_rec_title}' is required to contain operational risk and prevent further deterioration."
+                )
+            elif status_val == "WATCH_LIST":
+                expected_impact = (
+                    f"Several operational indicators are under pressure (Health Score: {health_score}/100 - WATCH_LIST). "
+                    f"Primary issue '{primary_issue}' is driven by '{top_rca_title}'. "
+                    f"Targeted execution of '{top_rec_title}' is recommended to reverse emerging operational drag."
+                )
+            else:
+                expected_impact = (
+                    f"Business performance remains healthy (Health Score: {health_score}/100 - {status_val}). "
+                    f"Primary driver '{primary_issue}' is linked to '{top_rca_title}'. "
+                    f"Execution of '{top_rec_title}' is recommended to sustain baseline growth and optimize margins."
+                )
         elif top_rec_title:
-            expected_impact = (
-                f"Executing '{top_rec_title}' is recommended to address identified operational bottlenecks "
-                f"(Business Health Score: {health_score}/100 - {health_status.value})."
-            )
+            if status_val in ("CRITICAL", "AT_RISK"):
+                expected_impact = (
+                    f"Business performance is severely degraded across multiple dimensions (Health Score: {health_score}/100 - {status_val}). "
+                    f"Immediate corrective action via '{top_rec_title}' is recommended to contain operational risk and prevent further deterioration."
+                )
+            elif status_val == "WATCH_LIST":
+                expected_impact = (
+                    f"Several operational indicators are under pressure (Health Score: {health_score}/100 - WATCH_LIST). "
+                    f"Targeted intervention via '{top_rec_title}' is recommended to address identified operational bottlenecks."
+                )
+            else:
+                expected_impact = (
+                    f"Business performance remains healthy (Health Score: {health_score}/100 - {status_val}). "
+                    f"Executing '{top_rec_title}' is recommended to sustain baseline momentum and optimize efficiency."
+                )
         else:
-            expected_impact = (
-                f"Business operations are stable with a health score of {health_score}/100 ({health_status.value}). "
-                f"Continue baseline metric monitoring."
-            )
+            if status_val in ("CRITICAL", "AT_RISK"):
+                expected_impact = (
+                    f"Business performance is severely degraded across multiple dimensions (Health Score: {health_score}/100 - {status_val}). "
+                    f"Immediate corrective action is recommended to contain operational risk and prevent further deterioration."
+                )
+            elif status_val == "WATCH_LIST":
+                expected_impact = (
+                    f"Several operational indicators are under pressure with a health score of {health_score}/100 (WATCH_LIST). "
+                    f"Targeted intervention is recommended to prevent further degradation."
+                )
+            elif status_val == "HEALTHY":
+                expected_impact = (
+                    f"Business performance remains healthy with a health score of {health_score}/100 (HEALTHY). "
+                    f"Address identified issues to sustain baseline momentum."
+                )
+            else:
+                expected_impact = (
+                    f"Business performance remains strong across monitored dimensions with a health score of {health_score}/100 (EXCELLENT). "
+                    f"Continue optimization and growth initiatives."
+                )
+
+        # Prohibited words invariant assertion for CRITICAL / AT_RISK status
+        if status_val in ("CRITICAL", "AT_RISK"):
+            prohibited_words = ["stable", "healthy", "normal", "baseline monitoring", "no action required"]
+            impact_lower = expected_impact.lower()
+            for word in prohibited_words:
+                if word in impact_lower:
+                    expected_impact = (
+                        f"Business performance is severely degraded across multiple dimensions (Health Score: {health_score}/100 - {status_val}). "
+                        f"Immediate emergency corrective action is required to contain operational risk and prevent further deterioration."
+                    )
+                    break
 
         return ExecutiveSummary(
             dataset_id=dataset_id,
@@ -179,4 +233,5 @@ class ExecutiveSummaryBuilder:
             business_health_score=health_score,
             business_health_status=health_status,
             expected_business_impact=expected_impact,
+            health_score_explanation=health_explanation,
         )

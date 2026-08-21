@@ -1,0 +1,21 @@
+date,revenue,orders,customers,review_score,cancellations,delivery_days,returning_customers,product_line,region,segment
+2026-01-01,1200,25,22,2.8,10,12,3,Enterprise,North America,B2B
+2026-01-02,1150,24,21,2.9,9,11,3,Enterprise,North America,B2B
+2026-01-03,1100,23,20,2.7,11,13,2,Enterprise,North America,B2B
+2026-01-04,1080,22,20,2.8,10,12,2,Enterprise,North America,B2B
+2026-01-05,1050,21,19,2.6,12,14,2,Enterprise,North America,B2B
+2026-01-06,1020,20,18,2.7,11,13,2,Enterprise,North America,B2B
+2026-01-07,980,19,17,2.5,12,15,1,Enterprise,North America,B2B
+2026-01-08,950,18,16,2.6,13,14,1,Enterprise,North America,B2B
+2026-01-09,900,17,15,2.4,12,15,1,Enterprise,North America,B2B
+2026-01-10,850,16,14,2.5,13,16,1,Enterprise,North America,B2B
+2026-01-11,800,15,13,2.3,12,16,1,Enterprise,North America,B2B
+2026-01-12,760,14,12,2.4,13,17,1,Enterprise,North America,B2B
+2026-01-13,720,13,11,2.2,12,18,1,Enterprise,North America,B2B
+2026-01-14,680,12,10,2.3,13,18,1,Enterprise,North America,B2B
+2026-01-15,650,11,9,2.1,14,19,1,Enterprise,North America,B2B
+2026-01-16,620,10,9,2.2,13,19,1,Enterprise,North America,B2B
+2026-01-17,590,10,8,2.0,14,20,1,Enterprise,North America,B2B
+2026-01-18,560,9,8,2.1,14,20,1,Enterprise,North America,B2B
+2026-01-19,540,9,7,2.0,15,21,1,Enterprise,North America,B2B
+2026-01-20,500,8,7,1.9,15,22,1,Enterprise,North America,B2B

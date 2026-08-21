@@ -67,9 +67,9 @@ export const BoardroomCenterView: React.FC = () => {
   const isError = isReportError || isHealthError;
 
   // Derive Real Values from Backend APIs (No Hardcoded Fallbacks)
-  const rawScore = healthData?.score ?? reportData?.executive_summary?.business_health_score;
+  const rawScore = reportData?.executive_summary?.business_health_score ?? healthData?.score;
   const healthScore = rawScore !== undefined && rawScore !== null ? Math.round(rawScore) : '--';
-  const healthStatusStr = healthData?.status ?? reportData?.executive_summary?.business_health_status ?? 'NEUTRAL';
+  const healthStatusStr = reportData?.executive_summary?.business_health_status ?? healthData?.status ?? 'NEUTRAL';
 
   const metricCount = reportData?.artifact_counts?.metrics ?? reportData?.metrics?.length ?? 0;
   const findingCount = reportData?.artifact_counts?.findings ?? reportData?.findings?.length ?? 0;

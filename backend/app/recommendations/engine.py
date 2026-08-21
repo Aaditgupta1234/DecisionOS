@@ -43,6 +43,7 @@ class RecommendationEngine:
         findings: List[DiagnosticFinding],
         root_causes: Optional[List[RootCauseAnalysis]] = None,
         source: RecommendationSource = RecommendationSource.RULE_ENGINE,
+        health_score: Optional[int] = None,
     ) -> List[Recommendation]:
         """
         Executes end-to-end recommendation generation over a collection of findings and RCAs.
@@ -112,6 +113,82 @@ class RecommendationEngine:
                         source=source,
                     )
                     candidates.append(rec)
+
+        # Fallback synthesis for any findings that did not match a specific template
+        from app.core.constants import (
+            RecommendationType,
+            RecommendationPriority,
+            RecommendationStatus,
+            ExpectedTimeToValue,
+        )
+        for finding in findings:
+            finding_has_rec = any(r.finding_id == finding.id for r in candidates)
+            if not finding_has_rec:
+                title_clean = finding.title.replace("Excessive ", "Resolve ").replace("High ", "Optimize ").replace("Decline in ", "Reverse Decline in ")
+                sev_val = finding.severity.value if hasattr(finding.severity, "value") else str(finding.severity)
+                rec = Recommendation(
+                    dataset_id=finding.dataset_id,
+                    finding_id=finding.id,
+                    title=f"Initiative: {title_clean}",
+                    description=f"Actionable intervention to address: {finding.description}",
+                    why_recommended=finding.business_impact or "Directly mitigates high-impact operational friction diagnosed in the telemetry.",
+                    recommendation_type=RecommendationType.OPERATIONAL_EFFICIENCY,
+                    priority=RecommendationPriority.HIGH if sev_val in ["CRITICAL", "HIGH"] else RecommendationPriority.MEDIUM,
+                    status=RecommendationStatus.PENDING,
+                    source=source,
+                    confidence_score=finding.confidence_score or 0.85,
+                    estimated_impact_score=0.85 if sev_val in ["CRITICAL", "HIGH"] else 0.65,
+                    estimated_effort_score=0.40,
+                    expected_time_to_value=ExpectedTimeToValue.SHORT_TERM,
+                    action_plan=[
+                        f"Triage underlying operational factors driving '{finding.title}'.",
+                        "Deploy targeted process optimizations and workflow safeguards.",
+                        "Establish automated alerting threshold to monitor leading recovery indicators.",
+                        "Review 30-day post-implementation recovery impact on business unit KPIs.",
+                    ],
+                    success_metrics=[finding.metric_key or "operational_efficiency"],
+                    evidence={"finding_title": finding.title, "severity": sev_val},
+                    outcomes={
+                        "primary_kpi_impact": f"Recovery in {finding.metric_key or 'core operations'}",
+                        "estimated_improvement": "+12% to +20%",
+                    },
+                )
+                candidates.append(rec)
+
+        # Invariant: If health score <= 60 and no CRITICAL recommendations exist, synthesize Emergency Recovery Program
+        if (health_score is not None and health_score <= 60) or (findings and not candidates):
+            primary_finding = findings[0] if findings else None
+            if primary_finding:
+                has_emergency_rec = any(r.title == "Emergency Business Recovery Program" for r in candidates)
+                if not has_emergency_rec:
+                    emergency_rec = Recommendation(
+                        dataset_id=primary_finding.dataset_id,
+                        finding_id=primary_finding.id,
+                        title="Emergency Business Recovery Program",
+                        description="Comprehensive emergency stabilization intervention to triage multiple critical business indicators breaching allowable thresholds.",
+                        why_recommended="Business health has breached critical stability levels (Score <= 60), requiring immediate executive intervention to arrest operational decline.",
+                        recommendation_type=RecommendationType.OPERATIONAL_EFFICIENCY,
+                        priority=RecommendationPriority.CRITICAL,
+                        status=RecommendationStatus.PENDING,
+                        source=source,
+                        confidence_score=0.95,
+                        estimated_impact_score=0.95,
+                        estimated_effort_score=0.30,
+                        expected_time_to_value=ExpectedTimeToValue.IMMEDIATE,
+                        action_plan=[
+                            "Convene emergency operational taskforce to triage core bottleneck drivers.",
+                            "Enforce immediate containment protocols across affected business workflows.",
+                            "Deploy daily telemetry monitoring on leading recovery indicators.",
+                            "Establish 14-day rapid review checkpoint to evaluate stabilization progress.",
+                        ],
+                        success_metrics=["business_health_score", "order_completion_rate"],
+                        evidence={"health_score": health_score, "finding_count": len(findings)},
+                        outcomes={
+                            "primary_kpi_impact": "Operational Stabilization",
+                            "estimated_improvement": "+20% to +35% Recovery",
+                        },
+                    )
+                    candidates.append(emergency_rec)
 
         # Deterministic Ranking:
         # Priority (DESC) -> Estimated Impact (DESC) -> Confidence (DESC) -> Estimated Effort (ASC)

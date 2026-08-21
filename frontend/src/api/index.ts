@@ -97,6 +97,11 @@ export const DecisionApi = {
     });
   },
 
+  deleteDataset: (datasetId: string) =>
+    apiClient<{ dataset_id: string; deleted: boolean }>(`/datasets/${datasetId}`, {
+      method: 'DELETE',
+    }),
+
   // ------------------------------------------------------------------------
   // Intelligence & Executive Briefings
   // ------------------------------------------------------------------------

@@ -94,13 +94,13 @@ export const DashboardView: React.FC = () => {
   const customersMetric = metricsList.find(m => m.metric_key?.toLowerCase().includes('custom') || m.metric_name?.toLowerCase().includes('custom'));
   const aovMetric = metricsList.find(m => m.metric_key?.toLowerCase().includes('aov') || m.metric_name?.toLowerCase().includes('aov'));
 
-  const revDisplay = revMetric ? `$${(revMetric.metric_value / 1000000).toFixed(1)}M` : '$4.2M';
-  const ordersDisplay = ordersMetric ? ordersMetric.metric_value.toLocaleString() : '18,530';
-  const customersDisplay = customersMetric ? customersMetric.metric_value.toLocaleString() : '6,842';
-  const aovDisplay = aovMetric ? `$${aovMetric.metric_value.toFixed(2)}` : '$228.40';
+  const revDisplay = revMetric ? `$${Number(revMetric.metric_value).toLocaleString()}` : '--';
+  const ordersDisplay = ordersMetric ? Number(ordersMetric.metric_value).toLocaleString() : '--';
+  const customersDisplay = customersMetric ? Number(customersMetric.metric_value).toLocaleString() : '--';
+  const aovDisplay = aovMetric ? `$${Number(aovMetric.metric_value).toFixed(2)}` : '--';
 
-  const healthScore = healthData?.score ?? 82;
-  const healthStatusName = healthData?.status ?? 'EXCELLENT';
+  const healthScore = summaryData?.business_health_score ?? healthData?.score ?? 0;
+  const healthStatusName = summaryData?.business_health_status ?? healthData?.status ?? 'HEALTHY';
   const findingsList = Array.isArray(diagnosticsData) ? diagnosticsData : [];
   const recsList = Array.isArray(recommendationsData) ? recommendationsData : [];
 

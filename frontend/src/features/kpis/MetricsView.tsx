@@ -216,12 +216,8 @@ export const MetricsView: React.FC = () => {
 
       {/* 3. Flagship Business Health Score Hero Card */}
       <HealthScoreHeroCard
-        score={healthData?.score ?? 81}
-        status={healthData?.status ?? 'HEALTHY'}
-        confidence={95}
-        financialScore={84}
-        customerScore={79}
-        operationalScore={88}
+        score={healthData?.score}
+        status={healthData?.status}
       />
 
       {/* 4. Filter Toolbar & Search */}
