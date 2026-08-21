@@ -49,4 +49,7 @@ export const queryKeys = {
   strategy: {
     latest: (datasetId: string) => ['datasets', datasetId, 'strategy', 'latest'] as const,
   },
+  knowledgeGraph: {
+    dag: (datasetId: string) => ['datasets', datasetId, 'knowledge-graph', 'dag'] as const,
+  },
 };

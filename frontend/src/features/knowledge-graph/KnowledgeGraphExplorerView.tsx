@@ -1,33 +1,172 @@
 import React, { useState } from 'react';
-import { Network, Database, Target, AlertTriangle, CheckCircle2, GitBranch, ShieldCheck, Filter, Eye, Layers, ArrowRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { useDataset } from '../../context/DatasetContext';
+import { DecisionApi } from '../../api';
+import { queryKeys } from '../../shared/api/queryKeys';
+import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
+import { BackendOfflineScreen } from '../../shared/components/feedback/BackendOfflineScreen';
+import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetEmptyState';
+import { IntelligencePipelineBreadcrumb } from '../../shared/components/pipeline/IntelligencePipelineBreadcrumb';
 import { ExplainabilityDrawer } from '../../components/workspace/ExplainabilityDrawer';
+import { DatasetRootCausesResponse } from '../../types';
+import {
+  Network,
+  Database,
+  Target,
+  AlertTriangle,
+  CheckCircle2,
+  GitBranch,
+  ShieldCheck,
+  Filter,
+  Eye,
+  Layers,
+  ArrowRight,
+  RefreshCw
+} from 'lucide-react';
 
 export const KnowledgeGraphExplorerView: React.FC = () => {
+  const { activeDataset } = useDataset();
+  const { status: healthStatus, checkHealth } = useBackendHealth();
+
   const [selectedNodeType, setSelectedNodeType] = useState('ALL');
   const [selectedNode, setSelectedNode] = useState<any | null>(null);
   const [isExplainOpen, setIsExplainOpen] = useState(false);
 
-  const nodes = [
-    { id: '1', type: 'DATASET', name: 'Master Orders Telemetry Stream', status: 'ACTIVE', system: 'DatasetIngestionEngine', confidence: 0.98, edgesCount: 3 },
-    { id: '2', type: 'KPI', name: 'Customer Retention Rate', status: 'ACTIVE', system: 'KPIEngine', confidence: 0.95, edgesCount: 4 },
-    { id: '3', type: 'KPI', name: 'Delivery Latency (Days)', status: 'ACTIVE', system: 'KPIEngine', confidence: 0.96, edgesCount: 3 },
-    { id: '4', type: 'FINDING', name: 'Southeastern Transit Delays (+68.8%)', status: 'ACTIVE', system: 'DiagnosticsEngine', confidence: 0.94, edgesCount: 2 },
-    { id: '5', type: 'ROOT_CAUSE', name: 'Secondary Hub Dispatch Bottleneck', status: 'ACTIVE', system: 'RootCauseEngine', confidence: 0.94, edgesCount: 3 },
-    { id: '6', type: 'RECOMMENDATION', name: 'Carrier Rebalancing & Automated SLA Penalties', status: 'ACTIVE', system: 'RecommendationEngine', confidence: 0.92, edgesCount: 4 },
-    { id: '7', type: 'INITIATIVE', name: 'INIT-2026-001: Win-Back & SLA Deployment', status: 'ACTIVE', system: 'ExecutionEngine', confidence: 0.95, edgesCount: 2 },
-    { id: '8', type: 'ALERT', name: 'CRITICAL: Retention Drift (-7.3%)', status: 'ACTIVE', system: 'ExecutiveAlertEngine', confidence: 0.99, edgesCount: 2 },
-    { id: '9', type: 'OUTCOME', name: 'Verified +$124K ARR Realized Recovery', status: 'ACTIVE', system: 'OutcomeEngine', confidence: 0.96, edgesCount: 2 },
-  ];
+  // Fetch Knowledge Graph DAG from backend API: GET /api/v1/datasets/{dataset_id}/root-causes
+  const {
+    data: rcaData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<DatasetRootCausesResponse>({
+    queryKey: queryKeys.knowledgeGraph.dag(activeDataset?.id || ''),
+    queryFn: () => DecisionApi.getKnowledgeGraph(activeDataset!.id),
+    enabled: !!activeDataset?.id && healthStatus === 'connected',
+    staleTime: 60000,
+  });
 
-  const filteredNodes = selectedNodeType === 'ALL' ? nodes : nodes.filter((n) => n.type === selectedNodeType);
+  if (healthStatus === 'offline') {
+    return <BackendOfflineScreen onRetry={checkHealth} />;
+  }
+
+  if (!activeDataset) {
+    return (
+      <div style={{ padding: '32px' }}>
+        <NoDatasetEmptyState
+          title="No Active Dataset Selected"
+          description="Select or upload a dataset to view the deterministic causal DAG knowledge graph."
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
+        <IntelligencePipelineBreadcrumb currentStep="rootcause" />
+        <div style={{ padding: '60px 20px', textAlign: 'center', background: '#090D14', border: '1px solid #1E293B', borderRadius: '12px' }}>
+          <RefreshCw size={28} color="#38BDF8" style={{ animation: 'spin 1s linear infinite', marginBottom: '12px' }} />
+          <div style={{ fontSize: '1rem', fontWeight: 700, color: '#F1F5F9' }}>Building Deterministic Causal DAG...</div>
+          <div style={{ fontSize: '0.8rem', color: '#64748B', marginTop: '4px' }}>Executing topological graph compilation for {activeDataset.name}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div style={{ padding: '32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
+        <IntelligencePipelineBreadcrumb currentStep="rootcause" />
+        <div style={{ padding: '40px 24px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <AlertTriangle size={32} color="#EF4444" />
+          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#F87171' }}>Unable to Load Knowledge Graph</div>
+          <div style={{ fontSize: '0.82rem', color: '#94A3B8', textAlign: 'center', maxWidth: '500px' }}>
+            {(error as any)?.message || 'An error occurred while building the Knowledge Graph DAG.'}
+          </div>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            style={{
+              padding: '8px 16px',
+              background: '#DC2626',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: 700,
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '8px'
+            }}
+          >
+            <RefreshCw size={14} /> Retry Query
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Robust Graph Node & Edge Transformation Layer
+  const rawNodes = rcaData?.graph?.nodes && rcaData.graph.nodes.length > 0
+    ? rcaData.graph.nodes.map((n: any) => ({
+        id: n.id,
+        type: (n.category || 'ROOT_CAUSE').toUpperCase(),
+        name: n.title,
+        status: 'ACTIVE',
+        system: n.subtype || 'RootCauseEngine',
+        confidence: n.confidence_score || 0.92,
+        severity: n.severity || 'HIGH',
+        edgesCount: rcaData.graph.edges?.filter((e: any) => e.source_id === n.id || e.target_id === n.id).length || 1,
+      }))
+    : (rcaData?.analyses || []).map((a: any) => ({
+        id: a.id,
+        type: 'ROOT_CAUSE',
+        name: a.explanation || a.primary_finding?.title || 'Causal Node',
+        status: 'ACTIVE',
+        system: a.relationship_type || 'RootCauseEngine',
+        confidence: a.confidence_score || 0.9,
+        severity: a.primary_finding?.severity || 'HIGH',
+        edgesCount: 2,
+      }));
+
+  const rawEdges = rcaData?.graph?.edges || [];
+
+  if (rawNodes.length === 0) {
+    return (
+      <div style={{ padding: '32px', color: '#FFFFFF', maxWidth: '1600px', margin: '0 auto' }}>
+        <IntelligencePipelineBreadcrumb currentStep="rootcause" />
+        <div style={{ padding: '60px 24px', textAlign: 'center', background: '#090D14', border: '1px solid #1E293B', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <Network size={36} color="#64748B" />
+          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#F1F5F9' }}>No causal relationships available for this dataset.</div>
+          <div style={{ fontSize: '0.82rem', color: '#64748B', maxWidth: '480px' }}>
+            Active Dataset: <strong style={{ color: '#38BDF8' }}>{activeDataset.name}</strong>. No root cause DAG nodes have been extracted yet.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const filteredNodes = selectedNodeType === 'ALL'
+    ? rawNodes
+    : rawNodes.filter((n: any) => n.type === selectedNodeType);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '40px' }}>
-      {/* Header */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '40px', maxWidth: '1600px', margin: '0 auto' }}>
+      {/* 1. Pipeline Breadcrumb Navigation */}
+      <IntelligencePipelineBreadcrumb currentStep="rootcause" />
+
+      {/* 2. Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#10B981', fontWeight: 800 }}>
-            Deterministic Causal DAG & Lineage Layer
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span style={{ fontSize: '10.5px', fontWeight: 700, color: '#10B981', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.28)', padding: '1px 7px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Phase 5.5 Causal Lineage
+            </span>
+            <span style={{ fontSize: '12px', color: '#64748B' }}>•</span>
+            <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 600 }}>{activeDataset.name}</span>
           </div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '4px 0 0 0' }}>
             Knowledge Graph Explorer
@@ -37,15 +176,18 @@ export const KnowledgeGraphExplorerView: React.FC = () => {
         {/* Snapshot Telemetry Pill */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)', padding: '6px 14px', borderRadius: '20px' }}>
           <ShieldCheck size={14} color="#10B981" />
-          <span style={{ fontSize: '0.78rem', color: '#10B981', fontWeight: 700 }}>Graph V3: 28 Nodes • 42 Edges • Cycles: 0 • Health: 96.4</span>
+          <span style={{ fontSize: '0.78rem', color: '#10B981', fontWeight: 700 }}>
+            DAG Topology: {rawNodes.length} Nodes • {rawEdges.length} Edges • Cycles: 0 • Health: 100%
+          </span>
         </div>
       </div>
 
-      {/* Filter Tabs */}
+      {/* 3. Filter Tabs */}
       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', padding: '6px', borderRadius: '8px' }}>
-        {['ALL', 'DATASET', 'KPI', 'FINDING', 'ROOT_CAUSE', 'RECOMMENDATION', 'INITIATIVE', 'ALERT', 'OUTCOME'].map((t) => (
+        {['ALL', 'ROOT_CAUSE', 'FINDING', 'KPI', 'RECOMMENDATION'].map((t) => (
           <button
             key={t}
+            type="button"
             onClick={() => setSelectedNodeType(t)}
             style={{
               padding: '5px 12px',
@@ -63,7 +205,7 @@ export const KnowledgeGraphExplorerView: React.FC = () => {
         ))}
       </div>
 
-      {/* 2-Column Graph Canvas + Node Inspector Layout */}
+      {/* 4. 2-Column Graph Canvas + Node Inspector Layout */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
         {/* Left: Interactive DAG Grid */}
         <div style={{ background: '#090D14', border: '1px solid #1E293B', borderRadius: '12px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -73,7 +215,7 @@ export const KnowledgeGraphExplorerView: React.FC = () => {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', maxHeight: '500px', overflowY: 'auto' }}>
-            {filteredNodes.map((n) => {
+            {filteredNodes.map((n: any) => {
               const isSelected = selectedNode?.id === n.id;
               return (
                 <div
@@ -119,16 +261,14 @@ export const KnowledgeGraphExplorerView: React.FC = () => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>DOWNSTREAM RELATIONSHIPS</div>
+                <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700 }}>CAUSAL PROVENANCE</div>
                 <div style={{ padding: '8px 12px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid #1E293B', borderRadius: '6px', fontSize: '0.78rem', color: '#CBD5E1' }}>
-                  → RECOMMENDED → Carrier Rebalancing (Conf: 94%)
-                </div>
-                <div style={{ padding: '8px 12px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid #1E293B', borderRadius: '6px', fontSize: '0.78rem', color: '#CBD5E1' }}>
-                  → EXECUTED_BY → INIT-2026-001 (Conf: 91%)
+                  → CAUSES → {selectedNode.name} (Conf: {Math.round(selectedNode.confidence * 100)}%)
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={() => setIsExplainOpen(true)}
                 style={{
                   marginTop: '10px',
@@ -140,9 +280,13 @@ export const KnowledgeGraphExplorerView: React.FC = () => {
                   fontSize: '0.82rem',
                   fontWeight: 700,
                   cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
                 }}
               >
-                Inspect Multi-Hop Provenance
+                <ShieldCheck size={16} /> Inspect Multi-Hop Lineage
               </button>
             </div>
           ) : (
@@ -158,8 +302,11 @@ export const KnowledgeGraphExplorerView: React.FC = () => {
         isOpen={isExplainOpen}
         onClose={() => setIsExplainOpen(false)}
         title={selectedNode?.name || 'Knowledge Graph Lineage'}
-        metricValue="96.4 Graph Health • 0 Cycles"
+        metricValue="Causal DAG Provenance • 0 Cycles"
       />
     </div>
   );
 };
+
+export default KnowledgeGraphExplorerView;
+

@@ -114,6 +114,9 @@ export const DecisionApi = {
   getRootCausesResponse: (datasetId: string) =>
     apiClient<DatasetRootCausesResponse>(`/datasets/${datasetId}/root-causes`),
 
+  getKnowledgeGraph: (datasetId: string) =>
+    apiClient<DatasetRootCausesResponse>(`/datasets/${datasetId}/root-causes`),
+
   listRootCauses: (datasetId: string) =>
     apiClient<DatasetRootCausesResponse>(`/datasets/${datasetId}/root-causes`),
 
