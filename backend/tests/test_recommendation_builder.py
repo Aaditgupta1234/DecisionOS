@@ -136,3 +136,69 @@ def test_recommendation_builder_synthesis():
     assert "Significant Revenue Decline" in rec.why_recommended
     assert "High Customer Churn Rate" in rec.why_recommended
     assert "Launch Retention Campaign" in rec.why_recommended
+
+
+def test_outcomes_target_calculation_directional_behavior():
+    """
+    Verifies directional target calculations for positive, negative, and zero baselines:
+    1. Positive baseline (95.0 with 0.02 -> 96.9)
+    2. Negative baseline ( -16.7 with 0.10 -> -15.03)
+    3. Negative baseline ( -16.7 with 0.08 -> -15.36)
+    4. Zero baseline (0.0 with 0.10 -> 0.0)
+    """
+    rule = RecommendationRule(
+        finding_subtype=FindingSubtype.DECLINE,
+        root_cause_subtype=None,
+        recommendation_type=RecommendationType.REVENUE_GROWTH,
+        priority_weight=0.85,
+        impact_weight=0.80,
+        effort_weight=0.40,
+        templates=[],
+        description="General revenue decline rule",
+    )
+
+    cases = [
+        # (observed_baseline, improvement_ratio, expected_target)
+        (95.0, 0.02, 96.9),
+        (-16.7, 0.10, -15.03),
+        (-16.7, 0.08, -15.36),
+        (0.0, 0.10, 0.0),
+    ]
+
+    for observed, ratio, expected_target in cases:
+        template = RecommendationTemplate(
+            title="Test Strategy",
+            description="Test strategy description",
+            actions=["Action 1"],
+            success_metrics=["Target KPI"],
+            expected_time_to_value=ExpectedTimeToValue.SHORT_TERM,
+            default_impact=0.80,
+            default_effort=0.40,
+            recommendation_type=RecommendationType.REVENUE_GROWTH,
+            target_metric_name="Target KPI",
+            target_improvement_ratio=ratio,
+            measurement_period="60 days",
+        )
+
+        finding = DiagnosticFinding(
+            id=uuid.uuid4(),
+            dataset_id=uuid.uuid4(),
+            finding_type=FindingType.REVENUE_DROP,
+            severity=FindingSeverity.HIGH,
+            title="Test Finding",
+            description="...",
+            business_impact="...",
+            confidence_score=0.90,
+            supporting_data={"category": "REVENUE", "subtype": "DECLINE", "observed": observed},
+        )
+
+        rec = RecommendationBuilder.build(
+            template=template,
+            finding=finding,
+            rule=rule,
+            rca=None,
+        )
+
+        assert rec.outcomes["baseline"] == float(observed)
+        assert rec.outcomes["target"] == expected_target
+

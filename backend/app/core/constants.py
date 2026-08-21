@@ -285,16 +285,30 @@ MAX_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024  # 50MB
 # Standard business canonical fields and synonyms for automated schema mapping
 STANDARD_BUSINESS_FIELDS: Dict[str, List[str]] = {
     "customer_id": [
-        "customer_id", "customerid", "customer", "client_id", "clientid",
+        "customer_id", "customerid", "client_id", "clientid",
         "buyer_id", "user_id", "customer_identifier", "cust_id", "account_id"
+    ],
+    "customers": [
+        "customers", "customer_count", "total_customers", "active_customers",
+        "num_customers", "unique_customers", "client_count"
+    ],
+    "returning_customers": [
+        "returning_customers", "repeat_customers", "returning_customer_count",
+        "repeat_customer_count", "retained_customers"
+    ],
+    "new_customers": [
+        "new_customers", "new_customer_count", "acquired_customers", "first_time_customers"
     ],
     "order_id": [
         "order_id", "orderid", "transaction_id", "transactionid", "invoice_id",
         "invoice_no", "order_number", "order_no", "purchase_id"
     ],
+    "orders": [
+        "orders", "order_count", "total_orders", "num_orders", "transaction_count"
+    ],
     "order_date": [
         "order_date", "orderdate", "transaction_date", "purchase_date", "date",
-        "created_at", "timestamp", "sale_date", "order_time"
+        "created_at", "timestamp", "sale_date", "order_time", "month", "period", "day"
     ],
     "revenue": [
         "revenue", "revenue_amount", "sales", "sales_amount", "amount",
@@ -309,11 +323,21 @@ STANDARD_BUSINESS_FIELDS: Dict[str, List[str]] = {
         "nps", "review_rating", "feedback_score"
     ],
     "delivery_time": [
-        "delivery_time", "delivery_days", "shipping_time", "lead_time",
-        "fulfillment_time", "transit_time"
+        "delivery_time", "delivery_time_days", "delivery_days", "shipping_time",
+        "lead_time", "fulfillment_time", "transit_time"
     ],
     "product_category": [
         "product_category", "category", "product_type", "item_category",
-        "department", "genre", "product_group"
+        "department", "genre", "product_group", "business_segment", "segment"
+    ],
+    "cancellation_rate": [
+        "cancellation_rate", "cancel_rate", "cancellation_percentage", "order_cancellation_rate"
+    ],
+    "churn_rate": [
+        "churn_rate", "customer_churn_rate", "attrition_rate"
+    ],
+    "region": [
+        "region", "territory", "geography", "zone", "market_region", "location"
     ],
 }
+

@@ -223,3 +223,88 @@ def test_division_by_zero_safety(client, admin_headers):
     summary_res = client.get(f"/api/v1/datasets/{dataset_id}/metrics/summary", headers=admin_headers)
     summary = summary_res.json()["data"]
     assert summary["revenue"]["total_revenue"] == 300.0
+
+
+def test_kpi_calculation_with_test_dataset_v2_schema(client, admin_headers):
+    """Test KPI calculation against the DecisionOS Test Dataset V2 schema with aggregate customer/order columns."""
+    v2_csv = (
+        "date,region,business_segment,revenue,orders,customers,returning_customers,delivery_time_days,review_score,cancellation_rate\n"
+        "2026-01-01,North,SaaS,420000,840,210,185,2.1,4.6,0.018\n"
+        "2026-02-01,North,SaaS,405000,810,202,188,2.4,4.4,0.024\n"
+        "2026-03-01,North,SaaS,372000,760,198,195,3.1,4.1,0.037\n"
+        "2026-04-01,North,SaaS,350000,720,191,201,3.8,3.8,0.052\n"
+    ).encode("utf-8")
+
+    files = {
+        "file": ("test_dataset_v2.csv", io.BytesIO(v2_csv), "text/csv"),
+    }
+    upload_res = client.post("/api/v1/datasets/upload", headers=admin_headers, files=files)
+    assert upload_res.status_code == 201
+    dataset_id = upload_res.json()["data"]["dataset_id"]
+
+    # Generate metrics
+    gen_res = client.post(f"/api/v1/datasets/{dataset_id}/metrics/generate", headers=admin_headers)
+    assert gen_res.status_code == 200
+    gen_data = gen_res.json()["data"]
+    assert gen_data["metrics_generated"] > 0
+
+    # Verify summary
+    summary_res = client.get(f"/api/v1/datasets/{dataset_id}/metrics/summary", headers=admin_headers)
+    assert summary_res.status_code == 200
+    summary = summary_res.json()["data"]
+
+    # Revenue: 420k + 405k + 372k + 350k = 1,547,000
+    assert summary["revenue"]["total_revenue"] == 1547000.0
+    # Orders: 840 + 810 + 760 + 720 = 3130
+    assert summary["orders"]["total_orders"] == 3130
+    # Customers: 210 + 202 + 198 + 191 = 801
+    assert summary["customers"]["unique_customers"] == 801
+    # Reviews
+    assert summary["reviews"]["average_review_score"] == 4.22
+
+
+def test_duplicate_canonical_mappings_deduplication():
+    """Test KPICalculator handles duplicate canonical target mappings without throwing DataFrame TypeErrors."""
+    import pandas as pd
+    from app.services.metric_calculator import KPICalculator
+
+    raw_data = {
+        "revenue": [100000, 200000],
+        "customers": [100, 150],
+        "returning_customers": [80, 120],
+        "orders": [500, 600],
+    }
+    df = pd.DataFrame(raw_data)
+    # Intentional duplicate canonical mappings
+    duplicate_mappings = {
+        "customers": "customer_id",
+        "returning_customers": "customer_id",
+        "revenue": "revenue",
+        "orders": "order_id",
+    }
+
+    calculator = KPICalculator(df=df, mapped_fields=duplicate_mappings)
+    # Must have unique columns
+    assert not calculator.working_df.columns.duplicated().any()
+    # Must compute without raising TypeError
+    metrics, skipped = calculator.calculate_all()
+    assert len(metrics) > 0
+    metric_keys = {m.metric_key for m in metrics}
+    assert "total_revenue" in metric_keys
+    assert "revenue_per_customer" in metric_keys
+
+
+def test_schema_mapper_preserves_semantic_distinction():
+    """Test SchemaMapper preserves semantic distinction between customer and order fields."""
+    from app.services.schema_mapper import SchemaMapper
+
+    mapper = SchemaMapper()
+    assert mapper.match_column("customer_id")[0] == "customer_id"
+    assert mapper.match_column("customers")[0] == "customers"
+    assert mapper.match_column("returning_customers")[0] == "returning_customers"
+    assert mapper.match_column("new_customers")[0] == "new_customers"
+    assert mapper.match_column("order_id")[0] == "order_id"
+    assert mapper.match_column("orders")[0] == "orders"
+    assert mapper.match_column("delivery_time_days")[0] == "delivery_time"
+    assert mapper.match_column("cancellation_rate")[0] == "cancellation_rate"
+

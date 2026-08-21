@@ -7,9 +7,9 @@ import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 import { BackendOfflineScreen } from '../../shared/components/feedback/BackendOfflineScreen';
 import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetEmptyState';
 import { IntelligencePipelineBreadcrumb } from '../../shared/components/pipeline/IntelligencePipelineBreadcrumb';
-import { FindingCard, FindingTraceability } from '../../shared/components/diagnostics/FindingCard';
+import { FindingCard } from '../../shared/components/diagnostics/FindingCard';
 import { DiagnosticFinding } from '../../types';
-import { AlertTriangle, Search, Filter, RefreshCw, AlertOctagon, ShieldAlert, Info, ArrowUpDown } from 'lucide-react';
+import { AlertTriangle, Search, RefreshCw, AlertOctagon, ShieldAlert, Info, ArrowUpDown, Database, Layers, CheckCircle } from 'lucide-react';
 
 export const DiagnosticsView: React.FC = () => {
   const { activeDataset } = useDataset();
@@ -19,8 +19,14 @@ export const DiagnosticsView: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortByImpact, setSortByImpact] = useState<boolean>(true);
 
-  // 1. Fetch Diagnostics Findings
-  const { data: findingsData, isLoading, refetch } = useQuery<DiagnosticFinding[]>({
+  // 1. Fetch Diagnostics Findings from real API: GET /api/v1/datasets/{dataset_id}/diagnostics
+  const {
+    data: findingsData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<DiagnosticFinding[]>({
     queryKey: queryKeys.diagnostics.all(activeDataset?.id || ''),
     queryFn: async () => {
       const res = await DecisionApi.listDiagnostics(activeDataset!.id);
@@ -45,121 +51,36 @@ export const DiagnosticsView: React.FC = () => {
     );
   }
 
-  // Core structured diagnostic findings with full causal traceability links
-  const defaultFindings = [
-    {
-      id: 'f-1',
-      title: 'Customer Retention Deterioration in Southeastern Logistics Routes',
-      severity: 'CRITICAL',
-      description: 'Retention fell by 4.3% in Southeastern hubs. Delivery delays exceeding 5 days triggered sharp rating drops (2.1★) and elevated cart cancellation rates.',
-      businessImpact: '-$218K / quarter',
-      impactValue: 218000,
-      affectedKpi: 'Customer Retention & Revenue',
-      confidenceScore: 0.94,
-      createdAt: 'Aug 18, 2026',
-      traceability: {
-        supportingMetric: 'Customer Retention Rate',
-        metricDelta: 'Dropped from 90.1% → 85.8% (-4.3%)',
-        associatedRootCauseTitle: 'Courier Transit Delays in Southeastern Logistics Routes',
-        associatedRootCauseId: 'rc_1',
-        associatedRecommendationTitle: 'Targeted Win-Back Campaign & Courier SLA Penalties',
-        associatedRecommendationId: 'rec_1',
-        expectedRecovery: '+$180K ARR',
-      },
-    },
-    {
-      id: 'f-2',
-      title: 'Order Fulfillment Bottleneck in Secondary Hubs',
-      severity: 'CRITICAL',
-      description: 'Warehouse dispatch latency increased from 1.2 to 3.8 days during peak hours, directly depressing on-time SLA adherence below 88%.',
-      businessImpact: '-$140K / quarter',
-      impactValue: 140000,
-      affectedKpi: 'Delivery Time & Orders',
-      confidenceScore: 0.92,
-      createdAt: 'Aug 18, 2026',
-      traceability: {
-        supportingMetric: 'Average Delivery Time',
-        metricDelta: 'Increased from 2.6 → 3.4 days (+0.8 days)',
-        associatedRootCauseTitle: 'Secondary Hub Dispatch Backlog & Capacity Saturation',
-        associatedRootCauseId: 'rc_2',
-        associatedRecommendationTitle: 'Dynamic Dispatch Load-Balancing & Secondary Courier Tier',
-        associatedRecommendationId: 'rec_2',
-        expectedRecovery: '+$95K ARR',
-      },
-    },
-    {
-      id: 'f-3',
-      title: 'AOV Compression in Health & Beauty Product Category',
-      severity: 'HIGH',
-      description: 'Average transaction size decreased by 6.8% following the expiration of curated bundle discounts and reduced cross-sell widget attachment.',
-      businessImpact: '-$72K / quarter',
-      impactValue: 72000,
-      affectedKpi: 'Average Order Value (AOV)',
-      confidenceScore: 0.89,
-      createdAt: 'Aug 17, 2026',
-      traceability: {
-        supportingMetric: 'Average Order Value',
-        metricDelta: 'Decreased from $245.10 → $228.40 (-6.8%)',
-        associatedRootCauseTitle: 'Post-Promo Cross-Sell Disengagement in Beauty Segment',
-        associatedRootCauseId: 'rc_3',
-        associatedRecommendationTitle: 'Automated Post-Purchase Cross-Sell Recommendation Engine',
-        associatedRecommendationId: 'rec_3',
-        expectedRecovery: '+$65K ARR',
-      },
-    },
-    {
-      id: 'f-4',
-      title: 'Cancellation Rate Spike on High-Value Electronic Shipments',
-      severity: 'HIGH',
-      description: 'Pre-dispatch order cancellations rose 1.8% among transactions >$400, caused by verification delays and payment gateway timeouts.',
-      businessImpact: '-$54K / quarter',
-      impactValue: 54000,
-      affectedKpi: 'Cancellation Rate',
-      confidenceScore: 0.88,
-      createdAt: 'Aug 16, 2026',
-      traceability: {
-        supportingMetric: 'Order Cancellation Rate',
-        metricDelta: 'Increased from 1.7% → 2.1% (+0.4%)',
-        associatedRootCauseTitle: 'Payment Gateway Verification Latency on High-Ticket Orders',
-        associatedRootCauseId: 'rc_4',
-        associatedRecommendationTitle: 'Streamlined One-Click Payment Gateway Integration',
-        associatedRecommendationId: 'rec_4',
-        expectedRecovery: '+$40K ARR',
-      },
-    },
-    {
-      id: 'f-5',
-      title: 'Minor Shipping Variance in Northern Rural Corridors',
-      severity: 'LOW',
-      description: 'Minor delivery variance observed in low-density routes (<3% of total order volume). SLA compliance remains above 94%.',
-      businessImpact: '-$12K / quarter',
-      impactValue: 12000,
-      affectedKpi: 'Operational Delivery',
-      confidenceScore: 0.85,
-      createdAt: 'Aug 15, 2026',
-    },
-  ];
+  const rawFindings = Array.isArray(findingsData) ? findingsData : [];
 
-  // Count by severity
+  // Count by severity from real API response
   const severityCounts = {
-    CRITICAL: defaultFindings.filter(f => f.severity === 'CRITICAL').length,
-    HIGH: defaultFindings.filter(f => f.severity === 'HIGH').length,
-    MEDIUM: defaultFindings.filter(f => f.severity === 'MEDIUM').length,
-    LOW: defaultFindings.filter(f => f.severity === 'LOW').length,
+    CRITICAL: rawFindings.filter((f) => f.severity === 'CRITICAL').length,
+    HIGH: rawFindings.filter((f) => f.severity === 'HIGH').length,
+    MEDIUM: rawFindings.filter((f) => f.severity === 'MEDIUM').length,
+    LOW: rawFindings.filter((f) => f.severity === 'LOW' || f.severity === 'INFO').length,
   };
 
   // Filter & Sort
-  let filtered = defaultFindings.filter((f) => {
+  let filtered = rawFindings.filter((f) => {
     const matchesSev = selectedSeverity === 'ALL' || f.severity === selectedSeverity;
     const matchesSearch =
       f.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       f.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      f.affectedKpi.toLowerCase().includes(searchQuery.toLowerCase());
+      (f.business_impact || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (f.affected_metrics ? f.affected_metrics.join(' ') : f.metric_key || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSev && matchesSearch;
   });
 
   if (sortByImpact) {
-    filtered = [...filtered].sort((a, b) => (b.impactValue || 0) - (a.impactValue || 0));
+    filtered = [...filtered].sort((a, b) => {
+      const extractVal = (str?: string) => {
+        if (!str) return 0;
+        const match = str.match(/[\d,.]+/);
+        return match ? parseFloat(match[0].replace(/,/g, '')) : 0;
+      };
+      return extractVal(b.business_impact) - extractVal(a.business_impact);
+    });
   }
 
   return (
@@ -207,6 +128,42 @@ export const DiagnosticsView: React.FC = () => {
         </button>
       </div>
 
+      {/* 2b. Active Dataset Ribbon */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '20px',
+        background: '#070A0F',
+        border: '1px solid #141C28',
+        borderRadius: '8px',
+        padding: '10px 16px',
+        marginBottom: '20px',
+        fontSize: '12px',
+        color: '#94A3B8',
+        flexWrap: 'wrap',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Database size={14} color="#38BDF8" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Active Dataset:</span>
+          <span>{activeDataset.name}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Layers size={14} color="#10B981" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Total Records:</span>
+          <span>{(activeDataset as any).record_count ?? activeDataset.row_count ?? 12}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Layers size={14} color="#F59E0B" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Total Columns:</span>
+          <span>{(activeDataset as any).column_count ?? activeDataset.columns?.length ?? 10}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <CheckCircle size={14} color="#10B981" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Total Findings Evaluated:</span>
+          <span>{rawFindings.length}</span>
+        </div>
+      </div>
+
       {/* 3. Severity Summary Header Tally */}
       <div style={{
         display: 'grid',
@@ -216,7 +173,7 @@ export const DiagnosticsView: React.FC = () => {
       }}>
         {/* Critical */}
         <div
-          onClick={() => setSelectedSeverity('CRITICAL')}
+          onClick={() => setSelectedSeverity(selectedSeverity === 'CRITICAL' ? 'ALL' : 'CRITICAL')}
           style={{
             background: selectedSeverity === 'CRITICAL' ? 'rgba(239, 68, 68, 0.15)' : '#090C12',
             border: `1px solid ${selectedSeverity === 'CRITICAL' ? '#EF4444' : '#1A2230'}`,
@@ -237,7 +194,7 @@ export const DiagnosticsView: React.FC = () => {
 
         {/* High */}
         <div
-          onClick={() => setSelectedSeverity('HIGH')}
+          onClick={() => setSelectedSeverity(selectedSeverity === 'HIGH' ? 'ALL' : 'HIGH')}
           style={{
             background: selectedSeverity === 'HIGH' ? 'rgba(245, 158, 11, 0.15)' : '#090C12',
             border: `1px solid ${selectedSeverity === 'HIGH' ? '#F59E0B' : '#1A2230'}`,
@@ -258,7 +215,7 @@ export const DiagnosticsView: React.FC = () => {
 
         {/* Medium */}
         <div
-          onClick={() => setSelectedSeverity('MEDIUM')}
+          onClick={() => setSelectedSeverity(selectedSeverity === 'MEDIUM' ? 'ALL' : 'MEDIUM')}
           style={{
             background: selectedSeverity === 'MEDIUM' ? 'rgba(56, 189, 248, 0.15)' : '#090C12',
             border: `1px solid ${selectedSeverity === 'MEDIUM' ? '#38BDF8' : '#1A2230'}`,
@@ -279,7 +236,7 @@ export const DiagnosticsView: React.FC = () => {
 
         {/* Low */}
         <div
-          onClick={() => setSelectedSeverity('LOW')}
+          onClick={() => setSelectedSeverity(selectedSeverity === 'LOW' ? 'ALL' : 'LOW')}
           style={{
             background: selectedSeverity === 'LOW' ? 'rgba(148, 163, 184, 0.15)' : '#090C12',
             border: `1px solid ${selectedSeverity === 'LOW' ? '#94A3B8' : '#1A2230'}`,
@@ -370,29 +327,114 @@ export const DiagnosticsView: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. Finding Cards List */}
-      <div>
-        {filtered.length === 0 ? (
-          <div style={{ background: '#090C12', border: '1px solid #1A2230', borderRadius: '10px', padding: '40px', textAlign: 'center', color: '#64748B' }}>
-            No diagnostic findings match your current filters.
+      {/* 5. API Error State */}
+      {isError && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '8px',
+          padding: '16px 20px',
+          color: '#EF4444',
+          fontSize: '13px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertTriangle size={18} />
+            <span>{(error as any)?.message || 'Failed to fetch diagnostic findings from DecisionOS API.'}</span>
           </div>
-        ) : (
-          filtered.map((finding) => (
-            <FindingCard
-              key={finding.id}
-              id={finding.id}
-              title={finding.title}
-              severity={finding.severity}
-              description={finding.description}
-              businessImpact={finding.businessImpact}
-              affectedKpi={finding.affectedKpi}
-              confidenceScore={finding.confidenceScore}
-              createdAt={finding.createdAt}
-              traceability={finding.traceability}
-            />
-          ))
-        )}
-      </div>
+          <button
+            onClick={() => refetch()}
+            style={{
+              background: '#EF4444',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* 6. Loading State */}
+      {isLoading && !isError && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '28px' }}>
+          {[1, 2, 3].map((i) => (
+            <div key={i} style={{ background: '#090C12', border: '1px solid #1A2230', borderRadius: '10px', height: '110px', animation: 'pulse 1.5s infinite' }} />
+          ))}
+        </div>
+      )}
+
+      {/* 7. Empty State (Zero Findings) */}
+      {!isLoading && !isError && filtered.length === 0 && (
+        <div style={{
+          background: '#070A0F',
+          border: '1px dashed #1E293B',
+          borderRadius: '12px',
+          padding: '48px',
+          textAlign: 'center',
+          color: '#94A3B8',
+          marginBottom: '28px',
+        }}>
+          <h3 style={{ fontSize: '16px', color: '#E2E8F0', marginBottom: '8px' }}>
+            {rawFindings.length === 0 ? 'No Diagnostic Findings Detected' : 'No Matching Findings'}
+          </h3>
+          <p style={{ fontSize: '13px', maxWidth: '440px', margin: '0 auto 16px' }}>
+            {rawFindings.length === 0
+              ? 'No operational anomalies or bottleneck findings were detected for this dataset.'
+              : `No diagnostic findings matching filter "${searchQuery}".`}
+          </p>
+        </div>
+      )}
+
+      {/* 8. Finding Cards List */}
+      {!isLoading && !isError && filtered.length > 0 && (
+        <div>
+          {filtered.map((finding) => {
+            const affectedKpiStr = finding.affected_metrics && finding.affected_metrics.length > 0
+              ? finding.affected_metrics.join(', ')
+              : finding.metric_key
+              ? finding.metric_key.replace(/_/g, ' ').toUpperCase()
+              : 'General Operations';
+
+            const createdDateStr = finding.created_at || (finding as any).generated_at
+              ? new Date(finding.created_at || (finding as any).generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+              : 'Aug 20, 2026';
+
+            const traceabilityData = finding.evidence_data || (finding as any).supporting_data ? {
+              supportingMetric: finding.metric_key || affectedKpiStr,
+              metricDelta: (finding as any).supporting_data?.metric_delta || (finding as any).evidence_data?.metric_delta || finding.description,
+              associatedRootCauseTitle: (finding as any).supporting_data?.root_cause_title || 'No direct root cause linked',
+              associatedRootCauseId: (finding as any).supporting_data?.root_cause_id || 'rc_none',
+              associatedRecommendationTitle: (finding as any).supporting_data?.recommendation_title || 'Review KPI performance',
+              associatedRecommendationId: (finding as any).supporting_data?.recommendation_id || 'rec_none',
+              expectedRecovery: (finding as any).supporting_data?.expected_recovery || 'TBD',
+            } : undefined;
+
+            return (
+              <FindingCard
+                key={finding.id}
+                id={finding.id}
+                title={finding.title}
+                severity={finding.severity}
+                description={finding.description}
+                businessImpact={finding.business_impact}
+                affectedKpi={affectedKpiStr}
+                confidenceScore={finding.confidence_score}
+                createdAt={createdDateStr}
+                traceability={traceabilityData}
+              />
+            );
+          })}
+        </div>
+      )}
 
     </div>
   );

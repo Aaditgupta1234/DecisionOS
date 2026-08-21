@@ -32,14 +32,18 @@ class SchemaMapper:
             if normalized in synonyms or raw_column.lower().strip() in synonyms:
                 return std_field, 0.9
 
-        # 3. Partial Substring Match (Confidence: 0.7)
+        # 3. Partial Substring / Token Match (Confidence: 0.7)
+        norm_tokens = set(normalized.split("_"))
         for std_field, synonyms in STANDARD_BUSINESS_FIELDS.items():
             for syn in synonyms:
-                # Check if synonym is a substantial substring of normalized name or vice-versa
-                if (len(syn) >= 4 and syn in normalized) or (len(normalized) >= 4 and normalized in syn):
+                syn_tokens = set(syn.split("_"))
+                if syn_tokens and syn_tokens.issubset(norm_tokens):
+                    return std_field, 0.7
+                elif (len(syn) >= 5 and (syn in normalized or normalized in syn)):
                     return std_field, 0.7
 
         return None, 0.0
+
 
     def suggest_mappings(self, columns: List[str]) -> List[MappingSuggestion]:
         """Generates mapping suggestions for all provided raw column names."""

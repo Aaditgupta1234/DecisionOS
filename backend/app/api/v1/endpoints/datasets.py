@@ -9,6 +9,8 @@ from app.api.dependencies.auth import get_current_active_user, require_admin
 from app.database.session import get_db
 from app.models.user import User
 from app.schemas.base import SuccessResponse
+from app.schemas.diagnostic import DiagnosticFindingResponse
+from app.schemas.recommendation import RecommendationResponse
 from app.schemas.dataset import (
     DatasetColumnResponse,
     DatasetDetailResponse,
@@ -176,3 +178,30 @@ def delete_dataset(
         message="Dataset deleted successfully.",
         data={"dataset_id": str(dataset_id), "deleted": True},
     )
+
+
+@router.get(
+    "/{dataset_id}/diagnostics",
+    response_model=SuccessResponse[List[DiagnosticFindingResponse]],
+    summary="Get Dataset Diagnostic Findings",
+)
+def list_dataset_diagnostics(
+    dataset_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+) -> Any:
+    """Retrieves all computed diagnostic findings for a dataset."""
+    from app.models.diagnostic_finding import DiagnosticFinding
+    from app.schemas.diagnostic import DiagnosticFindingResponse
+
+    findings = (
+        db.query(DiagnosticFinding)
+        .filter(DiagnosticFinding.dataset_id == dataset_id)
+        .order_by(DiagnosticFinding.generated_at.desc(), DiagnosticFinding.id.desc())
+        .all()
+    )
+    return SuccessResponse(
+        message="Dataset diagnostic findings retrieved successfully.",
+        data=[DiagnosticFindingResponse.model_validate(f) for f in findings],
+    )
+

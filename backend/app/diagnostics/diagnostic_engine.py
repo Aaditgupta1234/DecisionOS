@@ -169,3 +169,18 @@ class DiagnosticEngine:
                 self.db.commit()
 
             raise e
+
+    async def run(self, dataset_id: UUID) -> list[DiagnosticFinding]:
+        """Convenience execution method to load dataset, generate diagnostics, and return findings."""
+        stmt = select(Dataset).where(Dataset.id == dataset_id)
+        if self._is_async():
+            res = await self.db.execute(stmt)
+        else:
+            res = self.db.execute(stmt)
+        dataset = res.scalar_one_or_none()
+        if not dataset:
+            raise ValueError(f"Dataset '{dataset_id}' not found")
+
+        await self.generate(dataset)
+        return await self.repo.get_dataset_findings(dataset_id)
+

@@ -162,7 +162,16 @@ class RecommendationBuilder:
             observed = finding.supporting_data.get("observed")
 
         baseline_val = float(observed) if observed is not None and isinstance(observed, (int, float)) else 0.68
-        target_val = round(baseline_val * (1.0 + template.target_improvement_ratio), 2)
+        if baseline_val < 0:
+            target_val = round(
+                baseline_val * (1.0 - template.target_improvement_ratio),
+                2
+            )
+        else:
+            target_val = round(
+                baseline_val * (1.0 + template.target_improvement_ratio),
+                2
+            )
 
         return {
             "expected_metric": metric_name,

@@ -51,8 +51,11 @@ class RecommendationRuleRegistry:
         """
         matching_rules = self.find_matching_rules(finding_subtype, root_cause_subtype)
         
-        # Sort rules so specific root_cause matches come first
-        matching_rules.sort(
+        # If specific root-cause rules matched, filter to specific rules only to prevent template dilution
+        specific_rules = [r for r in matching_rules if r.root_cause_subtype is not None]
+        rules_to_use = specific_rules if specific_rules else matching_rules
+
+        rules_to_use.sort(
             key=lambda r: (r.root_cause_subtype is not None, r.priority_weight),
             reverse=True,
         )
@@ -60,13 +63,14 @@ class RecommendationRuleRegistry:
         results: List[Tuple[RecommendationTemplate, RecommendationRule]] = []
         seen_titles = set()
 
-        for rule in matching_rules:
+        for rule in rules_to_use:
             for tmpl in rule.templates:
                 if tmpl.title not in seen_titles:
                     seen_titles.add(tmpl.title)
                     results.append((tmpl, rule))
 
         return results
+
 
     def list_rules(self) -> List[RecommendationRule]:
         """Returns a copy of all registered rules."""
@@ -443,3 +447,102 @@ class RecommendationRuleRegistry:
                 description="Deceleration in net new customers requires channel optimization and organic incentives.",
             )
         )
+
+        # 6. Revenue Decline (General / Direct)
+        revenue_decline_templates = [
+            RecommendationTemplate(
+                title="Revenue Recovery & Pipeline Optimization",
+                description="Accelerate top-line revenue stabilization through sales pipeline optimization and conversion improvements.",
+                actions=[
+                    "Audit sales pipeline velocity and conversion drop-offs across funnel stages.",
+                    "Implement targeted promotions for high-margin catalog offerings.",
+                    "Engage core accounts with proactive account-review and expansion initiatives.",
+                    "Track weekly booking and revenue run-rate recovery.",
+                ],
+                success_metrics=[
+                    "Total Revenue",
+                    "Pipeline Conversion Rate",
+                    "Average Order Value",
+                ],
+                expected_time_to_value=ExpectedTimeToValue.SHORT_TERM,
+                default_impact=0.80,
+                default_effort=0.45,
+                recommendation_type=RecommendationType.REVENUE_GROWTH,
+                target_metric_name="Total Revenue",
+                target_improvement_ratio=0.10,
+                measurement_period="60 days",
+            ),
+            RecommendationTemplate(
+                title="Pricing & Discounting Strategy Review",
+                description="Realign pricing structures and promotional discounting to protect revenue yield.",
+                actions=[
+                    "Analyze price elasticity and discounting across customer segments.",
+                    "Eliminate unprofitable promotional discounts.",
+                    "Optimize dynamic pricing rules for high-demand periods.",
+                    "Monitor revenue per customer and blended transaction margin.",
+                ],
+                success_metrics=[
+                    "Revenue Per Customer",
+                    "Gross Margin %",
+                    "Discount Rate",
+                ],
+                expected_time_to_value=ExpectedTimeToValue.SHORT_TERM,
+                default_impact=0.70,
+                default_effort=0.35,
+                recommendation_type=RecommendationType.PRICING_STRATEGY,
+                target_metric_name="Revenue Per Customer",
+                target_improvement_ratio=0.08,
+                measurement_period="45 days",
+            ),
+        ]
+        self.register(
+            RecommendationRule(
+                finding_subtype=FindingSubtype.DECLINE,
+                root_cause_subtype=None,
+                recommendation_type=RecommendationType.REVENUE_GROWTH,
+                priority_weight=0.85,
+                impact_weight=0.80,
+                effort_weight=0.40,
+                templates=revenue_decline_templates,
+                description="Sustained revenue contraction requires immediate pipeline acceleration and pricing strategy review.",
+            )
+        )
+
+        # 7. Operational Productivity Improvement (Positive Opportunity)
+        productivity_templates = [
+            RecommendationTemplate(
+                title="Standardize Peak Fulfillment Protocols",
+                description="Document and standardize high-efficiency order fulfillment workflows across all operating regions.",
+                actions=[
+                    "Benchmark operating procedures of top-performing fulfillment hubs.",
+                    "Publish standard operating playbooks for picking, packing, and dispatch.",
+                    "Train regional operations teams on best-practice fulfillment workflows.",
+                    "Track regional fulfillment cycle times and maintain 95%+ completion rate.",
+                ],
+                success_metrics=[
+                    "Order Completion Rate",
+                    "Fulfillment Cycle Time",
+                    "Customer CSAT",
+                ],
+                expected_time_to_value=ExpectedTimeToValue.IMMEDIATE,
+                default_impact=0.60,
+                default_effort=0.25,
+                recommendation_type=RecommendationType.OPERATIONAL_EFFICIENCY,
+                target_metric_name="Order Completion Rate",
+                target_improvement_ratio=0.02,
+                measurement_period="30 days",
+            ),
+        ]
+        self.register(
+            RecommendationRule(
+                finding_subtype=FindingSubtype.PRODUCTIVITY_IMPROVEMENT,
+                root_cause_subtype=None,
+                recommendation_type=RecommendationType.OPERATIONAL_EFFICIENCY,
+                priority_weight=0.60,
+                impact_weight=0.60,
+                effort_weight=0.25,
+                templates=productivity_templates,
+                description="High fulfillment productivity provides an opportunity to scale operational best practices across all hubs.",
+            )
+        )
+

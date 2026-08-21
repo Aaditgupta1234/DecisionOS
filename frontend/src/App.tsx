@@ -56,6 +56,7 @@ const DecisionCopilotView = React.lazy(() => import('./features/decision-copilot
 const ExecutiveReportsCenterView = React.lazy(() => import('./features/reports/ExecutiveReportsCenterView').then(m => ({ default: m.ExecutiveReportsCenterView })));
 const MetricsView = React.lazy(() => import('./features/kpis/MetricsView'));
 const DiagnosticsView = React.lazy(() => import('./features/diagnostics/DiagnosticsView'));
+const RootCausesView = React.lazy(() => import('./features/root-causes/RootCausesView'));
 const RecommendationsView = React.lazy(() => import('./features/recommendations/RecommendationsView'));
 
 import './styles/globals.css';
@@ -94,7 +95,6 @@ function AppContent() {
           {/* Executive Marketing & Public Showcase Pages */}
           <Route path="/" element={<HomeView />} />
           <Route path="/platform" element={<PlatformShowcaseView />} />
-          <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
 
           {/* Authentication Screen */}
           <Route path="/login" element={<LoginPage />} />
@@ -112,6 +112,7 @@ function AppContent() {
             }
           >
             <Route path="/enterprise" element={<EnterpriseCommandCenterView />} />
+            <Route path="/kpi-dictionary" element={<KPIDictionaryView />} />
             <Route path="/enterprise-data" element={<DatasetManagementCenterView />} />
             <Route path="/data-hub" element={<DatasetManagementCenterView />} />
             <Route path="/boardroom" element={<BoardroomCenterView />} />
@@ -131,6 +132,7 @@ function AppContent() {
             <Route path="/portfolio" element={<MetricsView />} />
             <Route path="/data-management" element={<DatasetManagementCenterView />} />
             <Route path="/diagnostics" element={<DiagnosticsView />} />
+            <Route path="/root-causes" element={<RootCausesView />} />
             <Route path="/recommendations" element={<RecommendationsView />} />
             <Route path="/decision-copilot" element={<DecisionCopilotView />} />
             <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />

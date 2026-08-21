@@ -13,12 +13,13 @@ import {
   useEdgesState,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { ShieldCheck, GitMerge, AlertTriangle, TrendingDown } from 'lucide-react';
+import { Info } from 'lucide-react';
+import { CausalGraphData, CausalGraphEdge, CausalGraphNode } from '../../../types';
 
 export interface CausalNodeData {
   label: string;
   category?: string;
-  impactScore?: string;
+  severity?: string;
   confidence?: number;
   isRoot?: boolean;
   isDriver?: boolean;
@@ -26,7 +27,6 @@ export interface CausalNodeData {
   [key: string]: any;
 }
 
-// Custom Node Renderer with Glassmorphic Executive Styling
 const CustomCausalNode = ({ data, selected }: { data: CausalNodeData; selected: boolean }) => {
   const isRoot = data.isRoot;
   const isMetric = data.isMetric;
@@ -43,8 +43,8 @@ const CustomCausalNode = ({ data, selected }: { data: CausalNodeData; selected: 
       border: `1.5px solid ${selected ? '#38BDF8' : isRoot ? '#EF4444' : isMetric ? '#0284C7' : '#1E293B'}`,
       borderRadius: '8px',
       padding: '12px 14px',
-      minWidth: '180px',
-      maxWidth: '220px',
+      minWidth: '200px',
+      maxWidth: '240px',
       color: '#FFFFFF',
       boxShadow: selected ? '0 0 16px rgba(56, 189, 248, 0.4)' : '0 8px 20px rgba(0, 0, 0, 0.6)',
       fontSize: '12px',
@@ -61,10 +61,10 @@ const CustomCausalNode = ({ data, selected }: { data: CausalNodeData; selected: 
           textTransform: 'uppercase',
           letterSpacing: '0.04em',
         }}>
-          {isRoot ? 'ROOT CAUSE' : isMetric ? 'AFFECTED METRIC' : 'DRIVER FACTOR'}
+          {isRoot ? 'ROOT CAUSE' : isMetric ? 'AFFECTED METRIC' : 'DIAGNOSTIC FINDING'}
         </span>
 
-        {data.confidence && (
+        {data.confidence !== undefined && (
           <span style={{ fontSize: '9px', color: '#64748B', fontWeight: 600 }}>
             {data.confidence}% conf
           </span>
@@ -75,9 +75,9 @@ const CustomCausalNode = ({ data, selected }: { data: CausalNodeData; selected: 
         {data.label}
       </div>
 
-      {data.impactScore && (
-        <div style={{ fontSize: '11px', color: isRoot ? '#EF4444' : '#10B981', fontWeight: 700 }}>
-          {data.impactScore}
+      {data.severity && (
+        <div style={{ fontSize: '10.5px', color: '#94A3B8', fontWeight: 600 }}>
+          Severity: <span style={{ color: '#E2E8F0', fontWeight: 700 }}>{data.severity}</span>
         </div>
       )}
 
@@ -91,103 +91,59 @@ const nodeTypes = {
 };
 
 interface Props {
+  graph?: CausalGraphData;
   onSelectNode?: (nodeId: string, nodeData: CausalNodeData) => void;
 }
 
-export const ReactFlowCausalGraph: React.FC<Props> = ({ onSelectNode }) => {
-  const initialNodes: Node[] = [
-    {
-      id: 'node-root',
-      type: 'causalNode',
-      position: { x: 260, y: 30 },
-      data: {
-        label: 'Courier Transit Delays (SE Corridor)',
-        isRoot: true,
-        impactScore: '-$104.6K Impact',
-        confidence: 94,
-      },
-    },
-    {
-      id: 'node-driver-1',
-      type: 'causalNode',
-      position: { x: 100, y: 170 },
-      data: {
-        label: 'Late Delivery Review Rating Drop',
-        isDriver: true,
-        impactScore: '2.1★ Avg Rating',
-        confidence: 92,
-      },
-    },
-    {
-      id: 'node-driver-2',
-      type: 'causalNode',
-      position: { x: 420, y: 170 },
-      data: {
-        label: 'Customer Churn in Southeastern Region',
-        isDriver: true,
-        impactScore: '-4.3% Retention Delta',
-        confidence: 91,
-      },
-    },
-    {
-      id: 'node-metric-1',
-      type: 'causalNode',
-      position: { x: 100, y: 310 },
-      data: {
-        label: 'Customer Retention Rate (85.8%)',
-        isMetric: true,
-        impactScore: '-$78K ARR',
-        confidence: 96,
-      },
-    },
-    {
-      id: 'node-metric-2',
-      type: 'causalNode',
-      position: { x: 420, y: 310 },
-      data: {
-        label: 'Total Net Revenue ($4.2M)',
-        isMetric: true,
-        impactScore: '-$218K Net Impact',
-        confidence: 98,
-      },
-    },
-  ];
+export const ReactFlowCausalGraph: React.FC<Props> = ({ graph, onSelectNode }) => {
+  const { nodes: flowNodes, edges: flowEdges } = useMemo(() => {
+    const rawNodes: CausalGraphNode[] = graph?.nodes || [];
+    const rawEdges: CausalGraphEdge[] = graph?.edges || [];
 
-  const initialEdges: Edge[] = [
-    {
-      id: 'e-root-d1',
-      source: 'node-root',
-      target: 'node-driver-1',
+    const sourceIds = new Set(rawEdges.map((e: CausalGraphEdge) => e.source_id));
+    const targetIds = new Set(rawEdges.map((e: CausalGraphEdge) => e.target_id));
+
+    const nodes: Node[] = rawNodes.map((n: CausalGraphNode, idx: number) => {
+      const isRoot = sourceIds.has(n.id) && !targetIds.has(n.id);
+      const isMetric = targetIds.has(n.id);
+
+      const col = idx % 2;
+      const row = Math.floor(idx / 2);
+
+      return {
+        id: n.id,
+        type: 'causalNode',
+        position: { x: 80 + col * 280, y: 60 + row * 160 },
+        data: {
+          label: n.title,
+          category: n.category,
+          severity: n.severity,
+          confidence: Math.round((n.confidence_score || 0.9) * 100),
+          isRoot,
+          isMetric,
+        },
+      };
+    });
+
+    const edges: Edge[] = rawEdges.map((e: CausalGraphEdge) => ({
+      id: `e-${e.source_id}-${e.target_id}`,
+      source: e.source_id,
+      target: e.target_id,
       animated: true,
       style: { stroke: '#EF4444', strokeWidth: 2 },
       markerEnd: { type: MarkerType.ArrowClosed, color: '#EF4444' },
-    },
-    {
-      id: 'e-root-d2',
-      source: 'node-root',
-      target: 'node-driver-2',
-      animated: true,
-      style: { stroke: '#EF4444', strokeWidth: 2 },
-      markerEnd: { type: MarkerType.ArrowClosed, color: '#EF4444' },
-    },
-    {
-      id: 'e-d1-m1',
-      source: 'node-driver-1',
-      target: 'node-metric-1',
-      style: { stroke: '#38BDF8', strokeWidth: 1.5 },
-      markerEnd: { type: MarkerType.ArrowClosed, color: '#38BDF8' },
-    },
-    {
-      id: 'e-d2-m2',
-      source: 'node-driver-2',
-      target: 'node-metric-2',
-      style: { stroke: '#38BDF8', strokeWidth: 1.5 },
-      markerEnd: { type: MarkerType.ArrowClosed, color: '#38BDF8' },
-    },
-  ];
+    }));
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    return { nodes, edges };
+  }, [graph]);
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(flowNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(flowEdges);
+
+  React.useEffect(() => {
+    setNodes(flowNodes);
+    setEdges(flowEdges);
+  }, [flowNodes, flowEdges, setNodes, setEdges]);
 
   const handleNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
@@ -197,6 +153,8 @@ export const ReactFlowCausalGraph: React.FC<Props> = ({ onSelectNode }) => {
     },
     [onSelectNode]
   );
+
+  const hasEdges = (graph?.edges?.length ?? 0) > 0;
 
   return (
     <div style={{
@@ -208,6 +166,30 @@ export const ReactFlowCausalGraph: React.FC<Props> = ({ onSelectNode }) => {
       overflow: 'hidden',
       position: 'relative',
     }}>
+      {!hasEdges && (
+        <div style={{
+          position: 'absolute',
+          top: '12px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
+          background: 'rgba(15, 23, 42, 0.9)',
+          border: '1px solid rgba(56, 189, 248, 0.3)',
+          borderRadius: '6px',
+          padding: '6px 14px',
+          fontSize: '11.5px',
+          fontWeight: 600,
+          color: '#38BDF8',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          backdropFilter: 'blur(4px)',
+        }}>
+          <Info size={14} color="#38BDF8" />
+          <span>No validated causal relationships identified for the current dataset.</span>
+        </div>
+      )}
+
       <ReactFlow
         nodes={nodes}
         edges={edges}

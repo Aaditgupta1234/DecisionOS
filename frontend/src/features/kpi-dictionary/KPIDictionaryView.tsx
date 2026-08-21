@@ -313,21 +313,8 @@ export const KPIDictionaryView: React.FC = () => {
   };
 
   return (
-    <div className="home-root" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#040507' }}>
-      
-      {/* 1. Shared Exact Marketing / Home Page Navbar */}
-      <MarketingNavbar activeTab="intelligence" />
-
-      {/* 2. Main Page Content Container with Home Pedestal Spotlight */}
-      <main
-        style={{
-          flex: 1,
-          paddingTop: '104px',
-          paddingBottom: '80px',
-          backgroundImage: 'radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%)',
-        }}
-      >
-        <div className="page-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '32px' }}>
+      <div className="page-container" style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           {/* Header with Eyebrow Badge & Title (Centered) */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
@@ -838,26 +825,6 @@ export const KPIDictionaryView: React.FC = () => {
           </div>
 
         </div>
-      </main>
-
-      {/* 3. Site Footer (Matching Home Page) */}
-      <footer className="site-footer">
-        <div className="page-container footer-flex" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 28px' }}>
-          <div className="footer-left">
-            <span className="footer-logo">DecisionOS</span>
-            <span className="footer-copy">© 2025 DecisionOS. All rights reserved.</span>
-          </div>
-
-          <div className="footer-links">
-            <span className="f-link">Privacy Policy</span>
-            <span className="f-link">Terms of Service</span>
-            <span className="f-link">Security</span>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="f-link">API Documentation</a>
-            <span className="f-link">System Status</span>
-          </div>
-        </div>
-      </footer>
-
     </div>
   );
 };

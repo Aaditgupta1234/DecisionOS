@@ -28,13 +28,50 @@ class KPICalculator:
         self.raw_df = df
         self.mapped_fields = {orig: std for orig, std in mapped_fields.items() if std}
         self.working_df = self._prepare_working_dataframe()
-        self.available_fields = set(self.mapped_fields.values())
+        self.available_fields = set(self.working_df.columns)
 
     def _prepare_working_dataframe(self) -> pd.DataFrame:
-        """Creates a DataFrame with standardized business column names."""
+        """Creates a DataFrame with standardized business column names while preventing duplicate column collisions."""
         df = self.raw_df.copy()
-        rename_map = {orig: std for orig, std in self.mapped_fields.items() if orig in df.columns}
-        return df.rename(columns=rename_map)
+
+        # 1. Resolve safe 1-to-1 canonical mappings
+        used_canonical_targets: Set[str] = set()
+        rename_map: Dict[str, str] = {}
+
+        # Priority 1: Exact matches (source column name == canonical target)
+        for orig, std in self.mapped_fields.items():
+            if orig in df.columns and std and orig == std:
+                rename_map[orig] = std
+                used_canonical_targets.add(std)
+
+        # Priority 2: Remaining mapped fields if target is not yet claimed
+        for orig, std in self.mapped_fields.items():
+            if orig in df.columns and std and orig not in rename_map:
+                if std not in used_canonical_targets:
+                    rename_map[orig] = std
+                    used_canonical_targets.add(std)
+                else:
+                    logger.warning(
+                        f"Duplicate canonical mapping detected: column '{orig}' also mapped to '{std}'. "
+                        f"Retaining original column name '{orig}' to prevent duplicate column collisions."
+                    )
+
+        renamed_df = df.rename(columns=rename_map)
+
+        # Guarantee all column headers in working_df are unique
+        if renamed_df.columns.duplicated().any():
+            unique_cols = []
+            col_counts: Dict[str, int] = {}
+            for col in renamed_df.columns:
+                if col in col_counts:
+                    col_counts[col] += 1
+                    unique_cols.append(f"{col}_{col_counts[col]}")
+                else:
+                    col_counts[col] = 0
+                    unique_cols.append(col)
+            renamed_df.columns = unique_cols
+
+        return renamed_df
 
     def calculate_all(self) -> Tuple[List[CalculatedMetric], List[str]]:
         """
@@ -56,13 +93,18 @@ class KPICalculator:
             skipped_categories.append(MetricCategory.REVENUE.value)
 
         # 3. Order Metrics
-        if "order_id" in self.available_fields:
+        if "order_id" in self.available_fields or "orders" in self.available_fields:
             metrics.extend(self._calculate_order_metrics())
         else:
             skipped_categories.append(MetricCategory.ORDERS.value)
 
         # 4. Customer Metrics
-        if "customer_id" in self.available_fields:
+        if (
+            "customer_id" in self.available_fields
+            or "customers" in self.available_fields
+            or "returning_customers" in self.available_fields
+            or "new_customers" in self.available_fields
+        ):
             metrics.extend(self._calculate_customer_metrics())
         else:
             skipped_categories.append(MetricCategory.CUSTOMERS.value)
@@ -154,10 +196,19 @@ class KPICalculator:
             ),
         ])
 
-        # Cross-category KPI: revenue_per_customer (Requires both revenue and customer_id)
+        # Cross-category KPI: revenue_per_customer
+        unique_custs = 0
         if "customer_id" in self.available_fields:
-            cust_series = self.working_df["customer_id"].dropna()
-            unique_custs = int(cust_series.nunique())
+            cust_s = self.working_df["customer_id"].dropna()
+            unique_custs = int(cust_s.nunique())
+        elif "customers" in self.available_fields:
+            num_s = pd.to_numeric(self.working_df["customers"], errors="coerce").dropna()
+            if len(num_s) > 0 and num_s.sum() > 0:
+                unique_custs = int(num_s.sum())
+            else:
+                unique_custs = int(self.working_df["customers"].dropna().nunique())
+
+        if unique_custs > 0 or "customer_id" in self.available_fields or "customers" in self.available_fields:
             rev_per_cust = round(tot_rev / unique_custs, 2) if unique_custs > 0 else 0.0
             metrics.append(
                 CalculatedMetric(
@@ -173,8 +224,17 @@ class KPICalculator:
     def _calculate_order_metrics(self) -> List[CalculatedMetric]:
         """Calculates order volume and fulfillment rate KPIs."""
         metrics: List[CalculatedMetric] = []
-        orders_series = self.working_df["order_id"].dropna()
-        total_orders = int(orders_series.nunique())
+        total_orders = 0
+
+        if "order_id" in self.available_fields:
+            orders_series = self.working_df["order_id"].dropna()
+            total_orders = int(orders_series.nunique())
+        elif "orders" in self.available_fields:
+            num_orders = pd.to_numeric(self.working_df["orders"], errors="coerce").dropna()
+            if len(num_orders) > 0:
+                total_orders = int(num_orders.sum())
+            else:
+                total_orders = int(self.working_df["orders"].dropna().nunique())
 
         metrics.append(
             CalculatedMetric(
@@ -214,22 +274,97 @@ class KPICalculator:
                     metric_value=completion_rate,
                 ),
             ])
+        elif "cancellation_rate" in self.available_fields:
+            cxl_s = pd.to_numeric(self.working_df["cancellation_rate"], errors="coerce").dropna()
+            if len(cxl_s) > 0:
+                mean_cxl = float(cxl_s.mean())
+                cxl_pct = mean_cxl * 100.0 if mean_cxl <= 1.0 else mean_cxl
+                cancelled_orders = int(round(total_orders * (cxl_pct / 100.0)))
+                completed_orders = max(0, total_orders - cancelled_orders)
+                completion_rate = round(max(0.0, min(100.0, 100.0 - cxl_pct)), 2)
+
+                metrics.extend([
+                    CalculatedMetric(
+                        metric_key="completed_orders",
+                        metric_name="Completed Orders",
+                        metric_category=MetricCategory.ORDERS,
+                        metric_value=completed_orders,
+                    ),
+                    CalculatedMetric(
+                        metric_key="cancelled_orders",
+                        metric_name="Cancelled Orders",
+                        metric_category=MetricCategory.ORDERS,
+                        metric_value=cancelled_orders,
+                    ),
+                    CalculatedMetric(
+                        metric_key="completion_rate",
+                        metric_name="Completion Rate (%)",
+                        metric_category=MetricCategory.ORDERS,
+                        metric_value=completion_rate,
+                    ),
+                ])
 
         return metrics
 
     def _calculate_customer_metrics(self) -> List[CalculatedMetric]:
-        """Calculates customer metrics."""
-        cust_series = self.working_df["customer_id"].dropna()
-        unique_customers = int(cust_series.nunique())
+        """Calculates customer volume and retention metrics."""
+        metrics: List[CalculatedMetric] = []
+        unique_customers = 0
 
-        return [
+        if "customer_id" in self.available_fields:
+            cust_series = self.working_df["customer_id"].dropna()
+            unique_customers = int(cust_series.nunique())
+        elif "customers" in self.available_fields:
+            num_s = pd.to_numeric(self.working_df["customers"], errors="coerce").dropna()
+            if len(num_s) > 0:
+                unique_customers = int(num_s.sum())
+            else:
+                unique_customers = int(self.working_df["customers"].dropna().nunique())
+
+        metrics.append(
             CalculatedMetric(
                 metric_key="unique_customers",
                 metric_name="Unique Customers",
                 metric_category=MetricCategory.CUSTOMERS,
                 metric_value=unique_customers,
             )
-        ]
+        )
+
+        if "returning_customers" in self.available_fields:
+            ret_s = pd.to_numeric(self.working_df["returning_customers"], errors="coerce").dropna()
+            ret_count = int(ret_s.sum()) if len(ret_s) > 0 else int(self.working_df["returning_customers"].dropna().nunique())
+            metrics.append(
+                CalculatedMetric(
+                    metric_key="returning_customers",
+                    metric_name="Returning Customers",
+                    metric_category=MetricCategory.CUSTOMERS,
+                    metric_value=ret_count,
+                )
+            )
+            if unique_customers > 0:
+                rep_rate = round((ret_count / unique_customers) * 100.0, 2)
+                metrics.append(
+                    CalculatedMetric(
+                        metric_key="repeat_customer_rate",
+                        metric_name="Repeat Customer Rate (%)",
+                        metric_category=MetricCategory.CUSTOMERS,
+                        metric_value=rep_rate,
+                    )
+                )
+
+        if "new_customers" in self.available_fields:
+            new_s = pd.to_numeric(self.working_df["new_customers"], errors="coerce").dropna()
+            new_count = int(new_s.sum()) if len(new_s) > 0 else int(self.working_df["new_customers"].dropna().nunique())
+            metrics.append(
+                CalculatedMetric(
+                    metric_key="new_customers",
+                    metric_name="New Customers",
+                    metric_category=MetricCategory.CUSTOMERS,
+                    metric_value=new_count,
+                )
+            )
+
+        return metrics
 
     def _calculate_review_metrics(self) -> List[CalculatedMetric]:
         """Calculates customer review and satisfaction KPIs."""
@@ -258,3 +393,4 @@ class KPICalculator:
                 metric_value=avg_time,
             )
         ]
+

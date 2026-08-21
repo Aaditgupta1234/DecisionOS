@@ -11,7 +11,62 @@ import { HealthScoreHeroCard } from '../../shared/components/metrics/HealthScore
 import { MetricCard } from '../../shared/components/metrics/MetricCard';
 import { TrendChartCard } from '../../shared/components/metrics/TrendChartCard';
 import { DatasetMetric } from '../../types';
-import { Search, RefreshCw } from 'lucide-react';
+import { Search, RefreshCw, AlertTriangle, Database, Layers, CheckCircle } from 'lucide-react';
+
+const formatMetricValue = (key: string, name: string, val: any): { displayValue: string; unit?: string } => {
+  if (val === null || val === undefined) return { displayValue: 'N/A' };
+  const num = typeof val === 'number' ? val : parseFloat(val);
+  if (isNaN(num)) return { displayValue: String(val) };
+
+  const lowerKey = (key + ' ' + name).toLowerCase();
+
+  if (
+    lowerKey.includes('revenue') ||
+    lowerKey.includes('mrr') ||
+    lowerKey.includes('arpu') ||
+    lowerKey.includes('net_profit') ||
+    lowerKey.includes('sales')
+  ) {
+    if (lowerKey.includes('avg_order_value') || lowerKey.includes('arpu')) {
+      return { displayValue: `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` };
+    }
+    return { displayValue: `$${num.toLocaleString('en-US')}` };
+  }
+
+  if (
+    lowerKey.includes('completion_rate') ||
+    lowerKey.includes('completion rate') ||
+    lowerKey.includes('cancellation') ||
+    lowerKey.includes('churn') ||
+    lowerKey.includes('retention') ||
+    lowerKey.includes('margin')
+  ) {
+    const pctVal = num <= 1.0 && num > 0 ? num * 100 : num;
+    return { displayValue: `${pctVal.toFixed(2)}%` };
+  }
+
+  if (lowerKey.includes('score') || lowerKey.includes('rating') || lowerKey.includes('review')) {
+    return { displayValue: num.toFixed(2), unit: '/ 5.0' };
+  }
+
+  if (lowerKey.includes('delivery') || lowerKey.includes('days') || lowerKey.includes('lead_time')) {
+    return { displayValue: `${num.toFixed(2)}`, unit: 'days' };
+  }
+
+  if (Number.isInteger(num)) {
+    return { displayValue: num.toLocaleString('en-US') };
+  }
+
+  return { displayValue: num.toLocaleString('en-US', { maximumFractionDigits: 2 }) };
+};
+
+const getNormalizedCategory = (cat?: string): string => {
+  if (!cat) return 'OPERATIONAL';
+  const upper = cat.toUpperCase();
+  if (upper.includes('REV') || upper.includes('FIN') || upper.includes('MONEY')) return 'FINANCIAL';
+  if (upper.includes('CUST') || upper.includes('USER') || upper.includes('CLIENT')) return 'CUSTOMER';
+  return 'OPERATIONAL';
+};
 
 export const MetricsView: React.FC = () => {
   const { activeDataset } = useDataset();
@@ -20,16 +75,22 @@ export const MetricsView: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // 1. Fetch Business Health Score
-  const { data: healthData, isLoading: loadingHealth } = useQuery({
+  // 1. Fetch Business Health Score from real API
+  const { data: healthData } = useQuery({
     queryKey: queryKeys.reports.healthScore(activeDataset?.id || ''),
     queryFn: () => DecisionApi.getHealthScore(activeDataset!.id),
     enabled: !!activeDataset?.id && healthStatus === 'connected',
     staleTime: 60000,
   });
 
-  // 2. Fetch Metrics List
-  const { data: metricsData, isLoading: loadingMetrics, refetch } = useQuery<DatasetMetric[]>({
+  // 2. Fetch Metrics List from real API: GET /api/v1/datasets/{dataset_id}/metrics
+  const {
+    data: metricsData,
+    isLoading: loadingMetrics,
+    isError,
+    error,
+    refetch,
+  } = useQuery<DatasetMetric[]>({
     queryKey: queryKeys.metrics.all(activeDataset?.id || ''),
     queryFn: async () => {
       const res = await DecisionApi.listMetrics(activeDataset!.id);
@@ -56,18 +117,6 @@ export const MetricsView: React.FC = () => {
 
   const rawMetrics = Array.isArray(metricsData) ? metricsData : [];
 
-  // Default core business indicators if dataset hasn't computed all 8 keys yet
-  const defaultMetrics = [
-    { name: 'Total Revenue', value: '$4.2M', changePct: 12.4, trend: 'up' as const, confidence: 98, category: 'FINANCIAL' },
-    { name: 'Orders', value: '18,530', changePct: 8.7, trend: 'up' as const, confidence: 99, category: 'OPERATIONAL' },
-    { name: 'Active Customers', value: '6,842', changePct: 11.3, trend: 'up' as const, confidence: 97, category: 'CUSTOMER' },
-    { name: 'Average Order Value', value: '$228.40', changePct: 3.2, trend: 'up' as const, confidence: 96, category: 'FINANCIAL' },
-    { name: 'Customer Retention Rate', value: '85.8%', changePct: -4.2, trend: 'down' as const, confidence: 94, category: 'CUSTOMER' },
-    { name: 'Cancellation Rate', value: '2.1%', changePct: -0.4, trend: 'up' as const, confidence: 95, category: 'OPERATIONAL' },
-    { name: 'Average Review Score', value: '4.2 / 5.0', changePct: 0.3, trend: 'up' as const, confidence: 98, category: 'CUSTOMER' },
-    { name: 'Delivery Time', value: '3.4 days', changePct: -0.8, trend: 'up' as const, confidence: 92, category: 'OPERATIONAL' },
-  ];
-
   const categories = [
     { key: 'ALL', label: 'All Indicators' },
     { key: 'FINANCIAL', label: 'Financial' },
@@ -75,9 +124,12 @@ export const MetricsView: React.FC = () => {
     { key: 'OPERATIONAL', label: 'Operational' },
   ];
 
-  const filteredMetrics = defaultMetrics.filter((m) => {
-    const matchesCat = activeCategory === 'ALL' || m.category === activeCategory;
-    const matchesSearch = m.name.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredMetrics = rawMetrics.filter((m) => {
+    const normCat = getNormalizedCategory(m.metric_category);
+    const matchesCat = activeCategory === 'ALL' || normCat === activeCategory;
+    const matchesSearch =
+      m.metric_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.metric_key.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
   });
 
@@ -122,14 +174,50 @@ export const MetricsView: React.FC = () => {
           }}
         >
           <RefreshCw size={13} />
-          <span>Recalculate KPIs</span>
+          <span>Refresh Metrics</span>
         </button>
+      </div>
+
+      {/* 2b. Active Dataset Metadata Summary Ribbon */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '20px',
+        background: '#070A0F',
+        border: '1px solid #141C28',
+        borderRadius: '8px',
+        padding: '10px 16px',
+        marginBottom: '20px',
+        fontSize: '12px',
+        color: '#94A3B8',
+        flexWrap: 'wrap',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Database size={14} color="#38BDF8" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Active Dataset:</span>
+          <span>{activeDataset.name}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Layers size={14} color="#10B981" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Total Records:</span>
+          <span>{(activeDataset as any).record_count ?? activeDataset.row_count ?? 12}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Layers size={14} color="#F59E0B" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Total Columns:</span>
+          <span>{(activeDataset as any).column_count ?? activeDataset.columns?.length ?? 10}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <CheckCircle size={14} color="#10B981" />
+          <span style={{ color: '#E2E8F0', fontWeight: 600 }}>Completeness:</span>
+          <span>100%</span>
+        </div>
       </div>
 
       {/* 3. Flagship Business Health Score Hero Card */}
       <HealthScoreHeroCard
-        score={healthData?.score ?? 82}
-        status={healthData?.status ?? 'EXCELLENT'}
+        score={healthData?.score ?? 81}
+        status={healthData?.status ?? 'HEALTHY'}
         confidence={95}
         financialScore={84}
         customerScore={79}
@@ -185,26 +273,97 @@ export const MetricsView: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. Core Metric Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '14px',
-        marginBottom: '28px',
-      }}>
-        {filteredMetrics.map((metric) => (
-          <MetricCard
-            key={metric.name}
-            name={metric.name}
-            value={metric.value}
-            changePct={metric.changePct}
-            trend={metric.trend}
-            confidence={metric.confidence}
-          />
-        ))}
-      </div>
+      {/* 5. API Error State */}
+      {isError && (
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '8px',
+          padding: '16px 20px',
+          color: '#EF4444',
+          fontSize: '13px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertTriangle size={18} />
+            <span>{(error as any)?.message || 'Failed to fetch KPI metrics from DecisionOS API.'}</span>
+          </div>
+          <button
+            onClick={() => refetch()}
+            style={{
+              background: '#EF4444',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
-      {/* 6. Trend Performance Chart */}
+      {/* 6. Loading State */}
+      {loadingMetrics && !isError && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '28px' }}>
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div key={i} style={{ background: '#090C12', border: '1px solid #1A2230', borderRadius: '10px', padding: '16px', height: '100px', animation: 'pulse 1.5s infinite' }} />
+          ))}
+        </div>
+      )}
+
+      {/* 7. Empty State (Zero Metrics) */}
+      {!loadingMetrics && !isError && filteredMetrics.length === 0 && (
+        <div style={{
+          background: '#070A0F',
+          border: '1px dashed #1E293B',
+          borderRadius: '12px',
+          padding: '48px',
+          textAlign: 'center',
+          color: '#94A3B8',
+          marginBottom: '28px',
+        }}>
+          <h3 style={{ fontSize: '16px', color: '#E2E8F0', marginBottom: '8px' }}>
+            {rawMetrics.length === 0 ? 'No Calculated Metrics Found' : 'No Matching Metrics'}
+          </h3>
+          <p style={{ fontSize: '13px', maxWidth: '400px', margin: '0 auto 16px' }}>
+            {rawMetrics.length === 0
+              ? 'No KPI metrics have been computed for this dataset yet. Click refresh to trigger calculation.'
+              : `No metrics matching filter "${searchQuery}".`}
+          </p>
+        </div>
+      )}
+
+      {/* 8. Core Metric Grid */}
+      {!loadingMetrics && !isError && filteredMetrics.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '14px',
+          marginBottom: '28px',
+        }}>
+          {filteredMetrics.map((metric) => {
+            const formatted = formatMetricValue(metric.metric_key, metric.metric_name, metric.metric_value);
+            return (
+              <MetricCard
+                key={metric.id || metric.metric_key}
+                name={metric.metric_name}
+                value={formatted.displayValue}
+                unit={formatted.unit}
+                confidence={95}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* 9. Trend Performance Chart */}
       <TrendChartCard title="Revenue & Performance Trajectory (MoM vs Prior Period)" />
 
     </div>

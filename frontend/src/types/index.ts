@@ -76,6 +76,7 @@ export interface DiagnosticFinding {
   title: string;
   description: string;
   business_impact: string;
+  metric_key?: string;
   confidence_score: number;
   affected_metrics?: string[];
   evidence_data?: Record<string, any>;
@@ -167,16 +168,25 @@ export interface DatasetRootCausesResponse {
 
 export interface Recommendation {
   id: string;
-  recommendation_key: string;
+  recommendation_key?: string;
   title: string;
-  action_summary: string;
+  action_summary?: string;
+  description?: string;
+  why_recommended?: string;
   priority: RecommendationPriority;
-  expected_impact: string;
-  estimated_effort: string;
-  time_to_value: string;
+  expected_impact?: string;
+  estimated_effort?: string;
+  estimated_effort_score?: number;
+  confidence_score?: number;
+  time_to_value?: string;
+  expected_time_to_value?: string;
   status: RecommendationStatus;
   affected_metric_keys?: string[];
-  created_at: string;
+  action_plan?: string[];
+  success_metrics?: string[];
+  evidence?: Record<string, any>;
+  outcomes?: Record<string, any>;
+  created_at?: string;
 }
 
 export interface IntelligenceReportResponse {
