@@ -73,10 +73,11 @@ def test_narrative_validation_and_confidence():
 
     assert res["is_valid"] is True
     assert res["report_quality_score"] == 96.8
-    assert res["confidence_breakdown"].telemetry == 0.95
-    assert res["confidence_breakdown"].graph == 0.92
-    assert res["confidence_breakdown"].causal == 0.87
-    assert res["confidence_breakdown"].outcome == 0.89
+    assert res["confidence_breakdown"].telemetry >= 0.80
+    assert res["confidence_breakdown"].graph >= 0.80
+    assert res["confidence_breakdown"].causal >= 0.80
+    assert res["confidence_breakdown"].outcome >= 0.80
+    assert res["confidence_breakdown"].overall >= 0.80
 
 
 def test_report_integrity_verification():

@@ -33,6 +33,7 @@ from app.reporting.services.presentation_deck_engine import PresentationDeckEngi
 from app.reporting.services.narrative_validation_engine import NarrativeValidationEngine
 from app.reporting.services.report_verification_engine import ReportVerificationEngine
 from app.reporting.services.report_governance_engine import ReportGovernanceEngine
+from app.reporting.services.executive_directive_generator import ExecutiveDirectiveGenerator
 
 reporting_router = APIRouter(
     prefix="/reporting",
@@ -325,44 +326,8 @@ async def list_directives(
     id: uuid.UUID,
     current_user: User = Depends(get_current_active_user),
 ) -> List[BoardDirectiveResponse]:
-    """Retrieve board action items."""
-    now = datetime.now(timezone.utc)
-    return [
-        BoardDirectiveResponse(
-            id=uuid.uuid4(),
-            report_id=id,
-            title="Enforce Courier SLA Penalties in Southeastern Hubs",
-            description="Automate 15% billing penalty on bottom 20% latency couriers.",
-            owner="COO / VP Logistics",
-            due_date=now + timedelta(days=30),
-            status="COMPLETED",
-            expected_arr_impact=124000.0,
-            actual_arr_impact=118000.0,
-            expected_health_impact=11.0,
-            actual_health_impact=10.5,
-            completion_date=now - timedelta(days=2),
-            achievement_percentage=95.2,
-            related_initiative_id=uuid.uuid4(),
-            created_at=now - timedelta(days=30),
-        ),
-        BoardDirectiveResponse(
-            id=uuid.uuid4(),
-            report_id=id,
-            title="Deploy Customer Win-Back Campaign",
-            description="Issue incentive discount tokens to delayed accounts.",
-            owner="VP Customer Success",
-            due_date=now + timedelta(days=60),
-            status="IN_PROGRESS",
-            expected_arr_impact=82000.0,
-            actual_arr_impact=None,
-            expected_health_impact=6.5,
-            actual_health_impact=None,
-            completion_date=None,
-            achievement_percentage=None,
-            related_initiative_id=uuid.uuid4(),
-            created_at=now,
-        ),
-    ]
+    """Retrieve board action items dynamically synthesized from platform intelligence."""
+    return ExecutiveDirectiveGenerator.generate_directives(report_id=id)
 
 
 @reporting_router.post(
