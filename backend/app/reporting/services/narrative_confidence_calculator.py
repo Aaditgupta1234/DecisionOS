@@ -1,4 +1,4 @@
-"""Narrative Confidence Calculator for Dynamic 4-Factor Confidence."""
+"""Narrative Confidence Calculator with Explainability Breakdown."""
 
 from typing import Any, Dict, List, Optional
 from app.reporting.schemas.reporting_schemas import ConfidenceBreakdown
@@ -7,7 +7,8 @@ from app.reporting.schemas.reporting_schemas import ConfidenceBreakdown
 class NarrativeConfidenceCalculator:
     """
     Computes dynamic 4-factor confidence metrics directly from platform graph topology,
-    evidence citations, diagnostic finding coverage, and outcome verification state.
+    evidence citations, diagnostic finding coverage, and outcome verification state,
+    with full mathematical explainability and penalty attribution.
     """
 
     @staticmethod
@@ -20,7 +21,8 @@ class NarrativeConfidenceCalculator:
         total_kpis: int = 8,
     ) -> ConfidenceBreakdown:
         """
-        Dynamically calculates Telemetry, Graph, Causal, Outcome, and Composite confidence scores.
+        Dynamically calculates Telemetry, Graph, Causal, Outcome, and Composite confidence scores,
+        with detailed explainability dictionaries.
         """
         # 1. Telemetry confidence: data quality & non-null completeness
         kpi_ratio = (total_kpis - missing_metric_count) / max(1, total_kpis)
@@ -45,10 +47,36 @@ class NarrativeConfidenceCalculator:
             2,
         )
 
+        explainability = {
+            "telemetry": {
+                "formula": "0.80 + 0.15 * (valid_kpis / total_kpis) * row_factor",
+                "valid_kpis": total_kpis - missing_metric_count,
+                "total_kpis": total_kpis,
+                "missing_penalties": missing_metric_count * 0.02,
+            },
+            "graph": {
+                "formula": "0.75 + 0.20 * (connected_findings / total_findings)",
+                "connected_findings": findings_with_causes,
+                "total_findings": total_findings,
+            },
+            "causal": {
+                "formula": "0.70 + 0.18 * (verified_edges / total_findings)",
+                "verified_edges": findings_with_causes,
+                "total_findings": total_findings,
+            },
+            "outcome": {
+                "formula": "0.72 + 0.20 * (recommendations_linked / total_findings)",
+                "recommendations_linked": findings_with_recommendations,
+                "total_findings": total_findings,
+            },
+            "composite_weights": "35% Telemetry + 25% Graph + 20% Causal + 20% Outcome",
+        }
+
         return ConfidenceBreakdown(
             telemetry=telemetry,
             graph=graph,
             causal=causal,
             outcome=outcome,
             overall=overall,
+            explainability=explainability,
         )

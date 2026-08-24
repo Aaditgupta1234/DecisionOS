@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, AlertCircle, FileCheck } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, AlertCircle, FileCheck, History } from 'lucide-react';
 
 export interface ReportSignOffModalProps {
   isOpen: boolean;
@@ -12,12 +12,18 @@ export const ReportSignOffModal: React.FC<ReportSignOffModalProps> = ({
   isOpen,
   onClose,
   onSignOffSuccess,
-  reportTitle = 'DecisionOS Q4 Comprehensive Boardroom Governance Report',
+  reportTitle = 'DecisionOS Comprehensive Boardroom Governance Report',
 }) => {
   const [role, setRole] = useState('CEO');
-  const [action, setAction] = useState('APPROVED');
-  const [rationale, setRationale] = useState('All findings and ARR projections verified against deterministic telemetry.');
+  const [approverName, setApproverName] = useState('Chief Executive Officer');
+  const [targetStatus, setTargetStatus] = useState<'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'ARCHIVED'>('APPROVED');
+  const [comments, setComments] = useState('All findings, causal lineages, and ARR impact projections verified against deterministic telemetry.');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const approvalHistory = [
+    { role: 'COO / VP Logistics', name: 'Chief Operating Officer', action: 'REVIEWED', date: '2026-08-24 14:15 UTC', notes: 'Verified courier SLAs.' },
+    { role: 'CFO', name: 'Chief Financial Officer', action: 'REVIEWED', date: '2026-08-24 14:00 UTC', notes: 'Verified ROI calculations.' },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +32,7 @@ export const ReportSignOffModal: React.FC<ReportSignOffModalProps> = ({
       setIsSubmitting(false);
       if (onSignOffSuccess) onSignOffSuccess();
       onClose();
-    }, 600);
+    }, 500);
   };
 
   if (!isOpen) return null;
@@ -49,8 +55,8 @@ export const ReportSignOffModal: React.FC<ReportSignOffModalProps> = ({
     >
       <div
         style={{
-          width: '560px',
-          maxWidth: '92vw',
+          width: '600px',
+          maxWidth: '94vw',
           backgroundColor: '#090D14',
           border: '1px solid #1E293B',
           borderRadius: '14px',
@@ -67,7 +73,7 @@ export const ReportSignOffModal: React.FC<ReportSignOffModalProps> = ({
             <FileCheck size={18} color="#10B981" />
             <div>
               <span style={{ fontSize: '0.72rem', color: '#10B981', textTransform: 'uppercase', fontWeight: 800 }}>
-                Executive Fiduciary Sign-Off
+                Executive Fiduciary Sign-Off Workflow
               </span>
               <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#FFFFFF' }}>{reportTitle}</div>
             </div>
@@ -83,76 +89,87 @@ export const ReportSignOffModal: React.FC<ReportSignOffModalProps> = ({
 
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
-              Sign-Off Role
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', borderRadius: '6px', color: '#FFFFFF', fontSize: '0.85rem' }}
-            >
-              <option value="CEO">Chief Executive Officer (CEO)</option>
-              <option value="COO">Chief Operating Officer (COO)</option>
-              <option value="CFO">Chief Financial Officer (CFO)</option>
-              <option value="BOARD_CHAIR">Board Chair / Governance Lead</option>
-            </select>
-          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Sign-Off Role
+              </label>
+              <select
+                value={role}
+                onChange={(e) => {
+                  setRole(e.target.value);
+                  if (e.target.value === 'CEO') setApproverName('Chief Executive Officer');
+                  else if (e.target.value === 'COO') setApproverName('Chief Operating Officer');
+                  else if (e.target.value === 'CFO') setApproverName('Chief Financial Officer');
+                  else setApproverName('Board Chairperson');
+                }}
+                style={{ width: '100%', padding: '10px 14px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', borderRadius: '6px', color: '#FFFFFF', fontSize: '0.85rem' }}
+              >
+                <option value="CEO">Chief Executive Officer (CEO)</option>
+                <option value="COO">Chief Operating Officer (COO)</option>
+                <option value="CFO">Chief Financial Officer (CFO)</option>
+                <option value="BOARD_CHAIR">Board Chair / Governance Lead</option>
+              </select>
+            </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
-              Decision Action
-            </label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {['APPROVED', 'REQUIRES_REVISION', 'REJECTED'].map((act) => (
-                <button
-                  type="button"
-                  key={act}
-                  onClick={() => setAction(act)}
-                  style={{
-                    flex: 1,
-                    padding: '8px',
-                    borderRadius: '6px',
-                    border: `1px solid ${action === act ? '#10B981' : '#1E293B'}`,
-                    background: action === act ? 'rgba(16, 185, 129, 0.15)' : 'rgba(15, 23, 42, 0.6)',
-                    color: action === act ? '#10B981' : '#94A3B8',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {act}
-                </button>
-              ))}
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
+                Target Governance State
+              </label>
+              <select
+                value={targetStatus}
+                onChange={(e) => setTargetStatus(e.target.value as any)}
+                style={{ width: '100%', padding: '10px 14px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', borderRadius: '6px', color: '#FFFFFF', fontSize: '0.85rem' }}
+              >
+                <option value="APPROVED">APPROVED (Formal Ratification)</option>
+                <option value="UNDER_REVIEW">UNDER_REVIEW (Requested Edits)</option>
+                <option value="REJECTED">REJECTED (Requires Revision)</option>
+                <option value="DRAFT">DRAFT (Working Revision)</option>
+                <option value="ARCHIVED">ARCHIVED (Historical Record)</option>
+              </select>
             </div>
           </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', marginBottom: '6px' }}>
-              Executive Rationale & Endorsement Notes
+              Executive Rationale & Sign-Off Comments
             </label>
             <textarea
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
               rows={3}
-              value={rationale}
-              onChange={(e) => setRationale(e.target.value)}
-              style={{ width: '100%', padding: '10px 14px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', borderRadius: '6px', color: '#FFFFFF', fontSize: '0.85rem', outline: 'none' }}
+              style={{ width: '100%', padding: '10px 14px', background: 'rgba(15, 23, 42, 0.8)', border: '1px solid #1E293B', borderRadius: '6px', color: '#FFFFFF', fontSize: '0.85rem', resize: 'vertical' }}
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          {/* Previous Approval History */}
+          <div style={{ background: 'rgba(15, 23, 42, 0.5)', border: '1px solid #1E293B', borderRadius: '6px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase' }}>
+              <History size={13} /> Approval History Trail
+            </div>
+            {approvalHistory.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', color: '#64748B' }}>
+                <span><strong>{item.role}:</strong> {item.notes}</span>
+                <span style={{ color: '#10B981', fontWeight: 600 }}>{item.date}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Submit */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '6px' }}>
             <button
               type="button"
               onClick={onClose}
-              style={{ flex: 1, padding: '10px', background: 'rgba(30, 41, 59, 0.8)', border: '1px solid #334155', borderRadius: '6px', color: '#CBD5E1', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}
+              style={{ padding: '8px 16px', background: 'transparent', border: '1px solid #334155', borderRadius: '6px', color: '#94A3B8', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              style={{ flex: 1, padding: '10px', background: '#0284C7', border: 'none', borderRadius: '6px', color: '#FFFFFF', fontSize: '0.82rem', fontWeight: 700, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+              style={{ padding: '8px 20px', background: '#10B981', border: 'none', borderRadius: '6px', color: '#090D14', fontSize: '0.82rem', fontWeight: 800, cursor: 'pointer' }}
             >
-              {isSubmitting ? 'Signing...' : 'Record Formal Sign-Off'}
+              {isSubmitting ? 'Recording Cryptographic Sign-Off...' : `Submit ${targetStatus} Sign-Off`}
             </button>
           </div>
         </form>

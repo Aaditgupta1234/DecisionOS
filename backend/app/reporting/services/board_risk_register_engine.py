@@ -24,21 +24,21 @@ class BoardRiskRegisterEngine:
         Evaluates risk dimensions and returns structured risk breakdown.
         """
         # Confidence risk (inversely related to model confidence)
-        conf_risk_val = round(max(0.1, 1.0 - confidence_score), 2)
-        
+        conf_risk_val = round(max(0.05, 1.0 - confidence_score), 2)
+
         # Execution risk based on lifecycle status
         if status == "COMPLETED":
             exec_risk_val = 0.05
         elif status == "IN_PROGRESS":
             exec_risk_val = 0.25
         else:
-            exec_risk_val = 0.45
+            exec_risk_val = 0.50
 
         # Financial risk based on ARR magnitude at stake
-        fin_risk_val = 0.35 if expected_arr > 100000.0 else 0.15
+        fin_risk_val = 0.40 if expected_arr > 100000.0 else 0.15
 
         # Dependency risk
-        dep_risk_val = 0.30 if has_upstream_dependencies else 0.10
+        dep_risk_val = 0.35 if has_upstream_dependencies else 0.10
 
         # Weighted composite score: [0.0 to 1.0]
         composite_score = round(
@@ -46,13 +46,13 @@ class BoardRiskRegisterEngine:
             2,
         )
 
-        if composite_score <= 0.20:
+        if composite_score <= 0.18:
             risk_tier = "LOW"
             color = "#10B981"
-        elif composite_score <= 0.40:
+        elif composite_score <= 0.35:
             risk_tier = "MEDIUM"
             color = "#38BDF8"
-        elif composite_score <= 0.65:
+        elif composite_score <= 0.55:
             risk_tier = "HIGH"
             color = "#F59E0B"
         else:

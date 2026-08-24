@@ -44,6 +44,24 @@ class ConfidenceBreakdown(BaseModel):
     causal: float
     outcome: float
     overall: float
+    explainability: Optional[Dict[str, Any]] = None
+
+
+class ExecutiveReportGovernanceMetadata(BaseModel):
+    generated_by: Optional[str] = "DecisionOS Pipeline"
+    reviewed_by: Optional[str] = None
+    approved_by: Optional[str] = None
+    approval_timestamp: Optional[datetime] = None
+    lifecycle_status: str = "DRAFT"  # DRAFT, REVIEW, APPROVED, ARCHIVED
+    report_version: int = 1
+    dataset_version: str = "v1.0"
+    directive_count: int = 3
+    lineage_coverage: float = 100.0
+    confidence_score: float = 0.91
+    report_grounding_score: float = 100.0
+    dataset_specificity_score: float = 100.0
+    generated_from_strategy_engine: bool = True
+    generated_from_recommendations: bool = True
 
 
 class ExecutiveReportResponse(BaseModel):
@@ -64,6 +82,7 @@ class ExecutiveReportResponse(BaseModel):
     approved_at: Optional[datetime] = None
     version: int
     sha256_hash: str
+    governance_metadata: Optional[ExecutiveReportGovernanceMetadata] = None
     created_at: datetime
     updated_at: datetime
 
@@ -168,6 +187,10 @@ class BoardDirectiveResponse(BaseModel):
     completion_date: Optional[datetime] = None
     achievement_percentage: Optional[float] = None
     related_initiative_id: Optional[uuid.UUID] = None
+    evidence_chain: Optional[List[Dict[str, Any]]] = None
+    risk_assessment: Optional[Dict[str, Any]] = None
+    benefit_tracking: Optional[Dict[str, Any]] = None
+    dependencies: Optional[List[str]] = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
