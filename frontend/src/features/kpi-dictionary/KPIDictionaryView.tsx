@@ -137,6 +137,388 @@ export const KPIDictionaryView: React.FC = () => {
     );
   }
 
+// Authoritative KPI Governance Registry mapping metric keys to accurate mathematical calculus, lineage & executive ownership
+const KPI_DEFINITIONS_REGISTRY: Record<string, {
+  name?: string;
+  category?: string;
+  formula: string;
+  formulaTokens: { type: 'func' | 'var' | 'op' | 'num'; text: string }[];
+  owner: string;
+  ownerRole: string;
+  description: string;
+  unit?: string;
+  fixedTarget?: number;
+  targetMultiplier?: number;
+  lowerIsBetter?: boolean;
+  isBoardMetric?: boolean;
+}> = {
+  completion_rate: {
+    name: 'Completion Rate (%)',
+    category: 'ORDERS',
+    formula: 'completed_orders / total_orders * 100',
+    formulaTokens: [
+      { type: 'var', text: 'completed_orders' },
+      { type: 'op', text: '/' },
+      { type: 'var', text: 'total_orders' },
+      { type: 'op', text: '*' },
+      { type: 'num', text: '100' },
+    ],
+    owner: 'Chief Operating Officer',
+    ownerRole: 'Executive Operations',
+    description: 'Percentage of customer orders and service transactions successfully completed and settled without returns or cancellations.',
+    unit: '%',
+    fixedTarget: 98.0,
+    isBoardMetric: true,
+  },
+  revenue_per_customer: {
+    name: 'Revenue Per Customer',
+    category: 'REVENUE',
+    formula: 'total_revenue / unique_customers',
+    formulaTokens: [
+      { type: 'var', text: 'total_revenue' },
+      { type: 'op', text: '/' },
+      { type: 'var', text: 'unique_customers' },
+    ],
+    owner: 'VP Growth & Monetization',
+    ownerRole: 'Commercial Growth',
+    description: 'Average monetized gross revenue contribution generated per unique purchasing account across the observation period.',
+    unit: 'USD',
+    targetMultiplier: 1.15,
+    isBoardMetric: true,
+  },
+  total_revenue: {
+    name: 'Total Revenue',
+    category: 'REVENUE',
+    formula: 'SUM(revenue)',
+    formulaTokens: [
+      { type: 'func', text: 'SUM' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'revenue' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Chief Financial Officer',
+    ownerRole: 'Finance Leadership',
+    description: 'Aggregated gross enterprise revenues recognized from all completed customer transactions and order logs.',
+    unit: 'USD',
+    targetMultiplier: 1.08,
+    isBoardMetric: true,
+  },
+  average_revenue: {
+    name: 'Average Revenue',
+    category: 'REVENUE',
+    formula: 'AVG(revenue)',
+    formulaTokens: [
+      { type: 'func', text: 'AVG' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'revenue' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Revenue Operations',
+    ownerRole: 'Revenue Ops',
+    description: 'Arithmetic mean dollar value of individual transactions across the active reporting period.',
+    unit: 'USD',
+    targetMultiplier: 1.12,
+  },
+  maximum_revenue: {
+    name: 'Maximum Revenue',
+    category: 'REVENUE',
+    formula: 'MAX(revenue)',
+    formulaTokens: [
+      { type: 'func', text: 'MAX' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'revenue' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'VP Enterprise Sales',
+    ownerRole: 'Sales Leadership',
+    description: 'Highest single transaction or contract value captured within the ingested dataset.',
+    unit: 'USD',
+    targetMultiplier: 1.05,
+  },
+  minimum_revenue: {
+    name: 'Minimum Revenue',
+    category: 'REVENUE',
+    formula: 'MIN(revenue)',
+    formulaTokens: [
+      { type: 'func', text: 'MIN' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'revenue' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'VP Enterprise Sales',
+    ownerRole: 'Sales Leadership',
+    description: 'Lowest single order revenue recorded across all active transaction records.',
+    unit: 'USD',
+    targetMultiplier: 1.25,
+  },
+  total_orders: {
+    name: 'Total Orders',
+    category: 'ORDERS',
+    formula: 'COUNT_DISTINCT(order_id)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_DISTINCT' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'order_id' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'VP Operations',
+    ownerRole: 'Operations Leadership',
+    description: 'Total volume of discrete customer order records submitted and recorded in the system.',
+    unit: 'Orders',
+    targetMultiplier: 1.12,
+    isBoardMetric: true,
+  },
+  completed_orders: {
+    name: 'Completed Orders',
+    category: 'ORDERS',
+    formula: 'COUNT_FILTER(status IN completed_statuses)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_FILTER' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'status' },
+      { type: 'op', text: 'IN' },
+      { type: 'var', text: 'completed_statuses' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Fulfillment',
+    ownerRole: 'Fulfillment Operations',
+    description: 'Total count of customer orders processed through full delivery and positive settlement.',
+    unit: 'Orders',
+    targetMultiplier: 1.10,
+  },
+  cancelled_orders: {
+    name: 'Cancelled Orders',
+    category: 'ORDERS',
+    formula: 'COUNT_FILTER(status IN cancelled_statuses)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_FILTER' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'status' },
+      { type: 'op', text: 'IN' },
+      { type: 'var', text: 'cancelled_statuses' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Customer Success',
+    ownerRole: 'Customer Retention',
+    description: 'Count of transactions cancelled, aborted, or refunded prior to final fulfillment.',
+    unit: 'Orders',
+    fixedTarget: 0,
+    lowerIsBetter: true,
+  },
+  unique_customers: {
+    name: 'Unique Customers',
+    category: 'CUSTOMERS',
+    formula: 'COUNT_DISTINCT(customer_id)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_DISTINCT' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'customer_id' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'VP Marketing',
+    ownerRole: 'Growth Marketing',
+    description: 'Total count of distinct individual accounts or organizations with active engagement.',
+    unit: 'Accounts',
+    targetMultiplier: 1.18,
+    isBoardMetric: true,
+  },
+  total_customers: {
+    name: 'Total Customers',
+    category: 'CUSTOMERS',
+    formula: 'COUNT_DISTINCT(customer_id)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_DISTINCT' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'customer_id' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'VP Marketing',
+    ownerRole: 'Growth Marketing',
+    description: 'Total number of discrete buyers recorded across historical sales ingress.',
+    unit: 'Accounts',
+    targetMultiplier: 1.15,
+  },
+  returning_customers: {
+    name: 'Returning Customers',
+    category: 'CUSTOMERS',
+    formula: 'COUNT_FILTER(order_count > 1)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_FILTER' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'order_count' },
+      { type: 'op', text: '>' },
+      { type: 'num', text: '1' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Customer Retention',
+    ownerRole: 'Lifecycle Marketing',
+    description: 'Number of active customer accounts that executed two or more distinct purchasing transactions.',
+    unit: 'Accounts',
+    targetMultiplier: 1.22,
+  },
+  new_customers: {
+    name: 'New Customers',
+    category: 'CUSTOMERS',
+    formula: 'COUNT_FILTER(order_count == 1)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT_FILTER' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'order_count' },
+      { type: 'op', text: '==' },
+      { type: 'num', text: '1' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Acquisition',
+    ownerRole: 'Growth Acquisition',
+    description: 'First-time customer conversions originating during the active dataset timeline.',
+    unit: 'Accounts',
+    targetMultiplier: 1.14,
+  },
+  repeat_customer_rate: {
+    name: 'Repeat Customer Rate (%)',
+    category: 'CUSTOMERS',
+    formula: '(returning_customers / unique_customers) * 100',
+    formulaTokens: [
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'returning_customers' },
+      { type: 'op', text: '/' },
+      { type: 'var', text: 'unique_customers' },
+      { type: 'op', text: ')' },
+      { type: 'op', text: '*' },
+      { type: 'num', text: '100' },
+    ],
+    owner: 'Chief Commercial Officer',
+    ownerRole: 'Commercial Strategy',
+    description: 'Proportion of total customer accounts that generated repeat transactions.',
+    unit: '%',
+    fixedTarget: 45.0,
+  },
+  customer_churn_rate: {
+    name: 'Customer Churn Rate (%)',
+    category: 'RETENTION',
+    formula: '(churned_customers / total_customers) * 100',
+    formulaTokens: [
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'churned_customers' },
+      { type: 'op', text: '/' },
+      { type: 'var', text: 'total_customers' },
+      { type: 'op', text: ')' },
+      { type: 'op', text: '*' },
+      { type: 'num', text: '100' },
+    ],
+    owner: 'VP Customer Success',
+    ownerRole: 'Customer Success',
+    description: 'Percentage of customer accounts lost or unrenewed within the measured observation cohort.',
+    unit: '%',
+    fixedTarget: 5.0,
+    lowerIsBetter: true,
+    isBoardMetric: true,
+  },
+  average_review_score: {
+    name: 'Average Review Score',
+    category: 'REVIEWS',
+    formula: 'AVG(review_score)',
+    formulaTokens: [
+      { type: 'func', text: 'AVG' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'review_score' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Product Quality',
+    ownerRole: 'Customer Experience',
+    description: 'Mean customer satisfaction sentiment score measured across submitted product and service reviews.',
+    unit: '/ 5.0',
+    fixedTarget: 4.8,
+  },
+  total_reviews: {
+    name: 'Total Reviews',
+    category: 'REVIEWS',
+    formula: 'COUNT(review_score)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'review_score' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Head of Customer Experience',
+    ownerRole: 'CX Analytics',
+    description: 'Total number of customer ratings and feedback submissions captured.',
+    unit: 'Reviews',
+    targetMultiplier: 1.15,
+  },
+  average_delivery_time: {
+    name: 'Avg Delivery Time',
+    category: 'DELIVERY',
+    formula: 'AVG(delivery_time)',
+    formulaTokens: [
+      { type: 'func', text: 'AVG' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'delivery_time' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'VP Logistics & Supply Chain',
+    ownerRole: 'Logistics Operations',
+    description: 'Average calendar days required to complete fulfillment from checkout order timestamp to customer receipt.',
+    unit: 'Days',
+    fixedTarget: 2.0,
+    lowerIsBetter: true,
+  },
+  record_count: {
+    name: 'Total Records',
+    category: 'QUALITY',
+    formula: 'COUNT(rows)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'rows' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Data Engineering Lead',
+    ownerRole: 'Data Platform',
+    description: 'Total count of row records ingested and validated in the dataset table.',
+    unit: 'Rows',
+    targetMultiplier: 1.0,
+  },
+  column_count: {
+    name: 'Total Columns',
+    category: 'QUALITY',
+    formula: 'COUNT(columns)',
+    formulaTokens: [
+      { type: 'func', text: 'COUNT' },
+      { type: 'op', text: '(' },
+      { type: 'var', text: 'columns' },
+      { type: 'op', text: ')' },
+    ],
+    owner: 'Data Architect',
+    ownerRole: 'Data Governance',
+    description: 'Total verified schema dimension columns recognized and normalized.',
+    unit: 'Cols',
+    targetMultiplier: 1.0,
+  },
+  completeness_percentage: {
+    name: 'Data Completeness (%)',
+    category: 'QUALITY',
+    formula: '((total_cells - null_cells) / total_cells) * 100',
+    formulaTokens: [
+      { type: 'op', text: '((' },
+      { type: 'var', text: 'total_cells' },
+      { type: 'op', text: '-' },
+      { type: 'var', text: 'null_cells' },
+      { type: 'op', text: ')' },
+      { type: 'op', text: '/' },
+      { type: 'var', text: 'total_cells' },
+      { type: 'op', text: ')' },
+      { type: 'op', text: '*' },
+      { type: 'num', text: '100' },
+    ],
+    owner: 'Head of Enterprise Data Governance',
+    ownerRole: 'Data Quality Assurance',
+    description: 'Percentage of non-null populated telemetry data cells across the entire dataset matrix.',
+    unit: '%',
+    fixedTarget: 100.0,
+  },
+};
+
   const rawMetrics = metricsData || [];
 
   if (rawMetrics.length === 0) {
@@ -154,47 +536,81 @@ export const KPIDictionaryView: React.FC = () => {
     );
   }
 
-  // Transform DatasetMetric[] to MetricItem[]
+  // Transform DatasetMetric[] to MetricItem[] with accurate mathematical formulas, targets and realization rates
   const kpis: MetricItem[] = rawMetrics.map((m: DatasetMetric, idx: number) => {
-    const val = m.metric_value || 0;
-    const cat = (m.metric_category || 'FINANCIAL').toUpperCase();
-    const formattedVal = val.toLocaleString() + (m.unit ? ` ${m.unit}` : '');
+    const val = typeof m.metric_value === 'number' ? m.metric_value : (parseFloat(m.metric_value as any) || 0);
+    const spec = KPI_DEFINITIONS_REGISTRY[m.metric_key];
+    const cat = (spec?.category || m.metric_category || 'FINANCIAL').toUpperCase();
+    const metricUnit = spec?.unit || m.unit || '';
+    const formattedVal = val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + (metricUnit ? ` ${metricUnit}` : '');
+
+    let targetVal: number;
+    let realization: number;
+
+    if (spec?.fixedTarget !== undefined) {
+      targetVal = spec.fixedTarget;
+      if (spec.lowerIsBetter) {
+        if (val <= 0) {
+          realization = 100.0;
+        } else {
+          realization = Math.round(Math.min(150, (targetVal / Math.max(0.01, val)) * 100) * 10) / 10;
+        }
+      } else {
+        realization = Math.round(Math.min(150, (val / Math.max(0.01, targetVal)) * 100) * 10) / 10;
+      }
+    } else {
+      const multiplier = spec?.targetMultiplier ?? (1.06 + ((idx * 5) % 18) / 100);
+      targetVal = Math.round(val * multiplier * 100) / 100;
+      realization = Math.round((val / Math.max(0.01, targetVal)) * 100 * 10) / 10;
+    }
+
+    const formattedTarget = targetVal.toLocaleString(undefined, { maximumFractionDigits: 2 }) + (metricUnit ? ` ${metricUnit}` : '');
+
+    const formulaStr = spec?.formula || `CALCULATE(${m.metric_key})`;
+    const tokens = spec?.formulaTokens || [
+      { type: 'func' as const, text: 'CALCULATE' },
+      { type: 'op' as const, text: '(' },
+      { type: 'var' as const, text: m.metric_key },
+      { type: 'op' as const, text: ')' },
+    ];
 
     return {
       id: m.id || `m-${idx}`,
-      metricName: m.metric_name || m.metric_key,
+      metricName: spec?.name || m.metric_name || m.metric_key,
       category: cat,
-      formula: `CALCULATE_SUM(${m.metric_key})`,
-      formulaTokens: [
-        { type: 'func', text: 'CALCULATE_SUM' },
-        { type: 'op', text: '(' },
-        { type: 'var', text: m.metric_key },
-        { type: 'op', text: ')' },
-      ],
-      owner: 'DecisionOS Engine',
-      ownerRole: 'Automated Metric Intelligence',
+      formula: formulaStr,
+      formulaTokens: tokens,
+      owner: spec?.owner || 'DecisionOS Engine',
+      ownerRole: spec?.ownerRole || 'Automated Metric Intelligence',
       dataSource: `${activeDataset.name} (${activeDataset.original_filename || 'CSV'})`,
       refreshFrequency: 'REALTIME',
-      unit: m.unit || 'Units',
-      targetValue: val * 1.1,
+      unit: metricUnit || 'Units',
+      targetValue: targetVal,
       currentValue: val,
-      formattedTarget: (val * 1.1).toLocaleString(undefined, { maximumFractionDigits: 2 }) + (m.unit ? ` ${m.unit}` : ''),
+      formattedTarget: formattedTarget,
       formattedCurrent: formattedVal,
-      realizationPct: 90.9,
-      description: `Governed telemetry KPI calculating ${m.metric_name || m.metric_key} derived from dataset ${activeDataset.name}.`,
+      realizationPct: realization,
+      description: spec?.description || `Governed telemetry KPI calculating ${m.metric_name || m.metric_key} derived from dataset ${activeDataset.name}.`,
       version: 'v1.0',
-      isBoardMetric: idx < 5,
-      provenanceLineage: `${activeDataset.original_filename || 'Ingestion'} → MetricEngine → DecisionOS_Calculus_Core`,
+      isBoardMetric: spec?.isBoardMetric ?? (idx < 4),
+      provenanceLineage: `${activeDataset.original_filename || 'Ingestion'} → ${spec?.formula ? spec.formula.split(' ')[0] : 'MetricEngine'} → DecisionOS_Calculus_Core`,
     };
   });
+
+  // Dynamic Formula Accuracy Rating based on active dataset completeness & valid metrics
+  const validMetricCount = rawMetrics.filter(m => m.metric_value !== null && m.metric_value !== undefined && !isNaN(Number(m.metric_value))).length;
+  const completenessMetric = rawMetrics.find(m => m.metric_key === 'completeness_percentage');
+  const formulaAccuracyRating = completenessMetric && completenessMetric.metric_value 
+    ? `${Number(completenessMetric.metric_value).toFixed(1)}%` 
+    : (rawMetrics.length > 0 ? `${((validMetricCount / rawMetrics.length) * 100).toFixed(1)}%` : '100.0%');
 
   const categories = [
     { key: 'ALL', label: 'All Registered', count: kpis.length },
     { key: 'BOARD', label: 'Boardroom Metrics', count: kpis.filter(k => k.isBoardMetric).length },
     { key: 'REVENUE', label: 'Revenue & Growth', count: kpis.filter(k => k.category === 'REVENUE' || k.category === 'GROWTH').length },
-    { key: 'RETENTION', label: 'Retention', count: kpis.filter(k => k.category === 'RETENTION').length },
-    { key: 'OPERATIONS', label: 'Operations & Margins', count: kpis.filter(k => k.category === 'OPERATIONS' || k.category === 'MARGIN').length },
-    { key: 'GOVERNANCE', label: 'Governance & AI', count: kpis.filter(k => k.category === 'GOVERNANCE').length },
+    { key: 'RETENTION', label: 'Retention & Cust.', count: kpis.filter(k => k.category === 'RETENTION' || k.category === 'CUSTOMERS').length },
+    { key: 'OPERATIONS', label: 'Operations & Orders', count: kpis.filter(k => k.category === 'OPERATIONS' || k.category === 'ORDERS' || k.category === 'DELIVERY').length },
+    { key: 'QUALITY', label: 'Quality & Governance', count: kpis.filter(k => k.category === 'QUALITY' || k.category === 'GOVERNANCE' || k.category === 'REVIEWS').length },
   ];
 
   const filtered = kpis.filter((k) => {
@@ -209,9 +625,9 @@ export const KPIDictionaryView: React.FC = () => {
     if (activeCategory === 'ALL') return true;
     if (activeCategory === 'BOARD') return k.isBoardMetric;
     if (activeCategory === 'REVENUE') return k.category === 'REVENUE' || k.category === 'GROWTH';
-    if (activeCategory === 'RETENTION') return k.category === 'RETENTION';
-    if (activeCategory === 'OPERATIONS') return k.category === 'OPERATIONS' || k.category === 'MARGIN';
-    if (activeCategory === 'GOVERNANCE') return k.category === 'GOVERNANCE';
+    if (activeCategory === 'RETENTION') return k.category === 'RETENTION' || k.category === 'CUSTOMERS';
+    if (activeCategory === 'OPERATIONS') return k.category === 'OPERATIONS' || k.category === 'ORDERS' || k.category === 'DELIVERY';
+    if (activeCategory === 'QUALITY') return k.category === 'QUALITY' || k.category === 'GOVERNANCE' || k.category === 'REVIEWS';
     return true;
   });
 
@@ -224,11 +640,16 @@ export const KPIDictionaryView: React.FC = () => {
   const getCategoryColor = (cat: string) => {
     switch (cat) {
       case 'REVENUE': return { bg: 'rgba(56, 189, 248, 0.12)', color: '#38BDF8', border: 'rgba(56, 189, 248, 0.3)' };
-      case 'RETENTION': return { bg: 'rgba(16, 185, 129, 0.12)', color: '#10B981', border: 'rgba(16, 185, 129, 0.3)' };
+      case 'RETENTION': 
+      case 'CUSTOMERS': return { bg: 'rgba(16, 185, 129, 0.12)', color: '#10B981', border: 'rgba(16, 185, 129, 0.3)' };
       case 'GROWTH': return { bg: 'rgba(99, 102, 241, 0.12)', color: '#818CF8', border: 'rgba(99, 102, 241, 0.3)' };
       case 'MARGIN': return { bg: 'rgba(245, 158, 11, 0.12)', color: '#F59E0B', border: 'rgba(245, 158, 11, 0.3)' };
-      case 'OPERATIONS': return { bg: 'rgba(244, 63, 94, 0.12)', color: '#FB7185', border: 'rgba(244, 63, 94, 0.3)' };
-      case 'GOVERNANCE': return { bg: 'rgba(168, 85, 247, 0.12)', color: '#C084FC', border: 'rgba(168, 85, 247, 0.3)' };
+      case 'ORDERS':
+      case 'OPERATIONS':
+      case 'DELIVERY': return { bg: 'rgba(244, 63, 94, 0.12)', color: '#FB7185', border: 'rgba(244, 63, 94, 0.3)' };
+      case 'QUALITY':
+      case 'GOVERNANCE':
+      case 'REVIEWS': return { bg: 'rgba(168, 85, 247, 0.12)', color: '#C084FC', border: 'rgba(168, 85, 247, 0.3)' };
       default: return { bg: 'rgba(100, 116, 139, 0.12)', color: '#94A3B8', border: 'rgba(100, 116, 139, 0.3)' };
     }
   };
@@ -414,7 +835,7 @@ export const KPIDictionaryView: React.FC = () => {
                 <CheckCircle2 size={15} color="#818CF8" />
               </div>
               <div style={{ fontSize: '2.4rem', fontWeight: 900, color: '#818CF8', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-                99.4%
+                {formulaAccuracyRating}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.76rem', color: '#94A3B8', marginTop: '6px' }}>
                 <span style={{ color: '#818CF8', fontWeight: 700 }}>Automated Schema</span>
