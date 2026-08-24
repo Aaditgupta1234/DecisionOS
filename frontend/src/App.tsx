@@ -17,6 +17,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
 const PlatformShowcaseView = React.lazy(() => import('./views/platform/PlatformShowcaseView').then(m => ({ default: m.PlatformShowcaseView })));
 const LoginPage = React.lazy(() => import('./features/auth/LoginPage'));
+const ChatView = React.lazy(() => import('./views/chat/ChatView').then(m => ({ default: m.ChatView })));
 
 // Core Multi-Portfolio & Executive Studios
 const EnterpriseCommandCenterView = React.lazy(() => import('./features/enterprise-os/EnterpriseCommandCenterView').then(m => ({ default: m.EnterpriseCommandCenterView })));
@@ -134,6 +135,7 @@ function AppContent() {
             <Route path="/diagnostics" element={<DiagnosticsView />} />
             <Route path="/root-causes" element={<RootCausesView />} />
             <Route path="/recommendations" element={<RecommendationsView />} />
+            <Route path="/chat" element={<ChatView />} />
             <Route path="/decision-copilot" element={<DecisionCopilotView />} />
             <Route path="/knowledge-graph" element={<KnowledgeGraphExplorerView />} />
             <Route path="/reports" element={<ExecutiveReportsCenterView />} />
@@ -149,6 +151,7 @@ function AppContent() {
             <Route path="/admin" element={<SystemAdminCenterView />} />
 
             {/* Aliases & Fallbacks */}
+            <Route path="/chat-analyst" element={<Navigate to="/chat" replace />} />
             <Route path="/command-center" element={<Navigate to="/enterprise" replace />} />
             <Route path="/dashboard" element={<Navigate to="/enterprise" replace />} />
             <Route path="/metrics" element={<Navigate to="/portfolio" replace />} />

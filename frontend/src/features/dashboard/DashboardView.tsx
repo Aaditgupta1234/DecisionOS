@@ -162,7 +162,7 @@ export const DashboardView: React.FC = () => {
             }}
           >
             <MessageSquare size={13} />
-            <span>Ask AI Analyst</span>
+            <span>AI Business Analyst</span>
           </Link>
         </div>
       </div>

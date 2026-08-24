@@ -5,6 +5,7 @@ import {
   Command,
   LayoutDashboard,
   FileText,
+  MessageSquare,
   Bot,
   Database,
   BookOpen,
@@ -56,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenSearch }) => {
   const pinnedItems: NavItem[] = [
     { path: '/enterprise', title: 'Enterprise Command', icon: LayoutDashboard, badge: 'OS v1' },
     { path: '/boardroom', title: 'Executive Boardroom', icon: FileText, badge: 'BOARD' },
+    { path: '/chat', title: 'AI Business Analyst', icon: MessageSquare, badge: 'ANALYST' },
     { path: '/decision-copilot', title: 'AI Decision Copilot', icon: Bot, badge: 'COPILOT' },
   ];
 

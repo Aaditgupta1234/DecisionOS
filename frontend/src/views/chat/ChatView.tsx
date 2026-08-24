@@ -5,7 +5,7 @@ import { ChatMessage, ChatSession } from '../../types';
 import { LoadingSkeleton } from '../../components/feedback/LoadingSkeleton';
 import { ErrorBanner } from '../../components/feedback/ErrorBanner';
 import { EmptyState } from '../../components/feedback/EmptyState';
-import { MessageSquare, Send, Plus, Sparkles, Bot, User as UserIcon } from 'lucide-react';
+import { MessageSquare, Send, Plus, Sparkles, Bot, User as UserIcon, ShieldCheck } from 'lucide-react';
 
 export const ChatView: React.FC = () => {
   const { activeDataset } = useDataset();
@@ -19,10 +19,10 @@ export const ChatView: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedPrompts = [
-    'What is the primary risk diagnosed in this dataset?',
-    'Explain the top root cause driving performance decline.',
-    'What are the highest priority recommendations?',
-    'How is the 0-100 business health score calculated?',
+    'How healthy is my company?',
+    'What is my biggest business risk?',
+    'Why is revenue declining?',
+    'What should I fix first?',
   ];
 
   const fetchSessions = async (datasetId: string) => {
@@ -84,7 +84,15 @@ export const ChatView: React.FC = () => {
 
     try {
       setIsSending(true);
-      const responseMsg = await DecisionApi.sendChatMessage(activeSession.id, text);
+      const response: any = await DecisionApi.sendChatMessage(activeSession.id, text);
+      const responseMsg: ChatMessage = response?.assistant_message || response || {
+        id: `ast-${Date.now()}`,
+        session_id: activeSession.id,
+        role: 'ASSISTANT',
+        content: response?.answer || 'Response generated.',
+        created_at: new Date().toISOString(),
+        citations: response?.citations,
+      };
       setMessages((prev) => [...prev, responseMsg]);
     } catch (err: any) {
       console.error('Chat response error:', err);
@@ -123,18 +131,61 @@ export const ChatView: React.FC = () => {
     );
   }
 
+  // Helper to render citation badges
+  const renderCitations = (citations: any) => {
+    if (!citations) return null;
+    let items: Array<{ type: string; title: string }> = [];
+
+    if (Array.isArray(citations)) {
+      items = citations.map(c => ({
+        type: typeof c === 'string' ? 'Source' : (c.type || c.artifact_type || 'Source'),
+        title: typeof c === 'string' ? c : (c.title || c.id || 'Reference'),
+      }));
+    } else if (typeof citations === 'object') {
+      const categories = ['findings', 'root_causes', 'recommendations', 'forecasts', 'scenarios'];
+      for (const cat of categories) {
+        if (Array.isArray(citations[cat])) {
+          for (const c of citations[cat]) {
+            items.push({
+              type: cat.replace('_', ' ').slice(0, -1).toUpperCase(),
+              title: c.title || c.id || 'Artifact',
+            });
+          }
+        }
+      }
+    }
+
+    if (items.length === 0) return null;
+
+    return (
+      <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.15)', fontSize: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+          <ShieldCheck size={12} color="var(--color-ai-light)" />
+          <span style={{ color: 'var(--color-ai-light)', fontWeight: 600 }}>Grounded Citations:</span>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+          {items.map((c, i) => (
+            <span key={i} className="badge badge-neutral" style={{ fontSize: '0.68rem', padding: '2px 8px' }}>
+              <strong>{c.type}:</strong> {c.title}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="page-container" style={{ height: 'calc(100vh - var(--header-height))', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span className="badge badge-ai">Phase 6.1 AI Chat Analyst</span>
+            <span className="badge badge-ai">Grounded Intelligence</span>
             <span style={{ fontSize: '0.75rem', color: 'var(--color-ai-light)' }}>
-              Grounded in Deterministic Pipeline Intelligence
+              100% Deterministic Platform Telemetry
             </span>
           </div>
-          <h1>AI Analyst Studio</h1>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '2px 0 0 0' }}>AI Business Analyst</h1>
         </div>
 
         <button
@@ -164,7 +215,7 @@ export const ChatView: React.FC = () => {
         {/* Sessions Sidebar */}
         <div
           style={{
-            width: '220px',
+            width: '240px',
             borderRight: '1px solid var(--border-subtle)',
             backgroundColor: 'var(--bg-app)',
             display: 'flex',
@@ -212,13 +263,13 @@ export const ChatView: React.FC = () => {
           <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {messages.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center' }}>
-                <Bot size={36} color="var(--color-ai-light)" style={{ marginBottom: '12px' }} />
-                <h3 style={{ fontSize: '1.1rem', marginBottom: '6px' }}>DecisionOS Grounded Chat Analyst</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '400px', marginBottom: '20px' }}>
-                  Ask questions about diagnosed findings, root causes, KPI trends, and actionable recommendations.
+                <Bot size={40} color="var(--color-ai-light)" style={{ marginBottom: '12px' }} />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '6px', color: '#FFFFFF' }}>DecisionOS AI Business Analyst</h3>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '440px', marginBottom: '20px' }}>
+                  Ask natural-language questions about health scores, diagnosed risks, root causes, and actionable recommendations.
                 </p>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '420px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '440px' }}>
                   {suggestedPrompts.map((prompt, idx) => (
                     <button
                       key={idx}
@@ -247,7 +298,7 @@ export const ChatView: React.FC = () => {
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
                       {isUser ? <UserIcon size={12} /> : <Bot size={12} color="var(--color-ai-light)" />}
-                      <span>{isUser ? 'You' : 'AI Analyst'}</span>
+                      <span>{isUser ? 'You' : 'AI Business Analyst'}</span>
                     </div>
 
                     <div
@@ -265,17 +316,8 @@ export const ChatView: React.FC = () => {
                     >
                       {m.content}
 
-                      {/* Citations */}
-                      {m.citations && m.citations.length > 0 && (
-                        <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.15)', fontSize: '0.75rem' }}>
-                          <span style={{ color: 'var(--color-ai-light)', fontWeight: 600 }}>Citations: </span>
-                          {m.citations.map((c, i) => (
-                            <span key={i} className="badge badge-neutral" style={{ marginRight: '4px', fontSize: '0.65rem' }}>
-                              {c.type}: {c.title}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      {/* Citations & Evidence Lineage */}
+                      {!isUser && renderCitations(m.citations)}
                     </div>
                   </div>
                 );
@@ -285,7 +327,7 @@ export const ChatView: React.FC = () => {
             {isSending && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-ai-light)', fontSize: '0.85rem' }}>
                 <Bot size={16} />
-                <span>Analyst is evaluating dataset context...</span>
+                <span>AI Business Analyst is evaluating dataset context...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -302,7 +344,7 @@ export const ChatView: React.FC = () => {
             >
               <input
                 type="text"
-                placeholder="Ask about revenue trends, findings, or recommendations..."
+                placeholder="Ask about health score, risks, root causes, or recommendations..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 disabled={isSending}
