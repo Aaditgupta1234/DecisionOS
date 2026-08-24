@@ -3,11 +3,13 @@
 from app.portfolio.constants import (
     BenchmarkTier,
     PortfolioStatus,
+    PortfolioState,
     TrendDirection,
 )
 
 __all__ = [
     "PortfolioStatus",
+    "PortfolioState",
     "BenchmarkTier",
     "TrendDirection",
 ]

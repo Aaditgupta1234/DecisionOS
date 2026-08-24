@@ -9,6 +9,7 @@ from app.portfolio.constants.portfolio_constants import (
     VALID_LOOKBACK_DAYS,
     BenchmarkTier,
     PortfolioStatus,
+    PortfolioState,
 )
 from app.portfolio.constants.benchmark_constants import (
     BENCHMARK_TIER_THRESHOLDS,

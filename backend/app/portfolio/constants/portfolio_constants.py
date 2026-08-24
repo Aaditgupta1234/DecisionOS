@@ -20,6 +20,13 @@ class PortfolioStatus(str, Enum):
     INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
 
 
+class PortfolioState(str, Enum):
+    """Explicit lifecycle state of an organization's portfolio studio."""
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    SINGLE_WORKSPACE = "SINGLE_WORKSPACE"
+    AVAILABLE = "AVAILABLE"
+
+
 class BenchmarkTier(str, Enum):
     """Percentile-based ranking tier for a workspace (Phase 11.0 Baseline)."""
     TOP = "TOP"        # >= 80th percentile

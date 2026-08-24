@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------
 
 export type PortfolioStatus = 'HEALTHY' | 'AT_RISK' | 'CRITICAL' | 'INSUFFICIENT_DATA';
+export type PortfolioState = 'INSUFFICIENT_DATA' | 'SINGLE_WORKSPACE' | 'AVAILABLE';
 export type TrendDirection = 'UP' | 'DOWN' | 'STABLE';
 export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
 
