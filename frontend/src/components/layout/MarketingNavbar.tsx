@@ -89,6 +89,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
 
   const isHome = location.pathname === '/' || activeTab === 'home';
   const isPlatform = location.pathname === '/platform' || activeTab === 'platform';
+  const isChat = location.pathname === '/chat' || activeTab === 'chat';
 
   // Compute initials & display name
   const displayName = user?.full_name || (user?.email ? user.email.split('@')[0] : 'Executive');
@@ -266,6 +267,22 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
                 </div>
               )}
             </div>
+
+            {/* AI Chatbot Option in Main Nav */}
+            <Link
+              to="/chat"
+              className={`nav-link ${isChat ? 'nav-link-active' : ''}`}
+              style={{
+                color: isChat ? '#FFFFFF' : undefined,
+                fontWeight: isChat ? 700 : undefined,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <Bot size={14} color="#38BDF8" />
+              <span>AI Chatbot</span>
+            </Link>
 
             {/* Launch Platform Link in Main Nav */}
             <Link
