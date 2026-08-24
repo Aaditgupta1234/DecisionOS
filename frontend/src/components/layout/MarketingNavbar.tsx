@@ -20,7 +20,8 @@ import {
   BookOpen, 
   FileText,
   Cpu,
-  ArrowRight
+  ArrowRight,
+  MessageSquare
 } from 'lucide-react';
 import '../../styles/home.css';
 
@@ -123,43 +124,30 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
               Home
             </Link>
 
-            <Link
-              to="/platform"
-              className={`nav-link ${isPlatform ? 'nav-link-active' : ''}`}
-              style={{
-                color: isPlatform ? '#FFFFFF' : undefined,
-                fontWeight: isPlatform ? 700 : undefined,
-              }}
-            >
-              Platform
-            </Link>
-
-            {/* Enterprise OS with Interactive Mega Menu */}
+            {/* Platform with Interactive Mega Menu on Hover */}
             <div 
               style={{ position: 'relative', height: '100%', display: 'flex', alignItems: 'center' }} 
               ref={megaMenuRef}
               onMouseEnter={() => setIsMegaMenuOpen(true)}
               onMouseLeave={() => setIsMegaMenuOpen(false)}
             >
-              <button
-                onClick={() => setIsMegaMenuOpen(!isMegaMenuOpen)}
-                className="nav-link"
+              <Link
+                to="/platform"
+                className={`nav-link ${isPlatform ? 'nav-link-active' : ''}`}
                 style={{
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
+                  color: isPlatform || isMegaMenuOpen ? '#FFFFFF' : undefined,
+                  fontWeight: isPlatform ? 700 : undefined,
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
-                  color: isMegaMenuOpen ? '#FFFFFF' : '#8E99A8',
-                  padding: 0,
+                  textDecoration: 'none',
                 }}
               >
-                <span>Enterprise OS</span>
+                <span>Platform</span>
                 <ChevronDown size={13} style={{ transform: isMegaMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
-              </button>
+              </Link>
 
-              {/* Enterprise OS Mega Menu */}
+              {/* Platform Mega Menu Dropdown */}
               {isMegaMenuOpen && (
                 <div
                   style={{
@@ -167,7 +155,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
                     top: 'calc(100% - 6px)',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    width: '840px',
+                    width: '860px',
                     background: '#080A0F',
                     border: '1px solid #14171E',
                     borderRadius: '16px',
@@ -191,6 +179,10 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
                     <Link to="/kpi-dictionary" onClick={() => setIsMegaMenuOpen(false)} className="mega-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '6px', color: '#E2E8F0', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600 }}>
                       <BookOpen size={13} color="#F59E0B" />
                       <span>KPI Dictionary</span>
+                    </Link>
+                    <Link to="/chat" onClick={() => setIsMegaMenuOpen(false)} className="mega-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '6px', color: '#E2E8F0', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600 }}>
+                      <MessageSquare size={13} color="#38BDF8" />
+                      <span>AI Business Analyst</span>
                     </Link>
                     <Link to="/boardroom" onClick={() => setIsMegaMenuOpen(false)} className="mega-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '6px', color: '#E2E8F0', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600 }}>
                       <FileText size={13} color="#F59E0B" />
