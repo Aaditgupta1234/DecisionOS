@@ -1,0 +1,6 @@
+OrderID,CustomerID,Order Date,Revenue Amount,Order Status,Review Score,Delivery Time,Product Category
+ORD001,C001,2026-01-15,150.50,completed,5,2.5,Electronics
+ORD002,C002,2026-01-16,230.00,completed,4,3.0,Home
+ORD003,C003,2026-01-17,45.00,returned,2,5.0,Apparel
+ORD004,C004,2026-01-18,310.25,completed,5,1.5,Electronics
+ORD005,C005,2026-01-19,89.90,pending,3,4.0,Home

@@ -20,6 +20,8 @@ export interface Dataset {
   original_filename: string;
   status: string;
   file_size: number;
+  record_count?: number;
+  column_count?: number;
   row_count?: number;
   created_at: string;
   updated_at: string;

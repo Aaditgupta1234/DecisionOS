@@ -115,7 +115,7 @@ export const DecisionApi = {
     apiClient<IntelligenceReportResponse>(`/datasets/${datasetId}/intelligence-report`),
 
   generateIntelligence: (datasetId: string) =>
-    apiClient<IntelligenceReportResponse>(`/datasets/${datasetId}/intelligence/generate`, {
+    apiClient<any>(`/datasets/${datasetId}/metrics/generate`, {
       method: 'POST',
     }),
 

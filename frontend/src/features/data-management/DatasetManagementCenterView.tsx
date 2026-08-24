@@ -181,7 +181,7 @@ export const DatasetManagementCenterView: React.FC = () => {
   };
 
   const handleLoadDemoDataset = () => {
-    setSuccessMsg('Loaded Enterprise Benchmark Telemetry (1.42M events). Active workspace context switched!');
+    setSuccessMsg('Loaded Enterprise Benchmark Telemetry. Active workspace context switched!');
     if (datasets.length > 0) {
       setActiveDataset(datasets[0]);
     }
@@ -283,25 +283,25 @@ export const DatasetManagementCenterView: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
         <MetricTile 
           label="REGISTERED DATASETS" 
-          value={`${datasets.length > 0 ? datasets.length : 3} Datasets`} 
+          value={`${datasets.length > 0 ? datasets.length : 2} Datasets`} 
           sublabel="Live Ingestion Registry" 
           valueColor="#10B981" 
         />
         <MetricTile 
           label="ACTIVE ANALYTICAL CONTEXT" 
-          value={activeDataset?.name ? activeDataset.name.slice(0, 18) + '...' : 'SaaS ARR Telemetry'} 
+          value={activeDataset?.name ? (activeDataset.name.length > 20 ? activeDataset.name.slice(0, 20) + '...' : activeDataset.name) : 'No Dataset Selected'} 
           sublabel="Multi-Tenant Pipeline Active" 
           valueColor="#38BDF8" 
         />
         <MetricTile 
           label="INGESTED EVENTS ANALYZED" 
-          value="2.67M" 
+          value={`${datasets.length > 0 ? datasets.reduce((sum, d) => sum + (d.record_count ?? d.row_count ?? 0), 0) : (activeDataset ? (activeDataset.record_count ?? activeDataset.row_count ?? 0) : 0)}`} 
           sublabel="100% Schema Validated" 
           valueColor="#818CF8" 
         />
         <MetricTile 
           label="CALCULATED LINEAGE METRICS" 
-          value="32 KPIs" 
+          value={activeDataset ? '32 KPIs' : '0 KPIs'} 
           sublabel="Autonomous Deterministic Rules" 
           valueColor="#F59E0B" 
         />
@@ -381,7 +381,7 @@ export const DatasetManagementCenterView: React.FC = () => {
             <div style={{ fontSize: '0.72rem', color: '#64748B' }}>Select an active dataset to broadcast its context across all DecisionOS studios.</div>
           </div>
           <Badge variant="emerald" size="sm">
-            {datasets.length > 0 ? `${datasets.length} REGISTERED` : '3 BENCHMARKS LOADED'}
+            {datasets.length > 0 ? `${datasets.length} REGISTERED` : '2 BENCHMARKS LOADED'}
           </Badge>
         </div>
 
@@ -429,7 +429,7 @@ export const DatasetManagementCenterView: React.FC = () => {
                       )}
                     </div>
                     <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '2px' }}>
-                      Rows: <strong style={{ color: '#FFFFFF' }}>{ds.rows || '1.42M events'}</strong> • Status: <span style={{ color: '#10B981', fontWeight: 700 }}>PROCESSED</span> • Lineage: {ds.validationRating || '100% Conformance'}
+                      Rows: <strong style={{ color: '#FFFFFF' }}>{ds.record_count ?? ds.row_count ?? (ds.rows ? ds.rows : 0)}</strong> • Columns: <strong style={{ color: '#FFFFFF' }}>{ds.column_count ?? ds.columns?.length ?? (ds.cols ? ds.cols : 0)}</strong> • Status: <span style={{ color: '#10B981', fontWeight: 700 }}>{ds.status || 'READY'}</span> • Lineage: {ds.validationRating || '100% Conformance'}
                     </div>
                   </div>
                 </div>
