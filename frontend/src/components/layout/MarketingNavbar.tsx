@@ -32,11 +32,13 @@ interface MarketingNavbarProps {
 export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   
   const userMenuRef = useRef<HTMLDivElement>(null);
   const megaMenuRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
 
@@ -44,6 +46,15 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
     let ticking = false;
 
     const handleScroll = () => {
+      // Set scrolling state active and reset the idle timer
+      setIsScrolling(true);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 700);
+
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const scrollPos =
@@ -84,6 +95,9 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
       window.removeEventListener('scroll', handleScroll, true);
       document.removeEventListener('scroll', handleScroll, true);
       document.removeEventListener('mousedown', handleClickOutside);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -97,9 +111,9 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
 
   return (
     <header className={`top-nav-wrapper ${isScrolled ? 'is-scrolled' : ''}`}>
-      {/* Dynamic Scroll Progress Line */}
+      {/* Dynamic Scroll Progress Line (fades when scrolling stops) */}
       <div
-        className="nav-scroll-progress-line"
+        className={`nav-scroll-progress-line ${isScrolling ? 'is-scrolling' : 'is-idle'}`}
         style={{ transform: `scaleX(${scrollProgress / 100})` }}
         aria-hidden="true"
       />

@@ -26,6 +26,7 @@ from app.portfolio.executive.constants import (
     INTERVENTION_P3_SCORE_THRESHOLD,
     RISK_CONCENTRATION_CRITICAL_PCT,
     RISK_CONCENTRATION_HIGH_PCT,
+    AssessmentState,
     ExecutiveInsightType,
     PriorityLevel,
     RiskLevel,
@@ -112,10 +113,12 @@ def test_executive_constants_and_enums():
 
 def test_risk_summary_evaluation():
     """Verify operational risk concentration calculation across low, moderate, and critical portfolios."""
-    # 1. Zero workspaces
+    # 1. Zero workspaces -> Deterministic NOT_ASSESSED & EMPTY_PORTFOLIO
     empty_risk = ExecutiveIntelligenceEngine.evaluate_risk_summary([], total_portfolio=0)
-    assert empty_risk.risk_level == RiskLevel.LOW
+    assert empty_risk.risk_level == RiskLevel.NOT_ASSESSED
+    assert empty_risk.assessment_state == AssessmentState.EMPTY_PORTFOLIO
     assert empty_risk.risk_concentration_percent == 0.0
+    assert empty_risk.governance_message is not None
 
     # 2. Healthy portfolio (4 workspaces in TOP / HIGH performers)
     ws1 = WorkspaceBenchmarkDetailResponse(workspace_id=uuid.uuid4(), workspace_name="A", health_score=95.0, rank=1, total_ranked=2, percentile=100.0, percentile_rank=100.0, benchmark_tier=ExecutiveBenchmarkTier.ELITE, peer_group=PeerGroup.TOP_PERFORMERS, cohort_size=2, peer_group_available=True)

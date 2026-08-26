@@ -13,7 +13,8 @@
 export type PortfolioStatus = 'HEALTHY' | 'AT_RISK' | 'CRITICAL' | 'INSUFFICIENT_DATA';
 export type PortfolioState = 'INSUFFICIENT_DATA' | 'SINGLE_WORKSPACE' | 'AVAILABLE';
 export type TrendDirection = 'UP' | 'DOWN' | 'STABLE';
-export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL' | 'NOT_ASSESSED' | 'INSUFFICIENT_DATA';
+export type AssessmentState = 'NOT_ASSESSED' | 'INSUFFICIENT_DATA' | 'EMPTY_PORTFOLIO' | 'ASSESSMENT_AVAILABLE';
 
 // ---------------------------------------------------------------------------
 // WorkspacePortfolioEntry — the core "portfolio row" returned by the backend
@@ -69,7 +70,9 @@ export interface PortfolioRiskSummary {
   total_critical_workspaces: number;
   risk_concentration_percent: number;
   risk_level: RiskLevel;
+  assessment_state?: AssessmentState;
   portfolio_size: number;
   ranked_workspace_count: number;
+  governance_message?: string | null;
   generated_at: string;
 }

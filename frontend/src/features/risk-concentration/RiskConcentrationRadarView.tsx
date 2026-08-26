@@ -1,9 +1,9 @@
 import React from 'react';
-import { ShieldAlert, AlertTriangle, Users, Globe, ArrowRight, WifiOff } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, Users, Globe, ArrowRight, WifiOff, Info, CheckCircle2, Shield, Layers } from 'lucide-react';
 import { Card, Badge, MetricTile, Button } from '../../design-system';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 import { usePortfolioSummary, usePortfolioRisk } from '../../shared/hooks/usePortfolioSummary';
-import type { WorkspacePortfolioEntry, RiskLevel } from '../../types/portfolio';
+import type { WorkspacePortfolioEntry, RiskLevel, AssessmentState } from '../../types/portfolio';
 
 function PulseSkeleton({ width = '100%', height = '24px' }: { width?: string; height?: string }) {
   return (
@@ -19,14 +19,8 @@ function PulseSkeleton({ width = '100%', height = '24px' }: { width?: string; he
   );
 }
 
-function riskBadgeVariant(level: RiskLevel): 'rose' | 'amber' | 'emerald' | 'sky' {
-  if (level === 'CRITICAL') return 'rose';
-  if (level === 'HIGH') return 'amber';
-  if (level === 'MODERATE') return 'sky';
-  return 'emerald';
-}
-
-function riskColor(level: RiskLevel): string {
+function riskColor(level: RiskLevel, isAssessed: boolean): string {
+  if (!isAssessed || level === 'NOT_ASSESSED' || level === 'INSUFFICIENT_DATA') return '#64748B';
   if (level === 'CRITICAL') return '#EF4444';
   if (level === 'HIGH') return '#F59E0B';
   if (level === 'MODERATE') return '#38BDF8';
@@ -59,20 +53,59 @@ export const RiskConcentrationRadarView: React.FC = () => {
   }
 
   const risk = riskQuery.data;
-  const workspaces: WorkspacePortfolioEntry[] = summaryQuery.data?.workspaces ?? [];
-  // Surface the highest-risk workspaces (most critical findings, sorted descending)
+  const summary = summaryQuery.data;
+  const workspaces: WorkspacePortfolioEntry[] = summary?.workspaces ?? [];
+
+  const workspaceCount = summary?.workspace_count ?? workspaces.length;
+  const portfolioUnits = risk?.portfolio_size ?? workspaceCount;
+  const rankedUnits = risk?.ranked_workspace_count ?? 0;
+
+  // Explicit Assessment State Machine (Anti-Hallucination Governance)
+  const assessmentState: AssessmentState = ((): AssessmentState => {
+    if (workspaceCount === 0 || portfolioUnits === 0) return 'EMPTY_PORTFOLIO';
+    if (rankedUnits === 0 || !summary?.benchmark_available) return 'INSUFFICIENT_DATA';
+    return 'ASSESSMENT_AVAILABLE';
+  })();
+
+  const isAssessed = assessmentState === 'ASSESSMENT_AVAILABLE';
+
+  // Surface highest-risk workspaces
   const riskWorkspaces = [...workspaces]
     .sort((a, b) => b.critical_finding_count - a.critical_finding_count)
     .slice(0, 5);
 
-  const riskLevel: RiskLevel = risk?.risk_level ?? 'LOW';
+  const riskLevel: RiskLevel = isAssessed
+    ? (risk?.risk_level ?? 'LOW')
+    : assessmentState === 'EMPTY_PORTFOLIO'
+      ? 'NOT_ASSESSED'
+      : 'INSUFFICIENT_DATA';
+
+  const riskLevelDisplay = isAssessed
+    ? (risk?.risk_level ?? 'LOW')
+    : assessmentState === 'EMPTY_PORTFOLIO'
+      ? 'Not Assessed'
+      : 'Insufficient Data';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
       {/* Header */}
       <div>
-        <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#EF4444', fontWeight: 800 }}>
-          Boardroom Risk Governance &amp; Exposure Radar
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: isAssessed ? '#EF4444' : '#64748B', fontWeight: 800 }}>
+            Boardroom Risk Governance &amp; Exposure Radar
+          </span>
+          <span
+            style={{
+              fontSize: '0.65rem',
+              fontWeight: 800,
+              padding: '2px 8px',
+              borderRadius: '12px',
+              background: isAssessed ? 'rgba(239,68,68,0.15)' : 'rgba(100,116,139,0.15)',
+              color: isAssessed ? '#EF4444' : '#94A3B8',
+            }}
+          >
+            {isAssessed ? 'Active Assessment' : assessmentState === 'EMPTY_PORTFOLIO' ? 'Empty Portfolio' : 'Insufficient Telemetry'}
+          </span>
         </div>
         <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '4px 0 0 0' }}>
           Enterprise Revenue &amp; Portfolio Concentration Radar
@@ -94,7 +127,7 @@ export const RiskConcentrationRadarView: React.FC = () => {
         </div>
       )}
 
-      {/* Hero Metrics */}
+      {/* Hero Metrics — Grounded in Deterministic Assessment State */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         {isLoading ? (
           <>
@@ -110,33 +143,33 @@ export const RiskConcentrationRadarView: React.FC = () => {
           <>
             <MetricTile
               label="RISK CONCENTRATION"
-              value={risk ? `${risk.risk_concentration_percent.toFixed(1)}%` : '—'}
-              sublabel={risk ? `${risk.total_at_risk_workspaces} workspaces at risk` : 'Live risk tracking'}
-              valueColor={riskColor(riskLevel)}
+              value={isAssessed && risk ? `${risk.risk_concentration_percent.toFixed(1)}%` : '—'}
+              sublabel={isAssessed && risk ? `${risk.total_at_risk_workspaces} workspaces at risk` : 'No assessable units'}
+              valueColor={riskColor(riskLevel, isAssessed)}
             />
             <MetricTile
               label="OVERALL RISK LEVEL"
-              value={risk?.risk_level ?? '—'}
-              sublabel={risk ? `${risk.portfolio_size} total portfolio units` : 'Portfolio risk grade'}
-              valueColor={riskColor(riskLevel)}
+              value={riskLevelDisplay}
+              sublabel={isAssessed && risk ? `${risk.portfolio_size} total portfolio units` : 'Assessment unavailable'}
+              valueColor={riskColor(riskLevel, isAssessed)}
             />
             <MetricTile
               label="CRITICAL WORKSPACES"
-              value={risk ? String(risk.total_critical_workspaces) : '—'}
-              sublabel="Requiring immediate intervention"
-              valueColor="#EF4444"
+              value={isAssessed && risk ? String(risk.total_critical_workspaces) : '—'}
+              sublabel={isAssessed ? 'Requiring immediate intervention' : 'No critical units identified'}
+              valueColor={isAssessed ? '#EF4444' : '#64748B'}
             />
             <MetricTile
               label="RANKED COVERAGE"
-              value={risk ? `${risk.ranked_workspace_count} / ${risk.portfolio_size}` : '—'}
-              sublabel="Workspaces with active benchmark rankings"
-              valueColor="#10B981"
+              value={isAssessed && risk ? `${risk.ranked_workspace_count} / ${risk.portfolio_size}` : `${rankedUnits} / ${portfolioUnits}`}
+              sublabel={isAssessed ? 'Workspaces with active benchmark rankings' : 'Benchmark coverage pending'}
+              valueColor={isAssessed ? '#10B981' : '#64748B'}
             />
           </>
         )}
       </div>
 
-      {/* Top Risk Concentration Matrix */}
+      {/* Risk Concentration Matrix or Governance-Aware Empty Banner */}
       <Card style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF' }}>Portfolio Concentration Risk Matrix</span>
@@ -147,16 +180,71 @@ export const RiskConcentrationRadarView: React.FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {[1, 2, 3].map((i) => <PulseSkeleton key={i} height="72px" />)}
           </div>
-        ) : riskWorkspaces.length === 0 ? (
-          <div style={{ padding: '32px', textAlign: 'center', color: '#64748B' }}>
-            No risk concentration data available for this portfolio.
+        ) : !isAssessed || riskWorkspaces.length === 0 ? (
+          /* Governance-Aware Empty State Banner */
+          <div
+            style={{
+              background: '#090D14',
+              border: '1px solid #1E293B',
+              borderRadius: '12px',
+              padding: '36px 24px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: '16px',
+            }}
+          >
+            <ShieldAlert size={42} color="#64748B" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '640px' }}>
+              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748B', fontWeight: 800 }}>
+                Deterministic Governance Enforcement
+              </span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
+                Portfolio Risk Analytics Unavailable
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: '#94A3B8', margin: '6px 0 0 0', lineHeight: 1.6 }}>
+                Risk concentration analysis requires:
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginTop: '10px', textAlign: 'left' }}>
+                <div style={{ padding: '10px 14px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid #1E293B', borderRadius: '8px', fontSize: '0.78rem', color: '#CBD5E1' }}>
+                  • Active workspaces
+                </div>
+                <div style={{ padding: '10px 14px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid #1E293B', borderRadius: '8px', fontSize: '0.78rem', color: '#CBD5E1' }}>
+                  • Portfolio governance telemetry
+                </div>
+                <div style={{ padding: '10px 14px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid #1E293B', borderRadius: '8px', fontSize: '0.78rem', color: '#CBD5E1' }}>
+                  • Risk assessment inputs
+                </div>
+                <div style={{ padding: '10px 14px', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid #1E293B', borderRadius: '8px', fontSize: '0.78rem', color: '#CBD5E1' }}>
+                  • Benchmark coverage data
+                </div>
+              </div>
+
+              <div style={{ fontSize: '0.82rem', color: '#64748B', marginTop: '12px', fontStyle: 'italic', lineHeight: 1.5 }}>
+                Current portfolio contains insufficient data to generate a concentration assessment.<br />
+                <strong style={{ color: '#94A3B8' }}>No portfolio risk classification has been assigned.</strong>
+              </div>
+            </div>
           </div>
         ) : (
+          /* Populated Risk Concentration Matrix */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {riskWorkspaces.map((w) => (
               <div
                 key={w.workspace_id}
-                style={{ background: 'rgba(15,23,42,0.6)', border: '1px solid #1E293B', borderRadius: '10px', padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}
+                style={{
+                  background: 'rgba(15,23,42,0.6)',
+                  border: '1px solid #1E293B',
+                  borderRadius: '10px',
+                  padding: '18px 20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '14px',
+                }}
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

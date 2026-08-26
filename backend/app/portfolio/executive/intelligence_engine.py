@@ -12,6 +12,7 @@ from app.portfolio.executive.constants import (
     RISK_CONCENTRATION_CRITICAL_PCT,
     RISK_CONCENTRATION_HIGH_PCT,
     RISK_CONCENTRATION_MODERATE_PCT,
+    AssessmentState,
     ExecutiveInsightType,
     PriorityLevel,
     RiskLevel,
@@ -50,15 +51,30 @@ class ExecutiveIntelligenceEngine:
         Evaluates operational and financial risk concentration across the portfolio.
         """
         ranked_count = len(details)
-        if ranked_count == 0:
+        if total_portfolio == 0:
             return PortfolioRiskSummary(
                 total_at_risk_workspaces=0,
                 total_critical_workspaces=0,
                 risk_concentration_percent=0.0,
                 highest_risk_cohort=None,
-                risk_level=RiskLevel.LOW,
+                risk_level=RiskLevel.NOT_ASSESSED,
+                assessment_state=AssessmentState.EMPTY_PORTFOLIO,
+                portfolio_size=0,
+                ranked_workspace_count=0,
+                governance_message="Portfolio Risk Analytics Unavailable. Risk concentration analysis requires active workspaces, portfolio governance telemetry, risk assessment inputs, and benchmark coverage data. Current portfolio contains insufficient data to generate a concentration assessment. No portfolio risk classification has been assigned.",
+                generated_at=datetime.now(timezone.utc),
+            )
+        elif ranked_count == 0:
+            return PortfolioRiskSummary(
+                total_at_risk_workspaces=0,
+                total_critical_workspaces=0,
+                risk_concentration_percent=0.0,
+                highest_risk_cohort=None,
+                risk_level=RiskLevel.INSUFFICIENT_DATA,
+                assessment_state=AssessmentState.INSUFFICIENT_DATA,
                 portfolio_size=total_portfolio,
                 ranked_workspace_count=0,
+                governance_message="Portfolio Risk Analytics Unavailable. Risk concentration analysis requires benchmark coverage and telemetry inputs. Current portfolio workspaces have not yet been benchmarked. No portfolio risk classification has been assigned.",
                 generated_at=datetime.now(timezone.utc),
             )
 
@@ -90,6 +106,7 @@ class ExecutiveIntelligenceEngine:
             risk_concentration_percent=risk_pct,
             highest_risk_cohort=highest_risk_cohort,
             risk_level=r_level,
+            assessment_state=AssessmentState.ASSESSMENT_AVAILABLE,
             portfolio_size=total_portfolio,
             ranked_workspace_count=ranked_count,
             generated_at=datetime.now(timezone.utc),

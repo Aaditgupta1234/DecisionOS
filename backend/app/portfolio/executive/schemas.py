@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from app.portfolio.constants.benchmark_constants import PeerGroup
 from app.portfolio.executive.constants import (
     EXECUTIVE_INTELLIGENCE_VERSION,
+    AssessmentState,
     ExecutiveInsightType,
     PriorityLevel,
     RiskLevel,
@@ -49,9 +50,11 @@ class PortfolioRiskSummary(BaseModel):
     total_critical_workspaces: int = 0
     risk_concentration_percent: float = 0.0
     highest_risk_cohort: Optional[PeerGroup] = None
-    risk_level: RiskLevel = RiskLevel.LOW
+    risk_level: RiskLevel = RiskLevel.NOT_ASSESSED
+    assessment_state: AssessmentState = AssessmentState.NOT_ASSESSED
     portfolio_size: int = 0
     ranked_workspace_count: int = 0
+    governance_message: Optional[str] = None
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 

@@ -46,12 +46,22 @@ class ExecutiveInsightType(str, Enum):
     INTERVENTION_PRIORITY = "INTERVENTION_PRIORITY"
 
 
+class AssessmentState(str, Enum):
+    """Deterministic assessment states to prevent artificial risk inferences."""
+    NOT_ASSESSED = "NOT_ASSESSED"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
+    EMPTY_PORTFOLIO = "EMPTY_PORTFOLIO"
+    ASSESSMENT_AVAILABLE = "ASSESSMENT_AVAILABLE"
+
+
 class RiskLevel(str, Enum):
     """Overall portfolio or business unit operational/financial risk level."""
     CRITICAL = "CRITICAL"
     HIGH = "HIGH"
     MODERATE = "MODERATE"
     LOW = "LOW"
+    NOT_ASSESSED = "NOT_ASSESSED"
+    INSUFFICIENT_DATA = "INSUFFICIENT_DATA"
 
 
 class PriorityLevel(str, Enum):
