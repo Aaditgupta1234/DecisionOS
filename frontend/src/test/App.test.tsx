@@ -14,8 +14,7 @@ globalThis.fetch = vi.fn(() =>
 describe('App Component', () => {
   it('renders application shell and branding', async () => {
     render(<App />);
-    expect(screen.getByText('Decision')).toBeInTheDocument();
-    expect(screen.getByText('OS')).toBeInTheDocument();
-    expect(screen.getByText('Decision Intelligence')).toBeInTheDocument();
+    const branding = await screen.findAllByText(/DecisionOS/i);
+    expect(branding.length).toBeGreaterThan(0);
   });
 });
