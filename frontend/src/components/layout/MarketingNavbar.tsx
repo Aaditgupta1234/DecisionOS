@@ -53,7 +53,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
       }
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
-      }, 200);
+      }, 280);
 
       if (!ticking) {
         window.requestAnimationFrame(() => {
