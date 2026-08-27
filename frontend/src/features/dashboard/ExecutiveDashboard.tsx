@@ -13,6 +13,13 @@ import { KPISection } from './sections/KPISection';
 import { FindingsSection } from './sections/FindingsSection';
 import { RootCauseSection } from './sections/RootCauseSection';
 import { RecommendationSection } from './sections/RecommendationSection';
+import { 
+  KPICardSkeleton, 
+  ChartSkeleton, 
+  FindingsSkeleton, 
+  TableSkeleton 
+} from '../../design-system/skeletons';
+import { FadeUp, FadeIn, CrossFade } from '../../design-system/motion';
 
 // Code-Split Lazy Loaded Heavyweight Sections
 const ForecastSection = React.lazy(() =>
@@ -183,9 +190,21 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 text-slate-400">
-        <Loader2 className="w-10 h-10 animate-spin text-cyan-400" />
-        <p className="text-sm font-medium">Synthesizing executive intelligence workspace...</p>
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 pt-8 pb-16 space-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+          <KPICardSkeleton />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <ChartSkeleton height={240} />
+          </div>
+          <div>
+            <FindingsSkeleton />
+          </div>
+        </div>
       </div>
     );
   }
@@ -232,59 +251,69 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({ datasetI
           stats={ws?.overview?.statistics}
         />
 
-        {/* Continuous Sections Feed */}
+        {/* Continuous Sections Feed with Rapid 0/100/200/300ms Cascade */}
         <main className="flex-1 min-w-0 space-y-12">
           {ws?.overview && (
-            <DashboardSectionErrorBoundary
-              title="Executive Scorecard & Health"
-              sectionKey="overview"
-              onRetry={() => loadWorkspace(true)}
-            >
-              <OverviewSection
-                overview={ws.overview}
-                onNavigateSection={handleSelectSection}
-              />
-            </DashboardSectionErrorBoundary>
+            <FadeUp delay={0}>
+              <DashboardSectionErrorBoundary
+                title="Executive Scorecard & Health"
+                sectionKey="overview"
+                onRetry={() => loadWorkspace(true)}
+              >
+                <OverviewSection
+                  overview={ws.overview}
+                  onNavigateSection={handleSelectSection}
+                />
+              </DashboardSectionErrorBoundary>
+            </FadeUp>
           )}
 
           {ws?.kpis && (
-            <DashboardSectionErrorBoundary
-              title="Key Performance Indicators"
-              sectionKey="kpis"
-              onRetry={() => loadWorkspace(true)}
-            >
-              <KPISection kpis={ws.kpis} />
-            </DashboardSectionErrorBoundary>
+            <FadeUp delay={0.1}>
+              <DashboardSectionErrorBoundary
+                title="Key Performance Indicators"
+                sectionKey="kpis"
+                onRetry={() => loadWorkspace(true)}
+              >
+                <KPISection kpis={ws.kpis} />
+              </DashboardSectionErrorBoundary>
+            </FadeUp>
           )}
 
           {ws?.findings && (
-            <DashboardSectionErrorBoundary
-              title="Diagnostic Findings"
-              sectionKey="findings"
-              onRetry={() => loadWorkspace(true)}
-            >
-              <FindingsSection findings={ws.findings} />
-            </DashboardSectionErrorBoundary>
+            <FadeUp delay={0.2}>
+              <DashboardSectionErrorBoundary
+                title="Diagnostic Findings"
+                sectionKey="findings"
+                onRetry={() => loadWorkspace(true)}
+              >
+                <FindingsSection findings={ws.findings} />
+              </DashboardSectionErrorBoundary>
+            </FadeUp>
           )}
 
           {ws?.root_causes && (
-            <DashboardSectionErrorBoundary
-              title="Root Cause Chains"
-              sectionKey="root_causes"
-              onRetry={() => loadWorkspace(true)}
-            >
-              <RootCauseSection rootCauses={ws.root_causes} />
-            </DashboardSectionErrorBoundary>
+            <FadeUp delay={0.25}>
+              <DashboardSectionErrorBoundary
+                title="Root Cause Chains"
+                sectionKey="root_causes"
+                onRetry={() => loadWorkspace(true)}
+              >
+                <RootCauseSection rootCauses={ws.root_causes} />
+              </DashboardSectionErrorBoundary>
+            </FadeUp>
           )}
 
           {ws?.recommendations && (
-            <DashboardSectionErrorBoundary
-              title="Strategic Recommendations Matrix"
-              sectionKey="recommendations"
-              onRetry={() => loadWorkspace(true)}
-            >
-              <RecommendationSection recommendations={ws.recommendations} />
-            </DashboardSectionErrorBoundary>
+            <FadeUp delay={0.3}>
+              <DashboardSectionErrorBoundary
+                title="Strategic Recommendations Matrix"
+                sectionKey="recommendations"
+                onRetry={() => loadWorkspace(true)}
+              >
+                <RecommendationSection recommendations={ws.recommendations} />
+              </DashboardSectionErrorBoundary>
+            </FadeUp>
           )}
 
           {ws?.forecasts && (

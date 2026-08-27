@@ -21,6 +21,12 @@ import {
 } from 'lucide-react';
 import { MarketingNavbar } from '../../components/layout/MarketingNavbar';
 import '../../styles/home.css';
+import { 
+  FadeUp, 
+  StaggerContainer, 
+  StaggerItem, 
+  MotionCard 
+} from '../../design-system/motion';
 
 export const PlatformShowcaseView: React.FC = () => {
   const modules = [
@@ -232,73 +238,72 @@ export const PlatformShowcaseView: React.FC = () => {
             </div>
           </div>
 
-          {/* Module Cards Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '18px' }}>
+          {/* Grid of Modular Platforms */}
+          <StaggerContainer
+            staggerDelay={0.05}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+              gap: '20px',
+              zIndex: 1,
+            }}
+          >
             {modules.map((mod, i) => {
               const IconComponent = mod.icon;
-
               return (
-                <Link
-                  key={i}
-                  to={mod.path}
-                  style={{
-                    background: '#080A0E',
-                    border: '1px solid #161A22',
-                    borderRadius: '14px',
-                    padding: '24px',
-                    textDecoration: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    gap: '16px',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-                    transition: 'all 0.2s ease',
-                    position: 'relative',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#2D333F';
-                    e.currentTarget.style.background = '#0C0F14';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.8)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '#161A22';
-                    e.currentTarget.style.background = '#080A0E';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
-                  }}
-                >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#11141B', border: '1px solid #1E232E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
-                        <IconComponent size={19} />
+                <StaggerItem key={i}>
+                  <Link
+                    to={mod.path}
+                    style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}
+                  >
+                    <MotionCard
+                      interactive={true}
+                      style={{
+                        background: '#080A0E',
+                        border: '1px solid #161A22',
+                        borderRadius: '14px',
+                        padding: '24px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        gap: '16px',
+                        height: '100%',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#11141B', border: '1px solid #1E232E', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
+                            <IconComponent size={19} />
+                          </div>
+                          <span style={{ fontSize: '0.66rem', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#0F172A', color: '#CBD5E1', border: '1px solid #334155', letterSpacing: '0.06em' }}>
+                            {mod.badge}
+                          </span>
+                        </div>
+
+                        <div style={{ fontSize: '0.72rem', color: '#616B78', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+                          {mod.category}
+                        </div>
+
+                        <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '6px' }}>
+                          {mod.title}
+                        </div>
+
+                        <p style={{ color: '#8E99A8', fontSize: '0.86rem', lineHeight: 1.5, margin: 0 }}>
+                          {mod.desc}
+                        </p>
                       </div>
-                      <span style={{ fontSize: '0.66rem', fontWeight: 700, padding: '3px 8px', borderRadius: '4px', background: '#0F172A', color: '#CBD5E1', border: '1px solid #334155', letterSpacing: '0.06em' }}>
-                        {mod.badge}
-                      </span>
-                    </div>
 
-                    <div style={{ fontSize: '0.72rem', color: '#616B78', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
-                      {mod.category}
-                    </div>
-
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '6px' }}>
-                      {mod.title}
-                    </div>
-
-                    <p style={{ color: '#8E99A8', fontSize: '0.86rem', lineHeight: 1.5, margin: 0 }}>
-                      {mod.desc}
-                    </p>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 700, color: '#E2E8F0', paddingTop: '12px', borderTop: '1px solid #14171E' }}>
-                    <span>Launch Module</span>
-                    <ArrowRight size={14} />
-                  </div>
-                </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 700, color: '#E2E8F0', paddingTop: '12px', borderTop: '1px solid #14171E' }}>
+                        <span>Launch Module</span>
+                        <ArrowRight size={14} className="btn-icon-wrapper right" />
+                      </div>
+                    </MotionCard>
+                  </Link>
+                </StaggerItem>
               );
             })}
-          </div>
+          </StaggerContainer>
 
           {/* Bottom Callout */}
           <div

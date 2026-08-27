@@ -282,7 +282,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
               )}
             </div>
 
-            {/* DEX Copilot Option in Main Nav */}
+            {/* DEX Analyst Option in Main Nav */}
             <Link
               to="/chat"
               className={`nav-link ${isChat ? 'nav-link-active' : ''}`}
@@ -291,7 +291,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
                 fontWeight: isChat ? 700 : undefined,
               }}
             >
-              DEX Copilot
+              DEX Analyst
             </Link>
 
             {/* Launch Platform Link in Main Nav */}

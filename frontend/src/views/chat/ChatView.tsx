@@ -6,6 +6,7 @@ import { LoadingSkeleton } from '../../components/feedback/LoadingSkeleton';
 import { ErrorBanner } from '../../components/feedback/ErrorBanner';
 import { EmptyState } from '../../components/feedback/EmptyState';
 import { MessageSquare, Send, Plus, Sparkles, Bot, User as UserIcon, ShieldCheck } from 'lucide-react';
+import { FadeIn } from '../../design-system/motion';
 
 export const ChatView: React.FC = () => {
   const { activeDataset } = useDataset();
@@ -263,9 +264,11 @@ export const ChatView: React.FC = () => {
           <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {messages.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center' }}>
-                <Bot size={40} color="var(--color-ai-light)" style={{ marginBottom: '12px' }} />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '6px', color: '#FFFFFF' }}>DecisionOS AI Business Analyst</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '440px', marginBottom: '20px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
+                  <Bot size={26} color="#38BDF8" />
+                </div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '6px', color: '#FFFFFF' }}>DEX Analyst</h3>
+                <p style={{ fontSize: '0.85rem', color: '#94A3B8', maxWidth: '440px', marginBottom: '20px' }}>
                   Ask natural-language questions about health scores, diagnosed risks, root causes, and actionable recommendations.
                 </p>
 
@@ -274,10 +277,23 @@ export const ChatView: React.FC = () => {
                     <button
                       key={idx}
                       onClick={() => handleSendMessage(prompt)}
-                      className="btn btn-secondary btn-sm"
-                      style={{ textAlign: 'left', justifyContent: 'flex-start' }}
+                      className="executive-motion-btn"
+                      style={{
+                        textAlign: 'left',
+                        justifyContent: 'flex-start',
+                        padding: '10px 14px',
+                        background: '#090D14',
+                        border: '1px solid #1A2230',
+                        borderRadius: '8px',
+                        color: '#E2E8F0',
+                        fontSize: '0.82rem',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
                     >
-                      <Sparkles size={14} color="var(--color-ai-light)" />
+                      <Sparkles size={14} color="#38BDF8" className="btn-icon-wrapper left" />
                       <span>{prompt}</span>
                     </button>
                   ))}
@@ -287,7 +303,7 @@ export const ChatView: React.FC = () => {
               messages.map((m) => {
                 const isUser = m.role === 'USER';
                 return (
-                  <div
+                  <FadeIn
                     key={m.id}
                     style={{
                       display: 'flex',
@@ -296,20 +312,20 @@ export const ChatView: React.FC = () => {
                       width: '100%',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                      {isUser ? <UserIcon size={12} /> : <Bot size={12} color="var(--color-ai-light)" />}
-                      <span>{isUser ? 'You' : 'AI Business Analyst'}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px', fontSize: '0.7rem', color: '#64748B' }}>
+                      {isUser ? <UserIcon size={12} /> : <Bot size={12} color="#38BDF8" />}
+                      <span>{isUser ? 'You' : 'DEX Analyst'}</span>
                     </div>
 
                     <div
                       style={{
                         maxWidth: '80%',
                         padding: '12px 16px',
-                        borderRadius: 'var(--radius-md)',
-                        backgroundColor: isUser ? 'var(--color-primary)' : 'var(--bg-surface-elevated)',
-                        border: `1px solid ${isUser ? 'transparent' : 'var(--border-default)'}`,
+                        borderRadius: '8px',
+                        backgroundColor: isUser ? '#0284C7' : '#080C14',
+                        border: `1px solid ${isUser ? 'transparent' : '#1A2230'}`,
                         color: '#ffffff',
-                        fontSize: '0.9rem',
+                        fontSize: '0.88rem',
                         lineHeight: 1.6,
                         whiteSpace: 'pre-wrap',
                       }}
@@ -319,22 +335,26 @@ export const ChatView: React.FC = () => {
                       {/* Citations & Evidence Lineage */}
                       {!isUser && renderCitations(m.citations)}
                     </div>
-                  </div>
+                  </FadeIn>
                 );
               })
             )}
 
             {isSending && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-ai-light)', fontSize: '0.85rem' }}>
-                <Bot size={16} />
-                <span>AI Business Analyst is evaluating dataset context...</span>
-              </div>
+              <FadeIn style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#38BDF8', fontSize: '0.82rem', padding: '6px 0' }}>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0s' }} />
+                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.2s' }} />
+                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.4s' }} />
+                </div>
+                <span style={{ fontWeight: 600 }}>DEX Analyst is conducting deterministic evaluation...</span>
+              </FadeIn>
             )}
             <div ref={messagesEndRef} />
           </div>
 
           {/* Input Box */}
-          <div style={{ padding: '16px', borderTop: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-app)' }}>
+          <div style={{ padding: '16px', borderTop: '1px solid #141A24', backgroundColor: '#07090E' }}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -344,15 +364,30 @@ export const ChatView: React.FC = () => {
             >
               <input
                 type="text"
-                placeholder="Ask about health score, risks, root causes, or recommendations..."
+                placeholder="Ask DEX Analyst about health score, risks, root causes, or recommendations..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 disabled={isSending}
                 className="input"
-                style={{ flex: 1 }}
+                style={{ flex: 1, background: '#0A0E17', border: '1px solid #1A2230', borderRadius: '8px', color: '#FFFFFF', padding: '10px 14px', fontSize: '0.86rem' }}
               />
-              <button type="submit" disabled={isSending || !inputText.trim()} className="btn btn-primary">
-                <Send size={16} />
+              <button
+                type="submit"
+                disabled={isSending || !inputText.trim()}
+                className="executive-motion-btn"
+                style={{
+                  background: '#38BDF8',
+                  color: '#080C14',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '0 18px',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <Send size={15} />
               </button>
             </form>
           </div>

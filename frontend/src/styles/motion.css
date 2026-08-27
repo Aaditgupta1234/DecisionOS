@@ -1,0 +1,127 @@
+/* ==========================================================================
+   DecisionOS Motion & Micro-Interaction Design System
+   Executive-Grade 60 FPS GPU-Accelerated Hardware Styles
+   ========================================================================== */
+
+/* 1. Shimmer & Pulse Animation */
+@keyframes executiveShimmerSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes typingPulse {
+  0%, 80%, 100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+.executive-shimmer-box {
+  position: relative;
+  overflow: hidden;
+  background: #090C12 !important;
+}
+
+.executive-shimmer-box .shimmer-wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%);
+  animation: executiveShimmerSweep 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+/* Visibility Suspension: Freeze animations on backgrounded tabs */
+.executive-shimmer-box.is-paused .shimmer-wave {
+  animation-play-state: paused !important;
+}
+
+/* 2. Executive Card Micro-Elevation */
+.executive-motion-card {
+  transition: border-color 0.16s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.executive-motion-card.is-interactive:hover {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* 3. Button Micro-Interactions & Icon Translations */
+.executive-motion-btn {
+  font-family: inherit;
+  transition: border-color 0.14s ease,
+              background-color 0.14s ease,
+              box-shadow 0.14s ease;
+  will-change: transform;
+}
+
+.executive-motion-btn .btn-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.executive-motion-btn:hover .btn-icon-wrapper.right {
+  transform: translateX(2.5px);
+}
+
+.executive-motion-btn:hover .btn-icon-wrapper.left {
+  transform: translateX(-2.5px);
+}
+
+/* 4. Glow as a Functional State Indicator */
+/* Active KPI Indicator Glow */
+.state-glow-active-kpi {
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35), 0 4px 20px rgba(56, 189, 248, 0.15) !important;
+  border-color: rgba(56, 189, 248, 0.5) !important;
+}
+
+/* Diagnostic Critical Risk State Glow */
+.state-glow-risk {
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.3), 0 4px 16px rgba(239, 68, 68, 0.12) !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+/* Health Score Verified Gauge Accent Glow */
+.state-glow-health {
+  filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.45));
+}
+
+/* 5. Reduced Motion Hard Overrides */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .executive-shimmer-box .shimmer-wave {
+    display: none !important;
+  }
+
+  .executive-motion-card.is-interactive:hover,
+  .executive-motion-btn:hover {
+    transform: none !important;
+  }
+}

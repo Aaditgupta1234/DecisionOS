@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import {
-  AlertCircle,
-  AlertTriangle,
   ChevronDown,
   ChevronUp,
-  FileSearch,
-  Filter,
-  Info,
   ShieldAlert,
 } from 'lucide-react';
 import { FindingItem } from '../../../types/dashboard';
+import { IntelligenceReveal, FindingItem as MotionFindingItem } from '../../../design-system/motion';
 
 interface FindingsSectionProps {
   findings: FindingItem[];
@@ -88,18 +84,34 @@ export const FindingsSection: React.FC<FindingsSectionProps> = ({ findings }) =>
         </div>
       </div>
 
-      {/* Findings List */}
+      {/* Findings List — powered by IntelligenceReveal (65ms stagger + terminal closure state) */}
       {filteredFindings.length === 0 ? (
         <div className="p-8 text-center bg-slate-900/40 border border-slate-800 rounded-2xl text-slate-500 text-sm">
           No diagnostic findings match severity &quot;{selectedSeverity}&quot;.
         </div>
       ) : (
-        <div className="space-y-4">
-          {filteredFindings.map((finding) => {
+        <IntelligenceReveal
+          // Re-key on filter change so investigation rereplays for each severity subset
+          key={`findings-reveal-${selectedSeverity}`}
+          findings={filteredFindings.map((f) => ({
+            id: f.finding_id,
+            title: f.title,
+            category: f.category,
+            impact: f.business_impact
+              ? `Impact ${Math.round(f.impact_score * 100)}%`
+              : undefined,
+            severity: f.severity.toLowerCase() as MotionFindingItem['severity'],
+            confidence: f.confidence_score,
+          }))}
+          analyzingLabel={`Scanning ${filteredFindings.length} diagnostic signal${filteredFindings.length !== 1 ? 's' : ''}...`}
+          rootCausesCount={filteredFindings.filter(f => f.severity.toUpperCase() === 'CRITICAL' || f.severity.toUpperCase() === 'HIGH').length}
+          actionsCount={filteredFindings.length}
+          renderItem={(motionFinding, idx) => {
+            const finding = filteredFindings[idx];
+            if (!finding) return null;
             const isExpanded = expandedId === finding.finding_id;
             return (
               <div
-                key={finding.finding_id}
                 className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 shadow-lg hover:border-slate-700 transition-all"
               >
                 <div
@@ -186,8 +198,8 @@ export const FindingsSection: React.FC<FindingsSectionProps> = ({ findings }) =>
                 )}
               </div>
             );
-          })}
-        </div>
+          }}
+        />
       )}
     </section>
   );

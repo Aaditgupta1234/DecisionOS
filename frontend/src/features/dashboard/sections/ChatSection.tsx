@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   Bot,
-  HelpCircle,
-  Loader2,
   MessageSquare,
   Send,
   Sparkles,
@@ -11,6 +9,7 @@ import {
 } from 'lucide-react';
 import { ChatSummaryPayload } from '../../../types/dashboard';
 import { chatAnalystApi } from '../../../api';
+import { FadeIn, StaggerContainer, StaggerItem } from '../../../design-system/motion';
 
 interface ChatSectionProps {
   datasetId: string;
@@ -33,12 +32,17 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
       id: 'welcome',
       role: 'assistant',
       content:
-        'Hello. I am your DecisionOS Strategic AI Analyst. Ask me anything regarding your verified business health, critical root causes, scenario simulations, or recommended action plans.',
+        'Hello. I am DEX Analyst, your DecisionOS autonomous strategic intelligence engine. Ask me anything about your verified business health, critical root causes, scenario simulations, or recommended action plans.',
     },
   ]);
   const [inputText, setInputText] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, sending]);
 
   const rawQuestions = chatSummary?.suggested_questions || [];
   const normalizedQuestions = rawQuestions.map((item) => {
@@ -134,10 +138,10 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
           </div>
           <div>
             <h2 className="text-xl font-bold text-white tracking-tight">
-              AI Decision Copilot & Conversational Analyst
+              DEX Analyst
             </h2>
             <p className="text-xs text-slate-400">
-              Interactive strategic Q&amp;A anchored to verified dataset telemetry, causal graphs, and forecast projections
+              Autonomous strategic Q&amp;A — anchored to verified dataset telemetry, causal graphs, and forecast projections
             </p>
           </div>
         </div>
@@ -174,9 +178,9 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
           {messages.map((m) => {
             const isUser = m.role === 'user';
             return (
-              <div
+              <FadeIn
                 key={m.id}
-                className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`}
+                style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flexDirection: isUser ? 'row-reverse' : 'row' }}
               >
                 <div
                   className={`p-2 rounded-xl text-white shrink-0 ${
@@ -195,42 +199,57 @@ export const ChatSection: React.FC<ChatSectionProps> = ({
                       : 'bg-slate-950/80 border border-slate-800 text-slate-200 shadow-md'
                   }`}
                 >
+                  {/* DEX Analyst label */}
+                  {!isUser && (
+                    <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#38BDF8', marginBottom: '4px', letterSpacing: '0.04em' }}>
+                      DEX Analyst
+                    </div>
+                  )}
                   <div className="whitespace-pre-wrap">{m.content}</div>
 
-                  {/* Citations block */}
+                  {/* Citations block with 30ms stagger */}
                   {m.citations && m.citations.length > 0 && (
                     <div className="mt-3 pt-2.5 border-t border-slate-800 space-y-1">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         Verified Data Sources:
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
+                      <StaggerContainer
+                        staggerDelay={0.03}
+                        viewportOnce={false}
+                        style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}
+                      >
                         {m.citations.map((c, i) => (
-                          <span
-                            key={i}
-                            className="px-2 py-0.5 text-[10px] bg-slate-900 text-cyan-300 rounded border border-cyan-900/40"
-                          >
-                            {c.title || c.source}
-                          </span>
+                          <StaggerItem key={i}>
+                            <span className="px-2 py-0.5 text-[10px] bg-slate-900 text-cyan-300 rounded border border-cyan-900/40">
+                              {c.title || c.source}
+                            </span>
+                          </StaggerItem>
                         ))}
-                      </div>
+                      </StaggerContainer>
                     </div>
                   )}
                 </div>
-              </div>
+              </FadeIn>
             );
           })}
 
           {sending && (
-            <div className="flex items-start gap-3">
+            <FadeIn style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
               <div className="p-2 rounded-xl bg-slate-800 text-cyan-400 border border-slate-700">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-xs text-slate-400 flex items-center gap-2">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />
-                <span>Synthesizing intelligence response from verified artifacts...</span>
+              <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-xs text-slate-400 flex items-center gap-8px">
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center', marginRight: '8px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', display: 'inline-block', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0s' }} />
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', display: 'inline-block', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.2s' }} />
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', display: 'inline-block', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.4s' }} />
+                </div>
+                <span style={{ fontWeight: 600, color: '#38BDF8', fontSize: '0.75rem' }}>DEX Analyst</span>
+                <span style={{ marginLeft: '6px' }}>conducting deterministic analysis...</span>
               </div>
-            </div>
+            </FadeIn>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Input Bar */}

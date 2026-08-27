@@ -12,6 +12,7 @@ import { GlobalSearchModal } from './features/shared/GlobalSearchModal';
 import { OnboardingWizardModal } from './features/shared/OnboardingWizardModal';
 import { NotificationCenterDrawer } from './features/shared/NotificationCenterDrawer';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { MotionProvider } from './design-system/motion/MotionProvider';
 
 // Landing Page & Auth
 const HomeView = React.lazy(() => import('./views/home/HomeView').then(m => ({ default: m.HomeView })));
@@ -176,19 +177,21 @@ function AppContent() {
 export function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <OrganizationProvider>
-            <DatasetProvider>
-              <BrowserRouter>
-                <FrontendTelemetryProvider>
-                  <AppContent />
-                </FrontendTelemetryProvider>
-              </BrowserRouter>
-            </DatasetProvider>
-          </OrganizationProvider>
-        </AuthProvider>
-      </QueryClientProvider>
+      <MotionProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <OrganizationProvider>
+              <DatasetProvider>
+                <BrowserRouter>
+                  <FrontendTelemetryProvider>
+                    <AppContent />
+                  </FrontendTelemetryProvider>
+                </BrowserRouter>
+              </DatasetProvider>
+            </OrganizationProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </MotionProvider>
     </ErrorBoundary>
   );
 }

@@ -1,31 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
-  Play, 
   Database, 
   BarChart2, 
   Search, 
   GitMerge, 
   Target, 
   TrendingUp, 
-  FileText, 
-  Bot, 
-  AlertTriangle, 
-  Sparkles, 
-  ArrowUpRight,
-  TrendingDown,
+  ArrowUpRight, 
+  CheckCircle2, 
+  Sparkles,
   Layers,
-  Cpu,
-  ShieldCheck,
-  Activity,
-  CheckCircle2,
-  Zap,
-  ArrowDown
+  Cpu
 } from 'lucide-react';
 import '../../styles/home.css';
-
 import { MarketingNavbar } from '../../components/layout/MarketingNavbar';
+import { 
+  FadeUp, 
+  FadeIn, 
+  StaggerContainer, 
+  StaggerItem, 
+  AnimatedCounter, 
+  MotionCard 
+} from '../../design-system/motion';
 
 export const HomeView: React.FC = () => {
   return (
@@ -35,52 +33,62 @@ export const HomeView: React.FC = () => {
       <MarketingNavbar activeTab="home" />
 
       {/* ======================================================================
-          2. Hero Section with Spotlight, Pedestal & Symmetrical Telemetry
+          2. Hero Section with Spotlight, Pedestal & Stable Telemetry
           ====================================================================== */}
       <section className="hero-section" id="platform">
         <div className="page-container hero-grid">
           
-          {/* LEFT: Headline & Value Narrative */}
+          {/* LEFT: Headline & Value Narrative with Executive Stagger */}
           <div className="hero-left">
-            <div className="hero-badge">
-              DETERMINISTIC EXECUTIVE INTELLIGENCE
-            </div>
+            <FadeUp delay={0.05}>
+              <div className="hero-badge">
+                DETERMINISTIC EXECUTIVE INTELLIGENCE
+              </div>
+            </FadeUp>
 
-            <h1 className="hero-headline">
-              Know What’s Happening.<br />
-              Understand Why.<br />
-              Decide What Comes Next.
-            </h1>
+            <FadeUp delay={0.12}>
+              <h1 className="hero-headline">
+                Know What’s Happening.<br />
+                Understand Why.<br />
+                Decide What Comes Next.
+              </h1>
+            </FadeUp>
 
-            <p className="hero-desc">
-              DecisionOS identifies why business performance changed, isolates root causes through deterministic analysis, and calculates the highest-impact actions to take next.
-            </p>
+            <FadeUp delay={0.18}>
+              <p className="hero-desc">
+                DecisionOS identifies why business performance changed, isolates root causes through deterministic analysis, and calculates the highest-impact actions to take next.
+              </p>
+            </FadeUp>
 
-            <div className="hero-btn-row">
-              <Link to="/enterprise" className="btn-hero-primary">
-                <span>Start Analysis</span>
-                <ArrowRight size={16} />
-              </Link>
-              <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="btn-hero-secondary">
-                <span>API Docs</span>
-                <div className="btn-play-circle">
-                  <ArrowUpRight size={12} style={{ color: '#FFFFFF', marginLeft: '1px' }} />
-                </div>
-              </a>
-            </div>
+            <FadeUp delay={0.24}>
+              <div className="hero-btn-row">
+                <Link to="/enterprise" className="btn-hero-primary executive-motion-btn">
+                  <span>Start Analysis</span>
+                  <ArrowRight size={16} className="btn-icon-wrapper right" />
+                </Link>
+                <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="btn-hero-secondary executive-motion-btn">
+                  <span>API Docs</span>
+                  <div className="btn-play-circle">
+                    <ArrowUpRight size={12} style={{ color: '#FFFFFF', marginLeft: '1px' }} />
+                  </div>
+                </a>
+              </div>
+            </FadeUp>
 
             {/* Trust Strip Directly Beneath CTAs */}
-            <div className="hero-trust-strip">
-              <span className="strip-item">783+ Tests</span>
-              <span className="strip-dot">•</span>
-              <span className="strip-item">100+ APIs</span>
-              <span className="strip-dot">•</span>
-              <span className="strip-item">25+ Engines</span>
-              <span className="strip-dot">•</span>
-              <span className="strip-item">Production Certified</span>
-              <span className="strip-dot">•</span>
-              <span className="strip-item">Explainable AI</span>
-            </div>
+            <FadeUp delay={0.28}>
+              <div className="hero-trust-strip">
+                <span className="strip-item">783+ Tests</span>
+                <span className="strip-dot">•</span>
+                <span className="strip-item">100+ APIs</span>
+                <span className="strip-dot">•</span>
+                <span className="strip-item">25+ Engines</span>
+                <span className="strip-dot">•</span>
+                <span className="strip-item">Production Certified</span>
+                <span className="strip-dot">•</span>
+                <span className="strip-item">Explainable AI</span>
+              </div>
+            </FadeUp>
           </div>
 
           {/* RIGHT: Spotlight Beam, 3D Glowing Pedestal & Orbiting Telemetry */}
@@ -202,13 +210,13 @@ export const HomeView: React.FC = () => {
             <div className="dex-identity-tag">
               <span className="dex-name">DEX</span>
               <span className="dex-dot">•</span>
-              <span className="dex-role">Decision Execution Engine</span>
+              <span className="dex-role">DEX Analyst Core</span>
               <span className="dex-dot">•</span>
-              <span className="dex-sub">Deterministic Strategic Intelligence Core</span>
+              <span className="dex-sub">Deterministic Strategic Intelligence</span>
             </div>
 
-            {/* Orbiting Telemetry Card 1: Top-Left Business Health Score */}
-            <div className="telemetry-card card-pos-top-left">
+            {/* Stable Telemetry Card 1: Top-Left Business Health Score */}
+            <MotionCard className="telemetry-card card-pos-top-left state-glow-active-kpi" interactive={true}>
               <div className="t-card-header-flex">
                 <span className="t-card-label">HEALTH SCORE</span>
                 <span className="t-status-pill">Excellent</span>
@@ -225,10 +233,10 @@ export const HomeView: React.FC = () => {
                   <path d="M0,9 Q25,12 50,5 T100,2" fill="none" stroke="#FFFFFF" strokeWidth="1.6" />
                 </svg>
               </div>
-            </div>
+            </MotionCard>
 
-            {/* Orbiting Telemetry Card 2: Top-Right Forecast Confidence */}
-            <div className="telemetry-card card-pos-top-right">
+            {/* Stable Telemetry Card 2: Top-Right Forecast Confidence */}
+            <MotionCard className="telemetry-card card-pos-top-right" interactive={true}>
               <div className="t-card-header-flex">
                 <span className="t-card-label">DEX CONFIDENCE</span>
                 <div className="t-circle-gauge">
@@ -255,10 +263,10 @@ export const HomeView: React.FC = () => {
                 <span className="t-status-sub-inline">Optimal</span>
               </div>
               <div className="t-confidence-sub">Trusted Analysis</div>
-            </div>
+            </MotionCard>
 
-            {/* Orbiting Telemetry Card 3: Bottom-Left Retention Risk */}
-            <div className="telemetry-card card-pos-bottom-left">
+            {/* Stable Telemetry Card 3: Bottom-Left Retention Risk */}
+            <MotionCard className="telemetry-card card-pos-bottom-left state-glow-risk" interactive={true}>
               <div className="t-card-header-flex">
                 <span className="t-card-label">RETENTION RISK</span>
                 <span className="t-status-pill">High</span>
@@ -268,10 +276,10 @@ export const HomeView: React.FC = () => {
                 <span className="t-val-sub">Churn</span>
               </div>
               <div className="t-confidence-sub">Customer Retention</div>
-            </div>
+            </MotionCard>
 
-            {/* Orbiting Telemetry Card 4: Bottom-Right Recommended Action */}
-            <div className="telemetry-card card-pos-bottom-right">
+            {/* Stable Telemetry Card 4: Bottom-Right Recommended Action */}
+            <MotionCard className="telemetry-card card-pos-bottom-right" interactive={true}>
               <div className="t-card-header-flex">
                 <span className="t-card-label">RECOMMENDED</span>
                 <span className="t-status-pill">Active</span>
@@ -281,7 +289,7 @@ export const HomeView: React.FC = () => {
                 <span className="t-val-sub">ARR</span>
               </div>
               <div className="t-confidence-sub">Win-Back Campaign</div>
-            </div>
+            </MotionCard>
 
           </div>
 
@@ -364,113 +372,131 @@ export const HomeView: React.FC = () => {
             </p>
           </div>
 
-          <div className="pipeline-grid-container">
+          <StaggerContainer className="pipeline-grid-container" staggerDelay={0.065}>
             
             {/* Stage 1: Data */}
-            <div className="pipeline-card">
-              <div className="pipeline-card-step">
-                <span>01. INGESTION</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <Database size={18} />
-              </div>
-              <div className="pipeline-card-title">Data</div>
-              <div className="pipeline-card-desc">Unified multi-source ingestion & schema normalization across ERP and transactional databases.</div>
-            </div>
+            <StaggerItem>
+              <MotionCard className="pipeline-card" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span>01. INGESTION</span>
+                  <span className="pipeline-dot" />
+                </div>
+                <div className="pipeline-card-icon">
+                  <Database size={18} />
+                </div>
+                <div className="pipeline-card-title">Data</div>
+                <div className="pipeline-card-desc">Unified multi-source ingestion & schema normalization across ERP and transactional databases.</div>
+              </MotionCard>
+            </StaggerItem>
 
             {/* Stage 2: KPIs */}
-            <div className="pipeline-card">
-              <div className="pipeline-card-step">
-                <span>02. METRICS</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <BarChart2 size={18} />
-              </div>
-              <div className="pipeline-card-title">KPIs</div>
-              <div className="pipeline-card-desc">Deterministic performance computation with period-over-period delta attribution.</div>
-            </div>
+            <StaggerItem>
+              <MotionCard className="pipeline-card" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span>02. METRICS</span>
+                  <span className="pipeline-dot" />
+                </div>
+                <div className="pipeline-card-icon">
+                  <BarChart2 size={18} />
+                </div>
+                <div className="pipeline-card-title">KPIs</div>
+                <div className="pipeline-card-desc">Deterministic performance computation with period-over-period delta attribution.</div>
+              </MotionCard>
+            </StaggerItem>
 
             {/* Stage 3: Diagnostics */}
-            <div className="pipeline-card">
-              <div className="pipeline-card-step">
-                <span>03. ANOMALY</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <Search size={18} />
-              </div>
-              <div className="pipeline-card-title">Diagnostics</div>
-              <div className="pipeline-card-desc">Statistical anomaly scanning, threshold breaches, and volatility pattern detection.</div>
-            </div>
+            <StaggerItem>
+              <MotionCard className="pipeline-card" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span>03. ANOMALY</span>
+                  <span className="pipeline-dot" />
+                </div>
+                <div className="pipeline-card-icon">
+                  <Search size={18} />
+                </div>
+                <div className="pipeline-card-title">Diagnostics</div>
+                <div className="pipeline-card-desc">Statistical anomaly scanning, threshold breaches, and volatility pattern detection.</div>
+              </MotionCard>
+            </StaggerItem>
 
             {/* Stage 4: Root Cause */}
-            <div className="pipeline-card">
-              <div className="pipeline-card-step">
-                <span>04. ATTRIBUTION</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <GitMerge size={18} />
-              </div>
-              <div className="pipeline-card-title">Root Cause</div>
-              <div className="pipeline-card-desc">Multi-dimensional variance isolation pinpointing exact revenue and cost drivers.</div>
-            </div>
+            <StaggerItem>
+              <MotionCard className="pipeline-card" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span>04. ATTRIBUTION</span>
+                  <span className="pipeline-dot" />
+                </div>
+                <div className="pipeline-card-icon">
+                  <GitMerge size={18} />
+                </div>
+                <div className="pipeline-card-title">Root Cause</div>
+                <div className="pipeline-card-desc">Multi-dimensional variance isolation pinpointing exact revenue and cost drivers.</div>
+              </MotionCard>
+            </StaggerItem>
 
             {/* Stage 5: Recommendations */}
-            <div className="pipeline-card">
-              <div className="pipeline-card-step">
-                <span>05. ACTIONS</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <Target size={18} />
-              </div>
-              <div className="pipeline-card-title">Recommendations</div>
-              <div className="pipeline-card-desc">Prioritized corrective playbooks ranked by expected revenue impact and feasibility.</div>
-            </div>
+            <StaggerItem>
+              <MotionCard className="pipeline-card" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span>05. ACTIONS</span>
+                  <span className="pipeline-dot" />
+                </div>
+                <div className="pipeline-card-icon">
+                  <Target size={18} />
+                </div>
+                <div className="pipeline-card-title">Recommendations</div>
+                <div className="pipeline-card-desc">Prioritized corrective playbooks ranked by expected revenue impact and feasibility.</div>
+              </MotionCard>
+            </StaggerItem>
 
             {/* Stage 6: Forecasting */}
-            <div className="pipeline-card">
-              <div className="pipeline-card-step">
-                <span>06. SIMULATION</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <TrendingUp size={18} />
-              </div>
-              <div className="pipeline-card-title">Forecasting</div>
-              <div className="pipeline-card-desc">Predictive modeling with confidence intervals and what-if scenario simulations.</div>
-            </div>
+            <StaggerItem>
+              <MotionCard className="pipeline-card" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span>06. SIMULATION</span>
+                  <span className="pipeline-dot" />
+                </div>
+                <div className="pipeline-card-icon">
+                  <TrendingUp size={18} />
+                </div>
+                <div className="pipeline-card-title">Forecasting</div>
+                <div className="pipeline-card-desc">Predictive modeling with confidence intervals and what-if scenario simulations.</div>
+              </MotionCard>
+            </StaggerItem>
 
             {/* Stage 7: Executive Intelligence */}
-            <Link to="/kpi-dictionary" className="pipeline-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="pipeline-card-step">
-                <span>07. SYNTHESIS</span>
-                <span className="pipeline-dot" />
-              </div>
-              <div className="pipeline-card-icon">
-                <FileText size={18} />
-              </div>
-              <div className="pipeline-card-title">Executive Intelligence</div>
-              <div className="pipeline-card-desc">Natural language executive briefs and strategic decision summaries.</div>
-            </Link>
+            <StaggerItem>
+              <Link to="/kpi-dictionary" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                <MotionCard className="pipeline-card" interactive={true}>
+                  <div className="pipeline-card-step">
+                    <span>07. SYNTHESIS</span>
+                    <span className="pipeline-dot" />
+                  </div>
+                  <div className="pipeline-card-icon">
+                    <Layers size={18} />
+                  </div>
+                  <div className="pipeline-card-title">Executive Intelligence</div>
+                  <div className="pipeline-card-desc">Natural language executive briefs and strategic decision summaries.</div>
+                </MotionCard>
+              </Link>
+            </StaggerItem>
 
-            {/* Stage 8: DEX */}
-            <div className="pipeline-card pipeline-card-highlight">
-              <div className="pipeline-card-step">
-                <span style={{ color: '#FFFFFF' }}>08. AUTONOMOUS</span>
-                <Sparkles size={12} style={{ color: '#FFFFFF' }} />
-              </div>
-              <div className="pipeline-card-icon">
-                <Bot size={20} />
-              </div>
-              <div className="pipeline-card-title" style={{ color: '#FFFFFF' }}>DEX</div>
-              <div className="pipeline-card-desc" style={{ color: '#C5CCD6' }}>Your autonomous 24/7 AI decision analyst providing conversational deep dives.</div>
-            </div>
+            {/* Stage 8: DEX Analyst */}
+            <StaggerItem>
+              <MotionCard className="pipeline-card pipeline-card-highlight" interactive={true}>
+                <div className="pipeline-card-step">
+                  <span style={{ color: '#FFFFFF' }}>08. AUTONOMOUS</span>
+                  <Sparkles size={12} style={{ color: '#FFFFFF' }} />
+                </div>
+                <div className="pipeline-card-icon">
+                  <Cpu size={20} />
+                </div>
+                <div className="pipeline-card-title" style={{ color: '#FFFFFF' }}>DEX Analyst</div>
+                <div className="pipeline-card-desc" style={{ color: '#C5CCD6' }}>Your autonomous 24/7 AI decision analyst providing conversational deep dives.</div>
+              </MotionCard>
+            </StaggerItem>
 
-          </div>
+          </StaggerContainer>
 
         </div>
       </section>
@@ -481,58 +507,68 @@ export const HomeView: React.FC = () => {
       <section className="section-overview-wrap" id="solutions">
         <div className="page-container">
           
-          <div className="section-heading-center">
-            <div className="section-badge">DECISIONOS COMMAND CENTER</div>
-            <h2 className="section-title-main">Executive Intelligence Overview</h2>
-            <p className="section-subtitle-main">
-              A real-time command center for data-driven leaders.
-            </p>
-          </div>
+          <FadeUp>
+            <div className="section-heading-center">
+              <div className="section-badge">DECISIONOS COMMAND CENTER</div>
+              <h2 className="section-title-main">Executive Intelligence Overview</h2>
+              <p className="section-subtitle-main">
+                A real-time command center for data-driven leaders.
+              </p>
+            </div>
+          </FadeUp>
 
           <div className="cockpit-container">
             
-            {/* Top Stat / Summary Row */}
+            {/* Top Stat / Summary Row with Animated Counters */}
             <div className="cockpit-top-row">
               
               {/* Stat 1: Total Revenue */}
-              <div className="cockpit-stat-card">
+              <MotionCard className="cockpit-stat-card" interactive={true}>
                 <div className="c-stat-title">Total Revenue</div>
-                <div className="c-stat-num">$4.2M</div>
+                <div className="c-stat-num">
+                  <AnimatedCounter value={4.2} prefix="$" suffix="M" decimals={1} />
+                </div>
                 <div className="c-stat-delta delta-pos">
                   <span>+12.4%</span>
                   <span className="delta-sub">vs last period ↗</span>
                 </div>
-              </div>
+              </MotionCard>
 
               {/* Stat 2: Orders */}
-              <div className="cockpit-stat-card">
+              <MotionCard className="cockpit-stat-card" interactive={true}>
                 <div className="c-stat-title">Orders</div>
-                <div className="c-stat-num">18,530</div>
+                <div className="c-stat-num">
+                  <AnimatedCounter value={18530} />
+                </div>
                 <div className="c-stat-delta delta-pos">
                   <span>+8.7%</span>
                   <span className="delta-sub">vs last period ↗</span>
                 </div>
-              </div>
+              </MotionCard>
 
               {/* Stat 3: Customers */}
-              <div className="cockpit-stat-card">
+              <MotionCard className="cockpit-stat-card" interactive={true}>
                 <div className="c-stat-title">Customers</div>
-                <div className="c-stat-num">6,842</div>
+                <div className="c-stat-num">
+                  <AnimatedCounter value={6842} />
+                </div>
                 <div className="c-stat-delta delta-pos">
                   <span>+11.3%</span>
                   <span className="delta-sub">vs last period ↗</span>
                 </div>
-              </div>
+              </MotionCard>
 
               {/* Stat 4: Business Health Score (Flagship Wide Anchor) */}
-              <div className="cockpit-stat-card cockpit-health-card">
+              <MotionCard className="cockpit-stat-card cockpit-health-card state-glow-active-kpi" interactive={true}>
                 <div className="c-stat-title-flex">
                   <span className="c-stat-title">Business Health Score</span>
                   <span className="badge-health-status">Excellent</span>
                 </div>
                 <div className="c-health-flex">
                   <div>
-                    <div className="c-stat-num">82 <span style={{ fontSize: '13px', color: '#727A86', fontWeight: 500 }}>/100</span></div>
+                    <div className="c-stat-num">
+                      <AnimatedCounter value={82} durationMs={850} /> <span style={{ fontSize: '13px', color: '#727A86', fontWeight: 500 }}>/100</span>
+                    </div>
                     <div className="c-health-track-info">
                       <div className="c-health-bar-wrap">
                         <div className="c-health-bar-fill" style={{ width: '82%' }} />
@@ -540,7 +576,7 @@ export const HomeView: React.FC = () => {
                       <span className="c-health-label">Optimal Performance</span>
                     </div>
                   </div>
-                  <div className="c-ring-gauge">
+                  <div className="c-ring-gauge state-glow-health">
                     <svg width="44" height="44" viewBox="0 0 36 36">
                       <path
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -560,13 +596,13 @@ export const HomeView: React.FC = () => {
                     <span className="gauge-center-text">82%</span>
                   </div>
                 </div>
-              </div>
+              </MotionCard>
 
               {/* Stat 5: Executive Summary Card (Structured DEX Synthesis) */}
-              <div className="cockpit-summary-card">
+              <MotionCard className="cockpit-summary-card" interactive={true}>
                 <div className="c-sum-header">
                   <span>Executive Summary</span>
-                  <span className="c-ai-badge">DEX AI</span>
+                  <span className="c-ai-badge">DEX Analyst</span>
                 </div>
                 <div className="c-sum-structured">
                   <div className="c-sum-lead">
@@ -583,7 +619,7 @@ export const HomeView: React.FC = () => {
                 <Link to="/reports" className="btn-sum-action">
                   View Full Report
                 </Link>
-              </div>
+              </MotionCard>
 
             </div>
 
