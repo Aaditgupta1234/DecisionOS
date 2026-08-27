@@ -282,20 +282,16 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
               )}
             </div>
 
-            {/* AI Chatbot Option in Main Nav */}
+            {/* DEX Copilot Option in Main Nav */}
             <Link
               to="/chat"
               className={`nav-link ${isChat ? 'nav-link-active' : ''}`}
               style={{
                 color: isChat ? '#FFFFFF' : undefined,
                 fontWeight: isChat ? 700 : undefined,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
               }}
             >
-              <Bot size={14} color="#38BDF8" />
-              <span>AI Chatbot</span>
+              DEX Copilot
             </Link>
 
             {/* Launch Platform Link in Main Nav */}
