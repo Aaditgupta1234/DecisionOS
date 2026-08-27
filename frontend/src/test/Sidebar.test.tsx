@@ -12,18 +12,14 @@ describe('Sidebar Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Overview')).toBeInTheDocument();
-    expect(screen.getByText('KPI Metrics')).toBeInTheDocument();
-    expect(screen.getByText('Diagnostics')).toBeInTheDocument();
-    expect(screen.getByText('Root Causes')).toBeInTheDocument();
-    expect(screen.getByText('Recommendations')).toBeInTheDocument();
-    expect(screen.getByText('AI Insights')).toBeInTheDocument();
-    expect(screen.getByText('Strategy Planner')).toBeInTheDocument();
-    expect(screen.getByText('Scenarios')).toBeInTheDocument();
-    expect(screen.getByText('Forecasting')).toBeInTheDocument();
-    expect(screen.getByText('AI Analyst')).toBeInTheDocument();
-    expect(screen.getByText('Executive Reports')).toBeInTheDocument();
-    expect(screen.getByText('Organization')).toBeInTheDocument();
-    expect(screen.getByText('Datasets')).toBeInTheDocument();
+    expect(screen.getByText('Enterprise Command')).toBeInTheDocument();
+    expect(screen.getByText('Executive Boardroom')).toBeInTheDocument();
+    expect(screen.getByText('AI Business Analyst')).toBeInTheDocument();
+    expect(screen.getByText('AI Decision Copilot')).toBeInTheDocument();
+    expect(screen.getByText('Data & Intelligence')).toBeInTheDocument();
+    expect(screen.getByText('Strategy & Execution')).toBeInTheDocument();
+    expect(screen.getByText('Governance & Risk')).toBeInTheDocument();
+    expect(screen.getByText('Enterprise Portfolio')).toBeInTheDocument();
+    expect(screen.getByText('Platform Admin')).toBeInTheDocument();
   });
 });
