@@ -7,8 +7,10 @@ import { ErrorBanner } from '../../components/feedback/ErrorBanner';
 import { EmptyState } from '../../components/feedback/EmptyState';
 import { MessageSquare, Send, Plus, Sparkles, Bot, User as UserIcon, ShieldCheck } from 'lucide-react';
 import { FadeIn } from '../../design-system/motion';
+import { useMotion } from '../../design-system/motion/MotionProvider';
 
 export const ChatView: React.FC = () => {
+  const { isSuspended, shouldReduceMotion } = useMotion();
   const { activeDataset } = useDataset();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSession, setActiveSession] = useState<ChatSession | null>(null);
@@ -125,7 +127,7 @@ export const ChatView: React.FC = () => {
       <div className="page-container">
         <EmptyState
           title="No Active Dataset Selected"
-          description="Select a dataset to converse with the grounded AI Business Analyst."
+          description="Select a dataset to converse with DEX Analyst, your autonomous strategic intelligence engine."
           icon={MessageSquare}
         />
       </div>
@@ -186,7 +188,7 @@ export const ChatView: React.FC = () => {
               100% Deterministic Platform Telemetry
             </span>
           </div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '2px 0 0 0' }}>AI Business Analyst</h1>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FFFFFF', margin: '2px 0 0 0' }}>DEX Analyst</h1>
         </div>
 
         <button
@@ -343,9 +345,10 @@ export const ChatView: React.FC = () => {
             {isSending && (
               <FadeIn style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#38BDF8', fontSize: '0.82rem', padding: '6px 0' }}>
                 <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0s' }} />
-                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.2s' }} />
-                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.4s' }} />
+                  {/* Typing dots respect isSuspended and shouldReduceMotion via MotionProvider */}
+                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: (isSuspended || shouldReduceMotion) ? 'none' : 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0s' }} />
+                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: (isSuspended || shouldReduceMotion) ? 'none' : 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.2s' }} />
+                  <span className="typing-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38BDF8', animation: (isSuspended || shouldReduceMotion) ? 'none' : 'typingPulse 1.4s infinite ease-in-out', animationDelay: '0.4s' }} />
                 </div>
                 <span style={{ fontWeight: 600 }}>DEX Analyst is conducting deterministic evaluation...</span>
               </FadeIn>

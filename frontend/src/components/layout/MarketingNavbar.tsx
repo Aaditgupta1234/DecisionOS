@@ -197,7 +197,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
                     </Link>
                     <Link to="/chat" onClick={() => setIsMegaMenuOpen(false)} className="mega-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '6px', color: '#E2E8F0', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600 }}>
                       <MessageSquare size={13} color="#38BDF8" />
-                      <span>AI Business Analyst</span>
+                      <span>DEX Analyst</span>
                     </Link>
                     <Link to="/boardroom" onClick={() => setIsMegaMenuOpen(false)} className="mega-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', borderRadius: '6px', color: '#E2E8F0', textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600 }}>
                       <FileText size={13} color="#F59E0B" />

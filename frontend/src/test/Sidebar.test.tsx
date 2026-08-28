@@ -14,7 +14,7 @@ describe('Sidebar Component', () => {
 
     expect(screen.getByText('Enterprise Command')).toBeInTheDocument();
     expect(screen.getByText('Executive Boardroom')).toBeInTheDocument();
-    expect(screen.getByText('AI Business Analyst')).toBeInTheDocument();
+    expect(screen.getByText('DEX Analyst')).toBeInTheDocument();
     expect(screen.getByText('AI Decision Copilot')).toBeInTheDocument();
     expect(screen.getByText('Data & Intelligence')).toBeInTheDocument();
     expect(screen.getByText('Strategy & Execution')).toBeInTheDocument();

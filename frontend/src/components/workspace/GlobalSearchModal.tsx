@@ -20,7 +20,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     { title: 'Recovery Forecast V3 ($480K Projected ARR)', type: 'FORECAST', desc: 'Rolling 3-cycle recovery forecast (88.4% accuracy)', link: '/forecasting' },
     { title: 'Simulation Run: Logistics Rebalancing (+20% FTE)', type: 'SIMULATION', desc: 'Digital Twin Monte Carlo simulation', link: '/simulations' },
     { title: 'Verified +$124K ARR Realized Recovery', type: 'OUTCOME', desc: 'Measured business recovery verified by OutcomeEngine', link: '/outcomes' },
-    { title: 'Ask AI Analyst about Churn in Southeast', type: 'AI_PROMPT', desc: 'Ask AI Business Analyst for graph-grounded explanation', link: '/ai-analyst' },
+    { title: 'Ask DEX Analyst about Churn in Southeast', type: 'AI_PROMPT', desc: 'Ask DEX Analyst for graph-grounded explanation', link: '/ai-analyst' },
   ];
 
   const filtered = items.filter((item) =>

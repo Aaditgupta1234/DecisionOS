@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ChevronDown,
   ChevronUp,
   ShieldAlert,
 } from 'lucide-react';
 import { FindingItem } from '../../../types/dashboard';
-import { IntelligenceReveal, FindingItem as MotionFindingItem } from '../../../design-system/motion';
+import { IntelligenceReveal, FindingItem as MotionFindingItem, CrossFade } from '../../../design-system/motion';
 
 interface FindingsSectionProps {
   findings: FindingItem[];
@@ -14,6 +14,10 @@ interface FindingsSectionProps {
 export const FindingsSection: React.FC<FindingsSectionProps> = ({ findings }) => {
   const [selectedSeverity, setSelectedSeverity] = useState<string>('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Track whether the initial IntelligenceReveal sequence has completed.
+  // Once true, filter changes use CrossFade instead of replaying the full reveal.
+  const hasInvestigatedRef = useRef<boolean>(false);
 
   const severities = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 
@@ -41,6 +45,110 @@ export const FindingsSection: React.FC<FindingsSectionProps> = ({ findings }) =>
     setExpandedId(expandedId === id ? null : id);
   };
 
+  /** Shared renderer for a single finding row — used by both IntelligenceReveal and CrossFade */
+  const renderFindingItem = (motionFinding: MotionFindingItem, idx: number) => {
+    const finding = filteredFindings[idx];
+    if (!finding) return null;
+    const isExpanded = expandedId === finding.finding_id;
+    return (
+      <div
+        className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 shadow-lg hover:border-slate-700 transition-all"
+      >
+        <div
+          className="flex items-start justify-between gap-4 cursor-pointer"
+          onClick={() => toggleExpand(finding.finding_id)}
+        >
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className={`px-2.5 py-0.5 text-xs font-bold rounded-md border ${getSeverityBadge(finding.severity)}`}
+              >
+                {finding.severity}
+              </span>
+              <span className="text-xs text-slate-500 uppercase font-mono">
+                {finding.finding_type}
+              </span>
+              {finding.category && (
+                <span className="text-xs text-slate-400 font-medium">
+                  • {finding.category}
+                </span>
+              )}
+            </div>
+            <h3 className="text-base font-bold text-white mt-2">
+              {finding.title}
+            </h3>
+            <p className="text-xs text-slate-300 mt-1 line-clamp-2">
+              {finding.description}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="text-right hidden sm:block">
+              <div className="text-xs font-bold text-slate-200">
+                Impact: {Math.round(finding.impact_score * 100)}%
+              </div>
+              <div className="text-[10px] text-slate-500">
+                Confidence: {Math.round(finding.confidence_score * 100)}%
+              </div>
+            </div>
+            <button className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
+              {isExpanded ? (
+                <ChevronUp className="w-5 h-5" />
+              ) : (
+                <ChevronDown className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Expandable Details */}
+        {isExpanded && (
+          <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-3 animate-in fade-in">
+            {finding.business_impact && (
+              <div className="p-3 bg-rose-950/20 border border-rose-900/30 rounded-xl text-xs">
+                <strong className="text-rose-300 font-semibold block mb-0.5">
+                  Business &amp; Financial Impact:
+                </strong>
+                <span className="text-slate-300">{finding.business_impact}</span>
+              </div>
+            )}
+
+            {finding.evidence_points && finding.evidence_points.length > 0 && (
+              <div>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                  Observed Evidence &amp; Telemetry:
+                </div>
+                <ul className="list-disc list-inside space-y-1 text-xs text-slate-300 bg-slate-950/40 p-3 rounded-xl border border-slate-800/60">
+                  {finding.evidence_points.map((ev, i) => (
+                    <li key={i}>{ev}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2">
+              <span>Finding Identifier: <code className="font-mono text-slate-400">{finding.finding_id.slice(0, 12)}...</code></span>
+              {finding.primary_metric_key && (
+                <span>Linked KPI: <strong className="text-cyan-400">{finding.primary_metric_key}</strong></span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const motionFindings = filteredFindings.map((f) => ({
+    id: f.finding_id,
+    title: f.title,
+    category: f.category,
+    impact: f.business_impact
+      ? `Impact ${Math.round(f.impact_score * 100)}%`
+      : undefined,
+    severity: f.severity.toLowerCase() as MotionFindingItem['severity'],
+    confidence: f.confidence_score,
+  }));
+
   return (
     <section id="findings" className="scroll-mt-24 space-y-6">
       {/* Section Header */}
@@ -51,7 +159,7 @@ export const FindingsSection: React.FC<FindingsSectionProps> = ({ findings }) =>
           </div>
           <div>
             <h2 className="text-xl font-bold text-white tracking-tight">
-              Diagnostic Findings & Anomalies
+              Diagnostic Findings &amp; Anomalies
             </h2>
             <p className="text-xs text-slate-400">
               Verified operational anomalies, revenue contractions, and efficiency frictions identified by diagnostic engines
@@ -84,122 +192,30 @@ export const FindingsSection: React.FC<FindingsSectionProps> = ({ findings }) =>
         </div>
       </div>
 
-      {/* Findings List — powered by IntelligenceReveal (65ms stagger + terminal closure state) */}
+      {/* Findings List */}
       {filteredFindings.length === 0 ? (
         <div className="p-8 text-center bg-slate-900/40 border border-slate-800 rounded-2xl text-slate-500 text-sm">
           No diagnostic findings match severity &quot;{selectedSeverity}&quot;.
         </div>
-      ) : (
+      ) : !hasInvestigatedRef.current ? (
+        /* FIRST MOUNT ONLY: Full IntelligenceReveal sequence */
         <IntelligenceReveal
-          // Re-key on filter change so investigation rereplays for each severity subset
-          key={`findings-reveal-${selectedSeverity}`}
-          findings={filteredFindings.map((f) => ({
-            id: f.finding_id,
-            title: f.title,
-            category: f.category,
-            impact: f.business_impact
-              ? `Impact ${Math.round(f.impact_score * 100)}%`
-              : undefined,
-            severity: f.severity.toLowerCase() as MotionFindingItem['severity'],
-            confidence: f.confidence_score,
-          }))}
+          findings={motionFindings}
           analyzingLabel={`Scanning ${filteredFindings.length} diagnostic signal${filteredFindings.length !== 1 ? 's' : ''}...`}
           rootCausesCount={filteredFindings.filter(f => f.severity.toUpperCase() === 'CRITICAL' || f.severity.toUpperCase() === 'HIGH').length}
           actionsCount={filteredFindings.length}
-          renderItem={(motionFinding, idx) => {
-            const finding = filteredFindings[idx];
-            if (!finding) return null;
-            const isExpanded = expandedId === finding.finding_id;
-            return (
-              <div
-                className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl p-5 shadow-lg hover:border-slate-700 transition-all"
-              >
-                <div
-                  className="flex items-start justify-between gap-4 cursor-pointer"
-                  onClick={() => toggleExpand(finding.finding_id)}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className={`px-2.5 py-0.5 text-xs font-bold rounded-md border ${getSeverityBadge(
-                          finding.severity
-                        )}`}
-                      >
-                        {finding.severity}
-                      </span>
-                      <span className="text-xs text-slate-500 uppercase font-mono">
-                        {finding.finding_type}
-                      </span>
-                      {finding.category && (
-                        <span className="text-xs text-slate-400 font-medium">
-                          • {finding.category}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-base font-bold text-white mt-2">
-                      {finding.title}
-                    </h3>
-                    <p className="text-xs text-slate-300 mt-1 line-clamp-2">
-                      {finding.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-right hidden sm:block">
-                      <div className="text-xs font-bold text-slate-200">
-                        Impact: {Math.round(finding.impact_score * 100)}%
-                      </div>
-                      <div className="text-[10px] text-slate-500">
-                        Confidence: {Math.round(finding.confidence_score * 100)}%
-                      </div>
-                    </div>
-                    <button className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
-                      {isExpanded ? (
-                        <ChevronUp className="w-5 h-5" />
-                      ) : (
-                        <ChevronDown className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Expandable Details */}
-                {isExpanded && (
-                  <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-3 animate-in fade-in">
-                    {finding.business_impact && (
-                      <div className="p-3 bg-rose-950/20 border border-rose-900/30 rounded-xl text-xs">
-                        <strong className="text-rose-300 font-semibold block mb-0.5">
-                          Business & Financial Impact:
-                        </strong>
-                        <span className="text-slate-300">{finding.business_impact}</span>
-                      </div>
-                    )}
-
-                    {finding.evidence_points && finding.evidence_points.length > 0 && (
-                      <div>
-                        <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                          Observed Evidence & Telemetry:
-                        </div>
-                        <ul className="list-disc list-inside space-y-1 text-xs text-slate-300 bg-slate-950/40 p-3 rounded-xl border border-slate-800/60">
-                          {finding.evidence_points.map((ev, i) => (
-                            <li key={i}>{ev}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2">
-                      <span>Finding Identifier: <code className="font-mono text-slate-400">{finding.finding_id.slice(0, 12)}...</code></span>
-                      {finding.primary_metric_key && (
-                        <span>Linked KPI: <strong className="text-cyan-400">{finding.primary_metric_key}</strong></span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          }}
+          onComplete={() => { hasInvestigatedRef.current = true; }}
+          renderItem={renderFindingItem}
         />
+      ) : (
+        /* SUBSEQUENT FILTER CHANGES: CrossFade only — no investigation replay */
+        <CrossFade stateKey={selectedSeverity}>
+          <div className="flex flex-col gap-2">
+            {filteredFindings.map((_, idx) =>
+              renderFindingItem(motionFindings[idx], idx)
+            )}
+          </div>
+        </CrossFade>
       )}
     </section>
   );

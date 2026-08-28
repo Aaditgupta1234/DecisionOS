@@ -93,7 +93,7 @@ export const AIInsightsView: React.FC = () => {
           </button>
 
           <Link to="/chat" className="btn btn-secondary">
-            <span>AI Business Analyst</span>
+            <span>DEX Analyst</span>
             <ArrowRight size={16} />
           </Link>
         </div>

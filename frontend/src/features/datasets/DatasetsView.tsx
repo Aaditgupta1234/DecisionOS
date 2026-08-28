@@ -206,8 +206,18 @@ export const DatasetsView: React.FC = () => {
 
         {uploading && (
           <div style={{ maxWidth: '300px', margin: '16px auto 0' }}>
+            {/* GPU-accelerated progress — transform: scaleX() instead of width transition */}
             <div style={{ width: '100%', height: '4px', background: '#1E293B', borderRadius: '2px', overflow: 'hidden' }}>
-              <div style={{ width: `${uploadProgress}%`, height: '100%', background: '#38BDF8', transition: 'width 0.2s ease' }} />
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: '#38BDF8',
+                  transformOrigin: 'left center',
+                  transform: `scaleX(${uploadProgress / 100})`,
+                  transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              />
             </div>
           </div>
         )}

@@ -41,7 +41,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         );
       case 'BUILDING':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 animate-pulse">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
             <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             Generating Intelligence...
           </span>
@@ -95,7 +95,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     if (age < 60) {
       return (
         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           Fresh ({age}s)
         </span>
       );
@@ -117,7 +117,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 animate-pulse">
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">
         <AlertCircle className="w-3 h-3 text-rose-400" />
         Stale ({Math.floor(age / 60)}m old)
       </span>

@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { dashboardApi } from '../../api';
 import { WorkspaceResponse } from '../../types/dashboard';
 import { DashboardHeader } from './components/DashboardHeader';
@@ -42,10 +42,11 @@ const ChatSection = React.lazy(() =>
 );
 
 const SectionSkeleton: React.FC<{ title: string }> = ({ title }) => (
-  <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8 animate-pulse flex flex-col items-center justify-center text-center space-y-3 min-h-[220px]">
-    <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
-    <span className="text-xs font-semibold text-slate-300">Loading {title}...</span>
-    <span className="text-[11px] text-slate-500">Hydrating progressive intelligence module</span>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <ChartSkeleton height={220} />
+    <span style={{ fontSize: '11px', color: '#4B5563', textAlign: 'center' }}>
+      Loading {title}...
+    </span>
   </div>
 );
 
