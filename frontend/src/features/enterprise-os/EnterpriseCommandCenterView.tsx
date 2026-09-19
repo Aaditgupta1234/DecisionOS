@@ -11,7 +11,6 @@ import {
   BrainCircuit,
   Target,
   BarChart2,
-  Layers3,
   Network,
   CheckCircle2,
   Check
@@ -76,8 +75,8 @@ export const EnterpriseCommandCenterView: React.FC = () => {
         await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(lastDataset.id) });
         await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(lastDataset.id) });
 
-        setQuickNotice(`Dataset "${lastDataset.name}" active. Pipeline updated.`);
-        setTimeout(() => setQuickNotice(null), 4000);
+        setQuickNotice(`Dataset "${lastDataset.name}" active.`);
+        setTimeout(() => setQuickNotice(null), 3500);
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
@@ -124,7 +123,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
   const topRootCause =
     reportData?.executive_summary?.top_root_cause ||
     reportData?.root_causes?.[0]?.title ||
-    'Low Customer Retention & Fulfillment Lag';
+    'Low Customer Retention';
   const topRecommendation = reportData?.executive_summary?.top_recommendation || 'Emergency Business Recovery';
   const topBenefitImpact = (reportData?.recommendations?.[0] as any)?.expected_benefits?.primary_kpi_impact || 'Operational Stabilization';
   const confidenceScore = reportData?.executive_summary?.overall_confidence ? Math.round(reportData.executive_summary.overall_confidence * 100) : 94;
@@ -135,10 +134,10 @@ export const EnterpriseCommandCenterView: React.FC = () => {
   const totalCategorized = Math.max(findingCount, 1);
   const criticalPct = Math.round((criticalFindings / totalCategorized) * 100) || 57;
 
-  // Strict 80% Neutral, 15% Cyan, 5% Status Colors
+  // Strict Color Palette (White, Slate, Ice Blue, Subtle Coral Red, Subtle Emerald)
   const isHealthy = typeof rawHealthScore === 'number' ? rawHealthScore > 50 : healthStatusStr === 'HEALTHY';
-  const healthColor = isHealthy ? '#10B981' : '#EF4444';
-  const healthBadgeText = isHealthy ? 'Healthy Operations' : 'Critical Degradation';
+  const healthStatusColor = isHealthy ? '#10B981' : '#F87171';
+  const healthBadgeText = isHealthy ? 'Healthy' : 'Critical';
 
   const isLoading = isReportLoading || isHealthLoading;
   const isError = isReportError || isHealthError;
@@ -153,7 +152,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
   };
 
   const handleRefreshAll = async () => {
-    setQuickNotice('Refreshing live intelligence...');
+    setQuickNotice('Refreshing intelligence...');
     await queryClient.invalidateQueries();
     if (activeDataset?.id) {
       await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(activeDataset.id) });
@@ -168,22 +167,22 @@ export const EnterpriseCommandCenterView: React.FC = () => {
 
   if (!activeDataset) {
     return (
-      <div style={{ padding: '56px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+      <div style={{ padding: '64px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
         <div
           style={{
             position: 'absolute',
             top: 0,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: '600px',
-            height: '300px',
-            background: 'radial-gradient(circle at top center, rgba(0, 180, 255, 0.06), transparent 60%)',
+            width: '500px',
+            height: '260px',
+            background: 'radial-gradient(circle at top center, rgba(56, 189, 248, 0.05), transparent 65%)',
             pointerEvents: 'none',
           }}
         />
         <NoDatasetEmptyState
           title="No Active Dataset Selected"
-          description="Upload or select an enterprise dataset to initialize the Executive Command Center overview."
+          description="Upload or select an enterprise dataset to initialize the Executive Command Center."
           actionText="Or Select Existing Dataset"
           actionTo="/enterprise-data"
         />
@@ -200,7 +199,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             fontSize: '13px',
             fontWeight: 700,
             cursor: isUploading ? 'not-allowed' : 'pointer',
-            boxShadow: '0 2px 14px rgba(255, 255, 255, 0.14)',
+            boxShadow: '0 2px 14px rgba(255, 255, 255, 0.12)',
             transition: 'all 0.15s ease',
           }}
           onMouseEnter={(e) => {
@@ -227,37 +226,39 @@ export const EnterpriseCommandCenterView: React.FC = () => {
     );
   }
 
-  // Premium Understated Enterprise Card Styling
+  // Premium Command Center Card Material
   const cardStyle: React.CSSProperties = {
     background: 'rgba(8, 12, 20, 0.75)',
     border: '1px solid rgba(255, 255, 255, 0.05)',
     borderRadius: '12px',
-    transition: 'transform 0.15s ease, border-color 0.15s ease',
+    boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.40)',
+    transition: 'transform 0.16s ease, border-color 0.16s ease',
   };
 
   const secondaryBtnStyle: React.CSSProperties = {
-    background: '#0D0F14',
-    color: '#FFFFFF',
+    background: 'rgba(15, 20, 30, 0.60)',
+    color: '#E2E8F0',
     fontSize: '12px',
     fontWeight: 600,
     height: '32px',
     padding: '0 14px',
     borderRadius: '18px',
-    border: '1px solid rgba(255, 255, 255, 0.07)',
+    border: '1px solid rgba(255, 255, 255, 0.06)',
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '5px',
+    gap: '6px',
     textDecoration: 'none',
     cursor: 'pointer',
     transition: 'all 0.15s ease',
   };
 
-  const sectionLabelStyle: React.CSSProperties = {
-    color: '#64748B',
+  const sectionHeaderStyle: React.CSSProperties = {
     fontSize: '11px',
     fontWeight: 700,
-    letterSpacing: '0.02em',
-    marginBottom: '2px',
+    letterSpacing: '0.04em',
+    color: '#64748B',
+    marginBottom: '6px',
+    textTransform: 'uppercase',
   };
 
   return (
@@ -266,24 +267,24 @@ export const EnterpriseCommandCenterView: React.FC = () => {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        gap: '22px',
-        paddingBottom: '24px',
+        gap: '24px',
+        paddingBottom: '28px',
         maxWidth: '1280px',
         margin: '0 auto',
         width: '100%',
       }}
     >
-      {/* Subtle Ambient Illumination */}
+      {/* Subtle Ambient Ice Blue Illumination */}
       <div
         style={{
           position: 'absolute',
-          top: '-60px',
+          top: '-80px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '100%',
-          maxWidth: '1280px',
-          height: '320px',
-          background: 'radial-gradient(circle at top center, rgba(0, 180, 255, 0.035), transparent 55%)',
+          maxWidth: '1000px',
+          height: '280px',
+          background: 'radial-gradient(circle at top center, rgba(56, 189, 248, 0.035), transparent 60%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -291,39 +292,40 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       />
 
       {/* ======================================================================
-          LEVEL 1: HERO HEADER
+          HERO SECTION: EXECUTIVE ORIENTATION HEADER
           ====================================================================== */}
       <FadeUp delay={0.02}>
-        <div style={{ position: 'relative', zIndex: 1, paddingTop: '0px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ position: 'relative', zIndex: 1, paddingTop: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
             
-            {/* Headline & Concise Subtitle */}
+            {/* Title & Concise Subtitle */}
             <div style={{ maxWidth: '820px' }}>
               <div
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px',
+                  gap: '6px',
                   padding: '2px 8px',
                   borderRadius: '10px',
-                  background: '#0D0F14',
+                  background: 'rgba(15, 20, 30, 0.70)',
                   border: '1px solid rgba(255, 255, 255, 0.05)',
                   color: '#64748B',
                   fontSize: '9.5px',
                   fontWeight: 700,
-                  marginBottom: '4px',
+                  letterSpacing: '0.04em',
+                  marginBottom: '6px',
                 }}
               >
-                <BrainCircuit size={10} color="#00B4FF" />
+                <BrainCircuit size={11} color="#38BDF8" />
                 <span>DecisionOS • Strategic Overview</span>
               </div>
 
               <h1
                 style={{
-                  fontSize: 'clamp(24px, 2vw, 30px)',
+                  fontSize: 'clamp(24px, 2.2vw, 32px)',
                   fontWeight: 800,
                   lineHeight: 1.1,
-                  letterSpacing: '-0.03em',
+                  letterSpacing: '-0.035em',
                   color: '#FFFFFF',
                   margin: '0 0 4px 0',
                 }}
@@ -337,7 +339,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                   lineHeight: 1.45,
                   color: '#94A3B8',
                   margin: 0,
-                  maxWidth: '42rem',
+                  maxWidth: '38rem',
                 }}
               >
                 Autonomous causal intelligence, business health exposure, and strategic execution programs.
@@ -345,18 +347,18 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
 
             {/* Actions */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', alignSelf: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', alignSelf: 'center' }}>
               <button
                 onClick={handleRefreshAll}
                 style={secondaryBtnStyle}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#151820';
+                  e.currentTarget.style.background = 'rgba(25, 32, 48, 0.80)';
                   e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
                   e.currentTarget.style.transform = 'translateY(-1px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#0D0F14';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)';
+                  e.currentTarget.style.background = 'rgba(15, 20, 30, 0.60)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
@@ -368,13 +370,13 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 onClick={handleLoadDemoDataset}
                 style={secondaryBtnStyle}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#151820';
+                  e.currentTarget.style.background = 'rgba(25, 32, 48, 0.80)';
                   e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
                   e.currentTarget.style.transform = 'translateY(-1px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#0D0F14';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)';
+                  e.currentTarget.style.background = 'rgba(15, 20, 30, 0.60)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
@@ -389,13 +391,13 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                   fontSize: '12px',
                   fontWeight: 700,
                   height: '32px',
-                  padding: '0 15px',
+                  padding: '0 16px',
                   borderRadius: '18px',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '5px',
+                  gap: '6px',
                   cursor: isUploading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 2px 10px rgba(255, 255, 255, 0.15)',
+                  boxShadow: '0 2px 12px rgba(255, 255, 255, 0.14)',
                   opacity: isUploading ? 0.7 : 1,
                   transition: 'all 0.15s ease',
                 }}
@@ -429,20 +431,20 @@ export const EnterpriseCommandCenterView: React.FC = () => {
 
       {/* Real-time Notice Feedback */}
       {uploadError && (
-        <div style={{ padding: '6px 12px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.20)', borderRadius: '10px', color: '#EF4444', fontSize: '0.74rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
+        <div style={{ padding: '6px 12px', background: 'rgba(248, 113, 113, 0.08)', border: '1px solid rgba(248, 113, 113, 0.18)', borderRadius: '10px', color: '#F87171', fontSize: '0.74rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
           <span>Upload Failed: {uploadError}</span>
-          <button onClick={() => setUploadError(null)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontWeight: 700 }}>✕</button>
+          <button onClick={() => setUploadError(null)} style={{ background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontWeight: 700 }}>✕</button>
         </div>
       )}
       {quickNotice && (
-        <div style={{ padding: '6px 12px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.20)', borderRadius: '10px', color: '#10B981', fontSize: '0.74rem', display: 'flex', alignItems: 'center', gap: '6px', position: 'relative', zIndex: 1 }}>
+        <div style={{ padding: '6px 12px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.18)', borderRadius: '10px', color: '#10B981', fontSize: '0.74rem', display: 'flex', alignItems: 'center', gap: '6px', position: 'relative', zIndex: 1 }}>
           <CheckCircle2 size={12} />
           <span>{quickNotice}</span>
         </div>
       )}
 
       {/* ======================================================================
-          LEVEL 2: HERO EXECUTIVE SUMMARY (PRIMARY FOCAL POINT)
+          STRATEGIC SUMMARY SECTION (COMPACT EXECUTIVE SIGNALS — EQUAL WEIGHT)
           Business Health • Primary Risk • Root Cause • Recommended Action
           ====================================================================== */}
       {!isLoading && !isError && (
@@ -450,75 +452,75 @@ export const EnterpriseCommandCenterView: React.FC = () => {
           <div
             style={{
               ...cardStyle,
-              padding: '24px 28px',
+              padding: '18px 24px',
               position: 'relative',
               zIndex: 1,
             }}
           >
-            {/* 4 Core Pillars with Dominant Hierarchy and Scannable Typography */}
-            <div style={{ display: 'grid', gridTemplateColumns: '200px 1.15fr 1fr 1.15fr', gap: '26px', alignItems: 'flex-start' }}>
+            {/* 4 Pillars with Reduced Height, Equal Visual Weight, and Short Descriptions */}
+            <div style={{ display: 'grid', gridTemplateColumns: '180px 1.15fr 1fr 1.15fr', gap: '22px', alignItems: 'flex-start' }}>
               
               {/* Pillar 1: Business Health */}
-              <div style={{ borderRight: '1px solid rgba(255, 255, 255, 0.05)', paddingRight: '20px' }}>
-                <div style={{ fontSize: '0.70rem', color: '#64748B', fontWeight: 700 }}>
+              <div style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700 }}>
                   Business Health
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '4px 0 4px 0' }}>
-                  <span style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.035em' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0 2px 0' }}>
+                  <span style={{ fontSize: '2.1rem', fontWeight: 900, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.035em' }}>
                     {healthScore}
                   </span>
-                  <span style={{ fontSize: '0.88rem', color: '#64748B', fontWeight: 700 }}>/ 100</span>
+                  <span style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 700 }}>/ 100</span>
                 </div>
 
-                {/* Severity Meter */}
-                <div style={{ height: '4px', width: '100%', background: 'rgba(255, 255, 255, 0.06)', borderRadius: '2px', overflow: 'hidden', margin: '6px 0 8px 0' }}>
-                  <div style={{ width: `${Math.max(Number(healthScore) || 5, 5)}%`, height: '100%', background: healthColor, transition: 'width 0.6s ease' }} />
+                {/* Severity Meter Track */}
+                <div style={{ height: '3px', width: '100%', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '2px', overflow: 'hidden', margin: '4px 0 4px 0' }}>
+                  <div style={{ width: `${Math.max(Number(healthScore) || 5, 5)}%`, height: '100%', background: healthStatusColor, transition: 'width 0.6s ease' }} />
                 </div>
 
-                <span style={{ fontSize: '0.70rem', color: healthColor, fontWeight: 700 }}>
+                <span style={{ fontSize: '0.68rem', color: healthStatusColor, fontWeight: 700 }}>
                   {healthBadgeText}
                 </span>
               </div>
 
-              {/* Pillar 2: Primary Risk (Red) */}
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: '0.70rem', color: '#EF4444', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <AlertTriangle size={12} />
+              {/* Pillar 2: Primary Risk */}
+              <div style={{ minWidth: 0, borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
+                <div style={{ fontSize: '0.68rem', color: '#F87171', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                  <AlertTriangle size={11} />
                   <span>Primary Risk</span>
                 </div>
-                <div style={{ fontSize: '1.20rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.02em' }} title={primaryIssue}>
+                <div style={{ fontSize: '1.08rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={primaryIssue}>
                   {primaryIssue}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: '#94A3B8', marginTop: '4px', lineHeight: 1.4 }}>
-                  High vulnerability across core operational segments.
+                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  High operational exposure
                 </div>
               </div>
 
               {/* Pillar 3: Root Cause */}
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: '0.70rem', color: '#64748B', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <GitMerge size={12} color="#00B4FF" />
+              <div style={{ minWidth: 0, borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
+                <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                  <GitMerge size={11} color="#38BDF8" />
                   <span>Root Cause</span>
                 </div>
-                <div style={{ fontSize: '1.20rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.02em' }} title={topRootCause}>
+                <div style={{ fontSize: '1.08rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={topRootCause}>
                   {topRootCause}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: '#94A3B8', marginTop: '4px', lineHeight: 1.4 }}>
-                  Isolated causal transmission path to margin loss.
+                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  Margin loss pathway detected
                 </div>
               </div>
 
               {/* Pillar 4: Recommended Action */}
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: '0.70rem', color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-                  <Zap size={12} />
+                <div style={{ fontSize: '0.68rem', color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                  <Zap size={11} />
                   <span>Recommended Action</span>
                 </div>
-                <div style={{ fontSize: '1.20rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.02em' }} title={topRecommendation}>
+                <div style={{ fontSize: '1.08rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={topRecommendation}>
                   {topRecommendation}
                 </div>
-                <div style={{ fontSize: '0.76rem', color: '#94A3B8', marginTop: '4px', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   Target: <strong style={{ color: '#FFFFFF' }}>{topBenefitImpact}</strong>
                 </div>
               </div>
@@ -529,15 +531,15 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       )}
 
       {/* ======================================================================
-          LEVEL 3: EXECUTIVE SNAPSHOT (THIN HORIZONTAL STATUS STRIP)
-          Bloomberg Terminal Style • Active Risks • Critical Risk • Anomalies • Confidence
+          EXECUTIVE SNAPSHOT: SLIM COMMAND BAR (BLOOMBERG / LINEAR STATUS STRIP)
+          7 Risks • 57% Critical • 4 Anomalies • 94% Confidence
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.06}>
           <div
             style={{
               ...cardStyle,
-              padding: '12px 20px',
+              padding: '8px 20px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -545,29 +547,25 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               zIndex: 1,
             }}
           >
-            <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700 }}>
-              <span>Executive Snapshot</span>
-            </div>
-
-            {/* Muted Horizontal Strip */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+            {/* Inline Executive Status Strip */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF' }}>{findingCount}</span>
-                <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Active Risks</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>{findingCount}</span>
+                <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Risks</span>
               </div>
-              <span style={{ color: '#1E293B', fontSize: '10px' }}>•</span>
+              <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#EF4444' }}>{criticalPct}%</span>
-                <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Critical Risk</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#F87171' }}>{criticalPct}%</span>
+                <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Critical</span>
               </div>
-              <span style={{ color: '#1E293B', fontSize: '10px' }}>•</span>
+              <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF' }}>{criticalFindings}</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>{criticalFindings}</span>
                 <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Anomalies</span>
               </div>
-              <span style={{ color: '#1E293B', fontSize: '10px' }}>•</span>
+              <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#10B981' }}>{confidenceScore}%</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#10B981' }}>{confidenceScore}%</span>
                 <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Confidence</span>
               </div>
             </div>
@@ -580,7 +578,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 gap: '4px',
                 fontSize: '0.70rem',
                 fontWeight: 600,
-                color: '#00B4FF',
+                color: '#38BDF8',
                 textDecoration: 'none',
               }}
             >
@@ -592,17 +590,16 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       )}
 
       {/* ======================================================================
-          LEVEL 4: RECOMMENDED PROGRAMS (COMPACT CARDS, ~30% REDUCED HEIGHT)
-          Program Name • Target Outcome • Open Program →
+          RECOMMENDED PROGRAMS: COMPACT DESTINATIONS (~30% REDUCED HEIGHT)
+          Program Name • Outcome • Open →
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.08}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative', zIndex: 1 }}>
             
-            {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={sectionLabelStyle}>
-                <span>Recommended Programs</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+              <div style={sectionHeaderStyle}>
+                Recommended Programs
               </div>
               <Link
                 to="/recommendations"
@@ -612,7 +609,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                   gap: '4px',
                   fontSize: '0.70rem',
                   fontWeight: 600,
-                  color: '#00B4FF',
+                  color: '#38BDF8',
                   textDecoration: 'none',
                 }}
               >
@@ -621,7 +618,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               </Link>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', alignItems: 'stretch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', alignItems: 'stretch' }}>
               
               {/* Program 1 */}
               <div
@@ -647,7 +644,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     Emergency Business Recovery
                   </div>
                   <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
-                    Target: <strong style={{ color: '#FFFFFF' }}>Operational Stabilization</strong>
+                    Operational Stabilization
                   </div>
                 </div>
 
@@ -659,11 +656,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     gap: '4px',
                     fontSize: '0.70rem',
                     fontWeight: 600,
-                    color: '#00B4FF',
+                    color: '#38BDF8',
                     textDecoration: 'none',
                   }}
                 >
-                  <span>Open Program</span>
+                  <span>Open</span>
                   <ArrowRight size={10} />
                 </Link>
               </div>
@@ -692,7 +689,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     Operational Optimization
                   </div>
                   <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
-                    Target: <strong style={{ color: '#FFFFFF' }}>Margin Recovery</strong>
+                    Margin Recovery
                   </div>
                 </div>
 
@@ -704,11 +701,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     gap: '4px',
                     fontSize: '0.70rem',
                     fontWeight: 600,
-                    color: '#00B4FF',
+                    color: '#38BDF8',
                     textDecoration: 'none',
                   }}
                 >
-                  <span>Open Program</span>
+                  <span>Open</span>
                   <ArrowRight size={10} />
                 </Link>
               </div>
@@ -719,29 +716,28 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       )}
 
       {/* ======================================================================
-          LEVEL 5: ENTERPRISE WORKSPACES (DESTINATION NAVIGATION CARDS)
+          ENTERPRISE WORKSPACES: STRONGEST PRIMARY NAVIGATION DESTINATIONS
           KPI Workspace • Diagnostic Graph • Action Portfolio • Dataset Lineage
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.10}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative', zIndex: 1 }}>
             
-            {/* Header */}
-            <div style={sectionLabelStyle}>
-              <span>Enterprise Workspaces</span>
+            <div style={sectionHeaderStyle}>
+              Enterprise Workspaces
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '10px', alignItems: 'stretch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px', alignItems: 'stretch' }}>
               
               {/* Workspace 1: KPI Workspace */}
               <div
                 style={{
                   ...cardStyle,
-                  padding: '14px 16px',
+                  padding: '16px 18px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '10px',
+                  gap: '12px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-1px)';
@@ -753,12 +749,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                    <BarChart2 size={13} color="#64748B" />
-                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>KPI Workspace</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <BarChart2 size={14} color="#64748B" />
+                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>KPI Workspace</span>
                   </div>
-                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.4 }}>
-                    Operational monitoring and telemetry
+                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    Monitor enterprise performance
                   </p>
                 </div>
                 <Link
@@ -767,9 +763,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontSize: '0.70rem',
+                    fontSize: '0.72rem',
                     fontWeight: 600,
-                    color: '#00B4FF',
+                    color: '#38BDF8',
                     textDecoration: 'none',
                   }}
                 >
@@ -782,11 +778,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               <div
                 style={{
                   ...cardStyle,
-                  padding: '14px 16px',
+                  padding: '16px 18px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '10px',
+                  gap: '12px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-1px)';
@@ -798,12 +794,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                    <Network size={13} color="#64748B" />
-                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Diagnostic Graph</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <Network size={14} color="#64748B" />
+                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Diagnostic Graph</span>
                   </div>
-                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.4 }}>
-                    Root-cause analysis and causal exploration
+                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    Explore root-cause relationships
                   </p>
                 </div>
                 <Link
@@ -812,9 +808,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontSize: '0.70rem',
+                    fontSize: '0.72rem',
                     fontWeight: 600,
-                    color: '#00B4FF',
+                    color: '#38BDF8',
                     textDecoration: 'none',
                   }}
                 >
@@ -827,11 +823,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               <div
                 style={{
                   ...cardStyle,
-                  padding: '14px 16px',
+                  padding: '16px 18px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '10px',
+                  gap: '12px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-1px)';
@@ -843,12 +839,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                    <Target size={13} color="#64748B" />
-                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Action Portfolio</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <Target size={14} color="#64748B" />
+                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Action Portfolio</span>
                   </div>
-                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.4 }}>
-                    Execution programs and interventions
+                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    Manage execution programs
                   </p>
                 </div>
                 <Link
@@ -857,9 +853,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontSize: '0.70rem',
+                    fontSize: '0.72rem',
                     fontWeight: 600,
-                    color: '#00B4FF',
+                    color: '#38BDF8',
                     textDecoration: 'none',
                   }}
                 >
@@ -872,11 +868,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               <div
                 style={{
                   ...cardStyle,
-                  padding: '14px 16px',
+                  padding: '16px 18px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '10px',
+                  gap: '12px',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-1px)';
@@ -888,12 +884,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
-                    <Database size={13} color="#64748B" />
-                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Dataset Lineage</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <Database size={14} color="#64748B" />
+                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Dataset Lineage</span>
                   </div>
-                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.4 }}>
-                    Governance and traceability
+                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    Track data governance
                   </p>
                 </div>
                 <Link
@@ -902,9 +898,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontSize: '0.70rem',
+                    fontSize: '0.72rem',
                     fontWeight: 600,
-                    color: '#00B4FF',
+                    color: '#38BDF8',
                     textDecoration: 'none',
                   }}
                 >
@@ -919,7 +915,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       )}
 
       {/* ======================================================================
-          LEVEL 6: FOOTER (SUBTLE MUTED TRUST LINE)
+          FOOTER: UNDERSTATED TRUST & VERIFICATION STATUS
           ✓ Deterministic Engine Verified • ✓ Explainable Audit Passed • ✓ Governance Active
           ====================================================================== */}
       {!isLoading && !isError && (
@@ -937,7 +933,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               zIndex: 1,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <span style={{ color: '#94A3B8', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <Check size={11} color="#10B981" /> Deterministic Engine Verified
               </span>
