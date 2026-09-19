@@ -1,0 +1,10 @@
+Severity,Issue ID,Finding,Required Fix,Priority
+Critical,C-01,Static SHA-256 provenance hash,Compute real SHA-256 digest from dataset or backend audit signature,Open
+Critical,C-02,localStorage ownership persistence,Persist stewardship claims via backend API and sync across users,Open
+Major,M-01,Accessibility keyboard/focus support,Add aria-labels and focus-visible styles,Open
+Major,M-02,Missing loading skeletons,Render stable skeleton states during intelligence computation,Open
+Major,M-03,KPI dictionary deep linking,Pass contextual query parameters to KPI dictionary,Open
+Major,M-04,Low contrast tertiary text,Upgrade text token to WCAG-compliant contrast,Open
+Minor,N-01,Tooltip truncation,Replace native title tooltips with accessible multiline tooltips,Optional
+Minor,N-02,Static tenant label,Bind tenant information to authenticated organization,Optional
+Minor,N-03,Export briefing action,Add PDF/SOC-2 executive briefing export,Optional
