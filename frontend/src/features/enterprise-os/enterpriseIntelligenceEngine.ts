@@ -107,7 +107,7 @@ export interface DataContractStatus {
     tooltip: string;
   };
   schemaIntegrity: {
-    status: 'VALIDATED';
+    status: 'VALIDATED' | 'UNRECOGNIZED';
     label: string;
     detail: string;
     badgeColor: string;
@@ -1096,7 +1096,8 @@ export function deriveDataContractStatus(
   hasMonetaryField: boolean,
   monetaryColName: string | undefined,
   hasTimestamp: boolean,
-  hasFeatures: boolean
+  hasFeatures: boolean,
+  schemaVerified: boolean = true
 ): DataContractStatus {
   return {
     slaConfiguration: {
@@ -1135,11 +1136,13 @@ export function deriveDataContractStatus(
       tooltip: 'Derived from connected business indicators and statistical attribution methods.',
     },
     schemaIntegrity: {
-      status: 'VALIDATED',
-      label: '✓ Data Contract Validated',
-      detail: 'Cryptographic Provenance & Zero Schema Drift',
-      badgeColor: '#10B981',
-      tooltip: 'Business data structure validated against enterprise data contracts with cryptographic provenance.',
+      status: schemaVerified ? 'VALIDATED' : 'UNRECOGNIZED',
+      label: schemaVerified ? '✓ Data Contract Validated' : '⚠ Unverified Schema Contract',
+      detail: schemaVerified ? 'Cryptographic Provenance & Zero Schema Drift' : 'No Standard Business Metrics Recognized',
+      badgeColor: schemaVerified ? '#10B981' : '#F59E0B',
+      tooltip: schemaVerified
+        ? 'Business data structure validated against enterprise data contracts with cryptographic provenance.'
+        : 'Dataset column headers do not match standard enterprise KPI schema dictionaries. Intelligence confidence downgraded.',
     },
   };
 }
@@ -1741,6 +1744,10 @@ export function buildHarmonizedExecutiveIntelligence(
     },
   ];
 
+  const schemaVerified = (activeDataset as any)?.metadata_json?.schema_verified ?? (activeDataset as any)?.schema_verified ?? true;
+  const colCount = activeDataset?.column_count ?? activeDataset?.columns?.length ?? 2;
+  const isUnivariate = colCount < 2;
+
   const rawConfidence = reportData?.executive_summary?.overall_confidence;
   let confidenceScore = rawConfidence ? Math.round(rawConfidence * 100) : boundedScore < 50 ? 76 : 94;
 
@@ -1748,6 +1755,11 @@ export function buildHarmonizedExecutiveIntelligence(
     confidenceScore = boundedScore < 50 ? 89 : 94;
   } else if (confidenceScore < 60 || isNaN(confidenceScore)) {
     confidenceScore = 74;
+  }
+
+  // Downgrade confidence score on unverified or univariate schemas (< 50%)
+  if (!schemaVerified || isUnivariate) {
+    confidenceScore = Math.min(confidenceScore, 44);
   }
 
   const confInfo = getConfidenceTier(confidenceScore);
@@ -1803,7 +1815,8 @@ export function buildHarmonizedExecutiveIntelligence(
     Boolean(monetaryField),
     monetaryField,
     hasTimestamp,
-    programs[0]?.hasMappedFeatures ?? true
+    programs[0]?.hasMappedFeatures ?? true,
+    schemaVerified
   );
 
   const usableCols = extractUsableColumns(activeDataset, reportData);
@@ -1811,19 +1824,31 @@ export function buildHarmonizedExecutiveIntelligence(
 
   const dataGroundingStatus: DataGroundingStatus = {
     title: 'DATA GROUNDING STATUS',
-    badge: 'Dataset Grounded',
-    subtitle: 'Runtime Validation Passed',
-    isFullyGrounded: true,
-    tooltip: 'Status derived from active governance checks, runtime validation rules, and available dataset evidence.',
+    badge: !schemaVerified ? 'Unverified Schema' : isUnivariate ? 'Univariate Telemetry' : 'Dataset Grounded',
+    subtitle: !schemaVerified ? 'Synthetic / Non-Standard Schema' : isUnivariate ? 'Causal Attribution Suspended' : 'Runtime Validation Passed',
+    isFullyGrounded: schemaVerified && !isUnivariate,
+    tooltip: !schemaVerified
+      ? 'Dataset column headers do not match enterprise business schema dictionaries. Operating under unverified schema quarantine.'
+      : isUnivariate
+      ? 'Single-column dataset: bivariate causal DAG and correlation attributions suspended.'
+      : 'Status derived from active governance checks, runtime validation rules, and available dataset evidence.',
     checks: [
       { rule: 'Data Lineage Verified', verified: true, details: 'Governed data pipeline with active provenance tracking.' },
-      { rule: 'Schema Contract Verified', verified: true, details: 'Business data schema validated against enterprise data contract.' },
+      {
+        rule: 'Schema Contract Verified',
+        verified: schemaVerified && !isUnivariate,
+        details: !schemaVerified
+          ? 'Warning: No standard enterprise business metrics recognized in schema.'
+          : isUnivariate
+          ? 'Warning: Univariate dataset lacks bivariate dimensionality for causal analysis.'
+          : 'Business data schema validated against enterprise data contract.',
+      },
       { rule: 'Source Evidence Connected', verified: true, details: 'Causal graph connected to verified business data sources.' },
       { rule: 'Governance Policy Active', verified: true, details: 'Enterprise governance policies and baseline thresholds enforced.' },
       { rule: 'Audit Trail Available', verified: true, details: 'Cryptographic audit trail and immutable decision logs enabled.' },
       { rule: 'Decision Traceability Enabled', verified: true, details: 'End-to-end decision lineage from data source to executive action.' },
       { rule: 'Operational Exposure Grounded', verified: true, details: 'Risk exposure computed directly from active account records.' },
-      { rule: 'Business KPI Verified', verified: true, details: `${metricsCount} tracked business KPIs validated against governed metric definitions.` },
+      { rule: 'Business KPI Verified', verified: schemaVerified && !isUnivariate, details: `${metricsCount} tracked business KPIs validated against governed metric definitions.` },
     ],
   };
 
@@ -1836,8 +1861,10 @@ export function buildHarmonizedExecutiveIntelligence(
     },
     diagnosticGraph: {
       title: 'Diagnostic Graph',
-      badge: `${boundedScore >= 85 ? '0 Risk' : '4 Active Risk'} Edges`,
-      statusDetail: `${boundedScore >= 85 ? 'Zero Causal Anomaly Clusters' : `2 Root Anomaly Clusters (${operationalRootCause}, ${attributions[1]?.factor})`} • Governed Causal Graph`,
+      badge: isUnivariate ? 'Univariate Telemetry' : `${boundedScore >= 85 ? '0 Risk' : '4 Active Risk'} Edges`,
+      statusDetail: isUnivariate
+        ? 'Univariate Telemetry — Causal Attribution Suspended • Minimum 2 Columns Required for Causal DAG'
+        : `${boundedScore >= 85 ? 'Zero Causal Anomaly Clusters' : `2 Root Anomaly Clusters (${operationalRootCause}, ${attributions[1]?.factor})`} • Governed Causal Graph`,
       linkTo: '/diagnostics',
     },
     actionPortfolio: {
@@ -2111,12 +2138,16 @@ export function validateHarmonizedIntelligence(intel: HarmonizedExecutiveIntelli
   if (!rule9Passed) errors.push('Rule 9 violated: zero accounts at risk during active risk.');
 
   // Rule 10: Data Grounding Runtime Verification
-  const rule10Passed = intel.dataGroundingStatus.isFullyGrounded && intel.dataGroundingStatus.checks.every((c) => c.verified);
+  const rule10Passed = intel.dataGroundingStatus.isFullyGrounded
+    ? intel.dataGroundingStatus.checks.every((c) => c.verified)
+    : intel.dataGroundingStatus.badge.includes('Unverified') || intel.dataGroundingStatus.badge.includes('Univariate');
   assertions.push({
     ruleName: 'Rule 10: Dataset Grounding Runtime Verification',
     passed: rule10Passed,
     details: rule10Passed
-      ? 'Verified: All enterprise data grounding invariants validated. Platform operates with zero synthetic runtime artifacts.'
+      ? (intel.dataGroundingStatus.isFullyGrounded
+          ? 'Verified: All enterprise data grounding invariants validated. Platform operates with zero synthetic runtime artifacts.'
+          : `Verified: Dataset quarantine active (${intel.dataGroundingStatus.badge}: ${intel.dataGroundingStatus.subtitle}).`)
       : 'Failed: Data grounding contract failed.',
   });
   if (!rule10Passed) errors.push('Rule 10 violated: data grounding failure.');

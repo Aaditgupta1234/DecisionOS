@@ -118,7 +118,14 @@ class DatasetValidator:
 
         raw_columns = [str(c) for c in raw_headers]
 
-        # 5. Check for minimum record count (at least 1 row)
+        # 5. Check for minimum column dimensionality (at least 2 columns for causal & bivariate intelligence)
+        if len(raw_columns) < 2 or len(df.columns) < 2:
+            errors.append({
+                "type": "INSUFFICIENT_COLUMNS",
+                "message": "Dataset must contain at least 2 distinct columns for causal intelligence and correlation analysis.",
+            })
+
+        # 6. Check for minimum record count (at least 1 row)
         record_count = len(df)
         if record_count == 0:
             errors.append({

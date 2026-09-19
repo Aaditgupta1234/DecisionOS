@@ -95,9 +95,12 @@ def upload_dataset(
     dataset.processing_completed_at = datetime.now(timezone.utc)
 
     # 6. Extract columns, generate automated schema mappings, and store DatasetColumn records
+    matched_high_conf_count = 0
     for col in validation.columns:
         normalized = normalize_column_name(col)
         suggested_field, confidence = schema_mapper.match_column(col)
+        if confidence >= 0.5:
+            matched_high_conf_count += 1
         column_record = DatasetColumn(
             dataset_id=dataset.id,
             original_name=col,
@@ -108,6 +111,18 @@ def upload_dataset(
             sample_value=validation.sample_values.get(col, ""),
         )
         db.add(column_record)
+
+    schema_verified = matched_high_conf_count > 0 or len(validation.columns) >= 3
+    dataset.metadata_json = {
+        "source": "manual_upload",
+        "encoding": "utf-8",
+        "upload_method": "csv_upload",
+        "file_extension": "csv",
+        "columns_detected": validation.column_count,
+        "schema_verified": schema_verified,
+        "matched_business_fields": matched_high_conf_count,
+        "grounding_warning": None if schema_verified else "No standard enterprise business metrics recognized in schema.",
+    }
 
     db.commit()
     db.refresh(dataset)
