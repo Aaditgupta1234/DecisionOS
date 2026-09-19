@@ -43,7 +43,7 @@ export const ReportsView: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await aggregateReportData(dataset, user?.email || 'executive@decisionos.ai');
+      const data = await aggregateReportData(dataset, user?.email || 'enterprise.admin@internal.corp');
       setReportData(data);
     } catch (err: any) {
       console.error('Failed to load executive report data:', err);

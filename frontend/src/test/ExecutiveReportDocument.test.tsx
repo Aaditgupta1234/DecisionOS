@@ -9,7 +9,7 @@ describe('ExecutiveReportDocument Component', () => {
     reportId: 'rep-test-12345',
     datasetId: 'd-12345678',
     generatedAt: '2026-08-14T00:00:00Z',
-    generatedBy: 'executive@decisionos.ai',
+    generatedBy: 'admin@enterprise.internal',
     reportVersion: '1.0.0',
     dataset: {
       id: 'd-12345678',

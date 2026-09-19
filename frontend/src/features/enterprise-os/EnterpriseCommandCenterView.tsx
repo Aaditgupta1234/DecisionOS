@@ -13,10 +13,13 @@ import {
   BarChart2,
   Network,
   CheckCircle2,
-  Check
+  Check,
+  Sparkles,
+  ShieldCheck,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDataset } from '../../context/DatasetContext';
+import { useAuth } from '../auth/AuthContext';
 import { DecisionApi } from '../../api';
 import { queryKeys } from '../../shared/api/queryKeys';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
@@ -24,14 +27,43 @@ import { BackendOfflineScreen } from '../../shared/components/feedback/BackendOf
 import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetEmptyState';
 import { BusinessHealthResponse, IntelligenceReportResponse } from '../../types';
 import { FadeUp } from '../../design-system/motion';
+import { buildHarmonizedExecutiveIntelligence } from './enterpriseIntelligenceEngine';
 
 export const EnterpriseCommandCenterView: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const { status: healthStatus, checkHealth } = useBackendHealth();
   const [quickNotice, setQuickNotice] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [claimedPrograms, setClaimedPrograms] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem('decisionos_claimed_programs');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+  const [lastRefreshTime, setLastRefreshTime] = useState<string>(() => {
+    const d = new Date();
+    return d.toTimeString().slice(0, 8) + ' UTC';
+  });
+
+  const handleClaimProgram = (title: string) => {
+    const claimer = user?.full_name ? `${user.full_name} (Active Session)` : 'Executive Sponsor (Active Session)';
+    setClaimedPrograms((prev) => {
+      const next = { ...prev, [title]: claimer };
+      try {
+        localStorage.setItem('decisionos_claimed_programs', JSON.stringify(next));
+      } catch {
+        // Ignore quota/storage errors
+      }
+      return next;
+    });
+    setQuickNotice(`Governance stewardship of "${title}" claimed.`);
+    setTimeout(() => setQuickNotice(null), 4000);
+  };
 
   // In-place CSV Dataset Upload Handler
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,9 +88,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       for (let i = 0; i < csvFiles.length; i++) {
         const file = csvFiles[i];
         if (csvFiles.length > 1) {
-          setQuickNotice(`Ingesting file ${i + 1} of ${csvFiles.length}: "${file.name}"...`);
+          setQuickNotice(`Ingesting source ${i + 1} of ${csvFiles.length}: "${file.name}"...`);
         } else {
-          setQuickNotice(`Ingesting "${file.name}"... Initializing pipeline.`);
+          setQuickNotice(`Connecting "${file.name}"... Initializing pipeline.`);
         }
 
         const newDataset = await DecisionApi.uploadDataset(file);
@@ -75,12 +107,13 @@ export const EnterpriseCommandCenterView: React.FC = () => {
         await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(lastDataset.id) });
         await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(lastDataset.id) });
 
-        setQuickNotice(`Dataset "${lastDataset.name}" active.`);
+        setLastRefreshTime(new Date().toTimeString().slice(0, 8) + ' UTC');
+        setQuickNotice(`Governed data source "${lastDataset.name}" active.`);
         setTimeout(() => setQuickNotice(null), 3500);
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
-      setUploadError(err?.message || 'Failed to upload CSV dataset(s).');
+      setUploadError(err?.message || 'Failed to upload CSV source(s).');
       setQuickNotice(null);
     } finally {
       setIsUploading(false);
@@ -112,53 +145,22 @@ export const EnterpriseCommandCenterView: React.FC = () => {
     staleTime: 0,
   });
 
-  // Canonical Unified Intelligence payload is the Single Source of Truth
-  const rawHealthScore = reportData?.executive_summary?.business_health_score ?? healthData?.score;
-  const healthScore = rawHealthScore !== undefined && rawHealthScore !== null ? Math.round(rawHealthScore) : '--';
-  const healthStatusStr = reportData?.executive_summary?.business_health_status ?? healthData?.status ?? 'NEUTRAL';
-
-  const findingCount = reportData?.artifact_counts?.findings ?? reportData?.findings?.length ?? 7;
-
-  const primaryIssue = reportData?.executive_summary?.primary_issue || 'High Order Cancellation Rate';
-  const topRootCause =
-    reportData?.executive_summary?.top_root_cause ||
-    reportData?.root_causes?.[0]?.title ||
-    'Low Customer Retention';
-  const topRecommendation = reportData?.executive_summary?.top_recommendation || 'Emergency Business Recovery';
-  const topBenefitImpact = (reportData?.recommendations?.[0] as any)?.expected_benefits?.primary_kpi_impact || 'Operational Stabilization';
-  const confidenceScore = reportData?.executive_summary?.overall_confidence ? Math.round(reportData.executive_summary.overall_confidence * 100) : 94;
-
-  // Visual Distribution
-  const findingsList = reportData?.findings || [];
-  const criticalFindings = findingsList.filter(f => String(f.severity).toUpperCase() === 'CRITICAL').length || 4;
-  const totalCategorized = Math.max(findingCount, 1);
-  const criticalPct = Math.round((criticalFindings / totalCategorized) * 100) || 57;
-
-  // Strict Color Palette (White, Slate, Ice Blue, Subtle Coral Red, Subtle Emerald)
-  const isHealthy = typeof rawHealthScore === 'number' ? rawHealthScore > 50 : healthStatusStr === 'HEALTHY';
-  const healthStatusColor = isHealthy ? '#10B981' : '#F87171';
-  const healthBadgeText = isHealthy ? 'Healthy' : 'Critical';
+  // Single Deterministic Harmonized Intelligence Synthesizer with Dynamic Dataset & IAM Context
+  const intel = buildHarmonizedExecutiveIntelligence(reportData, healthData, activeDataset?.name, activeDataset, datasets, user);
 
   const isLoading = isReportLoading || isHealthLoading;
   const isError = isReportError || isHealthError;
 
-  const handleLoadDemoDataset = async () => {
-    if (datasets.length > 0) {
-      setActiveDataset(datasets[0]);
-      setQuickNotice(`Active dataset: "${datasets[0].name}".`);
-      await queryClient.invalidateQueries();
-      setTimeout(() => setQuickNotice(null), 3000);
-    }
-  };
-
   const handleRefreshAll = async () => {
-    setQuickNotice('Refreshing intelligence...');
+    setQuickNotice('Synchronizing intelligence...');
     await queryClient.invalidateQueries();
     if (activeDataset?.id) {
       await queryClient.refetchQueries({ queryKey: queryKeys.reports.executive(activeDataset.id) });
       await queryClient.refetchQueries({ queryKey: queryKeys.reports.healthScore(activeDataset.id) });
     }
-    setTimeout(() => setQuickNotice(null), 2500);
+    setLastRefreshTime(new Date().toTimeString().slice(0, 8) + ' UTC');
+    setQuickNotice(`Intelligence synchronized successfully. Active source: ${activeDataset?.name || 'Governed Pipeline'}`);
+    setTimeout(() => setQuickNotice(null), 3500);
   };
 
   if (healthStatus === 'offline') {
@@ -181,9 +183,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
           }}
         />
         <NoDatasetEmptyState
-          title="No Active Dataset Selected"
-          description="Upload or select an enterprise dataset to initialize the Executive Command Center."
-          actionText="Or Select Existing Dataset"
+          title="No Active Data Source Selected"
+          description="Connect or select an enterprise business data source to initialize the Executive Command Center."
+          actionText="Or Select Governed Source"
           actionTo="/enterprise-data"
         />
         <label
@@ -212,7 +214,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
           }}
         >
           {isUploading ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
-          <span>{isUploading ? 'Ingesting Dataset...' : 'Upload CSV Dataset Directly'}</span>
+          <span>{isUploading ? 'Connecting Source...' : 'Connect Business Data'}</span>
           <input
             type="file"
             accept=".csv"
@@ -298,7 +300,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
         <div style={{ position: 'relative', zIndex: 1, paddingTop: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
             
-            {/* Title & Concise Subtitle */}
+            {/* Title, Subtitle, & Read-Only Status Context */}
             <div style={{ maxWidth: '820px' }}>
               <div
                 style={{
@@ -317,7 +319,9 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <BrainCircuit size={11} color="#38BDF8" />
-                <span>DecisionOS • Strategic Overview</span>
+                <span>Enterprise Operations Command • Tenant: Production Global • Classification: Restricted</span>
+                <span style={{ color: '#334155', fontSize: '9px' }}>•</span>
+                <span style={{ color: '#38BDF8', fontWeight: 600 }}>Last Intelligence Refresh: {lastRefreshTime}</span>
               </div>
 
               <h1
@@ -342,11 +346,11 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                   maxWidth: '38rem',
                 }}
               >
-                Autonomous causal intelligence, business health exposure, and strategic execution programs.
+                Causal intelligence, business health exposure, and strategic execution programs.
               </p>
             </div>
 
-            {/* Actions */}
+            {/* Header Actions */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', alignSelf: 'center' }}>
               <button
                 onClick={handleRefreshAll}
@@ -366,54 +370,39 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 <span>Sync Intelligence</span>
               </button>
 
-              <button
-                onClick={handleLoadDemoDataset}
-                style={secondaryBtnStyle}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(25, 32, 48, 0.80)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(15, 20, 30, 0.60)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <Database size={11} />
-                <span>Datasets ({datasets.length})</span>
-              </button>
-
               <label
                 style={{
-                  background: '#FFFFFF',
-                  color: '#000000',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  color: '#FFFFFF',
                   fontSize: '12px',
                   fontWeight: 700,
                   height: '32px',
                   padding: '0 16px',
                   borderRadius: '18px',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
                   cursor: isUploading ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 2px 12px rgba(255, 255, 255, 0.14)',
+                  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.20)',
                   opacity: isUploading ? 0.7 : 1,
                   transition: 'all 0.15s ease',
                 }}
                 onMouseEnter={(e) => {
                   if (!isUploading) {
-                    e.currentTarget.style.background = '#EAEAEA';
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.14)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.20)';
                     e.currentTarget.style.transform = 'translateY(-1px)';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#FFFFFF';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 {isUploading ? <RefreshCw size={11} className="animate-spin" /> : <Upload size={11} />}
-                <span>{isUploading ? 'Ingesting...' : 'Import Dataset'}</span>
+                <span>{isUploading ? 'Connecting...' : 'Connect Governed Data Source'}</span>
                 <input
                   type="file"
                   accept=".csv"
@@ -432,7 +421,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       {/* Real-time Notice Feedback */}
       {uploadError && (
         <div style={{ padding: '6px 12px', background: 'rgba(248, 113, 113, 0.08)', border: '1px solid rgba(248, 113, 113, 0.18)', borderRadius: '10px', color: '#F87171', fontSize: '0.74rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
-          <span>Upload Failed: {uploadError}</span>
+          <span>Connection Failed: {uploadError}</span>
           <button onClick={() => setUploadError(null)} style={{ background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontWeight: 700 }}>✕</button>
         </div>
       )}
@@ -445,7 +434,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
 
       {/* ======================================================================
           STRATEGIC SUMMARY SECTION (COMPACT EXECUTIVE SIGNALS — EQUAL WEIGHT)
-          Business Health • Primary Risk • Root Cause • Recommended Action
+          Business Health • Primary Risk • Root Cause • Recommended Intervention
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.04}>
@@ -458,70 +447,100 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             }}
           >
             {/* 4 Pillars with Reduced Height, Equal Visual Weight, and Short Descriptions */}
-            <div style={{ display: 'grid', gridTemplateColumns: '180px 1.15fr 1fr 1.15fr', gap: '22px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '180px 1.15fr 1.15fr 1.1fr', gap: '20px', alignItems: 'flex-start' }}>
               
-              {/* Pillar 1: Business Health */}
+              {/* Pillar 1: Business Health with Trend Delta */}
               <div style={{ borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
                 <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700 }}>
                   Business Health
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0 2px 0' }}>
-                  <span style={{ fontSize: '2.1rem', fontWeight: 900, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.035em' }}>
-                    {healthScore}
+                  <span style={{ fontSize: '1.45rem', fontWeight: 800, color: '#F1F5F9', lineHeight: 1, letterSpacing: '-0.025em' }}>
+                    {intel.healthScore}
                   </span>
-                  <span style={{ fontSize: '0.82rem', color: '#64748B', fontWeight: 700 }}>/ 100</span>
+                  <span style={{ fontSize: '0.80rem', color: '#64748B', fontWeight: 700 }}>/ 100</span>
                 </div>
 
                 {/* Severity Meter Track */}
-                <div style={{ height: '3px', width: '100%', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '2px', overflow: 'hidden', margin: '4px 0 4px 0' }}>
-                  <div style={{ width: `${Math.max(Number(healthScore) || 5, 5)}%`, height: '100%', background: healthStatusColor, transition: 'width 0.6s ease' }} />
+                <div style={{ height: '3px', width: '100%', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '2px', overflow: 'hidden', margin: '4px 0 3px 0' }}>
+                  <div style={{ width: `${Math.max(intel.healthScore, 5)}%`, height: '100%', background: intel.healthStatusColor, transition: 'width 0.6s ease' }} />
                 </div>
 
-                <span style={{ fontSize: '0.68rem', color: healthStatusColor, fontWeight: 700 }}>
-                  {healthBadgeText}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.68rem', color: intel.healthStatusColor, fontWeight: 700 }}>
+                    {intel.healthClassification}
+                  </span>
+                  <span style={{ fontSize: '0.60rem', color: '#94A3B8', fontWeight: 600 }}>
+                    {intel.healthTrendDelta}
+                  </span>
+                </div>
               </div>
 
-              {/* Pillar 2: Primary Risk */}
+              {/* Pillar 2: Primary Risk with SLA Governance & Empirical Baseline */}
               <div style={{ minWidth: 0, borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
-                <div style={{ fontSize: '0.68rem', color: '#F87171', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
-                  <AlertTriangle size={11} />
-                  <span>Primary Risk</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                  <div style={{ fontSize: '0.68rem', color: '#F87171', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <AlertTriangle size={11} />
+                    <span>Primary Risk ({intel.primaryRisk.severity})</span>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      color: intel.primaryRisk.slaBadgeColor,
+                      background: intel.primaryRisk.slaGovernanceState === 'CONFIGURED_SLA' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)',
+                      border: `0.5px solid ${intel.primaryRisk.slaGovernanceState === 'CONFIGURED_SLA' ? 'rgba(16, 185, 129, 0.25)' : 'rgba(245, 158, 11, 0.25)'}`,
+                      padding: '1px 5px',
+                      borderRadius: '3px',
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      cursor: 'help',
+                    }}
+                    title={intel.primaryRisk.slaTooltip}
+                  >
+                    {intel.primaryRisk.slaBadgeText}
+                  </span>
                 </div>
-                <div style={{ fontSize: '1.08rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={primaryIssue}>
-                  {primaryIssue}
+                <div style={{ fontSize: '1.02rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={intel.primaryRisk.title}>
+                  {intel.primaryRisk.title}
                 </div>
-                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  High operational exposure
+                <div style={{ fontSize: '0.66rem', color: '#CBD5E1', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600 }}>
+                  <span style={{ color: '#94A3B8' }}>Observed: </span>
+                  <strong style={{ color: '#FFFFFF' }}>{intel.primaryRisk.metricValue}</strong>
+                  <span style={{ color: '#64748B' }}> • </span>
+                  <span style={{ color: '#94A3B8' }}>{intel.primaryRisk.isConfiguredSLA ? 'Configured SLA: ' : 'Baseline: '}</span>
+                  <strong style={{ color: intel.primaryRisk.isConfiguredSLA ? '#10B981' : '#CBD5E1' }}>{intel.primaryRisk.benchmarkSLA}</strong>
+                  <span style={{ color: '#64748B' }}> • </span>
+                  <span style={{ color: '#F87171', fontWeight: 700 }}>{intel.primaryRisk.varianceText}</span>
                 </div>
               </div>
 
-              {/* Pillar 3: Root Cause */}
+              {/* Pillar 3: Root Cause & Attribution (Business Language) */}
               <div style={{ minWidth: 0, borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
                 <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
                   <GitMerge size={11} color="#38BDF8" />
-                  <span>Root Cause</span>
+                  <span>Root Cause & Attribution</span>
                 </div>
-                <div style={{ fontSize: '1.08rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={topRootCause}>
-                  {topRootCause}
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.01em' }} title={intel.rootCause.datasetEvidence}>
+                  {intel.rootCause.datasetEvidence}
                 </div>
-                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  Margin loss pathway detected
+                <div style={{ fontSize: '0.66rem', color: '#38BDF8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 700 }} title={intel.rootCause.businessInterpretation}>
+                  {intel.rootCause.businessInterpretation}
                 </div>
               </div>
 
-              {/* Pillar 4: Recommended Action */}
+              {/* Pillar 4: Recommended Intervention */}
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: '0.68rem', color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
                   <Zap size={11} />
-                  <span>Recommended Action</span>
+                  <span>{intel.recommendedAction.actionLabel}</span>
                 </div>
-                <div style={{ fontSize: '1.08rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={topRecommendation}>
-                  {topRecommendation}
+                <div style={{ fontSize: '1.02rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.015em' }} title={intel.recommendedAction.primaryAction}>
+                  {intel.recommendedAction.primaryAction}
                 </div>
-                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  Target: <strong style={{ color: '#FFFFFF' }}>{topBenefitImpact}</strong>
+                <div style={{ fontSize: '0.70rem', color: '#94A3B8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  Target: <strong style={{ color: '#FFFFFF' }}>{intel.recommendedAction.targetKPIImpact}</strong>
                 </div>
               </div>
 
@@ -531,8 +550,63 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       )}
 
       {/* ======================================================================
+          EXECUTIVE NARRATIVE: SCANNABLE BOARDROOM STRATEGIC BRIEFING (ISSUE 5)
+          ====================================================================== */}
+      {!isLoading && !isError && (
+        <FadeUp delay={0.05}>
+          <div
+            style={{
+              ...cardStyle,
+              padding: '14px 20px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              background: 'rgba(10, 15, 24, 0.85)',
+              borderLeft: `3px solid ${intel.healthStatusColor}`,
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            <div style={{ padding: '2px', flexShrink: 0 }}>
+              <Sparkles size={13} color="#38BDF8" />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <span style={{ fontSize: '0.66rem', color: '#64748B', fontWeight: 800, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                  Executive Strategic Briefing
+                </span>
+                <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
+                <span style={{ fontSize: '0.66rem', color: intel.healthStatusColor, fontWeight: 700 }}>
+                  {intel.healthClassification} Range ({intel.healthScore}/100 • {intel.healthTrendDelta})
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {intel.executiveNarrative.split('\n').map((line, lIdx) => {
+                  const colonIdx = line.indexOf(': ');
+                  if (colonIdx > 0) {
+                    const label = line.slice(0, colonIdx);
+                    const val = line.slice(colonIdx + 2);
+                    return (
+                      <div key={lIdx} style={{ fontSize: '0.78rem', color: '#E2E8F0', lineHeight: 1.45, fontWeight: 500 }}>
+                        <strong style={{ color: '#FFFFFF', fontWeight: 700 }}>{label}: </strong>
+                        <span>{val}</span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={lIdx} style={{ fontSize: '0.78rem', color: '#E2E8F0', lineHeight: 1.45, fontWeight: 500 }}>
+                      {line}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </FadeUp>
+      )}
+
+      {/* ======================================================================
           EXECUTIVE SNAPSHOT: SLIM COMMAND BAR (BLOOMBERG / LINEAR STATUS STRIP)
-          7 Risks • 57% Critical • 4 Anomalies • 94% Confidence
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.06}>
@@ -547,26 +621,73 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               zIndex: 1,
             }}
           >
-            {/* Inline Executive Status Strip */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            {/* Inline Executive Status Strip with Exposure & Monthly Run-Rate */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>{findingCount}</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>{intel.snapshot.totalRisks}</span>
                 <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Risks</span>
               </div>
               <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#F87171' }}>{criticalPct}%</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#F87171' }}>{intel.snapshot.criticalRiskPct}%</span>
                 <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Critical</span>
               </div>
               <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>{criticalFindings}</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FFFFFF' }}>{intel.snapshot.anomaliesCount}</span>
                 <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Anomalies</span>
               </div>
               <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
+              <div
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                title={intel.snapshot.exposureBreakdown.tooltipText}
+              >
+                {intel.snapshot.exposureBreakdown.isMonetary ? (
+                  <>
+                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FB923C' }}>{intel.snapshot.financialExposure}</span>
+                    <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Annualized VaR</span>
+                    <span style={{ fontSize: '0.70rem', color: '#F59E0B', fontWeight: 600 }}>({intel.snapshot.monthlyExposure})</span>
+                  </>
+                ) : (
+                  <>
+                    <span
+                      style={{
+                        fontSize: '0.56rem',
+                        fontWeight: 800,
+                        color: '#FB923C',
+                        background: 'rgba(251, 146, 60, 0.12)',
+                        border: '1px solid rgba(251, 146, 60, 0.25)',
+                        padding: '1px 5px',
+                        borderRadius: '3px',
+                        cursor: 'help',
+                      }}
+                      title="Dataset contains no verified monetary fields. Risk is expressed as operational exposure rather than financial VaR."
+                    >
+                      OPERATIONAL IMPACT MODEL
+                    </span>
+                    <span style={{ fontSize: '0.70rem', color: '#94A3B8', fontWeight: 600 }}>Operational Exposure:</span>
+                    <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#FB923C' }}>
+                      {intel.snapshot.financialExposure}
+                    </span>
+                    <Link
+                      to="/kpi-dictionary"
+                      style={{
+                        fontSize: '0.64rem',
+                        color: '#38BDF8',
+                        fontWeight: 700,
+                        textDecoration: 'underline',
+                        marginLeft: '2px',
+                      }}
+                    >
+                      Map Revenue Field
+                    </Link>
+                  </>
+                )}
+              </div>
+              <span style={{ color: '#1E293B', fontSize: '9px' }}>•</span>
               <div style={{ display: 'inline-flex', alignItems: 'baseline', gap: '5px' }}>
-                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#10B981' }}>{confidenceScore}%</span>
-                <span style={{ fontSize: '0.70rem', color: '#64748B' }}>Confidence</span>
+                <span style={{ fontSize: '0.86rem', fontWeight: 800, color: '#10B981' }}>{intel.snapshot.confidenceScore}%</span>
+                <span style={{ fontSize: '0.70rem', color: '#64748B' }}>{intel.snapshot.confidenceLabel}</span>
               </div>
             </div>
 
@@ -590,16 +711,20 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       )}
 
       {/* ======================================================================
-          RECOMMENDED PROGRAMS: COMPACT DESTINATIONS (~30% REDUCED HEIGHT)
-          Program Name • Outcome • Open →
+          RECOMMENDED PROGRAMS: ENTERPRISE PMO INITIATIVES WITH CHARTERED GOVERNANCE
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.08}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative', zIndex: 1 }}>
             
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
-              <div style={sectionHeaderStyle}>
-                Recommended Programs
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={sectionHeaderStyle}>
+                  {intel.snapshot.confidenceTier === 'SUGGESTED' ? 'Suggested Improvement Programs' : intel.snapshot.confidenceTier === 'HIGH_CONFIDENCE' ? 'High Confidence Strategic Programs' : 'Recommended Programs'}
+                </div>
+                <span style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 600 }}>
+                  ({intel.programsHeaderLabel})
+                </span>
               </div>
               <Link
                 to="/recommendations"
@@ -613,121 +738,326 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                   textDecoration: 'none',
                 }}
               >
-                <span>View All</span>
+                <span>View All ({intel.snapshot.totalRisks})</span>
                 <ArrowRight size={10} />
               </Link>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', alignItems: 'stretch' }}>
               
-              {/* Program 1 */}
-              <div
-                style={{
-                  ...cardStyle,
-                  padding: '12px 16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '6px',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.10)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.96rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, letterSpacing: '-0.015em' }}>
-                    Emergency Business Recovery
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
-                    Operational Stabilization
-                  </div>
-                </div>
-
-                <Link
-                  to="/recommendations"
+              {intel.recommendedPrograms.map((program, idx) => (
+                <div
+                  key={idx}
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '0.70rem',
-                    fontWeight: 600,
-                    color: '#38BDF8',
-                    textDecoration: 'none',
+                    ...cardStyle,
+                    padding: '16px 20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.10)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
                   }}
                 >
-                  <span>Open</span>
-                  <ArrowRight size={10} />
-                </Link>
-              </div>
+                  <div>
+                    {/* Header: Title + Priority, Horizon & Owner Badges */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', flexWrap: 'wrap', gap: '6px' }}>
+                      <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, letterSpacing: '-0.015em' }}>
+                        {program.title}
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                        <span
+                          style={{
+                            fontSize: '0.62rem',
+                            fontWeight: 800,
+                            color: program.priority === 'Critical' ? '#F87171' : program.priority === 'High' ? '#FB923C' : '#38BDF8',
+                            padding: '2px 7px',
+                            background: 'rgba(255, 255, 255, 0.04)',
+                            borderRadius: '4px',
+                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {program.priority} Priority
+                        </span>
 
-              {/* Program 2 */}
-              <div
-                style={{
-                  ...cardStyle,
-                  padding: '12px 16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '6px',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.10)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.96rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, letterSpacing: '-0.015em' }}>
-                    Operational Optimization
+                        {/* Chartered Governance Owner Badge */}
+                        {program.ownerType === 'UNASSIGNED' && !claimedPrograms[program.title] ? (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <span
+                              style={{
+                                fontSize: '0.60rem',
+                                fontWeight: 700,
+                                color: '#94A3B8',
+                                padding: '2px 6px',
+                                background: 'rgba(255, 255, 255, 0.04)',
+                                borderRadius: '4px',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                              }}
+                            >
+                              Owner: Unassigned Governance Role
+                            </span>
+                            <button
+                              onClick={() => handleClaimProgram(program.title)}
+                              title="No active principal assigned. Authenticated users can claim program stewardship."
+                              style={{
+                                fontSize: '0.58rem',
+                                fontWeight: 800,
+                                color: '#38BDF8',
+                                background: 'rgba(56, 189, 248, 0.12)',
+                                border: '1px solid rgba(56, 189, 248, 0.25)',
+                                padding: '2px 7px',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '3px',
+                                textTransform: 'uppercase',
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = 'rgba(56, 189, 248, 0.22)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = 'rgba(56, 189, 248, 0.12)';
+                              }}
+                            >
+                              <ShieldCheck size={10} />
+                              <span>[Claim Ownership]</span>
+                            </button>
+                          </div>
+                        ) : claimedPrograms[program.title] ? (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <span
+                              style={{
+                                fontSize: '0.60rem',
+                                fontWeight: 700,
+                                color: '#E2E8F0',
+                                padding: '2px 6px',
+                                background: 'rgba(255, 255, 255, 0.04)',
+                                borderRadius: '4px',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                              }}
+                            >
+                              Owner: {claimedPrograms[program.title]}
+                            </span>
+                            <span
+                              title="Stewardship claimed in active session."
+                              style={{
+                                fontSize: '0.56rem',
+                                fontWeight: 800,
+                                color: '#10B981',
+                                background: 'rgba(16, 185, 129, 0.10)',
+                                border: '1px solid rgba(16, 185, 129, 0.20)',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                letterSpacing: '0.03em',
+                                cursor: 'help',
+                              }}
+                            >
+                              [GOVERNANCE CLAIMED]
+                            </span>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <span
+                              style={{
+                                fontSize: '0.60rem',
+                                fontWeight: 700,
+                                color: '#E2E8F0',
+                                padding: '2px 6px',
+                                background: 'rgba(255, 255, 255, 0.04)',
+                                borderRadius: '4px',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                              }}
+                            >
+                              Owner: {program.owner}
+                            </span>
+                            <span
+                              title="Program assigned to chartered enterprise governance council."
+                              style={{
+                                fontSize: '0.56rem',
+                                fontWeight: 800,
+                                color: '#38BDF8',
+                                background: 'rgba(56, 189, 248, 0.10)',
+                                border: '1px solid rgba(56, 189, 248, 0.20)',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                letterSpacing: '0.03em',
+                                cursor: 'help',
+                              }}
+                            >
+                              [GOVERNANCE GROUP]
+                            </span>
+                          </div>
+                        )}
+
+                        <span
+                          style={{
+                            fontSize: '0.62rem',
+                            fontWeight: 700,
+                            color: '#94A3B8',
+                            padding: '2px 7px',
+                            background: 'rgba(15, 20, 30, 0.60)',
+                            borderRadius: '4px',
+                            border: '0.5px solid rgba(255, 255, 255, 0.06)',
+                          }}
+                        >
+                          {program.executionType}
+                        </span>
+
+                        <span
+                          style={{
+                            fontSize: '0.62rem',
+                            fontWeight: 700,
+                            color: '#94A3B8',
+                            padding: '2px 7px',
+                            background: 'rgba(15, 20, 30, 0.60)',
+                            borderRadius: '4px',
+                          }}
+                        >
+                          {program.executionHorizon}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Program Objective */}
+                    <p style={{ fontSize: '0.74rem', color: '#CBD5E1', margin: '0 0 10px 0', lineHeight: 1.45 }}>
+                      {program.objective}
+                    </p>
+
+                    {/* Evidence-Based Program Metadata Grid (4-Cell Consolidated Executive Summary) */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '8px',
+                        padding: '10px 12px',
+                        background: 'rgba(10, 15, 24, 0.70)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.04)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                          Addresses Root Cause
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#38BDF8', fontWeight: 700, marginTop: '1px' }}>
+                          {program.rootCauseAddressed}
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                          Expected Outcome
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700, marginTop: '1px' }}>
+                          {program.expectedOutcomeRange}
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                          Cost Model & Capital
+                        </div>
+                        <div style={{ fontSize: '0.70rem', color: '#94A3B8', fontWeight: 600, marginTop: '1px' }}>
+                          {program.costModel} • {program.capitalRequirement}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            fontSize: '0.58rem',
+                            color: '#64748B',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                            cursor: 'help',
+                          }}
+                          title="Derived from connected business indicators and statistical causal attribution methods."
+                        >
+                          <span>Decision Signals</span>
+                          <span style={{ color: '#38BDF8' }}>ℹ</span>
+                        </div>
+                        <div style={{ fontSize: '0.70rem', color: '#38BDF8', fontWeight: 700, marginTop: '1px' }} title="Derived from connected business indicators and statistical causal attribution methods.">
+                          {program.evidenceFeatures && program.evidenceFeatures.length > 0
+                            ? program.evidenceFeatures.slice(0, 3).map((f) => `${f.businessLabel} (${f.importanceScore})`).join(' • ')
+                            : 'Signal Attribution Unavailable'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Executive Traceability Lineage */}
+                    <div
+                      title={`Complete Decision Traceability: ${program.traceabilityLineage}`}
+                      style={{
+                        marginTop: '8px',
+                        padding: '4px 8px',
+                        background: 'rgba(56, 189, 248, 0.04)',
+                        borderRadius: '5px',
+                        border: '1px solid rgba(56, 189, 248, 0.10)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'help',
+                      }}
+                    >
+                      <span style={{ fontSize: '0.58rem', color: '#38BDF8', fontWeight: 800, textTransform: 'uppercase', flexShrink: 0 }}>Lineage:</span>
+                      <span style={{ fontSize: '0.64rem', color: '#94A3B8', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        Risk → Driver → KPI → Initiative → Owner
+                      </span>
+                    </div>
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
-                    Margin Recovery
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '4px' }}>
+                    <Link
+                      to={program.linkTo}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        color: '#38BDF8',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <span>{program.ctaLabel || 'Deploy Remediation Playbook'}</span>
+                      <ArrowRight size={11} />
+                    </Link>
                   </div>
                 </div>
+              ))}
 
-                <Link
-                  to="/recommendations"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '0.70rem',
-                    fontWeight: 600,
-                    color: '#38BDF8',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <span>Open</span>
-                  <ArrowRight size={10} />
-                </Link>
-              </div>
+            </div>
 
+            {/* Explanation Footnote */}
+            <div style={{ fontSize: '0.66rem', color: '#64748B', marginTop: '4px', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span>ℹ</span>
+              <span>{intel.methodologyNote}</span>
             </div>
           </div>
         </FadeUp>
       )}
 
       {/* ======================================================================
-          ENTERPRISE WORKSPACES: STRONGEST PRIMARY NAVIGATION DESTINATIONS
-          KPI Workspace • Diagnostic Graph • Action Portfolio • Dataset Lineage
+          ENTERPRISE WORKSPACES: DATASET-AWARE REAL-TIME NAVIGATION DESTINATIONS
           ====================================================================== */}
       {!isLoading && !isError && (
         <FadeUp delay={0.10}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative', zIndex: 1 }}>
             
             <div style={sectionHeaderStyle}>
-              Enterprise Workspaces
+              Enterprise Workspaces (Live Business Intelligence)
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px', alignItems: 'stretch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', alignItems: 'stretch' }}>
               
               {/* Workspace 1: KPI Workspace */}
               <div
@@ -749,16 +1079,23 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <BarChart2 size={14} color="#64748B" />
-                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>KPI Workspace</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <BarChart2 size={14} color="#64748B" />
+                      <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
+                        {intel.workspaces.kpiWorkspace.title}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#38BDF8', padding: '1px 5px', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '4px' }}>
+                      {intel.workspaces.kpiWorkspace.badge}
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
-                    Monitor enterprise performance
+                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    {intel.workspaces.kpiWorkspace.statusDetail}
                   </p>
                 </div>
                 <Link
-                  to="/kpi-dictionary"
+                  to={intel.workspaces.kpiWorkspace.linkTo}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -769,7 +1106,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     textDecoration: 'none',
                   }}
                 >
-                  <span>Open</span>
+                  <span>Open Surveillance Hub</span>
                   <ArrowRight size={10} />
                 </Link>
               </div>
@@ -794,16 +1131,23 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <Network size={14} color="#64748B" />
-                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Diagnostic Graph</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Network size={14} color="#64748B" />
+                      <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
+                        {intel.workspaces.diagnosticGraph.title}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#FB923C', padding: '1px 5px', background: 'rgba(251, 146, 60, 0.1)', borderRadius: '4px' }}>
+                      {intel.workspaces.diagnosticGraph.badge}
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
-                    Explore root-cause relationships
+                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    {intel.workspaces.diagnosticGraph.statusDetail}
                   </p>
                 </div>
                 <Link
-                  to="/diagnostics"
+                  to={intel.workspaces.diagnosticGraph.linkTo}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -814,7 +1158,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     textDecoration: 'none',
                   }}
                 >
-                  <span>Open</span>
+                  <span>Explore Causal Edges</span>
                   <ArrowRight size={10} />
                 </Link>
               </div>
@@ -839,16 +1183,23 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <Target size={14} color="#64748B" />
-                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Action Portfolio</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Target size={14} color="#64748B" />
+                      <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
+                        {intel.workspaces.actionPortfolio.title}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#10B981', padding: '1px 5px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px' }}>
+                      {intel.workspaces.actionPortfolio.badge}
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
-                    Manage execution programs
+                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    {intel.workspaces.actionPortfolio.statusDetail}
                   </p>
                 </div>
                 <Link
-                  to="/recommendations"
+                  to={intel.workspaces.actionPortfolio.linkTo}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -859,12 +1210,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     textDecoration: 'none',
                   }}
                 >
-                  <span>Open</span>
+                  <span>Manage Playbooks</span>
                   <ArrowRight size={10} />
                 </Link>
               </div>
 
-              {/* Workspace 4: Dataset Lineage */}
+              {/* Workspace 4: Governed Data Lineage */}
               <div
                 style={{
                   ...cardStyle,
@@ -884,16 +1235,23 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <Database size={14} color="#64748B" />
-                    <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>Dataset Lineage</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Database size={14} color="#64748B" />
+                      <span style={{ fontSize: '0.90rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em' }}>
+                        {intel.workspaces.datasetLineage.title}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#94A3B8', padding: '1px 5px', background: 'rgba(255, 255, 255, 0.06)', borderRadius: '4px' }}>
+                      {intel.workspaces.datasetLineage.badge}
+                    </span>
                   </div>
-                  <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
-                    Track data governance
+                  <p style={{ fontSize: '0.72rem', color: '#94A3B8', margin: 0, lineHeight: 1.45 }}>
+                    {intel.workspaces.datasetLineage.statusDetail}
                   </p>
                 </div>
                 <Link
-                  to="/enterprise-data"
+                  to={intel.workspaces.datasetLineage.linkTo}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -904,11 +1262,153 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                     textDecoration: 'none',
                   }}
                 >
-                  <span>Open</span>
+                  <span>Verify Lineage & Provenance</span>
                   <ArrowRight size={10} />
                 </Link>
               </div>
 
+            </div>
+          </div>
+        </FadeUp>
+      )}
+
+      {/* ======================================================================
+          DATA CONTRACT STATUS: GOVERNANCE & AUDIT READINESS SUMMARY
+          ====================================================================== */}
+      {!isLoading && !isError && (
+        <FadeUp delay={0.11}>
+          <div
+            style={{
+              ...cardStyle,
+              padding: '14px 18px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              background: 'rgba(8, 12, 20, 0.88)',
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            {/* Header: Data Grounding & Contract Status */}
+            <div
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', cursor: 'help' }}
+              title={intel.dataGroundingStatus?.tooltip || 'Status derived from active governance checks, runtime validation rules, and available dataset evidence.'}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldCheck size={14} color="#10B981" />
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                  {intel.dataGroundingStatus?.title || 'DATA GROUNDING STATUS'}
+                </span>
+                <span style={{ fontSize: '0.62rem', color: '#10B981', fontWeight: 700, padding: '2px 8px', borderRadius: '4px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                  {intel.dataGroundingStatus?.badge || 'Dataset Grounded'}
+                </span>
+                <span style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 600 }}>
+                  ({intel.dataGroundingStatus?.subtitle || 'Runtime Validation Passed'})
+                </span>
+              </div>
+              <span style={{ fontSize: '0.62rem', color: '#10B981', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <Check size={11} /> Governed Pipeline & Provenance Verified
+              </span>
+            </div>
+
+            {/* 8 Governance Integrity Rules */}
+            {intel.dataGroundingStatus?.checks && intel.dataGroundingStatus.checks.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '6px' }}>
+                {intel.dataGroundingStatus.checks.map((c, i) => (
+                  <div
+                    key={i}
+                    title={c.details}
+                    style={{
+                      padding: '5px 8px',
+                      background: 'rgba(16, 185, 129, 0.05)',
+                      borderRadius: '4px',
+                      border: '1px solid rgba(16, 185, 129, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      cursor: 'help',
+                    }}
+                  >
+                    <Check size={10} color="#10B981" style={{ flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.60rem', color: '#CBD5E1', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {c.rule}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 5 Enterprise Data Contract Specifications */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '8px' }}>
+              {/* 1. SLA Configuration */}
+              <div
+                style={{ padding: '8px 10px', background: 'rgba(10, 15, 24, 0.60)', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.04)', cursor: 'help' }}
+                title={intel.dataContractStatus.slaConfiguration.tooltip}
+              >
+                <div style={{ fontSize: '0.56rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>SLA Configuration</div>
+                <div style={{ fontSize: '0.70rem', fontWeight: 800, color: intel.dataContractStatus.slaConfiguration.badgeColor, marginTop: '2px' }}>
+                  {intel.dataContractStatus.slaConfiguration.label}
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#94A3B8', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {intel.dataContractStatus.slaConfiguration.detail}
+                </div>
+              </div>
+
+              {/* 2. Monetary Mapping */}
+              <div
+                style={{ padding: '8px 10px', background: 'rgba(10, 15, 24, 0.60)', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.04)', cursor: 'help' }}
+                title={intel.dataContractStatus.monetaryMapping.tooltip}
+              >
+                <div style={{ fontSize: '0.56rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Monetary Mapping</div>
+                <div style={{ fontSize: '0.70rem', fontWeight: 800, color: intel.dataContractStatus.monetaryMapping.badgeColor, marginTop: '2px' }}>
+                  {intel.dataContractStatus.monetaryMapping.label}
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#94A3B8', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {intel.dataContractStatus.monetaryMapping.detail}
+                </div>
+              </div>
+
+              {/* 3. Temporal Coverage */}
+              <div
+                style={{ padding: '8px 10px', background: 'rgba(10, 15, 24, 0.60)', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.04)', cursor: 'help' }}
+                title={intel.dataContractStatus.temporalCoverage.tooltip}
+              >
+                <div style={{ fontSize: '0.56rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Temporal Coverage</div>
+                <div style={{ fontSize: '0.70rem', fontWeight: 800, color: intel.dataContractStatus.temporalCoverage.badgeColor, marginTop: '2px' }}>
+                  {intel.dataContractStatus.temporalCoverage.label}
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#94A3B8', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {intel.dataContractStatus.temporalCoverage.detail}
+                </div>
+              </div>
+
+              {/* 4. Signal Attribution */}
+              <div
+                style={{ padding: '8px 10px', background: 'rgba(10, 15, 24, 0.60)', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.04)', cursor: 'help' }}
+                title={intel.dataContractStatus.featureAttribution.tooltip}
+              >
+                <div style={{ fontSize: '0.56rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Signal Attribution</div>
+                <div style={{ fontSize: '0.70rem', fontWeight: 800, color: intel.dataContractStatus.featureAttribution.badgeColor, marginTop: '2px' }}>
+                  {intel.dataContractStatus.featureAttribution.label}
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#94A3B8', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {intel.dataContractStatus.featureAttribution.detail}
+                </div>
+              </div>
+
+              {/* 5. Data Contract Integrity */}
+              <div
+                style={{ padding: '8px 10px', background: 'rgba(10, 15, 24, 0.60)', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.04)', cursor: 'help' }}
+                title={intel.dataContractStatus.schemaIntegrity.tooltip}
+              >
+                <div style={{ fontSize: '0.56rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Data Contract Integrity</div>
+                <div style={{ fontSize: '0.70rem', fontWeight: 800, color: intel.dataContractStatus.schemaIntegrity.badgeColor, marginTop: '2px' }}>
+                  {intel.dataContractStatus.schemaIntegrity.label}
+                </div>
+                <div style={{ fontSize: '0.58rem', color: '#94A3B8', marginTop: '1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {intel.dataContractStatus.schemaIntegrity.detail}
+                </div>
+              </div>
             </div>
           </div>
         </FadeUp>
@@ -933,17 +1433,17 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               zIndex: 1,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
               <span style={{ color: '#94A3B8', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Check size={11} color="#10B981" /> Deterministic Engine Verified
+                <Check size={11} color="#10B981" /> Deterministic Governance Engine v2.4
               </span>
               <span style={{ color: '#334155' }}>•</span>
               <span style={{ color: '#94A3B8', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Check size={11} color="#10B981" /> Explainable Audit Passed
+                <Check size={11} color="#10B981" /> Audit Trail Verified
               </span>
               <span style={{ color: '#334155' }}>•</span>
               <span style={{ color: '#94A3B8', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                <Check size={11} color="#10B981" /> Governance Active
+                <Check size={11} color="#10B981" /> SHA-256 Provenance Active
               </span>
             </div>
 

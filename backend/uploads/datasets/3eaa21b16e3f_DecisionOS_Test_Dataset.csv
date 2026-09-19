@@ -1,0 +1,11 @@
+order_id,customer_id,order_date,order_value,status,is_returning_customer
+1,C001,2026-01-01,1200,Cancelled,No
+2,C002,2026-01-02,900,Completed,No
+3,C003,2026-01-03,1500,Cancelled,No
+4,C004,2026-01-04,800,Completed,No
+5,C005,2026-01-05,1100,Cancelled,No
+6,C006,2026-01-06,700,Completed,No
+7,C007,2026-01-07,1300,Cancelled,No
+8,C008,2026-01-08,950,Completed,No
+9,C009,2026-01-09,1400,Cancelled,No
+10,C010,2026-01-10,1000,Completed,No

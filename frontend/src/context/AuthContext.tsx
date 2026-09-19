@@ -28,9 +28,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(() => {
     try {
       const saved = typeof window !== 'undefined' && window.localStorage ? window.localStorage.getItem('decisionos_user') : null;
-      return saved ? JSON.parse(saved) : { id: 'exec-1', email: 'executive@decisionos.ai', full_name: 'Executive User', is_active: true };
+      return saved ? JSON.parse(saved) : { id: 'exec-1', email: 'enterprise.admin@internal.corp', full_name: 'Executive User', is_active: true };
     } catch {
-      return { id: 'exec-1', email: 'executive@decisionos.ai', full_name: 'Executive User', is_active: true };
+      return { id: 'exec-1', email: 'enterprise.admin@internal.corp', full_name: 'Executive User', is_active: true };
     }
   });
 

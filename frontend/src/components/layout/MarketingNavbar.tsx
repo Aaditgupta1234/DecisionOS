@@ -380,7 +380,7 @@ export const MarketingNavbar: React.FC<MarketingNavbarProps> = ({ activeTab }) =
                         {displayName}
                       </div>
                       <div style={{ fontSize: '0.74rem', color: '#64748B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {user?.email || 'executive@decisionos.ai'}
+                        {user?.email || 'enterprise.admin@internal.corp'}
                       </div>
                       <div style={{ marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.66rem', fontWeight: 800, color: '#38BDF8', background: 'rgba(56, 189, 248, 0.1)', padding: '2px 6px', borderRadius: '4px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
                         <Shield size={10} />

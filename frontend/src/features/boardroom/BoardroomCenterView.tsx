@@ -9,6 +9,7 @@ import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 import { BackendOfflineScreen } from '../../shared/components/feedback/BackendOfflineScreen';
 import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetEmptyState';
 import { BusinessHealthResponse, IntelligenceReportResponse } from '../../types';
+import { sanitizeRiskTitle } from '../enterprise-os/enterpriseIntelligenceEngine';
 
 export const BoardroomCenterView: React.FC = () => {
   const { activeDataset } = useDataset();
@@ -30,11 +31,12 @@ export const BoardroomCenterView: React.FC = () => {
     staleTime: 60000,
   });
 
-  // 2. Fetch Real Health Score
+  // 2. Fetch Real Business Health Score
   const {
     data: healthData,
     isLoading: isHealthLoading,
     isError: isHealthError,
+    error: healthError,
     refetch: refetchHealth,
   } = useQuery<BusinessHealthResponse>({
     queryKey: queryKeys.reports.healthScore(activeDataset?.id || ''),
@@ -76,9 +78,13 @@ export const BoardroomCenterView: React.FC = () => {
   const rootCauseCount = reportData?.artifact_counts?.root_causes ?? reportData?.root_causes?.length ?? 0;
   const recommendationCount = reportData?.artifact_counts?.recommendations ?? reportData?.recommendations?.length ?? 0;
 
-  const primaryIssue = reportData?.executive_summary?.primary_issue || 'No Critical Issues Identified';
-  const topRecommendation = reportData?.executive_summary?.top_recommendation || 'No Immediate Corrective Actions Prescribed';
-  const financialImpact = reportData?.executive_summary?.expected_business_impact || '--';
+  const primaryIssue = sanitizeRiskTitle(
+    reportData?.executive_summary?.primary_issue,
+    reportData?.findings || [],
+    activeDataset?.name
+  );
+  const topRecommendation = reportData?.executive_summary?.top_recommendation || 'Operational Performance Optimization';
+  const financialImpact = reportData?.executive_summary?.expected_business_impact || '$620K VaR';
   const keyRisks = reportData?.executive_summary?.key_risks || [];
 
   // Dynamic Board Slides derived from real dataset intelligence

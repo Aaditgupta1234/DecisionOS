@@ -160,7 +160,7 @@ export const LoginPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="executive@decisionos.ai"
+                placeholder="admin@enterprise.internal"
                 style={{
                   width: '100%',
                   background: '#04060A',
@@ -245,7 +245,7 @@ export const LoginPage: React.FC = () => {
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
             <button
               type="button"
-              onClick={() => handleQuickFill('executive@decisionos.ai', 'decisionos123')}
+              onClick={() => handleQuickFill('admin@enterprise.internal', 'enterprise123')}
               style={{
                 background: '#0C1017',
                 border: '1px solid #1F2937',
@@ -261,7 +261,7 @@ export const LoginPage: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => handleQuickFill('analyst@decisionos.ai', 'analyst123')}
+              onClick={() => handleQuickFill('analyst@enterprise.internal', 'analyst123')}
               style={{
                 background: '#0C1017',
                 border: '1px solid #1F2937',

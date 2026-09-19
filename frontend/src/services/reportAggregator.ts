@@ -18,7 +18,7 @@ import {
  */
 export async function aggregateReportData(
   dataset: Dataset,
-  userEmail: string = 'executive@decisionos.ai'
+  userEmail: string = 'enterprise.admin@internal.corp'
 ): Promise<ExecutiveReportData> {
   const datasetId = dataset.id;
   const timestamp = new Date().toISOString();

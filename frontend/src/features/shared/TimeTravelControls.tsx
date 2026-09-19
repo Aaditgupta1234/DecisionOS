@@ -16,16 +16,18 @@ export const TimeTravelControls: React.FC = () => {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '4px',
-        background: 'rgba(15, 23, 42, 0.8)',
+        gap: '6px',
+        background: 'rgba(12, 17, 26, 0.95)',
         border: '1px solid #1E293B',
-        borderRadius: '5px',
-        padding: '3px 6px',
+        borderRadius: '6px',
+        padding: '0 10px',
+        height: '32px',
+        minWidth: '160px',
         flexShrink: 0,
       }}
     >
-      <Clock size={11} color="#38BDF8" />
-      <span style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 800, whiteSpace: 'nowrap' }}>TIME:</span>
+      <Clock size={13} color="#38BDF8" style={{ flexShrink: 0 }} />
+      <span style={{ fontSize: '0.66rem', color: '#64748B', fontWeight: 800, whiteSpace: 'nowrap', letterSpacing: '0.04em' }}>TIME:</span>
       <select
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
@@ -33,11 +35,12 @@ export const TimeTravelControls: React.FC = () => {
           background: 'transparent',
           border: 'none',
           color: selectedDate.startsWith('LIVE') ? '#10B981' : '#F59E0B',
-          fontSize: '0.68rem',
+          fontSize: '0.72rem',
           fontWeight: 800,
           outline: 'none',
           cursor: 'pointer',
-          maxWidth: '90px',
+          width: '100%',
+          maxWidth: '170px',
           textOverflow: 'ellipsis',
         }}
       >
@@ -50,4 +53,5 @@ export const TimeTravelControls: React.FC = () => {
     </div>
   );
 };
+
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDataset } from '../../context/DatasetContext';
 import { useAuth } from '../../features/auth/AuthContext';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
@@ -29,6 +29,32 @@ export const TopNav: React.FC<TopNavProps> = ({
   const [isDatasetDropdownOpen, setIsDatasetDropdownOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+
+  const orgDropdownRef = useRef<HTMLDivElement>(null);
+  const datasetDropdownRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (orgDropdownRef.current && !orgDropdownRef.current.contains(target)) {
+        setIsOrgDropdownOpen(false);
+      }
+      if (datasetDropdownRef.current && !datasetDropdownRef.current.contains(target)) {
+        setIsDatasetDropdownOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -93,30 +119,49 @@ export const TopNav: React.FC<TopNavProps> = ({
           <span>← Overview</span>
         </Link>
 
-        {/* Org Switcher */}
-        <div style={{ position: 'relative', flexShrink: 0 }}>
+        {/* Org Switcher (Min Width: 280px, Full Name Visibility) */}
+        <div ref={orgDropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setIsOrgDropdownOpen(!isOrgDropdownOpen)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              padding: '3px 6px',
-              background: '#080A0F',
-              border: '1px solid #161A22',
-              borderRadius: '5px',
+              justifyContent: 'space-between',
+              gap: '8px',
+              padding: '0 10px',
+              height: '32px',
+              minWidth: '280px',
+              background: 'rgba(12, 17, 26, 0.95)',
+              border: '1px solid #1E293B',
+              borderRadius: '6px',
               color: '#FFFFFF',
-              fontSize: '0.70rem',
-              fontWeight: 700,
               cursor: 'pointer',
-              whiteSpace: 'nowrap',
+              transition: 'border-color 0.15s ease, background 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#1E293B';
             }}
           >
-            <Building2 size={11} color="#38BDF8" />
-            <span style={{ maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {activeOrg.name}
-            </span>
-            <ChevronDown size={10} color="#64748B" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+              <Building2 size={13} color="#38BDF8" style={{ flexShrink: 0 }} />
+              <span
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  color: '#F1F5F9',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
+                }}
+              >
+                {activeOrg.name || 'Apex Global Technologies Group'}
+              </span>
+            </div>
+            <ChevronDown size={11} color="#64748B" style={{ flexShrink: 0 }} />
           </button>
 
           {isOrgDropdownOpen && (
@@ -126,16 +171,17 @@ export const TopNav: React.FC<TopNavProps> = ({
                 top: '100%',
                 left: 0,
                 marginTop: '6px',
-                width: '260px',
+                minWidth: '280px',
+                width: '100%',
                 background: '#080A0F',
-                border: '1px solid #161A22',
+                border: '1px solid #1E293B',
                 borderRadius: '8px',
                 padding: '6px',
                 zIndex: 100,
                 boxShadow: '0 20px 40px rgba(0,0,0,0.85)',
               }}
             >
-              <div style={{ fontSize: '0.68rem', color: '#64748B', padding: '6px 8px', fontWeight: 800 }}>
+              <div style={{ fontSize: '0.68rem', color: '#64748B', padding: '6px 8px', fontWeight: 800, letterSpacing: '0.04em' }}>
                 SELECT TENANT ORGANIZATION
               </div>
               {organizations.map((org) => (
@@ -153,6 +199,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                     color: activeOrg.id === org.id ? '#38BDF8' : '#F1F5F9',
                     background: activeOrg.id === org.id ? 'rgba(56, 189, 248, 0.1)' : 'transparent',
                     fontWeight: 700,
+                    transition: 'all 0.12s ease',
                   }}
                 >
                   {org.name}
@@ -162,30 +209,49 @@ export const TopNav: React.FC<TopNavProps> = ({
           )}
         </div>
 
-        {/* Universal Dataset Context Switcher */}
-        <div style={{ position: 'relative', flexShrink: 0 }}>
+        {/* Universal Dataset Context Switcher (Min Width: 260px, Full Name Visibility) */}
+        <div ref={datasetDropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setIsDatasetDropdownOpen(!isDatasetDropdownOpen)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '4px',
-              padding: '3px 6px',
-              background: '#080A0F',
-              border: '1px solid #161A22',
-              borderRadius: '5px',
+              justifyContent: 'space-between',
+              gap: '8px',
+              padding: '0 10px',
+              height: '32px',
+              minWidth: '260px',
+              background: 'rgba(12, 17, 26, 0.95)',
+              border: '1px solid #1E293B',
+              borderRadius: '6px',
               color: '#FFFFFF',
-              fontSize: '0.70rem',
-              fontWeight: 700,
               cursor: 'pointer',
-              whiteSpace: 'nowrap',
+              transition: 'border-color 0.15s ease, background 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#1E293B';
             }}
           >
-            <Database size={11} color="#10B981" />
-            <span style={{ maxWidth: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {activeDataset?.name || 'SaaS Telemetry'}
-            </span>
-            <ChevronDown size={10} color="#64748B" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+              <Database size={13} color="#10B981" style={{ flexShrink: 0 }} />
+              <span
+                style={{
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  color: '#F1F5F9',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
+                }}
+              >
+                {activeDataset?.name || 'DecisionOS Test Dataset'}
+              </span>
+            </div>
+            <ChevronDown size={11} color="#64748B" style={{ flexShrink: 0 }} />
           </button>
 
           {isDatasetDropdownOpen && (
@@ -195,9 +261,10 @@ export const TopNav: React.FC<TopNavProps> = ({
                 top: '100%',
                 left: 0,
                 marginTop: '6px',
-                width: '280px',
+                minWidth: '280px',
+                width: '100%',
                 background: '#080A0F',
-                border: '1px solid #161A22',
+                border: '1px solid #1E293B',
                 borderRadius: '8px',
                 padding: '6px',
                 zIndex: 100,
@@ -205,7 +272,7 @@ export const TopNav: React.FC<TopNavProps> = ({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px' }}>
-                <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 800 }}>ACTIVE TELEMETRY DATASET</span>
+                <span style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 800, letterSpacing: '0.04em' }}>ACTIVE TELEMETRY DATASET</span>
                 <Link
                   to="/enterprise-data"
                   onClick={() => setIsDatasetDropdownOpen(false)}
@@ -244,10 +311,11 @@ export const TopNav: React.FC<TopNavProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
+                      transition: 'all 0.12s ease',
                     }}
                   >
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ds.name}</span>
-                    {activeDataset?.id === ds.id && <span style={{ fontSize: '0.65rem', color: '#10B981' }}>ACTIVE</span>}
+                    {activeDataset?.id === ds.id && <span style={{ fontSize: '0.65rem', color: '#10B981', fontWeight: 800 }}>ACTIVE</span>}
                   </div>
                 ))
               )}
@@ -255,7 +323,7 @@ export const TopNav: React.FC<TopNavProps> = ({
           )}
         </div>
 
-        {/* Time Travel Controls */}
+        {/* Time Travel Controls (Min Width: 160px) */}
         <TimeTravelControls />
       </div>
 
@@ -317,7 +385,7 @@ export const TopNav: React.FC<TopNavProps> = ({
         </button>
 
         {/* User / Profile Menu */}
-        <div style={{ position: 'relative', flexShrink: 0 }}>
+        <div ref={userMenuRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
             style={{
@@ -382,7 +450,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                   {user?.full_name || 'Executive User'}
                 </div>
                 <div style={{ fontSize: '0.68rem', color: '#64748B', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user?.email || 'executive@decisionos.ai'}
+                  {user?.email || 'enterprise.admin@internal.corp'}
                 </div>
               </div>
               <button

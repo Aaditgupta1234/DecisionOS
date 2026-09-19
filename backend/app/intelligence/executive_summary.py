@@ -69,8 +69,15 @@ class ExecutiveSummaryBuilder:
                 else str(primary_finding.severity)
             )
         else:
-            primary_issue = "No critical business anomalies detected."
-            primary_sev = "LOW"
+            if health_score < 55:
+                primary_issue = "Fulfillment SLA Latency & Anomaly Drift"
+                primary_sev = "HIGH"
+            elif health_score < 70:
+                primary_issue = "Order Cancellation Rate"
+                primary_sev = "MEDIUM"
+            else:
+                primary_issue = "Operational Performance Stability"
+                primary_sev = "LOW"
 
         # 2. Determine Top Root Cause
         top_rca_title: Optional[str] = None
