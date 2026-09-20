@@ -315,6 +315,9 @@ export interface HarmonizedExecutiveIntelligence {
   hasTimestampBaseline: boolean;
   dataContractStatus: DataContractStatus;
   dataGroundingStatus: DataGroundingStatus;
+  intelligenceSuppressed?: boolean;
+  quarantineReason?: string;
+  datasetStatus?: 'VERIFIED' | 'UNVERIFIED_SCHEMA' | 'UNIVARIATE' | 'EMPTY' | 'INVALID';
   primaryRisk: {
     title: string;
     metricValue: string;
@@ -1744,9 +1747,16 @@ export function buildHarmonizedExecutiveIntelligence(
     },
   ];
 
-  const schemaVerified = (activeDataset as any)?.metadata_json?.schema_verified ?? (activeDataset as any)?.schema_verified ?? true;
+  const datasetStatus: 'VERIFIED' | 'UNVERIFIED_SCHEMA' | 'UNIVARIATE' | 'EMPTY' | 'INVALID' =
+    (activeDataset as any)?.metadata_json?.dataset_status ??
+    (activeDataset as any)?.dataset_status ??
+    ((activeDataset as any)?.metadata_json?.schema_verified === false ? 'UNVERIFIED_SCHEMA' : 'VERIFIED');
+
+  const schemaVerified = (activeDataset as any)?.metadata_json?.schema_verified ?? (activeDataset as any)?.schema_verified ?? (datasetStatus === 'VERIFIED');
   const colCount = activeDataset?.column_count ?? activeDataset?.columns?.length ?? 2;
-  const isUnivariate = colCount < 2;
+  const isUnivariate = datasetStatus === 'UNIVARIATE' || colCount < 2;
+  const isUnverifiedSchema = datasetStatus === 'UNVERIFIED_SCHEMA' || !schemaVerified;
+  const intelligenceSuppressed = isUnverifiedSchema || isUnivariate;
 
   const rawConfidence = reportData?.executive_summary?.overall_confidence;
   let confidenceScore = rawConfidence ? Math.round(rawConfidence * 100) : boundedScore < 50 ? 76 : 94;
@@ -1757,14 +1767,14 @@ export function buildHarmonizedExecutiveIntelligence(
     confidenceScore = 74;
   }
 
-  // Downgrade confidence score on unverified or univariate schemas (< 50%)
-  if (!schemaVerified || isUnivariate) {
+  // Downgrade and cap confidence score on unverified or univariate schemas to maximum 44%
+  if (intelligenceSuppressed) {
     confidenceScore = Math.min(confidenceScore, 44);
   }
 
   const confInfo = getConfidenceTier(confidenceScore);
 
-  const { programs, primaryAction, secondaryAction, targetImpact } = deriveDynamicPrograms(
+  const dynamicProgramsResult = deriveDynamicPrograms(
     healthClass,
     boundedScore,
     baseRiskTitle,
@@ -1779,17 +1789,40 @@ export function buildHarmonizedExecutiveIntelligence(
     reportData
   );
 
+  const programs = intelligenceSuppressed ? [] : dynamicProgramsResult.programs;
+  const primaryAction = intelligenceSuppressed
+    ? 'No Actionable Intelligence Available'
+    : dynamicProgramsResult.primaryAction;
+  const secondaryAction = intelligenceSuppressed
+    ? (isUnverifiedSchema ? 'Schema Verification Required before generating intervention plans.' : 'Insufficient Telemetry for bivariate intervention.')
+    : dynamicProgramsResult.secondaryAction;
+  const targetImpact = intelligenceSuppressed ? 'Not Assessable' : dynamicProgramsResult.targetImpact;
+
   // Issue 5, 8.1 & Remediation 4: Structured executive briefing with confidence signal and cryptographic audit
   const auditHash = 'SHA-256 [8f4c2b91] • Model: Deterministic Governance v2.4';
-  const confLevelLabel = confidenceScore >= 85 ? `High (${confidenceScore}%)` : `Moderate (${confidenceScore}%)`;
-  const executiveBriefing = [
-    `Current Status: ${healthClass} posture with Business Health rated at ${boundedScore}/100 (${healthTrendDelta}).`,
-    `Confidence Level: ${confLevelLabel} based on active telemetry and empirical variance bounds.`,
-    `Primary Risk: ${primaryRiskFullTitle} (${varianceTextStr} vs ${benchmarkSLAStr} baseline).`,
-    `Primary Driver: ${attributions[0]?.factor} (${attributions[0]?.percentage}%) identified as the leading causal factor.`,
-    `Recommended Intervention: Deploy ${programs[0]?.title} under ${programs[0]?.owner}.`,
-    `Expected Outcome: ${programs[0]?.expectedOutcomeRange} and restoration of core operating baseline.`,
-  ].join('\n');
+  const confLevelLabel = intelligenceSuppressed
+    ? `Quarantined (${confidenceScore}%)`
+    : confidenceScore >= 85
+    ? `High (${confidenceScore}%)`
+    : `Moderate (${confidenceScore}%)`;
+
+  const executiveBriefing = intelligenceSuppressed
+    ? [
+        `Current Status: ${isUnivariate ? 'UNIVARIATE TELEMETRY' : 'UNVERIFIED SCHEMA CONTRACT'} — Automated intelligence generation is quarantined.`,
+        `Confidence Level: Capped at ${confidenceScore}% due to ${isUnivariate ? 'insufficient telemetry dimensionality' : 'unverified schema contract'}.`,
+        `Primary Risk: ${isUnivariate ? 'UNIVARIATE TELEMETRY' : 'UNVERIFIED SCHEMA CONTRACT'} — No recognized enterprise business metrics detected.`,
+        `Primary Driver: CAUSAL ATTRIBUTION SUSPENDED. Minimum 2 verified enterprise columns required.`,
+        `Recommended Intervention: No Actionable Intelligence Available. Complete schema verification to resume automated synthesis.`,
+        `Expected Outcome: Restoration of verified schema contract will unlock deterministic causal insights.`,
+      ].join('\n')
+    : [
+        `Current Status: ${healthClass} posture with Business Health rated at ${boundedScore}/100 (${healthTrendDelta}).`,
+        `Confidence Level: ${confLevelLabel} based on active telemetry and empirical variance bounds.`,
+        `Primary Risk: ${primaryRiskFullTitle} (${varianceTextStr} vs ${benchmarkSLAStr} baseline).`,
+        `Primary Driver: ${attributions[0]?.factor} (${attributions[0]?.percentage}%) identified as the leading causal factor.`,
+        `Recommended Intervention: Deploy ${programs[0]?.title} under ${programs[0]?.owner}.`,
+        `Expected Outcome: ${programs[0]?.expectedOutcomeRange} and restoration of core operating baseline.`,
+      ].join('\n');
 
   const exposureBreakdown = deriveFinancialVaR(
     boundedScore,
@@ -1799,12 +1832,15 @@ export function buildHarmonizedExecutiveIntelligence(
     varianceTextStr
   );
 
-  const financialExposure = exposureBreakdown.annualizedVaR;
-  const totalFindings = boundedScore >= 85 ? 0 : 2;
+  const financialExposure = intelligenceSuppressed ? 'Not Assessable' : exposureBreakdown.annualizedVaR;
+  const totalFindings = intelligenceSuppressed ? 0 : boundedScore >= 85 ? 0 : 2;
   const renderedTotalRisks = totalFindings;
-  const programsHeaderLabel = `Programs displayed: ${programs.length} active strategic workstream${programs.length > 1 ? 's' : ''}`;
-  const methodologyNote =
-    'Recommendations are derived from causal risk pathways, empirical operational clusters, and governed baseline thresholds.';
+  const programsHeaderLabel = intelligenceSuppressed
+    ? (isUnivariate ? 'Intervention Plans Suspended (Univariate Telemetry)' : 'Intervention Plans Suspended (Unverified Contract)')
+    : `Programs displayed: ${programs.length} active strategic workstream${programs.length > 1 ? 's' : ''}`;
+  const methodologyNote = intelligenceSuppressed
+    ? 'Causal attribution and intervention recommendations are suspended pending schema verification and multi-column telemetry.'
+    : 'Recommendations are derived from causal risk pathways, empirical operational clusters, and governed baseline thresholds.';
 
   const lineageInfo = deriveDatasetLineage(activeDataset, allDatasets);
 
@@ -1815,8 +1851,8 @@ export function buildHarmonizedExecutiveIntelligence(
     Boolean(monetaryField),
     monetaryField,
     hasTimestamp,
-    programs[0]?.hasMappedFeatures ?? true,
-    schemaVerified
+    programs[0]?.hasMappedFeatures ?? (schemaVerified && !isUnivariate),
+    schemaVerified && !isUnivariate
   );
 
   const usableCols = extractUsableColumns(activeDataset, reportData);
@@ -1824,9 +1860,9 @@ export function buildHarmonizedExecutiveIntelligence(
 
   const dataGroundingStatus: DataGroundingStatus = {
     title: 'DATA GROUNDING STATUS',
-    badge: !schemaVerified ? 'Unverified Schema' : isUnivariate ? 'Univariate Telemetry' : 'Dataset Grounded',
-    subtitle: !schemaVerified ? 'Synthetic / Non-Standard Schema' : isUnivariate ? 'Causal Attribution Suspended' : 'Runtime Validation Passed',
-    isFullyGrounded: schemaVerified && !isUnivariate,
+    badge: !schemaVerified ? 'UNVERIFIED SCHEMA CONTRACT' : isUnivariate ? 'UNIVARIATE TELEMETRY' : 'Dataset Grounded',
+    subtitle: !schemaVerified ? 'UNVERIFIED SCHEMA CONTRACT' : isUnivariate ? 'CAUSAL ATTRIBUTION SUSPENDED' : 'Runtime Validation Passed',
+    isFullyGrounded: !intelligenceSuppressed,
     tooltip: !schemaVerified
       ? 'Dataset column headers do not match enterprise business schema dictionaries. Operating under unverified schema quarantine.'
       : isUnivariate
@@ -1836,41 +1872,47 @@ export function buildHarmonizedExecutiveIntelligence(
       { rule: 'Data Lineage Verified', verified: true, details: 'Governed data pipeline with active provenance tracking.' },
       {
         rule: 'Schema Contract Verified',
-        verified: schemaVerified && !isUnivariate,
+        verified: !intelligenceSuppressed,
         details: !schemaVerified
           ? 'Warning: No standard enterprise business metrics recognized in schema.'
           : isUnivariate
           ? 'Warning: Univariate dataset lacks bivariate dimensionality for causal analysis.'
           : 'Business data schema validated against enterprise data contract.',
       },
-      { rule: 'Source Evidence Connected', verified: true, details: 'Causal graph connected to verified business data sources.' },
+      { rule: 'Source Evidence Connected', verified: !intelligenceSuppressed, details: intelligenceSuppressed ? 'Evidence connection suspended in quarantine mode.' : 'Causal graph connected to verified business data sources.' },
       { rule: 'Governance Policy Active', verified: true, details: 'Enterprise governance policies and baseline thresholds enforced.' },
       { rule: 'Audit Trail Available', verified: true, details: 'Cryptographic audit trail and immutable decision logs enabled.' },
-      { rule: 'Decision Traceability Enabled', verified: true, details: 'End-to-end decision lineage from data source to executive action.' },
-      { rule: 'Operational Exposure Grounded', verified: true, details: 'Risk exposure computed directly from active account records.' },
-      { rule: 'Business KPI Verified', verified: schemaVerified && !isUnivariate, details: `${metricsCount} tracked business KPIs validated against governed metric definitions.` },
+      { rule: 'Decision Traceability Enabled', verified: !intelligenceSuppressed, details: intelligenceSuppressed ? 'Traceability pending schema verification.' : 'End-to-end decision lineage from data source to executive action.' },
+      { rule: 'Operational Exposure Grounded', verified: !intelligenceSuppressed, details: intelligenceSuppressed ? 'Exposure computation suspended for unverified schema.' : 'Risk exposure computed directly from active account records.' },
+      { rule: 'Business KPI Verified', verified: !intelligenceSuppressed, details: intelligenceSuppressed ? 'Zero recognized business KPIs verified.' : `${metricsCount} tracked business KPIs validated against governed metric definitions.` },
     ],
   };
 
   const workspaces: DatasetAwareWorkspaces = {
     kpiWorkspace: {
       title: 'KPI Surveillance Hub',
-      badge: `${metricsCount} Tracked KPIs`,
-      statusDetail: `${metricsCount} Core Business KPIs (${kpiListDetail}) • ${boundedScore >= 85 ? 'All Within Governed Bounds' : `2 Exceeded Baseline (${toBusinessLabel(baseRiskTitle)}, ${toBusinessLabel(attributions[0]?.factor)})`}`,
+      badge: intelligenceSuppressed ? 'Quarantine Mode' : `${metricsCount} Tracked KPIs`,
+      statusDetail: intelligenceSuppressed
+        ? 'Unverified Schema Contract • Telemetry Surveillance Suspended'
+        : `${metricsCount} Core Business KPIs (${kpiListDetail}) • ${boundedScore >= 85 ? 'All Within Governed Bounds' : `2 Exceeded Baseline (${toBusinessLabel(baseRiskTitle)}, ${toBusinessLabel(attributions[0]?.factor)})`}`,
       linkTo: '/kpi-dictionary',
     },
     diagnosticGraph: {
       title: 'Diagnostic Graph',
-      badge: isUnivariate ? 'Univariate Telemetry' : `${boundedScore >= 85 ? '0 Risk' : '4 Active Risk'} Edges`,
+      badge: isUnivariate ? 'UNIVARIATE TELEMETRY' : intelligenceSuppressed ? 'CAUSAL ATTRIBUTION SUSPENDED' : `${boundedScore >= 85 ? '0 Risk' : '4 Active Risk'} Edges`,
       statusDetail: isUnivariate
-        ? 'Univariate Telemetry — Causal Attribution Suspended • Minimum 2 Columns Required for Causal DAG'
+        ? 'UNIVARIATE TELEMETRY — CAUSAL ATTRIBUTION SUSPENDED • Minimum 2 Columns Required for Causal DAG'
+        : intelligenceSuppressed
+        ? 'UNVERIFIED SCHEMA CONTRACT — CAUSAL ATTRIBUTION SUSPENDED • Zero Causal DAG Generated'
         : `${boundedScore >= 85 ? 'Zero Causal Anomaly Clusters' : `2 Root Anomaly Clusters (${operationalRootCause}, ${attributions[1]?.factor})`} • Governed Causal Graph`,
       linkTo: '/diagnostics',
     },
     actionPortfolio: {
       title: 'Action Portfolio',
-      badge: `${programs.length} Active Initiative${programs.length > 1 ? 's' : ''}`,
-      statusDetail: `${programs.length === 1 ? '1 In Execution • 0 Blocked • 0 Escalated' : '1 In Execution • 1 Scheduled • 0 Blocked • 0 Escalated'} • Assigned: ${programs.map((p) => p.owner).slice(0, 2).join(' & ')}`,
+      badge: intelligenceSuppressed ? 'Interventions Suspended' : `${programs.length} Active Initiative${programs.length > 1 ? 's' : ''}`,
+      statusDetail: intelligenceSuppressed
+        ? 'No Actionable Intelligence Available • Governance Councils & Intervention Plans Quarantined'
+        : `${programs.length === 1 ? '1 In Execution • 0 Blocked • 0 Escalated' : '1 In Execution • 1 Scheduled • 0 Blocked • 0 Escalated'} • Assigned: ${programs.map((p) => p.owner).slice(0, 2).join(' & ')}`,
       linkTo: '/recommendations',
     },
     datasetLineage: {
@@ -1889,47 +1931,54 @@ export function buildHarmonizedExecutiveIntelligence(
     hasTimestampBaseline: hasTimestamp,
     dataContractStatus,
     dataGroundingStatus,
+    intelligenceSuppressed,
+    quarantineReason: isUnivariate ? 'UNIVARIATE TELEMETRY' : isUnverifiedSchema ? 'UNVERIFIED SCHEMA CONTRACT' : undefined,
+    datasetStatus,
     primaryRisk: {
-      title: primaryRiskFullTitle,
-      metricValue: metricValStr,
-      benchmarkSLA: benchmarkSLAStr,
-      varianceText: varianceTextStr,
-      rawTitle: baseRiskTitle,
-      severity: riskSeverity,
-      subtext: `${slaTargetDisplay} • ${varianceTextStr}`,
+      title: intelligenceSuppressed ? (isUnivariate ? 'UNIVARIATE TELEMETRY' : 'UNVERIFIED SCHEMA CONTRACT') : primaryRiskFullTitle,
+      metricValue: intelligenceSuppressed ? 'N/A' : metricValStr,
+      benchmarkSLA: intelligenceSuppressed ? 'N/A' : benchmarkSLAStr,
+      varianceText: intelligenceSuppressed ? 'Telemetry Unverified' : varianceTextStr,
+      rawTitle: intelligenceSuppressed ? (isUnivariate ? 'Univariate Telemetry' : 'Unverified Schema Contract') : baseRiskTitle,
+      severity: intelligenceSuppressed ? 'Warning' : riskSeverity,
+      subtext: intelligenceSuppressed
+        ? (isUnivariate ? 'UNIVARIATE TELEMETRY • CAUSAL ATTRIBUTION SUSPENDED' : 'UNVERIFIED SCHEMA CONTRACT • Telemetry Unverified')
+        : `${slaTargetDisplay} • ${varianceTextStr}`,
       slaGovernanceState,
       isConfiguredSLA: hasExplicitSLA,
-      slaTargetDisplay,
-      slaBadgeText,
-      slaBadgeColor,
-      slaSource,
-      slaTooltip,
+      slaTargetDisplay: intelligenceSuppressed ? 'Unverified Baseline' : slaTargetDisplay,
+      slaBadgeText: intelligenceSuppressed ? 'QUARANTINED' : slaBadgeText,
+      slaBadgeColor: intelligenceSuppressed ? '#F59E0B' : slaBadgeColor,
+      slaSource: intelligenceSuppressed ? 'Schema Quarantine' : slaSource,
+      slaTooltip: intelligenceSuppressed ? 'Operating under unverified schema quarantine' : slaTooltip,
     },
     rootCause: {
-      title: operationalRootCause,
-      causalPathway,
-      attributions,
-      subtext: `${attributions[0]?.percentage}% (${attributions[0]?.confidenceBound}) ${attributions[0]?.factor} • ${attributions[1]?.percentage}% (${attributions[1]?.confidenceBound}) ${attributions[1]?.factor}`,
-      chain: causalChain,
-      datasetEvidence,
-      businessInterpretation,
+      title: intelligenceSuppressed ? (isUnivariate ? 'CAUSAL ATTRIBUTION SUSPENDED' : 'Not Assessable') : operationalRootCause,
+      causalPathway: intelligenceSuppressed ? 'CAUSAL ATTRIBUTION SUSPENDED' : causalPathway,
+      attributions: intelligenceSuppressed ? [] : attributions,
+      subtext: intelligenceSuppressed
+        ? (isUnivariate ? 'UNIVARIATE TELEMETRY • Insufficient Telemetry' : 'UNVERIFIED SCHEMA CONTRACT • No Actionable Intelligence Available')
+        : `${attributions[0]?.percentage}% (${attributions[0]?.confidenceBound}) ${attributions[0]?.factor} • ${attributions[1]?.percentage}% (${attributions[1]?.confidenceBound}) ${attributions[1]?.factor}`,
+      chain: intelligenceSuppressed ? [] : causalChain,
+      datasetEvidence: intelligenceSuppressed ? 'Insufficient Telemetry' : datasetEvidence,
+      businessInterpretation: intelligenceSuppressed ? 'No Actionable Intelligence Available' : businessInterpretation,
     },
     recommendedAction: {
-      actionLabel: confInfo.actionHeading,
+      actionLabel: intelligenceSuppressed ? (isUnivariate ? 'UNIVARIATE TELEMETRY' : 'UNVERIFIED SCHEMA CONTRACT') : confInfo.actionHeading,
       primaryAction,
       targetKPIImpact: targetImpact,
       secondaryAction,
-      timeframe: healthClass === 'Critical' ? 'Immediate (< 30d)' : healthClass === 'High Risk' ? 'Tactical (< 60d)' : 'Strategic (< 90d)',
+      timeframe: intelligenceSuppressed ? 'Suspended' : healthClass === 'Critical' ? 'Immediate (< 30d)' : healthClass === 'High Risk' ? 'Tactical (< 60d)' : 'Strategic (< 90d)',
     },
     snapshot: {
       totalRisks: renderedTotalRisks,
-      criticalRiskPct: criticalPct,
+      criticalRiskPct: intelligenceSuppressed ? 0 : criticalPct,
       anomaliesCount: totalFindings,
       confidenceScore,
       confidenceTier: confInfo.tier,
-      confidenceLabel: confInfo.badgeText,
+      confidenceLabel: intelligenceSuppressed ? 'QUARANTINED (<= 44%)' : confInfo.badgeText,
       financialExposure,
-      monthlyExposure: exposureBreakdown.monthlyExposure,
+      monthlyExposure: intelligenceSuppressed ? 'Not Assessable' : exposureBreakdown.monthlyExposure,
       exposureBreakdown,
     },
     recommendedPrograms: programs,
@@ -1938,7 +1987,7 @@ export function buildHarmonizedExecutiveIntelligence(
     auditHash,
     methodologyNote,
     workspaces,
-    isEngineVerified: true,
+    isEngineVerified: !intelligenceSuppressed,
     validationPassed: true,
     validationAudit: {
       passed: true,
@@ -2007,18 +2056,21 @@ export function validateHarmonizedIntelligence(intel: HarmonizedExecutiveIntelli
   const totalRisks = intel.snapshot.totalRisks;
   const renderedProgramsCount = intel.recommendedPrograms.length;
   const anomaliesCount = intel.snapshot.anomaliesCount;
-  const rule2Passed =
-    totalRisks >= 0 &&
-    renderedProgramsCount >= 1 &&
-    anomaliesCount >= 0 &&
-    intel.snapshot.criticalRiskPct <= 100 &&
-    intel.snapshot.criticalRiskPct >= 0;
+  const rule2Passed = intel.intelligenceSuppressed
+    ? true
+    : (totalRisks >= 0 &&
+       renderedProgramsCount >= 1 &&
+       anomaliesCount >= 0 &&
+       intel.snapshot.criticalRiskPct <= 100 &&
+       intel.snapshot.criticalRiskPct >= 0);
 
   assertions.push({
     ruleName: 'Rule 2: Count Parity & Dynamic Sizing',
     passed: rule2Passed,
     details: rule2Passed
-      ? `Verified: Snapshot risks (${totalRisks}), anomalies (${anomaliesCount}), and rendered programs (${renderedProgramsCount}) are in exact mathematical alignment.`
+      ? (intel.intelligenceSuppressed
+          ? 'Verified: Intelligence quarantined; intervention programs safely suppressed.'
+          : `Verified: Snapshot risks (${totalRisks}), anomalies (${anomaliesCount}), and rendered programs (${renderedProgramsCount}) are in exact mathematical alignment.`)
       : `Failed: Count mismatch.`,
   });
   if (!rule2Passed) errors.push('Rule 2 violated: count mismatch.');

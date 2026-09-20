@@ -8,6 +8,14 @@ import pandas as pd
 from app.core.logging import logger
 
 
+class ValidationException(Exception):
+    """Exception raised when dataset structure or schema violates enterprise invariants."""
+    def __init__(self, code: str, message: str):
+        self.code = code
+        self.message = message
+        super().__init__(message)
+
+
 @dataclass
 class ValidationResult:
     """Dataclass encapsulating comprehensive dataset validation outputs."""
@@ -122,7 +130,8 @@ class DatasetValidator:
         if len(raw_columns) < 2 or len(df.columns) < 2:
             errors.append({
                 "type": "INSUFFICIENT_COLUMNS",
-                "message": "Dataset must contain at least 2 distinct columns for causal intelligence and correlation analysis.",
+                "code": "INSUFFICIENT_COLUMNS",
+                "message": "Dataset must contain at least 2 columns for causal intelligence.",
             })
 
         # 6. Check for minimum record count (at least 1 row)

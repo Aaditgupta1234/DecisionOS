@@ -68,19 +68,71 @@ def upload_dataset(
     if not validation.is_valid:
         dataset.status = DatasetStatus.FAILED
         dataset.validation_errors = validation.errors
+        dataset.metadata_json = {
+            "dataset_status": "INVALID",
+            "schema_verified": False,
+            "errors": validation.errors,
+        }
         dataset.processing_completed_at = datetime.now(timezone.utc)
         db.commit()
         db.refresh(dataset)
+        primary_err = validation.errors[0] if validation.errors else {}
+        err_code = primary_err.get("code") or primary_err.get("type", "VALIDATION_FAILED")
+        err_msg = primary_err.get("message", "Dataset validation failed.")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
-                "message": "Dataset validation failed.",
+                "type": err_code,
+                "code": err_code,
+                "message": err_msg,
                 "errors": validation.errors,
                 "dataset_id": str(dataset.id),
             },
         )
 
-    # 5. On validation success, populate metadata, cached preview, and transition to READY
+    # 5. On validation success, calculate Enterprise Schema Verification
+    # Recognized enterprise business concepts
+    RECOGNIZED_BUSINESS_CONCEPTS = {
+        "revenue", "sales", "profit", "margin", "cost", "expense",
+        "customer", "churn", "retention", "support", "tickets", "sla",
+        "delivery", "shipment", "inventory", "orders", "transactions",
+        "utilization", "availability", "latency", "risk", "compute",
+    }
+
+    matched_business_count = 0
+    column_matches = []
+    for col in validation.columns:
+        normalized = normalize_column_name(col)
+        col_tokens = set(normalized.split("_"))
+        suggested_field, confidence = schema_mapper.match_column(col)
+        
+        # Check direct token match, substring match in recognized concepts, or high-confidence schema mapper match
+        is_concept_match = any(token in RECOGNIZED_BUSINESS_CONCEPTS for token in col_tokens) or any(
+            concept in normalized for concept in RECOGNIZED_BUSINESS_CONCEPTS
+        ) or (confidence >= 0.5)
+
+        if is_concept_match:
+            matched_business_count += 1
+            column_matches.append((col, normalized, suggested_field, confidence))
+        else:
+            column_matches.append((col, normalized, None, 0.0))
+
+    total_cols = len(validation.columns)
+    schema_match_rate = matched_business_count / total_cols if total_cols > 0 else 0.0
+    schema_verified = schema_match_rate > 0
+
+    grounding_warning = None if schema_verified else "No recognized enterprise business metrics detected."
+
+    # Dataset Status Framework single source of truth
+    if validation.column_count < 2:
+        dataset_status = "UNIVARIATE"
+    elif validation.record_count == 0:
+        dataset_status = "EMPTY"
+    elif schema_verified:
+        dataset_status = "VERIFIED"
+    else:
+        dataset_status = "UNVERIFIED_SCHEMA"
+
     dataset.status = DatasetStatus.READY
     dataset.record_count = validation.record_count
     dataset.column_count = validation.column_count
@@ -91,49 +143,42 @@ def upload_dataset(
         "upload_method": "csv_upload",
         "file_extension": "csv",
         "columns_detected": validation.column_count,
+        "schema_verified": schema_verified,
+        "dataset_status": dataset_status,
+        "schema_match_rate": round(schema_match_rate, 4),
+        "matched_business_fields": matched_business_count,
+        "grounding_warning": grounding_warning,
     }
     dataset.processing_completed_at = datetime.now(timezone.utc)
 
     # 6. Extract columns, generate automated schema mappings, and store DatasetColumn records
-    matched_high_conf_count = 0
-    for col in validation.columns:
-        normalized = normalize_column_name(col)
-        suggested_field, confidence = schema_mapper.match_column(col)
-        if confidence >= 0.5:
-            matched_high_conf_count += 1
+    for col, normalized, suggested_field, confidence in column_matches:
+        # If schema is not verified, do not synthesize fake high-confidence mappings for garbage column names
+        final_mapped_field = suggested_field if schema_verified else None
+        final_confidence = confidence if schema_verified else 0.0
+
         column_record = DatasetColumn(
             dataset_id=dataset.id,
             original_name=col,
             normalized_name=normalized,
-            mapped_field=suggested_field,
-            mapping_confidence=confidence,
+            mapped_field=final_mapped_field,
+            mapping_confidence=final_confidence,
             data_type=validation.dtypes.get(col, "object"),
             sample_value=validation.sample_values.get(col, ""),
         )
         db.add(column_record)
 
-    schema_verified = matched_high_conf_count > 0 or len(validation.columns) >= 3
-    dataset.metadata_json = {
-        "source": "manual_upload",
-        "encoding": "utf-8",
-        "upload_method": "csv_upload",
-        "file_extension": "csv",
-        "columns_detected": validation.column_count,
-        "schema_verified": schema_verified,
-        "matched_business_fields": matched_high_conf_count,
-        "grounding_warning": None if schema_verified else "No standard enterprise business metrics recognized in schema.",
-    }
-
     db.commit()
     db.refresh(dataset)
-    logger.info(f"Dataset '{dataset.name}' ({dataset.id}) successfully processed with {dataset.record_count} records.")
+    logger.info(f"Dataset '{dataset.name}' ({dataset.id}) processed. Status={dataset_status}, Verified={schema_verified}, MatchRate={schema_match_rate:.2f}")
 
-    # 7. Immediately generate KPIs for instant analytics availability
-    try:
-        from app.services.kpi_engine import run_kpi_engine
-        run_kpi_engine(db=db, dataset_id=dataset.id, current_user=current_user)
-    except Exception as err:
-        logger.warning(f"Immediate KPI generation deferred for dataset {dataset.id}: {err}")
+    # 7. Generate KPIs only for verified schemas
+    if schema_verified:
+        try:
+            from app.services.kpi_engine import run_kpi_engine
+            run_kpi_engine(db=db, dataset_id=dataset.id, current_user=current_user)
+        except Exception as err:
+            logger.warning(f"Immediate KPI generation deferred for dataset {dataset.id}: {err}")
 
     return dataset
 

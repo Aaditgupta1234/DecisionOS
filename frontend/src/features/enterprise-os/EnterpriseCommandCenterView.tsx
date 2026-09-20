@@ -28,6 +28,7 @@ import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetE
 import { BusinessHealthResponse, IntelligenceReportResponse } from '../../types';
 import { FadeUp } from '../../design-system/motion';
 import { buildHarmonizedExecutiveIntelligence } from './enterpriseIntelligenceEngine';
+import { EnterpriseCardErrorBoundary } from './EnterpriseCardErrorBoundary';
 
 export const EnterpriseCommandCenterView: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
@@ -432,11 +433,121 @@ export const EnterpriseCommandCenterView: React.FC = () => {
         </div>
       )}
 
+      {/* Visible Error State Alert Banner (Dashboard Persists Permanently) */}
+      {isError && (
+        <div
+          style={{
+            padding: '12px 18px',
+            background: 'rgba(239, 68, 68, 0.10)',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            borderRadius: '10px',
+            color: '#F87171',
+            fontSize: '0.80rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <AlertTriangle size={14} color="#EF4444" />
+            <span>Telemetry synchronization encountered an API issue. Workspace shell remains active with deterministic fallback intelligence.</span>
+          </div>
+          <button
+            onClick={handleRefreshAll}
+            style={{
+              background: 'rgba(239, 68, 68, 0.2)',
+              border: '1px solid rgba(239, 68, 68, 0.4)',
+              color: '#FFFFFF',
+              padding: '5px 14px',
+              borderRadius: '6px',
+              fontSize: '11px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <RefreshCw size={11} />
+            <span>Retry Connection</span>
+          </button>
+        </div>
+      )}
+
+      {/* Intelligence Quarantine Banner (Unverified Schema or Univariate Telemetry) */}
+      {intel.intelligenceSuppressed && (
+        <div
+          style={{
+            padding: '14px 20px',
+            background: 'rgba(245, 158, 11, 0.08)',
+            border: '1px solid rgba(245, 158, 11, 0.25)',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '34px',
+                height: '34px',
+                borderRadius: '8px',
+                background: 'rgba(245, 158, 11, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <AlertTriangle size={17} color="#F59E0B" />
+            </div>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: '#FDE68A', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>{intel.quarantineReason || 'UNVERIFIED SCHEMA CONTRACT'}</span>
+                <span style={{ fontSize: '10px', background: 'rgba(245, 158, 11, 0.2)', padding: '1px 6px', borderRadius: '4px', color: '#F59E0B', fontWeight: 700 }}>
+                  CONFIDENCE CAPPED (44%)
+                </span>
+                <span style={{ fontSize: '10px', background: 'rgba(239, 68, 68, 0.15)', padding: '1px 6px', borderRadius: '4px', color: '#F87171', fontWeight: 700 }}>
+                  CAUSAL ATTRIBUTION SUSPENDED
+                </span>
+              </div>
+              <div style={{ fontSize: '11.5px', color: '#CBD5E1', marginTop: '2px' }}>
+                Automated causal DAG generation, governance councils, and strategic intervention plans are suspended. Operating under unverified schema quarantine.
+              </div>
+            </div>
+          </div>
+          <Link
+            to="/data-management"
+            style={{
+              background: '#F59E0B',
+              color: '#000000',
+              padding: '7px 14px',
+              borderRadius: '6px',
+              fontSize: '11px',
+              fontWeight: 700,
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              flexShrink: 0,
+            }}
+          >
+            <span>Review Schema</span>
+            <ArrowRight size={12} />
+          </Link>
+        </div>
+      )}
+
       {/* ======================================================================
           STRATEGIC SUMMARY SECTION (COMPACT EXECUTIVE SIGNALS — EQUAL WEIGHT)
           Business Health • Primary Risk • Root Cause • Recommended Intervention
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="strategic-summary" fallbackTitle="Strategic Summary Telemetry">
         <FadeUp delay={0.04}>
           <div
             style={{
@@ -547,12 +658,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
       {/* ======================================================================
           EXECUTIVE NARRATIVE: SCANNABLE BOARDROOM STRATEGIC BRIEFING (ISSUE 5)
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="executive-narrative" fallbackTitle="Executive Strategic Briefing">
         <FadeUp delay={0.05}>
           <div
             style={{
@@ -603,12 +714,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
       {/* ======================================================================
           EXECUTIVE SNAPSHOT: SLIM COMMAND BAR (BLOOMBERG / LINEAR STATUS STRIP)
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="executive-snapshot" fallbackTitle="Executive Status Strip">
         <FadeUp delay={0.06}>
           <div
             style={{
@@ -708,12 +819,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </Link>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
       {/* ======================================================================
           RECOMMENDED PROGRAMS: ENTERPRISE PMO INITIATIVES WITH CHARTERED GOVERNANCE
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="recommended-programs" fallbackTitle="Strategic Programs">
         <FadeUp delay={0.08}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative', zIndex: 1 }}>
             
@@ -1044,12 +1155,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
       {/* ======================================================================
           ENTERPRISE WORKSPACES: DATASET-AWARE REAL-TIME NAVIGATION DESTINATIONS
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="enterprise-workspaces" fallbackTitle="Enterprise Workspaces">
         <FadeUp delay={0.10}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative', zIndex: 1 }}>
             
@@ -1270,12 +1381,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
       {/* ======================================================================
           DATA CONTRACT STATUS: GOVERNANCE & AUDIT READINESS SUMMARY
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="data-contract-status" fallbackTitle="Data Grounding & Contract Status">
         <FadeUp delay={0.11}>
           <div
             style={{
@@ -1412,13 +1523,13 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
       {/* ======================================================================
           FOOTER: UNDERSTATED TRUST & VERIFICATION STATUS
           ✓ Deterministic Engine Verified • ✓ Explainable Audit Passed • ✓ Governance Active
           ====================================================================== */}
-      {!isLoading && !isError && (
+      <EnterpriseCardErrorBoundary sectionKey="footer" fallbackTitle="Governance Lineage Footer">
         <FadeUp delay={0.12}>
           <div
             style={{
@@ -1452,7 +1563,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
           </div>
         </FadeUp>
-      )}
+      </EnterpriseCardErrorBoundary>
 
     </div>
   );
