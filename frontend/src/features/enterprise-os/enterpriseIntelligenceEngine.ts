@@ -1759,17 +1759,17 @@ export function buildHarmonizedExecutiveIntelligence(
     (activeDataset as any)?.metadata_json?.schema_verified ??
     (activeDataset as any)?.schema_verified;
 
+  const hasUnverifiedStatus = datasetStatus === 'UNVERIFIED_SCHEMA' || reportData?.executive_summary?.business_health_status === 'NOT_ASSESSABLE' || healthData?.status === 'NOT_ASSESSABLE';
   const schemaVerified = schemaVerifiedRaw !== undefined
     ? Boolean(schemaVerifiedRaw)
-    : (datasetStatus !== 'UNVERIFIED_SCHEMA' && reportData?.executive_summary?.business_health_status !== 'NOT_ASSESSABLE' && healthData?.status !== 'NOT_ASSESSABLE');
+    : !hasUnverifiedStatus;
 
   const colCount = activeDataset?.column_count ?? activeDataset?.columns?.length ?? (activeDataset ? 0 : 2);
   const isUnivariate = datasetStatus === 'UNIVARIATE' || (activeDataset !== null && activeDataset !== undefined && colCount < 2);
-  const isUnverifiedSchema = datasetStatus === 'UNVERIFIED_SCHEMA' || !schemaVerified || reportData?.executive_summary?.business_health_status === 'NOT_ASSESSABLE' || healthData?.status === 'NOT_ASSESSABLE';
+  const isUnverifiedSchema = hasUnverifiedStatus || !schemaVerified;
   const intelligenceSuppressed = Boolean(
     schemaVerified === false ||
     isUnverifiedSchema ||
-    datasetStatus === 'UNVERIFIED_SCHEMA' ||
     isUnivariate ||
     (activeDataset && colCount < 2)
   );

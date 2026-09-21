@@ -83,9 +83,11 @@ export const BoardroomCenterView: React.FC = () => {
     reportData?.findings || [],
     activeDataset?.name
   );
-  const topRecommendation = reportData?.executive_summary?.top_recommendation || 'Operational Performance Optimization';
-  const financialImpact = reportData?.executive_summary?.expected_business_impact || '$620K VaR';
+  const topRecommendation = reportData?.executive_summary?.top_recommendation || (recommendationCount > 0 ? 'Targeted Baseline Recovery' : 'No Interventions Required');
+  const financialImpact = reportData?.executive_summary?.expected_business_impact || 'N/A (No Monetary Impact Modeled)';
   const keyRisks = reportData?.executive_summary?.key_risks || [];
+
+  const isHealthyBaseline = findingCount === 0 && rootCauseCount === 0 && keyRisks.length === 0;
 
   // Dynamic Board Slides derived from real dataset intelligence
   const slides = [
@@ -96,18 +98,24 @@ export const BoardroomCenterView: React.FC = () => {
     },
     {
       num: 2,
-      title: `Primary Diagnostic Analysis: ${primaryIssue}`,
-      content: `Primary Business Issue: "${primaryIssue}" • Estimated Impact: ${financialImpact}. Key Risks: ${keyRisks.length > 0 ? keyRisks.slice(0, 2).join('; ') : 'Rule-based evaluation completed cleanly.'}.`,
+      title: isHealthyBaseline ? 'Primary Diagnostic Analysis: All Baselines Healthy' : `Primary Diagnostic Analysis: ${primaryIssue}`,
+      content: isHealthyBaseline
+        ? 'All Baselines Healthy. No active anomalies, risks, or material findings were detected within the current observation window.'
+        : `Primary Business Issue: "${primaryIssue}" • Estimated Impact: ${financialImpact}. Key Risks: ${keyRisks.length > 0 ? keyRisks.slice(0, 2).join('; ') : 'Rule-based evaluation completed cleanly.'}.`,
     },
     {
       num: 3,
       title: `Root Cause Causal Lineage (${rootCauseCount} Causal Edges)`,
-      content: `${rootCauseCount} validated causal relationships isolated across ${findingCount} diagnostic findings. Direct deterministic correlation vs causation enforcement active.`,
+      content: rootCauseCount === 0
+        ? 'Zero adverse root cause propagation detected. All causal DAG nodes operating within steady-state parameters.'
+        : `${rootCauseCount} validated causal relationships isolated across ${findingCount} diagnostic findings. Direct deterministic correlation vs causation enforcement active.`,
     },
     {
       num: 4,
       title: `Prescribed Actions & Roadmap (${recommendationCount} Recommendations)`,
-      content: `Top Recommended Action: "${topRecommendation}" • Total Prescribed Actions: ${recommendationCount} • Targeted at restoring target metrics to healthy baseline parameters.`,
+      content: recommendationCount === 0
+        ? 'All key performance indicators meet or exceed benchmark targets. No remedial actions required.'
+        : `Top Recommended Action: "${topRecommendation}" • Total Prescribed Actions: ${recommendationCount} • Targeted at restoring target metrics to healthy baseline parameters.`,
     },
   ];
 

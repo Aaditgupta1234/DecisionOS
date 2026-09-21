@@ -30,7 +30,7 @@ interface TenantState {
 export const useTenantStore = create<TenantState>((set) => ({
   activeOrg: {
     id: 'org-enterprise-001',
-    name: 'Apex Global Technologies Group',
+    name: 'Enterprise Operating Group',
     plan: 'ENTERPRISE_PRO',
     activeWorkspacesCount: 4,
   },
@@ -45,7 +45,7 @@ export const useTenantStore = create<TenantState>((set) => ({
   organizations: [
     {
       id: 'org-enterprise-001',
-      name: 'Apex Global Technologies Group',
+      name: 'Enterprise Operating Group',
       plan: 'ENTERPRISE_PRO',
       activeWorkspacesCount: 4,
     },

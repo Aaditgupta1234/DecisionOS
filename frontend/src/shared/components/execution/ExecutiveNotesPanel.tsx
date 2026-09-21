@@ -14,8 +14,8 @@ interface Props {
 
 export const ExecutiveNotesPanel: React.FC<Props> = ({
   notes = [
-    { author: 'Elena Rostova', role: 'Chief Executive Officer', date: 'Aug 24, 2026', note: 'Approved $25K discretionary budget for SE customer credit vouchers. Mandated courier penalty enforcement as prerequisite.' },
-    { author: 'Marcus Vance', role: 'VP Customer Success', date: 'Aug 28, 2026', note: 'Batch 1 of customer credit incentives dispatched (420 customers). Early 48-hour conversion tracking at 41.2% repeat orders.' },
+    { author: 'Executive Sponsor', role: 'Executive Authority', date: 'Aug 24, 2026', note: 'Approved discretionary budget allocation for customer credit vouchers. Mandated courier penalty enforcement as prerequisite.' },
+    { author: 'Customer Success Lead', role: 'Customer Experience Operations', date: 'Aug 28, 2026', note: 'Batch 1 of customer credit incentives dispatched. Early 48-hour conversion tracking at 41.2% repeat orders.' },
   ],
 }) => {
   return (

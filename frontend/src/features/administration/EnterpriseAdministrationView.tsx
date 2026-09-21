@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Settings, ShieldCheck, CheckCircle2, Globe, Palette, Clock, ToggleLeft, ToggleRight, Layers } from 'lucide-react';
 import { Card, Badge, Button, MetricTile } from '../../design-system';
+import { useOrganization } from '../../context/OrganizationContext';
+import { useTenantStore } from '../../store/useTenantStore';
 
 export const EnterpriseAdministrationView: React.FC = () => {
+  const { activeOrganization } = useOrganization();
+  const { activeOrg } = useTenantStore();
   const [activeTab, setActiveTab] = useState<'BRANDING' | 'SECURITY' | 'RETENTION' | 'FLAGS'>('BRANDING');
   const [flags, setFlags] = useState({
     ENABLE_AUTONOMOUS_AGENTS: true,
@@ -11,6 +15,10 @@ export const EnterpriseAdministrationView: React.FC = () => {
     ENABLE_PUBLIC_API: true,
     ENABLE_DIGITAL_TWIN: true,
   });
+
+  const orgName = activeOrganization?.name || activeOrg?.name || 'Enterprise Workspace';
+  const orgSlug = activeOrganization?.slug || (activeOrg?.name ? activeOrg.name.toLowerCase().replace(/[^a-z0-9]/g, '-') : 'workspace');
+  const orgDomain = `decisionos.${orgSlug}.internal`;
 
   const toggleFlag = (key: keyof typeof flags) => {
     setFlags((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -30,7 +38,7 @@ export const EnterpriseAdministrationView: React.FC = () => {
 
       {/* Hero Metrics */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <MetricTile label="TENANT ORGANIZATION" value="Apex Global Group" sublabel="decisionos.apexgroup.com" valueColor="#38BDF8" />
+        <MetricTile label="TENANT ORGANIZATION" value={orgName} sublabel={orgDomain} valueColor="#38BDF8" />
         <MetricTile label="MFA SECURITY STATUS" value="ENFORCED" sublabel="Okta SAML 2.0 Single Sign-On" valueColor="#10B981" />
         <MetricTile label="DATA RETENTION POLICY" value="7 Years" sublabel="Immutable Audit Ledger" valueColor="#A855F7" />
         <MetricTile label="ACTIVE FEATURE FLAGS" value="5 / 5 Enabled" sublabel="Full Platform Capabilities" valueColor="#F59E0B" />
@@ -106,11 +114,11 @@ export const EnterpriseAdministrationView: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
             <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '16px', borderRadius: '8px', border: '1px solid #1E293B' }}>
               <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700 }}>ORGANIZATION NAME</div>
-              <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF', marginTop: '4px' }}>Apex Global Technologies Group</div>
+              <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#FFFFFF', marginTop: '4px' }}>{orgName}</div>
             </div>
             <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '16px', borderRadius: '8px', border: '1px solid #1E293B' }}>
               <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700 }}>CUSTOM DOMAIN</div>
-              <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#38BDF8', marginTop: '4px' }}>decisionos.apexgroup.com</div>
+              <div style={{ fontSize: '0.94rem', fontWeight: 800, color: '#38BDF8', marginTop: '4px' }}>{orgDomain}</div>
             </div>
             <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '16px', borderRadius: '8px', border: '1px solid #1E293B' }}>
               <div style={{ fontSize: '0.74rem', color: '#64748B', fontWeight: 700 }}>PRIMARY BRAND COLOR</div>

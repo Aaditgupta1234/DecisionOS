@@ -104,8 +104,8 @@ export const InitiativeDetailsView: React.FC = () => {
           {/* Owner Box */}
           <div style={{ background: '#05070B', border: '1px solid #141C28', borderRadius: '8px', padding: '12px 16px', textAlign: 'right' }}>
             <span style={{ fontSize: '10.5px', color: '#64748B', textTransform: 'uppercase', fontWeight: 700 }}>Executive Owner</span>
-            <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#FFFFFF', marginTop: '2px' }}>Marcus Vance</div>
-            <span style={{ fontSize: '11px', color: '#38BDF8' }}>VP Customer Success</span>
+            <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#FFFFFF', marginTop: '2px' }}>Customer Success Lead</div>
+            <span style={{ fontSize: '11px', color: '#38BDF8' }}>Customer Experience Authority</span>
           </div>
         </div>
 

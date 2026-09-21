@@ -27,6 +27,7 @@ import {
   StaggerItem, 
   MotionCard 
 } from '../../design-system/motion';
+import { getApiDocsUrl } from '../../utils/getApiDocsUrl';
 
 export const PlatformShowcaseView: React.FC = () => {
   const modules = [
@@ -365,7 +366,7 @@ export const PlatformShowcaseView: React.FC = () => {
             <span className="f-link">Privacy Policy</span>
             <span className="f-link">Terms of Service</span>
             <span className="f-link">Security</span>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="f-link">API Documentation</a>
+            <a href={getApiDocsUrl()} target="_blank" rel="noreferrer" className="f-link">API Documentation</a>
             <span className="f-link">System Status</span>
           </div>
         </div>

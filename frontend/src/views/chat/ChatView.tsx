@@ -103,7 +103,7 @@ export const ChatView: React.FC = () => {
         id: `err-${Date.now()}`,
         session_id: activeSession.id,
         role: 'ASSISTANT',
-        content: `Sorry, I encountered an issue analyzing your request: ${err?.message || 'Unknown error'}.`,
+        content: 'DecisionOS Intelligence Service is temporarily unavailable. Please retry your request in a few moments.',
         created_at: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorReply]);

@@ -3,17 +3,43 @@ import { Settings, Users, Key, ShieldCheck, Activity, Database, DollarSign, Chec
 import { Card, Badge, Button, MetricTile } from '../../design-system';
 import { useTenantStore } from '../../store/useTenantStore';
 import { useFeatureFlagsStore } from '../../store/useFeatureFlagsStore';
+import { useAuth } from '../auth/AuthContext';
+import { useOrganization } from '../../context/OrganizationContext';
 import { UserRole } from '../../config/permissionsConfig';
 
 export const SystemAdminCenterView: React.FC = () => {
   const { activeOrg, userRole, setUserRole } = useTenantStore();
+  const { user } = useAuth();
+  const { activeOrganization } = useOrganization();
   const { ENABLE_QUERY_DEVTOOLS, toggleFlag } = useFeatureFlagsStore();
   const [apiKeyCreated, setApiKeyCreated] = useState(false);
 
+  const activeEmail = user?.email || 'admin@decisionos.internal';
+  const activeName = user?.full_name || (user?.email ? user.email.split('@')[0] : 'Organization Administrator');
+  const domain = activeOrganization?.slug ? `${activeOrganization.slug}.decisionos.internal` : 'workspace.decisionos.internal';
+
   const users = [
-    { id: 'usr-1', name: 'Alexander Vance', email: 'a.vance@apexgroup.com', role: 'ADMIN' as UserRole, status: 'ACTIVE' },
-    { id: 'usr-2', name: 'Elena Rostova', email: 'e.rostova@apexgroup.com', role: 'EXECUTIVE' as UserRole, status: 'ACTIVE' },
-    { id: 'usr-3', name: 'Marcus Sterling', email: 'm.sterling@apexgroup.com', role: 'ANALYST' as UserRole, status: 'ACTIVE' },
+    {
+      id: user?.id || 'usr-active',
+      name: `${activeName} (You)`,
+      email: activeEmail,
+      role: (userRole || 'ADMIN') as UserRole,
+      status: 'ACTIVE',
+    },
+    {
+      id: 'usr-sec',
+      name: 'Security Officer',
+      email: `security@${domain}`,
+      role: 'EXECUTIVE' as UserRole,
+      status: 'ACTIVE',
+    },
+    {
+      id: 'usr-ops',
+      name: 'Operations Lead',
+      email: `operations@${domain}`,
+      role: 'ANALYST' as UserRole,
+      status: 'ACTIVE',
+    },
   ];
 
   return (
@@ -57,7 +83,7 @@ export const SystemAdminCenterView: React.FC = () => {
       {/* Hero Metrics */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
         <MetricTile label="TENANT PLAN TIER" value="Enterprise Pro" sublabel="Unlimited Workspaces & Playbooks" valueColor="#38BDF8" />
-        <MetricTile label="TOTAL ACTIVE USERS" value="18 Seats" sublabel="Role-Based Access Guarded" valueColor="#FFFFFF" />
+        <MetricTile label="TOTAL ACTIVE USERS" value={`${users.length} Active Accounts`} sublabel="Role-Based Access Guarded" valueColor="#FFFFFF" />
         <MetricTile label="MONTHLY AI INFERENCE COST" value="$28.40" sublabel="Avg: $0.002 per Reasoning Trace" valueColor="#10B981" />
         <MetricTile label="SYSTEM UPTIME (SLA)" value="99.98%" sublabel="Zero Platform Outages" valueColor="#A855F7" />
       </div>
@@ -72,35 +98,41 @@ export const SystemAdminCenterView: React.FC = () => {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {users.map((u) => (
-            <div
-              key={u.id}
-              style={{
-                background: 'rgba(15, 23, 42, 0.6)',
-                border: '1px solid #1E293B',
-                borderRadius: '8px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '10px',
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#FFFFFF' }}>{u.name}</div>
-                <div style={{ fontSize: '0.74rem', color: '#64748B' }}>{u.email}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Badge variant={u.role === 'ADMIN' ? 'purple' : u.role === 'EXECUTIVE' ? 'emerald' : 'sky'} size="sm">
-                  {u.role}
-                </Badge>
-                <Badge variant="emerald" size="sm">
-                  {u.status}
-                </Badge>
-              </div>
+          {users.length === 0 ? (
+            <div style={{ padding: '24px', textAlign: 'center', color: '#64748B', fontSize: '0.86rem' }}>
+              No organization members available
             </div>
-          ))}
+          ) : (
+            users.map((u) => (
+              <div
+                key={u.id}
+                style={{
+                  background: 'rgba(15, 23, 42, 0.6)',
+                  border: '1px solid #1E293B',
+                  borderRadius: '8px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '10px',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#FFFFFF' }}>{u.name}</div>
+                  <div style={{ fontSize: '0.74rem', color: '#64748B' }}>{u.email}</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Badge variant={u.role === 'ADMIN' ? 'purple' : u.role === 'EXECUTIVE' ? 'emerald' : 'sky'} size="sm">
+                    {u.role}
+                  </Badge>
+                  <Badge variant="emerald" size="sm">
+                    {u.status}
+                  </Badge>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </Card>
 

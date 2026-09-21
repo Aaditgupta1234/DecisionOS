@@ -72,10 +72,7 @@ export const BackendOfflineScreen: React.FC<Props> = ({ onRetry, isRetrying = fa
         </h2>
 
         <p style={{ fontSize: '13.5px', color: '#94A3B8', lineHeight: 1.6, marginBottom: '24px' }}>
-          Unable to establish a secure handshake with the DecisionOS FastAPI backend on{' '}
-          <code style={{ color: '#F1F5F9', background: '#171D27', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>
-            localhost:8000
-          </code>.
+          Unable to establish a secure handshake with the DecisionOS FastAPI backend gateway service.
         </p>
 
         <div

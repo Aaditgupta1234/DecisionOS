@@ -105,7 +105,7 @@ export const ExecutiveReportDocument = forwardRef<HTMLDivElement, ExecutiveRepor
                   Business Health Score
                 </span>
                 <div style={{ marginTop: '14px' }}>
-                  <HealthScoreGauge score={health.score} status={health.status} />
+                  <HealthScoreGauge score={health.score ?? 0} status={health.status} />
                 </div>
               </div>
 

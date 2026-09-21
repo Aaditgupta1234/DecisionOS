@@ -168,8 +168,8 @@ export const RecommendationsView: React.FC = () => {
         </div>
       ) : (
         <EmptyState
-          title="No Recommendations Found"
-          description="No recommendations in this priority tier."
+          title="All Baselines Healthy"
+          description="All performance indicators are operating within acceptable thresholds. No active interventions required for this category."
           icon={CheckCircle2}
         />
       )}

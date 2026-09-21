@@ -309,7 +309,10 @@ async def test_async_job_executor_execution_and_cleanup():
     assert executor.active_count() == 1
 
     # Wait for completion
-    await asyncio.sleep(0.06)
+    for _ in range(25):
+        if not executor.is_active(job_id):
+            break
+        await asyncio.sleep(0.02)
 
     assert executed is True
     assert executor.is_active(job_id) is False

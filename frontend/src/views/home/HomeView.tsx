@@ -24,6 +24,7 @@ import {
   AnimatedCounter, 
   MotionCard 
 } from '../../design-system/motion';
+import { getApiDocsUrl } from '../../utils/getApiDocsUrl';
 
 export const HomeView: React.FC = () => {
   return (
@@ -66,7 +67,7 @@ export const HomeView: React.FC = () => {
                   <span>Start Analysis</span>
                   <ArrowRight size={16} className="btn-icon-wrapper right" />
                 </Link>
-                <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="btn-hero-secondary executive-motion-btn">
+                <a href={getApiDocsUrl()} target="_blank" rel="noreferrer" className="btn-hero-secondary executive-motion-btn">
                   <span>API Docs</span>
                   <div className="btn-play-circle">
                     <ArrowUpRight size={12} style={{ color: '#FFFFFF', marginLeft: '1px' }} />
@@ -761,7 +762,7 @@ export const HomeView: React.FC = () => {
                 <ArrowRight size={15} />
               </Link>
               <a 
-                href="http://localhost:8000/docs" 
+                href={getApiDocsUrl()} 
                 target="_blank" 
                 rel="noreferrer"
                 className="btn-cta-secondary"
@@ -790,7 +791,7 @@ export const HomeView: React.FC = () => {
             <span className="f-link">Privacy Policy</span>
             <span className="f-link">Terms of Service</span>
             <span className="f-link">Security</span>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="f-link">API Documentation</a>
+            <a href={getApiDocsUrl()} target="_blank" rel="noreferrer" className="f-link">API Documentation</a>
             <span className="f-link">System Status</span>
           </div>
         </div>

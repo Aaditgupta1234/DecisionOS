@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Cpu, ShieldCheck, Terminal, BookOpen } from 'lucide-react';
+import { getApiDocsUrl } from '../../utils/getApiDocsUrl';
 
 export const ExecutiveCtaFooter: React.FC = () => {
   return (
@@ -25,12 +26,12 @@ export const ExecutiveCtaFooter: React.FC = () => {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/dashboard" className="btn-primary-command">
+            <Link to="/enterprise" className="btn-primary-command">
               <span>Launch Command Center</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <a 
-              href="http://localhost:8000/docs" 
+              href={getApiDocsUrl()} 
               target="_blank" 
               rel="noreferrer"
               className="btn-secondary-command"
@@ -111,7 +112,7 @@ export const ExecutiveCtaFooter: React.FC = () => {
             <span className="hover:text-gray-400 transition-colors">Privacy Policy</span>
             <span className="hover:text-gray-400 transition-colors">Terms of Service</span>
             <span className="hover:text-gray-400 transition-colors">Security Standards</span>
-            <a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="hover:text-gray-400 transition-colors">API Docs</a>
+            <a href={getApiDocsUrl()} target="_blank" rel="noreferrer" className="hover:text-gray-400 transition-colors">API Docs</a>
           </div>
         </div>
 

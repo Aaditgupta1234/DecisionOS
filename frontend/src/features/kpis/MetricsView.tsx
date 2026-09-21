@@ -216,7 +216,7 @@ export const MetricsView: React.FC = () => {
 
       {/* 3. Flagship Business Health Score Hero Card */}
       <HealthScoreHeroCard
-        score={healthData?.score}
+        score={healthData?.score ?? undefined}
         status={healthData?.status}
       />
 
