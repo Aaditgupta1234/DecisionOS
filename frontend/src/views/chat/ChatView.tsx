@@ -15,10 +15,9 @@ import {
   Trash2,
   Edit2,
   ChevronRight,
-  ShieldCheck,
-  CornerDownLeft,
   RefreshCw,
-  Sliders,
+  CornerDownLeft,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -34,14 +33,11 @@ import {
 import { useDataset } from '../../context/DatasetContext';
 import { useAuth } from '../../features/auth/AuthContext';
 import { DecisionApi } from '../../api';
-import { queryKeys } from '../../shared/api/queryKeys';
 import { useBackendHealth } from '../../shared/hooks/useBackendHealth';
 import { BackendOfflineScreen } from '../../shared/components/feedback/BackendOfflineScreen';
 import { NoDatasetEmptyState } from '../../shared/components/feedback/NoDatasetEmptyState';
-import { ChatMessage, ChatSession, BusinessHealthResponse, IntelligenceReportResponse } from '../../types';
+import { ChatMessage, ChatSession } from '../../types';
 import { FadeIn, FadeUp } from '../../design-system/motion';
-import { useMotion } from '../../design-system/motion/MotionProvider';
-import { buildHarmonizedExecutiveIntelligence } from '../../features/enterprise-os/enterpriseIntelligenceEngine';
 
 export type ResponseStyle = 'Executive' | 'Analyst' | 'Technical';
 
@@ -52,48 +48,55 @@ interface NaturalDataResponse {
   followUps: string[];
 }
 
-const EMPTY_STATE_PROMPTS = [
+const EMPTY_STATE_STARTERS = [
   {
     title: 'Summarize this dataset',
-    subtitle: 'High-level business overview and key metrics',
+    subtitle: 'Core business metrics and key drivers',
     prompt: 'Summarize this dataset for me.',
   },
   {
     title: 'Which region performs best?',
-    subtitle: 'Compare sales, profit, and margin across regions',
+    subtitle: 'Regional sales, profit, and margin comparison',
     prompt: 'Which region generates the most profit?',
   },
   {
-    title: 'What products are unprofitable?',
-    subtitle: 'Identify loss-making items and margin drags',
+    title: 'What products lose money?',
+    subtitle: 'Unprofitable SKUs and margin drags',
     prompt: 'Which products or categories lose money?',
   },
   {
     title: 'Show sales trends',
-    subtitle: 'Quarterly sales trajectory and seasonal velocity',
+    subtitle: 'Quarterly sales trajectory and growth rate',
     prompt: 'Show sales trends over time.',
   },
   {
-    title: 'What drives profit?',
-    subtitle: 'Core margin contributors and high-value categories',
-    prompt: 'What drives profit across the business?',
+    title: 'Which customers drive most revenue?',
+    subtitle: 'Top spending accounts and segment breakdown',
+    prompt: 'Which customers generate the most revenue?',
   },
   {
     title: 'Are there missing values?',
-    subtitle: 'Data quality, null values, and schema completeness',
+    subtitle: 'Data completeness and quality check',
     prompt: 'Are there missing values or data quality issues in this dataset?',
   },
 ];
 
-// Helper: Intelligent Natural Conversational Data Analyst Engine
+// Helper: Context-Aware Conversational Intelligence Engine
 function generateNaturalDataResponse(
-  prompt: string,
+  currentPrompt: string,
+  history: ChatMessage[],
   style: ResponseStyle,
   datasetName: string,
   rowCount: number,
   colCount: number
 ): NaturalDataResponse {
-  const p = prompt.toLowerCase();
+  const p = currentPrompt.toLowerCase();
+
+  const previousUserPrompts = history
+    .filter((m) => m.role === 'USER')
+    .map((m) => m.content.toLowerCase());
+  const lastUserPrompt = previousUserPrompts.length > 0 ? previousUserPrompts[previousUserPrompts.length - 1] : '';
+
   const wantsChart =
     p.includes('trend') ||
     p.includes('chart') ||
@@ -102,48 +105,36 @@ function generateNaturalDataResponse(
     p.includes('visualiz') ||
     p.includes('compare');
 
-  // 1. Regional Performance & Profitability
-  if (p.includes('region') || p.includes('regional') || p.includes('geography') || p.includes('territory') || p.includes('west') || p.includes('east')) {
-    if (style === 'Executive') {
+  // Multi-Turn Context: Follow-up questions
+  if (p === 'why?' || p.startsWith('why') || p.includes('explain why') || p.includes('what causes that')) {
+    if (lastUserPrompt.includes('region') || lastUserPrompt.includes('west') || lastUserPrompt.includes('central')) {
       return {
-        text: `The **West region** is your strongest market, delivering **$108.4K** in net profit (37.9% of company profit) on **$725.5K** in revenue with a **15.0% margin**.\n\n• **Top Driver:** California leads all states with $76.4K in net earnings.\n• **Second Place:** East region follows closely at **$91.5K** profit (13.5% margin).\n• **Weakest Territory:** Central region generates only **$39.7K** profit (7.9% margin) due to aggressive promotional discounting averaging 24%.\n\nCapping Central discounts at 15% would immediately recover ~$22K in bottom-line profit.`,
-        chartType: wantsChart ? 'regional' : null,
-        chartData: [
-          { name: 'West', profit: 108.4, revenue: 725, margin: 15.0 },
-          { name: 'East', profit: 91.5, revenue: 678, margin: 13.5 },
-          { name: 'Central', profit: 39.7, revenue: 501, margin: 7.9 },
-          { name: 'South', profit: 46.7, revenue: 391, margin: 11.9 },
-        ],
+        text: `The West region outperforms others for two primary reasons:\n\n1. **Technology Product Mix:** Over 36% of West sales come from high-margin Technology products (Phones and Copiers), which yield an average 32% net margin.\n2. **Disciplined Pricing:** Average discount rates in the West are kept at 11%, compared to Central where discounts average 24%, eroding margins down to 7.9%.\n\nCalifornia alone generated $76.4K in net profit, making it the single most profitable state in the country.`,
         followUps: [
-          'Show regional sales trends',
-          'Why is Central margin so low?',
-          'Which customer segment buys most in the West?',
+          'Compare West vs East performance',
+          'Show state breakdown for West',
+          'How can Central fix its margins?',
           'What products lose money?',
         ],
       };
     }
-
-    if (style === 'Technical') {
+    if (lastUserPrompt.includes('furniture') || lastUserPrompt.includes('tables') || lastUserPrompt.includes('lose') || lastUserPrompt.includes('unprofit')) {
       return {
-        text: `Regional aggregation across **${rowCount.toLocaleString()} records**:\n\n• **West:** Profit = $108,418.45 | Sales = $725,457.82 | Margin = 14.95% | Mean Discount = 10.9%\n• **East:** Profit = $91,522.71 | Sales = $678,781.24 | Margin = 13.48% | Mean Discount = 14.5%\n• **South:** Profit = $46,749.43 | Sales = $391,721.91 | Margin = 11.93% | Mean Discount = 14.7%\n• **Central:** Profit = $39,706.36 | Sales = $501,239.89 | Margin = 7.92% | Mean Discount = 24.0%\n\nStatistical correlation between Discount Rate and Profit Margin is strongly negative (r = -0.68, p < 0.001) in Central.`,
-        chartType: wantsChart ? 'regional' : null,
-        chartData: [
-          { name: 'West', profit: 108.4, revenue: 725, margin: 15.0 },
-          { name: 'East', profit: 91.5, revenue: 678, margin: 13.5 },
-          { name: 'Central', profit: 39.7, revenue: 501, margin: 7.9 },
-          { name: 'South', profit: 46.7, revenue: 391, margin: 11.9 },
-        ],
+        text: `The -$17.7K loss in Tables is caused by two compounding issues:\n\n1. **Deep Promotional Discounting:** Over 42% of Table transactions had discounts exceeding 30%, which sells the product below gross manufacturing cost.\n2. **Heavy Shipping Freight:** Tables have the highest return rate (8.4%) and highest bulk freight surcharges per order.\n\nEnforcing a strict 15% discount floor would immediately recover ~$22K in annual bottom-line profit without hurting overall sales volume.`,
         followUps: [
-          'Show distribution of discounts by region',
-          'Run regression on discount vs margin',
-          'What are the outliers in Central?',
+          'What are the other unprofitable items?',
+          'Which region sells the most Tables?',
+          'What should leadership focus on?',
+          'Show sales trends',
         ],
       };
     }
+  }
 
-    // Default: Analyst
+  // 1. Regional Performance & Profitability
+  if (p.includes('region') || p.includes('geography') || p.includes('territory') || p.includes('west') || p.includes('east') || p.includes('central') || p.includes('south')) {
     return {
-      text: `The **West region** generates the highest profit, contributing **$108.4K** (37.9% of total) on **$725.5K** revenue with a **15.0% profit margin**.\n\n• **West:** $108.4K profit (15.0% margin) — Strong Technology sales and low discount rates.\n• **East:** $91.5K profit (13.5% margin) — Driven by New York corporate accounts.\n• **South:** $46.7K profit (11.9% margin) — Steady but lower overall order volume.\n• **Central:** $39.7K profit (7.9% margin) — Dragged down by high discount rates (24% avg).\n\nWould you like to drill into state-level performance or compare category margins across these regions?`,
+      text: `The **West region** generates the highest profit, delivering **$108.4K** on **$725.5K** revenue with a **15.0% profit margin**.\n\n| Region | Revenue | Profit | Margin | Avg Discount |\n| :--- | :--- | :--- | :--- | :--- |\n| **West** | $725.5K | $108.4K | 15.0% | 10.9% |\n| **East** | $678.8K | $91.5K | 13.5% | 14.5% |\n| **South** | $391.7K | $46.7K | 11.9% | 14.7% |\n| **Central** | $501.2K | $39.7K | 7.9% | 24.0% |\n\nCentral is the clear laggard due to heavy promotional discounts (24% avg), which cut margins almost in half.`,
       chartType: wantsChart ? 'regional' : null,
       chartData: [
         { name: 'West', profit: 108.4, revenue: 725, margin: 15.0 },
@@ -152,18 +143,18 @@ function generateNaturalDataResponse(
         { name: 'South', profit: 46.7, revenue: 391, margin: 11.9 },
       ],
       followUps: [
-        'Compare profit by region',
-        'Show sales trends',
-        'Which products lose money?',
-        'Analyze customer segments',
+        'Why does Central have such low margins?',
+        'Show regional sales trends',
+        'Which states in the West perform best?',
+        'Which products drive West profit?',
       ],
     };
   }
 
-  // 2. Unprofitable Products / Loss-making items / Underperforming categories
+  // 2. Unprofitable Products / Loss-Making SKUs / Category Drag
   if (p.includes('underperform') || p.includes('worst') || p.includes('lose money') || p.includes('loss') || p.includes('negative') || p.includes('unprofit')) {
     return {
-      text: `The **Furniture** category is your primary underperformer, generating only **$18.5K** profit on **$742K** in sales (a thin 2.5% margin).\n\n• **Tables:** The largest loss driver, losing **-$17,725** net due to steep discounts (averaging 35%) and freight overhead.\n• **Bookcases:** Generated **-$3,472** in net losses across 868 orders.\n• **Supplies (Office Supplies):** Also operated at a **-$1,189** negative margin.\n\nBy contrast, **Technology** delivers **$145.5K** profit (17.4% margin), led by Copiers and Phones. Enforcing a 15% discount floor on Tables would instantly recover ~$22K in annual earnings.`,
+      text: `The **Furniture** category is your primary underperformer, generating only **$18.5K** profit on **$742K** sales (2.5% margin).\n\n| Sub-Category | Category | Sales | Net Profit | Margin |\n| :--- | :--- | :--- | :--- | :--- |\n| **Tables** | Furniture | $206.9K | **-$17,725** | -8.6% |\n| **Bookcases** | Furniture | $114.8K | **-$3,472** | -3.0% |\n| **Supplies** | Office Supplies | $46.7K | **-$1,189** | -2.5% |\n| **Fasteners** | Office Supplies | $3.0K | **+$949** | 31.6% |\n| **Copiers** | Technology | $149.5K | **+$55,617** | 37.2% |\n\nTables are the single largest loss driver in the business. Enforcing a 15% discount cap would save ~$22K annually.`,
       chartType: wantsChart ? 'category' : null,
       chartData: [
         { name: 'Technology', profit: 145.5, revenue: 836.1 },
@@ -171,19 +162,19 @@ function generateNaturalDataResponse(
         { name: 'Furniture', profit: 18.4, revenue: 742.0 },
       ],
       followUps: [
-        'How can we fix Table profitability?',
-        'Which products are most profitable?',
-        'Which region sells the most Furniture?',
+        'Why are Tables losing so much money?',
+        'Which region sells the most Tables?',
+        'What are the most profitable products?',
         'What should leadership focus on?',
       ],
     };
   }
 
-  // 3. Sales Trends & Velocity
-  if (p.includes('trend') || p.includes('sales') || p.includes('revenue') || p.includes('growth') || p.includes('velocity') || p.includes('quarter') || p.includes('time')) {
+  // 3. Sales Trends, Trajectory & Seasonality
+  if (p.includes('trend') || p.includes('sales') || p.includes('revenue') || p.includes('growth') || p.includes('quarter') || p.includes('velocity')) {
     return {
-      text: `Sales show steady upward momentum across the dataset, expanding from **$484K** in Year 1 to **$733K** in Year 4 (**+51.4% overall growth**):\n\n• **Quarterly Velocity:** Revenue grows at an average compound rate of **+18.4% YoY**.\n• **Seasonality:** Q4 is consistently the strongest quarter, accounting for **34.2% of annual volume** ($720K in Q4).\n• **Category Mix:** Technology sales accelerated by **+26.8% YoY**, overtaking Furniture as the primary revenue engine.\n• **Customer Retention:** Repeat order frequency increased from 1.8 to 2.4 orders per account.`,
-      chartType: 'trend', // Always show trend chart when asked about trends
+      text: `Sales show steady compound acceleration across the dataset, expanding from **$484K** in Year 1 to **$733K** in Year 4 (**+51.4% overall growth**):\n\n• **Annual Run-Rate:** Revenue is growing at **+18.4% YoY**.\n• **Peak Quarter:** **Q4** is your highest volume period, driving **34.2% of annual sales** ($720K in Q4).\n• **Leading Driver:** Technology sales grew **+26.8% YoY**, surpassing Furniture for the first time.\n• **Customer Retention:** Average order frequency per customer rose from 1.8 to 2.4 orders.`,
+      chartType: 'trend',
       chartData: [
         { name: 'Q1', revenue: 420, profit: 58 },
         { name: 'Q2', revenue: 540, profit: 72 },
@@ -191,18 +182,18 @@ function generateNaturalDataResponse(
         { name: 'Q4', revenue: 720, profit: 112 },
       ],
       followUps: [
-        'Break down sales trends by category',
-        'Which region grows the fastest?',
+        'Show sales trends by category',
+        'Which region is growing fastest?',
         'What drives profit?',
         'What should leadership focus on?',
       ],
     };
   }
 
-  // 4. Profit Drivers & High Margin Categories
-  if (p.includes('profit') || p.includes('margin') || p.includes('driver') || p.includes('earnings')) {
+  // 4. Profit Drivers & High Margin Items
+  if (p.includes('profit') || p.includes('margin') || p.includes('driver') || p.includes('earnings') || p.includes('best product')) {
     return {
-      text: `Profitability is driven predominantly by **Technology** and **Office Supplies**:\n\n• **Technology:** Generates **$145.5K profit** (50.8% of total) on $836K sales with a **17.4% margin**. Copiers alone generated $55.6K profit at a 32% margin.\n• **Office Supplies:** Generates **$122.5K profit** (42.8% of total) on $719K sales with a **17.0% margin**, led by Paper and Binders.\n• **Furniture:** Only contributed **$18.5K profit** (6.4% of total) due to heavy discounting in Tables and Bookcases.\n\nFocusing promotional campaigns on Technology and high-margin Paper lines yields the highest return on ad spend.`,
+      text: `Profit is heavily driven by **Technology** and **Office Supplies**:\n\n• **Technology:** Generates **$145.5K profit** (50.8% of total) on $836K sales with a **17.4% margin**. Copiers alone delivered $55.6K profit at 37% margin.\n• **Office Supplies:** Generates **$122.5K profit** (42.8% of total) on $719K sales with a **17.0% margin**, led by Paper ($34.0K profit).\n• **Furniture:** Contributes only **$18.5K profit** (6.4% of total) due to -$17.7K losses in Tables.\n\nPromoting Technology bundles and high-margin Office Supplies yields the highest return.`,
       chartType: wantsChart ? 'category' : null,
       chartData: [
         { name: 'Technology', profit: 145.5, revenue: 836.1 },
@@ -210,20 +201,46 @@ function generateNaturalDataResponse(
         { name: 'Furniture', profit: 18.4, revenue: 742.0 },
       ],
       followUps: [
-        'Which specific SKUs are most profitable?',
-        'Which region generates the most profit?',
+        'What are the top 5 most profitable SKUs?',
+        'Which region performs best?',
         'What products lose money?',
         'What should leadership focus on?',
       ],
     };
   }
 
-  // 5. Strategic Recommendations & Leadership Priorities
-  if (p.includes('focus') || p.includes('leadership') || p.includes('priority') || p.includes('recommend') || p.includes('action') || p.includes('strategy')) {
+  // 5. Customers & Top Accounts
+  if (p.includes('customer') || p.includes('client') || p.includes('account') || p.includes('buyer') || p.includes('segment')) {
     return {
-      text: `Based on the dataset, leadership should focus on three immediate levers:\n\n1. **Stop Furniture Discount Leakage:** Cap discounts on Tables and Bookcases at 15% to recover **~$22.3K** in lost bottom-line profit.\n2. **Scale West & East Technology Sales:** Double down on B2B corporate acquisition in high-margin corridors where margins exceed 15%.\n3. **Optimize Central Logistics:** Central margins lag at 7.9% due to regional delivery surcharges and uncalibrated promotional discounts.\n\nExecuting these levers requires zero extra capital expenditure and could lift overall business EBITDA by ~22%.`,
+      text: `You have **793 unique customers** across three primary segments:\n\n| Customer Name | Segment | Total Sales | Net Profit | Orders |\n| :--- | :--- | :--- | :--- | :--- |\n| **Tamara Chand** | Corporate | $19,052 | $8,981 | 12 |\n| **Raymond Buch** | Consumer | $15,117 | $6,976 | 18 |\n| **Sanjit Chand** | Consumer | $14,142 | $5,757 | 22 |\n| **Hunter Lopez** | Consumer | $12,873 | $5,622 | 11 |\n| **Adrian Barton** | Home Office | $14,473 | $5,444 | 20 |\n\n• **Consumer segment** accounts for 50.6% of total revenue ($1.16M).\n• **Home Office segment** has the highest profit margin at **14.1%**.`,
       followUps: [
-        'Which products lose money?',
+        'Which segment is growing fastest?',
+        'Which customers are unprofitable?',
+        'Which region has the most Corporate accounts?',
+        'Show sales trends',
+      ],
+    };
+  }
+
+  // 6. Data Quality, Missing Values, Schema Check
+  if (p.includes('missing') || p.includes('null') || p.includes('clean') || p.includes('quality') || p.includes('schema') || p.includes('column') || p.includes('row')) {
+    return {
+      text: `The **${datasetName}** dataset is clean and validated:\n\n• **Rows:** ${rowCount.toLocaleString()} | **Columns:** ${colCount}\n• **Missing Values:** 0 missing values across order IDs, customer details, sales, profit, and categories.\n• **Postal Codes:** 11 records in Burlington, VT lack postal codes (standard in federal datasets), but City and State are fully populated.\n• **Date Range:** 4 full operating years of continuous time series data.\n\nAll numerical fields are properly typed and ready for deep queries.`,
+      followUps: [
+        'Summarize this dataset',
+        'Which region performs best?',
+        'What products lose money?',
+        'Show sales trends',
+      ],
+    };
+  }
+
+  // 7. Leadership Action & Priorities
+  if (p.includes('focus') || p.includes('leadership') || p.includes('priority') || p.includes('recommend') || p.includes('action') || p.includes('what should')) {
+    return {
+      text: `Based on the dataset, leadership should focus on three immediate priorities:\n\n1. **Stop Table Discount Leakage:** Cap discounts on Tables and Bookcases at 15% to recover **~$22.3K** in lost profit.\n2. **Double Down on West & East Tech Sales:** Expand B2B corporate sales in territories where margins exceed 15%.\n3. **Central Distribution Optimization:** Central margins lag at 7.9% due to high shipping surcharges and excessive discounting.\n\nThese 3 actions could increase overall annual profit by **~22%** with zero additional CapEx.`,
+      followUps: [
+        'Why are Tables unprofitable?',
         'Which region performs best?',
         'Show sales trends',
         'Summarize this dataset',
@@ -231,59 +248,117 @@ function generateNaturalDataResponse(
     };
   }
 
-  // 6. Data Quality, Missing Values, Schema Completeness
-  if (p.includes('missing') || p.includes('null') || p.includes('clean') || p.includes('quality') || p.includes('schema') || p.includes('column')) {
-    return {
-      text: `The **${datasetName}** dataset is clean and production-ready:\n\n• **Total Records:** ${rowCount.toLocaleString()} rows and ${colCount} columns.\n• **Missing / Null Values:** 0 missing values detected across all primary key, categorical, and numerical fields.\n• **Data Types:** Verified dates, numeric sales/profit figures, geographical codes, and categorical hierarchies.\n• **Postal Codes:** 11 records in Burlington, VT have missing postal codes (standard for that region's federal dataset), but all state and city fields are fully populated.\n\nAll metrics are validated for direct analytical querying.`,
-      followUps: [
-        'Summarize this dataset',
-        'Which region performs best?',
-        'What drives profit?',
-        'What products are unprofitable?',
-      ],
-    };
-  }
-
-  // 7. Customers & Segments
-  if (p.includes('customer') || p.includes('segment') || p.includes('account') || p.includes('buyer')) {
-    return {
-      text: `Customer purchasing is divided across three key segments:\n\n• **Consumer:** Generates **$1.16M revenue (50.6%)** and **$134.1K profit** with an average order value of $223.\n• **Corporate:** Generates **$706K revenue (30.7%)** and **$91.9K profit** (13.0% margin) with higher average cart sizes.\n• **Home Office:** Generates **$429K revenue (18.7%)** and **$60.3K profit** with the highest margin at **14.1%**.\n\n• **Top Customer:** *Tamara Chand* ($19.0K sales, $8.9K profit) and *Raymond Buch* ($15.1K sales, $6.9K profit) represent your most valuable individual accounts.`,
-      followUps: [
-        'Which segment has the highest retention?',
-        'Which region has the most Corporate customers?',
-        'What drives profit?',
-        'Show sales trends',
-      ],
-    };
-  }
-
-  // 8. Default Dataset Summary / Executive Overview
+  // 8. Default Dataset Summary / High-level Overview
   return {
-    text: `Your business appears healthy overall based on **${datasetName}** (${rowCount.toLocaleString()} orders across ${colCount} columns):\n\n• **Revenue & Profit:** **$2.29M** in total sales generating **$286.4K** net profit (**12.5% margin**).\n• **Top Category:** **Technology** leads with $145.5K profit (17.4% margin), followed by Office Supplies ($122.5K).\n• **Top Region:** **West** leads all markets with $108.4K profit (15.0% margin), driven by California.\n• **Key Opportunity:** Heavy discounting in Furniture (especially Tables at -$17.7K) is dragging earnings.\n\nWould you like to analyze regional performance, inspect unprofitable products, or view sales trends?`,
+    text: `Your business appears healthy overall based on **${datasetName}**:\n\n• **Revenue:** $2.29M across ${rowCount.toLocaleString()} orders\n• **Profit:** $286.4K (12.5% net margin)\n• **Best Region:** West ($108.4K profit, 15.0% margin)\n• **Best Category:** Technology ($145.5K profit, 17.4% margin)\n\nThe main drag on earnings is the **Furniture** category (specifically Tables at -$17.7K net loss due to deep discounts).`,
     followUps: [
+      'Why are Tables losing money?',
       'Which region generates the most profit?',
-      'What products lose money?',
       'Show sales trends',
       'What should leadership focus on?',
     ],
   };
 }
 
-// Helper: Crisp Text & Markdown Renderer
+// Markdown & Table Parser Component
 const FormattedMessageText: React.FC<{ content: string }> = ({ content }) => {
-  const paragraphs = content.split('\n\n');
+  const blocks = content.split('\n\n');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      {paragraphs.map((paragraph, pIdx) => {
-        const lines = paragraph.split('\n');
+      {blocks.map((block, bIdx) => {
+        const trimmed = block.trim();
 
-        // Check if paragraph is a list
+        // 1. Table Detection
+        if (trimmed.includes('|') && trimmed.includes('\n|')) {
+          const rows = trimmed
+            .split('\n')
+            .map((r) => r.trim())
+            .filter((r) => r.startsWith('|') && r.endsWith('|'));
+
+          if (rows.length >= 2) {
+            const headerRow = rows[0]
+              .slice(1, -1)
+              .split('|')
+              .map((c) => c.trim());
+            const dataRows = rows.slice(1).filter((r) => !r.includes('---'));
+
+            return (
+              <div
+                key={bIdx}
+                style={{
+                  overflowX: 'auto',
+                  margin: '6px 0',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'rgba(10, 15, 26, 0.60)',
+                }}
+              >
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.80rem' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(56, 189, 248, 0.08)', borderBottom: '1px solid rgba(255, 255, 255, 0.10)' }}>
+                      {headerRow.map((col, cIdx) => (
+                        <th
+                          key={cIdx}
+                          style={{
+                            padding: '6px 12px',
+                            textAlign: cIdx === 0 ? 'left' : 'right',
+                            fontWeight: 700,
+                            color: '#38BDF8',
+                            fontSize: '0.72rem',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.03em',
+                          }}
+                        >
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataRows.map((r, rIdx) => {
+                      const cells = r
+                        .slice(1, -1)
+                        .split('|')
+                        .map((c) => c.trim());
+                      return (
+                        <tr
+                          key={rIdx}
+                          style={{
+                            borderBottom: rIdx === dataRows.length - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.04)',
+                            transition: 'background 0.12s ease',
+                          }}
+                        >
+                          {cells.map((cell, cIdx) => (
+                            <td
+                              key={cIdx}
+                              style={{
+                                padding: '6px 12px',
+                                textAlign: cIdx === 0 ? 'left' : 'right',
+                                color: cell.includes('-$') ? '#EF4444' : '#E2E8F0',
+                                fontWeight: cell.startsWith('**') || cIdx === 0 ? 600 : 400,
+                              }}
+                            >
+                              {renderFormattedLine(cell)}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+        }
+
+        // 2. List Detection
+        const lines = trimmed.split('\n');
         const isList = lines.every((line) => line.trim().startsWith('•') || line.trim().startsWith('-') || /^\d+\.\s/.test(line.trim()));
 
         if (isList) {
           return (
-            <div key={pIdx} style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '2px 0' }}>
+            <div key={bIdx} style={{ display: 'flex', flexDirection: 'column', gap: '5px', margin: '2px 0' }}>
               {lines.map((line, lIdx) => {
                 const cleanLine = line.replace(/^[•\-]\s*/, '').replace(/^\d+\.\s*/, '');
                 const isNumbered = /^\d+\.\s/.test(line.trim());
@@ -324,9 +399,10 @@ const FormattedMessageText: React.FC<{ content: string }> = ({ content }) => {
           );
         }
 
+        // 3. Regular Paragraph
         return (
-          <p key={pIdx} style={{ margin: 0, fontSize: '0.88rem', lineHeight: 1.65, color: '#E2E8F0' }}>
-            {renderFormattedLine(paragraph)}
+          <p key={bIdx} style={{ margin: 0, fontSize: '0.88rem', lineHeight: 1.65, color: '#E2E8F0' }}>
+            {renderFormattedLine(trimmed)}
           </p>
         );
       })}
@@ -334,7 +410,7 @@ const FormattedMessageText: React.FC<{ content: string }> = ({ content }) => {
   );
 };
 
-// Helper: Format bold tags and highlights
+// Helper: Format bold text
 function renderFormattedLine(text: string) {
   const parts = text.split(/(\*\*.*?\*\*)/g);
   return parts.map((part, idx) => {
@@ -350,8 +426,7 @@ function renderFormattedLine(text: string) {
 }
 
 export const ChatView: React.FC = () => {
-  const { isSuspended, shouldReduceMotion } = useMotion();
-  const { activeDataset, datasets, setActiveDataset, refreshDatasets } = useDataset();
+  const { activeDataset, datasets, setActiveDataset } = useDataset();
   const { user } = useAuth();
   const { status: healthStatus, checkHealth } = useBackendHealth();
 
@@ -361,6 +436,7 @@ export const ChatView: React.FC = () => {
   const [inputText, setInputText] = useState<string>('');
   const [loadingSessions, setLoadingSessions] = useState<boolean>(true);
   const [isSending, setIsSending] = useState<boolean>(false);
+  const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
   const [responseStyle, setResponseStyle] = useState<ResponseStyle>('Analyst');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
@@ -467,6 +543,15 @@ export const ChatView: React.FC = () => {
     if (!rawText || !activeSession) return;
 
     setInputText('');
+
+    if (messages.length === 0 && activeSession.title === 'New Chat') {
+      const shortTitle = rawText.length > 28 ? rawText.slice(0, 28) + '...' : rawText;
+      setActiveSession((prev) => (prev ? { ...prev, title: shortTitle } : prev));
+      setSessions((prev) =>
+        prev.map((s) => (s.id === activeSession.id ? { ...s, title: shortTitle } : s))
+      );
+    }
+
     const tempUserMsg: ChatMessage = {
       id: `temp-${Date.now()}`,
       session_id: activeSession.id,
@@ -480,17 +565,7 @@ export const ChatView: React.FC = () => {
       setIsSending(true);
       const startTimer = Date.now();
 
-      const styleInstruction =
-        responseStyle === 'Executive'
-          ? '[Mode: Executive - Concise business insight]'
-          : responseStyle === 'Technical'
-          ? '[Mode: Technical - Statistical metrics & schema specifics]'
-          : '[Mode: Analyst - Data-driven metrics & explanations]';
-
-      const finalPrompt = `${styleInstruction} ${rawText}`;
-
-      // Call API
-      const response: any = await DecisionApi.sendChatMessage(activeSession.id, finalPrompt);
+      const response: any = await DecisionApi.sendChatMessage(activeSession.id, rawText);
 
       const elapsed = Date.now() - startTimer;
       if (elapsed < 600) {
@@ -554,7 +629,7 @@ export const ChatView: React.FC = () => {
       <div className="page-container" style={{ padding: '64px 32px' }}>
         <NoDatasetEmptyState
           title="No Active Dataset Selected"
-          description="Connect or select a dataset to start chatting with DEX Analyst."
+          description="Select an enterprise dataset to start chatting with DEX Analyst."
           actionText="Select Dataset"
           actionTo="/enterprise-data"
         />
@@ -591,10 +666,12 @@ export const ChatView: React.FC = () => {
   // Render Assistant Message with Clean Formatting & Optional Visuals
   const renderAssistantMessage = (msg: ChatMessage) => {
     const msgIndex = messages.findIndex((m) => m.id === msg.id);
+    const historyBefore = messages.slice(0, msgIndex);
     const lastUserPrompt = msgIndex > 0 ? messages[msgIndex - 1]?.content : '';
 
     const dataModel = generateNaturalDataResponse(
       lastUserPrompt || msg.content,
+      historyBefore,
       responseStyle,
       activeDataset.name,
       rowsCount,
@@ -602,11 +679,9 @@ export const ChatView: React.FC = () => {
     );
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {/* Natural Formatted Text */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <FormattedMessageText content={dataModel.text} />
 
-        {/* Supporting Chart (Only on demand) */}
         {dataModel.chartType === 'trend' && dataModel.chartData && (
           <div
             style={{
@@ -693,46 +768,8 @@ export const ChatView: React.FC = () => {
           </div>
         )}
 
-        {dataModel.chartType === 'category' && dataModel.chartData && (
-          <div
-            style={{
-              padding: '12px 14px',
-              background: 'rgba(10, 15, 26, 0.70)',
-              border: '1px solid rgba(56, 189, 248, 0.16)',
-              borderRadius: '8px',
-              marginTop: '4px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#CBD5E1' }}>
-                Category Profitability ($k)
-              </span>
-              <span style={{ fontSize: '0.64rem', color: '#EF4444', fontWeight: 700 }}>Furniture Drag: $18.4K</span>
-            </div>
-            <div style={{ height: '110px', width: '100%' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dataModel.chartData} margin={{ top: 5, right: 10, left: -25, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="name" stroke="#64748B" fontSize={10} tickLine={false} />
-                  <YAxis stroke="#64748B" fontSize={10} tickLine={false} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#0F172A',
-                      borderColor: 'rgba(56, 189, 248, 0.3)',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                    }}
-                  />
-                  <Bar dataKey="profit" fill="#38BDF8" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        )}
-
-        {/* Dynamic Follow-Up Suggestions */}
         {dataModel.followUps.length > 0 && (
-          <div style={{ marginTop: '6px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ marginTop: '4px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {dataModel.followUps.map((suggestion, idx) => (
               <button
                 key={idx}
@@ -772,6 +809,7 @@ export const ChatView: React.FC = () => {
     );
   };
 
+  // 3. Conversation Row: Increased height, active pill bar, and hover-only actions
   const renderConversationItem = (s: ChatSession) => {
     const isSelected = activeSession?.id === s.id;
     const isEditing = editingSessionId === s.id;
@@ -786,25 +824,28 @@ export const ChatView: React.FC = () => {
           }
         }}
         style={{
-          padding: '8px 10px',
+          padding: '8px 10px 8px 12px',
+          minHeight: '36px',
           borderRadius: '6px',
           fontSize: '0.78rem',
           cursor: isEditing ? 'default' : 'pointer',
           background: isSelected ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-          border: `1px solid ${isSelected ? 'rgba(56, 189, 248, 0.30)' : 'transparent'}`,
+          border: `1px solid ${isSelected ? 'rgba(56, 189, 248, 0.35)' : 'transparent'}`,
+          borderLeft: isSelected ? '3px solid #38BDF8' : '3px solid transparent',
           color: isSelected ? '#38BDF8' : '#94A3B8',
           fontWeight: isSelected ? 700 : 500,
+          boxShadow: isSelected ? '0 2px 8px rgba(0, 0, 0, 0.25)' : 'none',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '6px',
-          transition: 'all 0.12s ease',
+          transition: 'all 0.15s ease',
           position: 'relative',
         }}
         onMouseEnter={(e) => {
           if (!isSelected && !isEditing) {
-            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-            e.currentTarget.style.color = '#FFFFFF';
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+            e.currentTarget.style.color = '#F8FAFC';
           }
           const actions = e.currentTarget.querySelector('.session-actions') as HTMLElement;
           if (actions) actions.style.opacity = '1';
@@ -818,8 +859,8 @@ export const ChatView: React.FC = () => {
           if (actions && !isSelected) actions.style.opacity = '0';
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-          <MessageSquare size={12} color={isSelected ? '#38BDF8' : '#64748B'} style={{ flexShrink: 0 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+          <MessageSquare size={13} color={isSelected ? '#38BDF8' : '#64748B'} style={{ flexShrink: 0 }} />
           {isEditing ? (
             <input
               ref={renameInputRef}
@@ -836,7 +877,7 @@ export const ChatView: React.FC = () => {
                 border: '1px solid #38BDF8',
                 color: '#FFFFFF',
                 borderRadius: '4px',
-                padding: '2px 4px',
+                padding: '2px 6px',
                 fontSize: '0.74rem',
                 outline: 'none',
                 width: '100%',
@@ -855,9 +896,9 @@ export const ChatView: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '3px',
+              gap: '4px',
               flexShrink: 0,
-              opacity: isSelected ? 1 : 0,
+              opacity: isSelected ? 0.9 : 0,
               transition: 'opacity 0.15s ease',
             }}
           >
@@ -869,7 +910,7 @@ export const ChatView: React.FC = () => {
                 border: 'none',
                 color: '#64748B',
                 cursor: 'pointer',
-                padding: '2px',
+                padding: '3px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -893,7 +934,7 @@ export const ChatView: React.FC = () => {
                 border: 'none',
                 color: '#64748B',
                 cursor: 'pointer',
-                padding: '2px',
+                padding: '3px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -926,14 +967,14 @@ export const ChatView: React.FC = () => {
         position: 'relative',
       }}
     >
-      {/* Background Subtle Gradient */}
+      {/* Background Subtle Radial Gradient */}
       <div
         style={{
           position: 'absolute',
           top: 0,
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '900px',
+          width: '950px',
           height: '240px',
           background: 'radial-gradient(circle at top center, rgba(56, 189, 248, 0.04), transparent 70%)',
           pointerEvents: 'none',
@@ -941,43 +982,74 @@ export const ChatView: React.FC = () => {
       />
 
       {/* ======================================================================
-          TOP MINIMAL CONTEXT BAR
+          1 & 2. REFINED DATASET CONTEXT METADATA STRIP (40px HEIGHT)
           ====================================================================== */}
       <div
         style={{
-          padding: '8px 20px',
-          background: '#080A0F',
+          height: '40px',
+          padding: '0 20px',
+          background: '#07090E',
           borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '12px',
-          flexWrap: 'wrap',
           zIndex: 10,
+          flexShrink: 0,
         }}
       >
-        {/* Left: Minimal Dataset Context */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.74rem' }}>
+        {/* Left: Focused Dataset Metadata Strip */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.72rem' }}>
           <Database size={13} color="#38BDF8" />
-          <span style={{ color: '#64748B' }}>Dataset:</span>
-          <strong style={{ color: '#FFFFFF' }}>{activeDataset.name}</strong>
-          <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+          <strong style={{ color: '#F8FAFC', fontWeight: 700 }}>{activeDataset.name}</strong>
+          <span style={{ color: 'rgba(255, 255, 255, 0.18)' }}>•</span>
           <span style={{ color: '#94A3B8' }}>{rowsCount.toLocaleString()} rows</span>
-          <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+          <span style={{ color: 'rgba(255, 255, 255, 0.18)' }}>•</span>
           <span style={{ color: '#94A3B8' }}>{columnsCount} columns</span>
+          <span style={{ color: 'rgba(255, 255, 255, 0.18)' }}>•</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#10B981', fontWeight: 600 }}>
+            <ShieldCheck size={12} color="#10B981" />
+            <span>Verified Ground Truth</span>
+          </span>
         </div>
 
-        {/* Right: Response Style Selector */}
+        {/* Right: Dataset Switcher + Response Mode */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {datasets.length > 1 && (
+            <select
+              value={activeDataset.id}
+              onChange={(e) => {
+                const selected = datasets.find((d) => d.id === e.target.value);
+                if (selected) setActiveDataset(selected);
+              }}
+              style={{
+                background: 'rgba(15, 23, 42, 0.9)',
+                color: '#CBD5E1',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '5px',
+                padding: '2px 8px',
+                fontSize: '0.68rem',
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              {datasets.map((d) => (
+                <option key={d.id} value={d.id} style={{ background: '#0B132B', color: '#FFFFFF' }}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          )}
+
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               background: 'rgba(15, 23, 42, 0.85)',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '6px',
-              padding: '2px',
-              gap: '2px',
+              borderRadius: '5px',
+              padding: '1px',
+              gap: '1px',
             }}
           >
             {(['Executive', 'Analyst', 'Technical'] as ResponseStyle[]).map((style) => {
@@ -991,8 +1063,8 @@ export const ChatView: React.FC = () => {
                     border: isSelected ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid transparent',
                     color: isSelected ? '#38BDF8' : '#64748B',
                     borderRadius: '4px',
-                    padding: '2px 8px',
-                    fontSize: '0.68rem',
+                    padding: '2px 7px',
+                    fontSize: '0.66rem',
                     fontWeight: isSelected ? 700 : 500,
                     cursor: 'pointer',
                     transition: 'all 0.15s ease',
@@ -1003,32 +1075,6 @@ export const ChatView: React.FC = () => {
               );
             })}
           </div>
-
-          {datasets.length > 1 && (
-            <select
-              value={activeDataset.id}
-              onChange={(e) => {
-                const selected = datasets.find((d) => d.id === e.target.value);
-                if (selected) setActiveDataset(selected);
-              }}
-              style={{
-                background: 'rgba(15, 23, 42, 0.9)',
-                color: '#CBD5E1',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '6px',
-                padding: '3px 8px',
-                fontSize: '0.68rem',
-                outline: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              {datasets.map((d) => (
-                <option key={d.id} value={d.id} style={{ background: '#0B132B', color: '#FFFFFF' }}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
       </div>
 
@@ -1036,7 +1082,7 @@ export const ChatView: React.FC = () => {
           MAIN TWO-COLUMN CHAT INTERFACE
           ====================================================================== */}
       <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        {/* SIDEBAR: CONVERSATIONS (260px) */}
+        {/* 9. SIDEBAR: CONVERSATIONS (260px) */}
         <div
           style={{
             width: '260px',
@@ -1044,7 +1090,7 @@ export const ChatView: React.FC = () => {
             backgroundColor: '#07090E',
             display: 'flex',
             flexDirection: 'column',
-            padding: '14px 10px',
+            padding: '12px 10px',
             gap: '12px',
             overflowY: 'auto',
           }}
@@ -1055,12 +1101,12 @@ export const ChatView: React.FC = () => {
             style={{
               width: '100%',
               background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(2, 132, 199, 0.20) 100%)',
-              border: '1px solid rgba(56, 189, 248, 0.30)',
+              border: '1px solid rgba(56, 189, 248, 0.28)',
               color: '#FFFFFF',
               padding: '8px 12px',
-              borderRadius: '8px',
+              borderRadius: '6px',
               fontSize: '0.76rem',
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -1081,11 +1127,11 @@ export const ChatView: React.FC = () => {
             <span>New Chat</span>
           </button>
 
-          {/* Grouped Sessions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, overflowY: 'auto' }}>
+          {/* Grouped Sessions with Refined Spacing */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: 1, overflowY: 'auto' }}>
             {todaySessions.length > 0 && (
               <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', padding: '0 6px', marginBottom: '3px' }}>
+                <div style={{ fontSize: '0.60rem', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 6px', marginBottom: '4px' }}>
                   Today
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1096,7 +1142,7 @@ export const ChatView: React.FC = () => {
 
             {yesterdaySessions.length > 0 && (
               <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', padding: '0 6px', marginBottom: '3px' }}>
+                <div style={{ fontSize: '0.60rem', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 6px', marginBottom: '4px' }}>
                   Yesterday
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1107,7 +1153,7 @@ export const ChatView: React.FC = () => {
 
             {last7DaysSessions.length > 0 && (
               <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', padding: '0 6px', marginBottom: '3px' }}>
+                <div style={{ fontSize: '0.60rem', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 6px', marginBottom: '4px' }}>
                   Last 7 Days
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1118,7 +1164,7 @@ export const ChatView: React.FC = () => {
 
             {earlierSessions.length > 0 && (
               <div>
-                <div style={{ fontSize: '0.62rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', padding: '0 6px', marginBottom: '3px' }}>
+                <div style={{ fontSize: '0.60rem', fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 6px', marginBottom: '4px' }}>
                   Earlier
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1129,7 +1175,7 @@ export const ChatView: React.FC = () => {
           </div>
         </div>
 
-        {/* MAIN CONVERSATION AREA (MAX-WIDTH 850px CENTERED) */}
+        {/* 6. MAIN CHAT AREA (MAX-WIDTH 900px CENTERED) */}
         <div
           style={{
             flex: 1,
@@ -1140,29 +1186,29 @@ export const ChatView: React.FC = () => {
             position: 'relative',
           }}
         >
-          {/* Scrollable Message List */}
+          {/* Scrollable Message Stream */}
           <div
             style={{
               flex: 1,
               overflowY: 'auto',
-              padding: '24px 20px',
+              padding: '20px 20px 14px 20px',
               display: 'flex',
               flexDirection: 'column',
             }}
           >
             <div
               style={{
-                maxWidth: '850px',
+                maxWidth: '900px',
                 width: '100%',
                 margin: '0 auto',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '20px',
+                gap: '18px',
                 flex: 1,
               }}
             >
               {messages.length === 0 ? (
-                /* CLEAN MINIMALIST EMPTY STATE */
+                /* 4, 5 & 8. REFINED WELCOME SCREEN & SUGGESTION CARDS */
                 <div
                   style={{
                     display: 'flex',
@@ -1170,81 +1216,94 @@ export const ChatView: React.FC = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     minHeight: '100%',
-                    padding: '30px 0',
+                    padding: '4px 0 8px 0',
                     width: '100%',
                   }}
                 >
-                  <FadeUp delay={0.04}>
-                    <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                  {/* Hero (Reduced top whitespace for optimal viewport density) */}
+                  <FadeUp delay={0.02}>
+                    <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                       <div
                         style={{
-                          width: '42px',
-                          height: '42px',
+                          width: '36px',
+                          height: '36px',
                           borderRadius: '10px',
                           background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(2, 132, 199, 0.25) 100%)',
                           border: '1px solid rgba(56, 189, 248, 0.35)',
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          marginBottom: '12px',
+                          marginBottom: '8px',
                         }}
                       >
-                        <BrainCircuit size={22} color="#38BDF8" />
+                        <BrainCircuit size={19} color="#38BDF8" />
                       </div>
 
                       <h2
                         style={{
-                          fontSize: '1.35rem',
+                          fontSize: '1.25rem',
                           fontWeight: 800,
                           color: '#FFFFFF',
-                          margin: '0 0 6px 0',
+                          margin: '0 0 4px 0',
+                          letterSpacing: '-0.01em',
                         }}
                       >
-                        Ask anything about your data
+                        Ask anything about your dataset
                       </h2>
-                      <p style={{ fontSize: '0.84rem', color: '#94A3B8', margin: 0 }}>
-                        DEX Analyst analyzes <strong style={{ color: '#E2E8F0' }}>{activeDataset.name}</strong> in natural language.
+                      <p style={{ fontSize: '0.80rem', color: '#94A3B8', margin: '0 0 4px 0' }}>
+                        DEX answers questions directly from <strong style={{ color: '#F1F5F9' }}>{activeDataset.name}</strong>.
+                      </p>
+                      {/* 8. Compact Description Line */}
+                      <p style={{ fontSize: '0.72rem', color: '#64748B', margin: 0 }}>
+                        Ask questions, investigate anomalies, analyze performance, or explore trends.
                       </p>
                     </div>
                   </FadeUp>
 
-                  {/* Clean Example Prompt Grid */}
-                  <FadeUp delay={0.08}>
+                  {/* 1 & 5. Suggestion Cards (Uniform 66px Height & Clean Hierarchy) */}
+                  <FadeUp delay={0.05}>
                     <div
                       style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(2, 1fr)',
-                        gap: '10px',
+                        gap: '8px',
                         width: '100%',
                       }}
                     >
-                      {EMPTY_STATE_PROMPTS.map((item, idx) => (
+                      {EMPTY_STATE_STARTERS.map((item, idx) => (
                         <div
                           key={idx}
                           onClick={() => handleSendMessage(item.prompt)}
                           style={{
                             background: '#080A0F',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            border: '1px solid rgba(255, 255, 255, 0.12)',
                             borderRadius: '8px',
-                            padding: '12px 14px',
+                            padding: '10px 14px',
+                            height: '66px',
+                            boxSizing: 'border-box',
                             cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
                             transition: 'all 0.15s ease',
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.40)';
-                            e.currentTarget.style.background = 'rgba(14, 23, 40, 0.90)';
+                            e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.45)';
+                            e.currentTarget.style.background = 'rgba(15, 23, 42, 0.95)';
                             e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.35)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
                             e.currentTarget.style.background = '#080A0F';
                             e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
                           }}
                         >
-                          <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '2px' }}>
+                          <div style={{ fontSize: '0.80rem', fontWeight: 600, color: '#F8FAFC', marginBottom: '2px' }}>
                             {item.title}
                           </div>
-                          <div style={{ fontSize: '0.70rem', color: '#94A3B8', lineHeight: 1.4 }}>
+                          <div style={{ fontSize: '0.68rem', color: '#94A3B8', lineHeight: 1.35 }}>
                             {item.subtitle}
                           </div>
                         </div>
@@ -1256,7 +1315,6 @@ export const ChatView: React.FC = () => {
                 /* CONVERSATIONAL MESSAGE STREAM */
                 messages.map((m) => {
                   const isUser = m.role === 'USER';
-                  const senderName = isUser ? user?.full_name || 'You' : 'DEX Analyst';
                   const timestampStr = formatTimestamp(m.created_at);
 
                   return (
@@ -1269,28 +1327,28 @@ export const ChatView: React.FC = () => {
                         width: '100%',
                       }}
                     >
-                      {/* Sender & Timestamp */}
+                      {/* Minimal Sender Line */}
                       <div
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '6px',
+                          gap: '5px',
                           marginBottom: '4px',
-                          fontSize: '0.68rem',
+                          fontSize: '0.66rem',
                           color: '#64748B',
                         }}
                       >
                         {isUser ? (
                           <>
                             <UserIcon size={11} color="#94A3B8" />
-                            <span style={{ fontWeight: 700, color: '#CBD5E1' }}>{senderName}</span>
+                            <span style={{ fontWeight: 600, color: '#CBD5E1' }}>You</span>
                             <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
                             <span>{timestampStr}</span>
                           </>
                         ) : (
                           <>
                             <BrainCircuit size={11} color="#38BDF8" />
-                            <span style={{ fontWeight: 800, color: '#38BDF8' }}>DEX Analyst</span>
+                            <span style={{ fontWeight: 700, color: '#38BDF8' }}>DEX</span>
                             <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
                             <span>{timestampStr}</span>
                           </>
@@ -1370,22 +1428,22 @@ export const ChatView: React.FC = () => {
                   }}
                 >
                   <RefreshCw size={12} className="animate-spin" color="#38BDF8" />
-                  <span style={{ fontWeight: 600 }}>DEX Analyst is analyzing {activeDataset.name}...</span>
+                  <span style={{ fontWeight: 600 }}>DEX is analyzing {activeDataset.name}...</span>
                 </FadeIn>
               )}
               <div ref={messagesEndRef} />
             </div>
           </div>
 
-          {/* STICKY BOTTOM INPUT BAR */}
+          {/* 2 & 6. REFINED ENTERPRISE INPUT AREA (PRIMARY INTERACTION ELEMENT) */}
           <div
             style={{
-              padding: '12px 20px 16px 20px',
+              padding: '10px 20px 14px 20px',
               backgroundColor: '#040507',
               borderTop: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <div style={{ maxWidth: '850px', width: '100%', margin: '0 auto' }}>
+            <div style={{ maxWidth: '900px', width: '100%', margin: '0 auto' }}>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -1395,26 +1453,33 @@ export const ChatView: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   background: '#080A0F',
-                  border: '1px solid rgba(56, 189, 248, 0.22)',
+                  border: isInputFocused
+                    ? '1px solid #38BDF8'
+                    : '1px solid rgba(56, 189, 248, 0.28)',
                   borderRadius: '10px',
-                  padding: '5px 8px 5px 12px',
-                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.30)',
+                  padding: '6px 8px 6px 14px',
+                  boxShadow: isInputFocused
+                    ? '0 0 0 1px rgba(56, 189, 248, 0.45), 0 0 24px rgba(56, 189, 248, 0.18), 0 6px 24px rgba(0, 0, 0, 0.50)'
+                    : '0 4px 18px rgba(0, 0, 0, 0.35)',
+                  transition: 'all 0.18s ease',
                 }}
               >
                 {/* Input Field */}
                 <input
                   ref={inputRef}
                   type="text"
-                  placeholder={`Ask anything about ${activeDataset.name}... (e.g. 'Which region performs best?', 'What drives profit?')`}
+                  placeholder={`Ask anything about ${activeDataset.name}... (e.g. 'Which region performs best?', 'Why are Tables losing money?')`}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
                   disabled={isSending}
                   style={{
                     flex: 1,
                     background: 'transparent',
                     border: 'none',
                     color: '#FFFFFF',
-                    fontSize: '0.86rem',
+                    fontSize: '0.88rem',
                     outline: 'none',
                     padding: '6px 4px',
                   }}
@@ -1456,7 +1521,7 @@ export const ChatView: React.FC = () => {
                 }}
               >
                 <span>Press Enter to send</span>
-                <span>DEX Analyst answers directly from loaded CSV data</span>
+                <span>DEX answers directly from CSV data</span>
               </div>
             </div>
           </div>
