@@ -260,6 +260,11 @@ export const DecisionApi = {
       body: JSON.stringify({ message }),
     }),
 
+  deleteChatSession: (sessionId: string) =>
+    apiClient<{ deleted: boolean; session_id: string }>(`/chat/sessions/${sessionId}`, {
+      method: 'DELETE',
+    }),
+
   // ------------------------------------------------------------------------
   // AI Provider Layer (Phase 9.1 Ollama / Local LLM)
   // ------------------------------------------------------------------------
