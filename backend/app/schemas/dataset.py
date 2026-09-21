@@ -26,6 +26,7 @@ class DatasetColumnResponse(BaseModel):
 
 class DatasetUploadResponse(BaseModel):
     """Response returned upon successful file upload and initial validation."""
+    id: Optional[UUID] = None
     dataset_id: UUID
     name: str
     original_filename: str
@@ -34,6 +35,11 @@ class DatasetUploadResponse(BaseModel):
     record_count: Optional[int] = None
     column_count: Optional[int] = None
     uploaded_by: UUID
+    metadata_json: Optional[Dict[str, Any]] = None
+    schema_verified: Optional[bool] = None
+    dataset_status: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DatasetListResponse(BaseModel):
@@ -51,6 +57,10 @@ class DatasetListResponse(BaseModel):
     diagnostics_generated_at: Optional[datetime] = None
     created_at: datetime
     uploaded_by: UUID
+    metadata_json: Optional[Dict[str, Any]] = None
+    schema_verified: Optional[bool] = None
+    dataset_status: Optional[str] = None
+    columns: List[DatasetColumnResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 

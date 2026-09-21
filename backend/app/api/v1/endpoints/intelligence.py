@@ -35,8 +35,13 @@ async def get_dataset_health_score(
     """
     service = IntelligenceService(db)
     result = await service.get_health_score(dataset_id)
+    msg = (
+        "Business health scoring suspended: unverified schema contract."
+        if result.score is None
+        else f"Business health score: {result.score}/100 ({result.status.value})."
+    )
     return SuccessResponse(
-        message=f"Business health score: {result.score}/100 ({result.status.value}).",
+        message=msg,
         data=result,
     )
 

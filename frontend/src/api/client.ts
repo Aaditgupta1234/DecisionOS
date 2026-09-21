@@ -52,10 +52,23 @@ export async function apiClient<T>(
   }
 
   if (!response.ok) {
-    const errorMsg =
-      responseData?.detail ||
-      responseData?.message ||
-      `HTTP Request Failed with status ${response.status}`;
+    let errorMsg = 'Intelligence Service Temporarily Unavailable';
+    if (typeof responseData?.detail === 'string') {
+      errorMsg = responseData.detail;
+    } else if (responseData?.detail && typeof responseData.detail === 'object') {
+      if (Array.isArray(responseData.detail)) {
+        const msgs = responseData.detail.map((d: any) => (typeof d === 'string' ? d : d?.msg || d?.message || JSON.stringify(d))).filter(Boolean);
+        if (msgs.length > 0) errorMsg = msgs.join('; ');
+      } else {
+        errorMsg = responseData.detail.message || responseData.detail.msg || responseData.detail.error || 'Dataset validation failed.';
+      }
+    } else if (typeof responseData?.message === 'string') {
+      errorMsg = responseData.message;
+    } else if (typeof responseData?.error === 'string') {
+      errorMsg = responseData.error;
+    } else if (response.status) {
+      errorMsg = `Intelligence Service Temporarily Unavailable (Status ${response.status})`;
+    }
     throw new ApiError(response.status, errorMsg, responseData);
   }
 

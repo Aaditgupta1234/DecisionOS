@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildHarmonizedExecutiveIntelligence } from '../features/enterprise-os/enterpriseIntelligenceEngine';
+import { getDatasetStatusDisplay } from '../utils/datasetStatus';
 import { Dataset, IntelligenceReportResponse, BusinessHealthResponse } from '../types';
 
 describe('Enterprise Intelligence Quarantine & Resilience Framework', () => {
@@ -9,9 +10,9 @@ describe('Enterprise Intelligence Quarantine & Resilience Framework', () => {
       name: 'Garbage Dataset',
       column_count: 3,
       columns: [
-        { id: 'c1', original_name: 'foo', normalized_name: 'foo' },
-        { id: 'c2', original_name: 'bar', normalized_name: 'bar' },
-        { id: 'c3', original_name: 'baz', normalized_name: 'baz' },
+        { id: 'c1', original_name: 'abc', normalized_name: 'abc' },
+        { id: 'c2', original_name: 'xyz', normalized_name: 'xyz' },
+        { id: 'c3', original_name: 'qwerty', normalized_name: 'qwerty' },
       ],
       metadata_json: {
         schema_verified: false,
@@ -28,13 +29,23 @@ describe('Enterprise Intelligence Quarantine & Resilience Framework', () => {
     );
 
     expect(intel.intelligenceSuppressed).toBe(true);
-    expect(intel.snapshot.confidenceScore).toBeLessThanOrEqual(44);
-    expect(intel.primaryRisk.title).toBe('UNVERIFIED SCHEMA CONTRACT');
-    expect(intel.rootCause.title).toBe('Not Assessable');
+    expect(intel.healthScore).toBeNull();
+    expect(intel.healthClassification).toBe('Not Assessable');
+    expect(intel.primaryRisk.title).toBe('Not Assessable');
+    expect(intel.rootCause.title).toBe('Causal Attribution Suspended');
     expect(intel.rootCause.attributions).toEqual([]);
+    expect(intel.rootCause.chain).toEqual([]);
+    expect(intel.rootCause.datasetEvidence).toBe('Insufficient Telemetry');
+    expect(intel.rootCause.businessInterpretation).toBe('No Actionable Intelligence Available');
     expect(intel.recommendedPrograms).toEqual([]);
     expect(intel.recommendedAction.primaryAction).toBe('No Actionable Intelligence Available');
+    expect(intel.recommendedAction.targetKPIImpact).toBe('Not Assessable');
+    expect(intel.workspaces.diagnosticGraph.badge).toBe('Insufficient Telemetry');
+    expect(intel.snapshot.confidenceScore).toBeLessThanOrEqual(44);
+    expect(intel.snapshot.financialExposure).toBe('Not Assessable');
     expect(intel.dataGroundingStatus.badge).toBe('UNVERIFIED SCHEMA CONTRACT');
+    expect(intel.dataGroundingStatus.subtitle).toBe('No recognized enterprise business metrics detected.');
+    expect(intel.validationPassed).toBe(true);
   });
 
   it('activates univariate quarantine when dataset has fewer than 2 columns', () => {
@@ -57,13 +68,16 @@ describe('Enterprise Intelligence Quarantine & Resilience Framework', () => {
     );
 
     expect(intel.intelligenceSuppressed).toBe(true);
-    expect(intel.snapshot.confidenceScore).toBeLessThanOrEqual(44);
-    expect(intel.primaryRisk.title).toBe('UNIVARIATE TELEMETRY');
-    expect(intel.rootCause.title).toBe('CAUSAL ATTRIBUTION SUSPENDED');
-    expect(intel.rootCause.causalPathway).toContain('CAUSAL ATTRIBUTION SUSPENDED');
+    expect(intel.healthScore).toBeNull();
+    expect(intel.healthClassification).toBe('Not Assessable');
+    expect(intel.primaryRisk.title).toBe('Not Assessable');
+    expect(intel.rootCause.title).toBe('Causal Attribution Suspended');
     expect(intel.rootCause.attributions).toEqual([]);
     expect(intel.recommendedPrograms).toEqual([]);
-    expect(intel.workspaces.diagnosticGraph.statusDetail).toContain('CAUSAL ATTRIBUTION SUSPENDED');
+    expect(intel.recommendedAction.primaryAction).toBe('No Actionable Intelligence Available');
+    expect(intel.workspaces.diagnosticGraph.badge).toBe('Insufficient Telemetry');
+    expect(intel.snapshot.confidenceScore).toBeLessThanOrEqual(44);
+    expect(intel.validationPassed).toBe(true);
   });
 
   it('generates rich actionable intelligence and high confidence for verified enterprise schemas', () => {
@@ -106,5 +120,88 @@ describe('Enterprise Intelligence Quarantine & Resilience Framework', () => {
     expect(intel.primaryRisk.title).toBeDefined();
     expect(intel.rootCause.title).toBeDefined();
     expect(intel.executiveNarrative).toBeDefined();
+  });
+
+  describe('Dataset Card Status Mapping & Single Source of Truth', () => {
+    it('maps UNVERIFIED_SCHEMA dataset to Quarantined Telemetry and never Verified Telemetry', () => {
+      const ds: Partial<Dataset> = {
+        name: 'Garbage Dataset',
+        column_count: 3,
+        metadata_json: {
+          schema_verified: false,
+          dataset_status: 'UNVERIFIED_SCHEMA',
+        },
+      } as any;
+
+      const display = getDatasetStatusDisplay(ds as Dataset);
+      expect(display.badge).toBe('Quarantined Telemetry');
+      expect(display.badge).not.toBe('Verified Telemetry');
+      expect(display.statusLabel).toBe('Unverified Schema Contract');
+      expect(display.isQuarantined).toBe(true);
+    });
+
+    it('maps UNIVARIATE dataset to Quarantined Telemetry and Insufficient Telemetry', () => {
+      const ds: Partial<Dataset> = {
+        name: 'Single Column',
+        column_count: 1,
+        metadata_json: {
+          schema_verified: true,
+          dataset_status: 'UNIVARIATE',
+        },
+      } as any;
+
+      const display = getDatasetStatusDisplay(ds as Dataset);
+      expect(display.badge).toBe('Quarantined Telemetry');
+      expect(display.badge).not.toBe('Verified Telemetry');
+      expect(display.statusLabel).toBe('Insufficient Telemetry');
+      expect(display.isQuarantined).toBe(true);
+    });
+
+    it('maps EMPTY dataset to Empty Dataset badge', () => {
+      const ds: Partial<Dataset> = {
+        name: 'Empty CSV',
+        record_count: 0,
+        row_count: 0,
+        metadata_json: {
+          dataset_status: 'EMPTY',
+        },
+      } as any;
+
+      const display = getDatasetStatusDisplay(ds as Dataset);
+      expect(display.badge).toBe('Empty Dataset');
+      expect(display.badge).not.toBe('Verified Telemetry');
+      expect(display.isQuarantined).toBe(true);
+    });
+
+    it('maps INVALID dataset to Invalid Dataset badge', () => {
+      const ds: Partial<Dataset> = {
+        name: 'Corrupt CSV',
+        metadata_json: {
+          dataset_status: 'INVALID',
+        },
+      } as any;
+
+      const display = getDatasetStatusDisplay(ds as Dataset);
+      expect(display.badge).toBe('Invalid Dataset');
+      expect(display.badge).not.toBe('Verified Telemetry');
+      expect(display.isQuarantined).toBe(true);
+    });
+
+    it('maps VERIFIED dataset to Verified Telemetry', () => {
+      const ds: Partial<Dataset> = {
+        name: 'Customer Churn',
+        column_count: 4,
+        record_count: 1000,
+        metadata_json: {
+          schema_verified: true,
+          dataset_status: 'VERIFIED',
+        },
+      } as any;
+
+      const display = getDatasetStatusDisplay(ds as Dataset);
+      expect(display.badge).toBe('Verified Telemetry');
+      expect(display.statusLabel).toBe('Verified');
+      expect(display.isQuarantined).toBe(false);
+    });
   });
 });

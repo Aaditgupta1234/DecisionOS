@@ -39,7 +39,7 @@ class ExecutiveSummary:
     key_risks: List[str]
     overall_confidence: float
     confidence_breakdown: Dict[str, float]
-    business_health_score: int
+    business_health_score: Optional[int]
     business_health_status: BusinessHealthStatus
     expected_business_impact: str
     health_score_explanation: Optional[Dict[str, Any]] = None

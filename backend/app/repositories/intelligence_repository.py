@@ -102,7 +102,19 @@ class IntelligenceRepository:
         root_causes = list(r_res.scalars().all())
         recommendations = list(rec_res.scalars().all())
 
-        if dataset.status.value == "READY":
+        meta = getattr(dataset, "metadata_json", {}) or {}
+        col_count = getattr(dataset, "column_count", None)
+        if col_count is None and hasattr(dataset, "columns") and dataset.columns:
+            col_count = len(dataset.columns)
+        col_count = col_count if col_count is not None else 2
+
+        is_quarantined = (
+            meta.get("schema_verified") is False
+            or meta.get("dataset_status") in ("UNVERIFIED_SCHEMA", "UNIVARIATE", "INVALID", "EMPTY")
+            or col_count < 2
+        )
+
+        if not is_quarantined and dataset.status.value == "READY":
             try:
                 if not findings:
                     from app.diagnostics.diagnostic_engine import DiagnosticEngine

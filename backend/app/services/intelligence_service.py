@@ -34,6 +34,19 @@ class IntelligenceService:
         self.db = db
         self.repo = IntelligenceRepository(db)
 
+    def _is_dataset_quarantined(self, dataset) -> bool:
+        meta = getattr(dataset, "metadata_json", {}) or {}
+        col_count = getattr(dataset, "column_count", None)
+        if col_count is None and hasattr(dataset, "columns") and dataset.columns:
+            col_count = len(dataset.columns)
+        col_count = col_count if col_count is not None else 2
+
+        return bool(
+            meta.get("schema_verified") is False
+            or meta.get("dataset_status") in ("UNVERIFIED_SCHEMA", "UNIVARIATE", "INVALID", "EMPTY")
+            or col_count < 2
+        )
+
     async def get_health_score(self, dataset_id: UUID) -> BusinessHealthResponse:
         """
         Calculates and returns the composite Business Health Score and categorical status.
@@ -46,6 +59,15 @@ class IntelligenceService:
             )
 
         dataset, metrics, findings, root_causes, recommendations = result
+
+        if self._is_dataset_quarantined(dataset):
+            return BusinessHealthResponse(
+                dataset_id=dataset_id,
+                score=None,
+                status=BusinessHealthStatus.NOT_ASSESSABLE,
+                description="Business health scoring suspended: dataset operating under unverified schema quarantine.",
+                health_score_explanation={"base_score": 0, "final_score": 0, "status": "NOT_ASSESSABLE"},
+            )
 
         try:
             score, health_status = BusinessHealthScoreEngine.calculate(
@@ -83,6 +105,16 @@ class IntelligenceService:
             )
 
         dataset, metrics, findings, root_causes, recommendations = result
+
+        if self._is_dataset_quarantined(dataset):
+            exec_summary = ExecutiveSummaryBuilder.build(
+                dataset_id=dataset_id,
+                findings=[],
+                root_causes=[],
+                recommendations=[],
+                is_quarantined=True,
+            )
+            return ExecutiveSummaryResponse.model_validate(exec_summary.to_dict())
 
         try:
             exec_summary = ExecutiveSummaryBuilder.build(
@@ -125,6 +157,16 @@ class IntelligenceService:
 
         dataset, metrics, findings, root_causes, recommendations = result
 
+        if self._is_dataset_quarantined(dataset):
+            report = IntelligenceReportBuilder.build(
+                dataset=dataset,
+                metrics=[],
+                findings=[],
+                root_causes=[],
+                recommendations=[],
+            )
+            return IntelligenceReportResponse.model_validate(report.to_dict())
+
         try:
             report = IntelligenceReportBuilder.build(
                 dataset=dataset,
@@ -135,20 +177,13 @@ class IntelligenceService:
             )
         except Exception as err:
             logger.error(f"Intelligence report compilation fallback for {dataset_id}: {err}", exc_info=True)
-            fallback_summary = ExecutiveSummary(
+            is_quar = self._is_dataset_quarantined(dataset)
+            fallback_summary = ExecutiveSummaryBuilder.build(
                 dataset_id=dataset_id,
-                generated_at=datetime.now(timezone.utc),
-                primary_issue="Operational Performance Stability",
-                severity="LOW",
-                top_root_cause=None,
-                top_recommendation=None,
-                key_risks=[],
-                overall_confidence=1.0,
-                confidence_breakdown={"findings": 1.0, "root_causes": 1.0, "recommendations": 1.0},
-                business_health_score=100,
-                business_health_status=BusinessHealthStatus.EXCELLENT,
-                expected_business_impact="Business telemetry operating within standard baseline parameters.",
-                health_score_explanation={"base_score": 100, "final_score": 100},
+                findings=[],
+                root_causes=[],
+                recommendations=[],
+                is_quarantined=is_quar,
             )
             report = IntelligenceReport(
                 report_version=CANONICAL_REPORT_VERSION,

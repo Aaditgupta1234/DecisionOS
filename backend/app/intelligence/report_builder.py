@@ -36,9 +36,40 @@ class IntelligenceReportBuilder:
         root_causes: Optional[List[RootCauseAnalysis]] = None,
         recommendations: Optional[List[Recommendation]] = None,
     ) -> IntelligenceReport:
-        """
-        Compiles the full IntelligenceReport entity with robust null safety.
-        """
+        meta = getattr(dataset, "metadata_json", {}) or {}
+        col_count = getattr(dataset, "column_count", None)
+        if col_count is None and hasattr(dataset, "columns") and dataset.columns:
+            col_count = len(dataset.columns)
+        col_count = col_count if col_count is not None else 2
+
+        is_quarantined = (
+            meta.get("schema_verified") is False
+            or meta.get("dataset_status") in ("UNVERIFIED_SCHEMA", "UNIVARIATE", "INVALID", "EMPTY")
+            or col_count < 2
+        )
+
+        if is_quarantined:
+            exec_summary = ExecutiveSummaryBuilder.build(
+                dataset_id=dataset.id,
+                findings=[],
+                root_causes=[],
+                recommendations=[],
+                is_quarantined=True,
+            )
+            return IntelligenceReport(
+                report_version=CANONICAL_REPORT_VERSION,
+                dataset_id=dataset.id,
+                dataset_name=getattr(dataset, "name", "Dataset") or "Dataset",
+                generated_at=datetime.now(timezone.utc),
+                dataset_last_updated_at=getattr(dataset, "updated_at", None) or datetime.now(timezone.utc),
+                artifact_counts={"metrics": 0, "findings": 0, "root_causes": 0, "recommendations": 0},
+                metrics=[],
+                findings=[],
+                root_causes=[],
+                recommendations=[],
+                executive_summary=exec_summary,
+            )
+
         metric_list = metrics or []
         finding_list = findings or []
         rca_list = root_causes or []

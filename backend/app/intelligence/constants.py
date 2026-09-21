@@ -1,6 +1,6 @@
 """Constants, threshold tiers, and penalty mappings for Business Health and Intelligence Layer."""
 
-from typing import Dict
+from typing import Dict, Optional
 from app.core.constants import BusinessHealthStatus, FindingSeverity
 
 # Health Score Threshold Tiers (0 - 100)
@@ -41,8 +41,10 @@ MAX_RECOMMENDATION_RECOVERY_BONUS = 6
 CANONICAL_REPORT_VERSION = "1.0"
 
 
-def health_score_to_status(score: int) -> BusinessHealthStatus:
+def health_score_to_status(score: Optional[int]) -> BusinessHealthStatus:
     """Maps integer health score [0 - 100] to BusinessHealthStatus enum."""
+    if score is None:
+        return BusinessHealthStatus.NOT_ASSESSABLE
     if score >= HEALTH_EXCELLENT_THRESHOLD:
         return BusinessHealthStatus.EXCELLENT
     elif score >= HEALTH_HEALTHY_THRESHOLD:

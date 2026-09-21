@@ -3,7 +3,7 @@
  * Derived directly from Backend Pydantic Schemas (Phases 1 - 6.4)
  */
 
-export type BusinessHealthStatus = 'EXCELLENT' | 'HEALTHY' | 'WATCH_LIST' | 'AT_RISK' | 'CRITICAL';
+export type BusinessHealthStatus = 'EXCELLENT' | 'HEALTHY' | 'WATCH_LIST' | 'AT_RISK' | 'CRITICAL' | 'NOT_ASSESSABLE';
 export type FindingSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'INFO';
 export type FindingType = 'ANOMALY' | 'BOTTLENECK' | 'TREND_CHANGE' | 'VARIANCE' | 'INVENTORY_RISK' | 'CUSTOMER_ATTRITION' | 'MARGIN_EROSION';
 export type RecommendationPriority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
@@ -26,6 +26,9 @@ export interface Dataset {
   created_at: string;
   updated_at: string;
   columns?: DatasetColumn[];
+  metadata_json?: Record<string, any>;
+  dataset_status?: string;
+  schema_verified?: boolean;
 }
 
 export interface DatasetColumn {
@@ -38,7 +41,7 @@ export interface DatasetColumn {
 
 export interface BusinessHealthResponse {
   dataset_id: string;
-  score: number;
+  score: number | null;
   status: BusinessHealthStatus;
   description: string;
 }
@@ -53,7 +56,7 @@ export interface ExecutiveSummaryResponse {
   key_risks: string[];
   overall_confidence: number;
   confidence_breakdown: Record<string, number>;
-  business_health_score: number;
+  business_health_score?: number | null;
   business_health_status: BusinessHealthStatus;
   expected_business_impact: string;
 }

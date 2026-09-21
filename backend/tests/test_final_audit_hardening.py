@@ -26,20 +26,6 @@ from app.models.user import User
 from app.services.dataset_validator import validator
 
 
-@pytest.fixture
-def client():
-    return TestClient(app)
-
-
-@pytest.fixture
-def admin_headers():
-    from app.core.security import create_access_token
-    token = create_access_token(
-        data={"sub": str(uuid.uuid4()), "role": UserRole.ADMIN.value, "email": "admin@decisionos.ai"}
-    )
-    return {"Authorization": f"Bearer {token}"}
-
-
 class TestValidationMatrix:
     """Validates strict file, structure, and dimensionality rejection invariants."""
 
@@ -228,3 +214,77 @@ class TestExecutiveSummaryZero500Resilience:
         assert report.artifact_counts["findings"] == 0
         assert report.executive_summary.business_health_score == 100
         assert report.executive_summary.primary_issue == "Operational Performance Stability"
+
+    def test_quarantined_report_builder_returns_deterministic_suppression(self):
+        dataset_id = uuid.uuid4()
+        dataset = Dataset(
+            id=dataset_id,
+            name="Garbage Dataset",
+            original_filename="garbage.csv",
+            stored_filename="garbage.csv",
+            file_path="/tmp/garbage.csv",
+            file_size=100,
+            version=1,
+            status=DatasetStatus.READY,
+            uploaded_by=uuid.uuid4(),
+            metadata_json={"schema_verified": False, "dataset_status": "UNVERIFIED_SCHEMA"},
+        )
+        report = IntelligenceReportBuilder.build(
+            dataset=dataset,
+            metrics=[],
+            findings=[],
+            root_causes=[],
+            recommendations=[],
+        )
+        assert report.executive_summary.business_health_score is None
+        assert report.executive_summary.business_health_status == BusinessHealthStatus.NOT_ASSESSABLE
+        assert report.executive_summary.overall_confidence == 0.44
+        assert report.executive_summary.primary_issue == "UNVERIFIED SCHEMA CONTRACT"
+        assert report.metrics == []
+        assert report.findings == []
+        assert report.root_causes == []
+        assert report.recommendations == []
+
+
+class TestQuarantineEndpointsAndZero500:
+    """Verifies that quarantined datasets return HTTP 200 across all intelligence endpoints with deterministic structures."""
+
+    def test_upload_garbage_csv_and_verify_quarantine_endpoints(self, client, admin_headers):
+        # 1. Upload garbage CSV (abc,xyz,qwerty)
+        csv_content = b"abc,xyz,qwerty\n1,2,3\n4,5,6\n7,8,9\n"
+        files = {"file": ("garbage.csv", io.BytesIO(csv_content), "text/csv")}
+        res = client.post("/api/v1/datasets/upload", files=files, headers=admin_headers)
+        assert res.status_code == 201, f"Upload failed: {res.text}"
+        data = res.json()["data"]
+        dataset_id = data["id"]
+        assert data["schema_verified"] is False
+        assert data["dataset_status"] == "UNVERIFIED_SCHEMA"
+
+        # 2. GET /datasets/{id}/health-score -> 200 OK (Never 500)
+        hs_res = client.get(f"/api/v1/datasets/{dataset_id}/health-score", headers=admin_headers)
+        assert hs_res.status_code == 200, f"Health score endpoint failed: {hs_res.text}"
+        hs_data = hs_res.json()["data"]
+        assert hs_data["score"] is None
+        assert hs_data["status"] == "NOT_ASSESSABLE"
+
+        # 3. GET /datasets/{id}/executive-summary -> 200 OK (Never 500)
+        es_res = client.get(f"/api/v1/datasets/{dataset_id}/executive-summary", headers=admin_headers)
+        assert es_res.status_code == 200, f"Executive summary endpoint failed: {es_res.text}"
+        es_data = es_res.json()["data"]
+        assert es_data["primary_issue"] == "UNVERIFIED SCHEMA CONTRACT"
+        assert es_data["business_health_score"] is None
+        assert es_data["business_health_status"] == "NOT_ASSESSABLE"
+        assert es_data["overall_confidence"] == 0.44
+
+        # 4. GET /datasets/{id}/intelligence-report -> 200 OK (Never 500)
+        ir_res = client.get(f"/api/v1/datasets/{dataset_id}/intelligence-report", headers=admin_headers)
+        assert ir_res.status_code == 200, f"Intelligence report endpoint failed: {ir_res.text}"
+        ir_data = ir_res.json()["data"]
+        assert ir_data["metrics"] == []
+        assert ir_data["findings"] == []
+        assert ir_data["root_causes"] == []
+        assert ir_data["recommendations"] == []
+        assert ir_data["executive_summary"]["business_health_status"] == "NOT_ASSESSABLE"
+        assert ir_data["executive_summary"]["business_health_score"] is None
+        assert ir_data["executive_summary"]["overall_confidence"] == 0.44
+

@@ -23,6 +23,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getDatasetStatusDisplay } from '../../utils/datasetStatus';
 
 export const ReportsView: React.FC = () => {
   const { activeDataset } = useDataset();
@@ -164,9 +165,9 @@ export const ReportsView: React.FC = () => {
           <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.01em', margin: 0, textTransform: 'uppercase' }}>
             Section 1: Executive Summary & Performance Assessment
           </h3>
-          <span style={{ fontSize: '11px', color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '11px', color: getDatasetStatusDisplay(activeDataset).badgeColor, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
             <ShieldCheck size={13} />
-            <span>98% Coverage • Verified Telemetry</span>
+            <span>{getDatasetStatusDisplay(activeDataset).badge}</span>
           </span>
         </div>
 

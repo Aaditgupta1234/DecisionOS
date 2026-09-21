@@ -29,6 +29,7 @@ import { BusinessHealthResponse, IntelligenceReportResponse } from '../../types'
 import { FadeUp } from '../../design-system/motion';
 import { buildHarmonizedExecutiveIntelligence } from './enterpriseIntelligenceEngine';
 import { EnterpriseCardErrorBoundary } from './EnterpriseCardErrorBoundary';
+import { getDatasetStatusDisplay } from '../../utils/datasetStatus';
 
 export const EnterpriseCommandCenterView: React.FC = () => {
   const { datasets, activeDataset, setActiveDataset, refreshDatasets } = useDataset();
@@ -114,7 +115,14 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
-      setUploadError(err?.message || 'Failed to upload CSV source(s).');
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.data?.detail?.message ||
+        err?.data?.message ||
+        (typeof err?.data?.detail === 'string' ? err.data.detail : null) ||
+        (typeof err?.message === 'string' && !err.message.includes('[object') ? err.message : null) ||
+        'Intelligence Service Temporarily Unavailable';
+      setUploadError(errorMessage);
       setQuickNotice(null);
     } finally {
       setIsUploading(false);
@@ -198,11 +206,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             background: '#FFFFFF',
             color: '#000000',
             padding: '10px 24px',
-            borderRadius: '24px',
+            borderRadius: '8px',
             fontSize: '13px',
             fontWeight: 700,
             cursor: isUploading ? 'not-allowed' : 'pointer',
-            boxShadow: '0 2px 14px rgba(255, 255, 255, 0.12)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.40)',
+            opacity: isUploading ? 0.7 : 1,
             transition: 'all 0.15s ease',
           }}
           onMouseEnter={(e) => {
@@ -215,7 +224,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
           }}
         >
           {isUploading ? <RefreshCw size={14} className="animate-spin" /> : <Upload size={14} />}
-          <span>{isUploading ? 'Connecting Source...' : 'Connect Business Data'}</span>
+          <span>{isUploading ? 'Connecting Source...' : 'Upload CSV Dataset Directly'}</span>
           <input
             type="file"
             accept=".csv"
@@ -265,118 +274,165 @@ export const EnterpriseCommandCenterView: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px',
-        paddingBottom: '28px',
-        maxWidth: '1280px',
-        margin: '0 auto',
-        width: '100%',
-      }}
-    >
-      {/* Subtle Ambient Ice Blue Illumination */}
+    <div style={{ padding: '24px 32px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+      
+      {/* Radial Backlight Backdrop */}
       <div
         style={{
           position: 'absolute',
-          top: '-80px',
+          top: 0,
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '100%',
-          maxWidth: '1000px',
-          height: '280px',
-          background: 'radial-gradient(circle at top center, rgba(56, 189, 248, 0.035), transparent 60%)',
+          width: '800px',
+          height: '260px',
+          background: 'radial-gradient(circle at top center, rgba(56, 189, 248, 0.07), transparent 70%)',
           pointerEvents: 'none',
-          zIndex: 0,
         }}
-        aria-hidden="true"
       />
 
       {/* ======================================================================
-          HERO SECTION: EXECUTIVE ORIENTATION HEADER
+          HEADER ROW: GOVERNED SOURCE BANNER (COMPACT INTEGRATED COMMAND BAR)
           ====================================================================== */}
       <FadeUp delay={0.02}>
-        <div style={{ position: 'relative', zIndex: 1, paddingTop: '4px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
-            
-            {/* Title, Subtitle, & Read-Only Status Context */}
-            <div style={{ maxWidth: '820px' }}>
+        <div
+          style={{
+            ...cardStyle,
+            padding: '12px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            background: 'linear-gradient(180deg, rgba(14, 22, 37, 0.90) 0%, rgba(8, 12, 20, 0.95) 100%)',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {/* Left: Active Dataset Selector Pill + Health Sync Indicator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div
                 style={{
-                  display: 'inline-flex',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '6px',
+                  background: 'rgba(56, 189, 248, 0.12)',
+                  display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  padding: '2px 8px',
-                  borderRadius: '10px',
-                  background: 'rgba(15, 20, 30, 0.70)',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  color: '#64748B',
-                  fontSize: '9.5px',
-                  fontWeight: 700,
-                  letterSpacing: '0.04em',
-                  marginBottom: '6px',
+                  justifyContent: 'center',
                 }}
               >
-                <BrainCircuit size={11} color="#38BDF8" />
-                <span>Enterprise Operations Command • Tenant: Production Global • Classification: Restricted</span>
-                <span style={{ color: '#334155', fontSize: '9px' }}>•</span>
-                <span style={{ color: '#38BDF8', fontWeight: 600 }}>Last Intelligence Refresh: {lastRefreshTime}</span>
+                <Database size={15} color="#38BDF8" />
               </div>
-
-              <h1
-                style={{
-                  fontSize: 'clamp(24px, 2.2vw, 32px)',
-                  fontWeight: 800,
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.035em',
-                  color: '#FFFFFF',
-                  margin: '0 0 4px 0',
-                }}
-              >
-                Enterprise Command Center
-              </h1>
-
-              <p
-                style={{
-                  fontSize: '13.5px',
-                  lineHeight: 1.45,
-                  color: '#94A3B8',
-                  margin: 0,
-                  maxWidth: '38rem',
-                }}
-              >
-                Causal intelligence, business health exposure, and strategic execution programs.
-              </p>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.015em' }}>
+                    {activeDataset.name}
+                  </span>
+                  {(() => {
+                    const statusDisplay = getDatasetStatusDisplay(activeDataset);
+                    return (
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 800,
+                          color: statusDisplay.badgeColor,
+                          background: statusDisplay.badgeBg,
+                          border: `0.5px solid ${statusDisplay.badgeBorder}`,
+                          padding: '1px 6px',
+                          borderRadius: '4px',
+                          letterSpacing: '0.04em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {statusDisplay.statusLabel}
+                      </span>
+                    );
+                  })()}
+                </div>
+                <div style={{ fontSize: '0.66rem', color: '#64748B', marginTop: '1px' }}>
+                  {activeDataset.column_count || activeDataset.columns?.length || 0} Columns • {activeDataset.record_count?.toLocaleString() || activeDataset.row_count?.toLocaleString() || '1,000+'} Records • {getDatasetStatusDisplay(activeDataset).badge}
+                </div>
+              </div>
             </div>
 
-            {/* Header Actions */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', alignSelf: 'center' }}>
-              <button
-                onClick={handleRefreshAll}
-                style={secondaryBtnStyle}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(25, 32, 48, 0.80)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
+            {/* Quick Switch Dropdown if multiple datasets exist */}
+            {datasets.length > 1 && (
+              <select
+                value={activeDataset.id}
+                onChange={(e) => {
+                  const selected = datasets.find((d) => d.id === e.target.value);
+                  if (selected) {
+                    setActiveDataset(selected);
+                    setQuickNotice(`Switched to governed source: "${selected.name}"`);
+                    setTimeout(() => setQuickNotice(null), 3000);
+                  }
                 }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(15, 20, 30, 0.60)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.10)',
+                  color: '#CBD5E1',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontSize: '0.70rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  outline: 'none',
                 }}
               >
-                <RefreshCw size={11} />
-                <span>Sync Intelligence</span>
-              </button>
+                {datasets.map((d) => (
+                  <option key={d.id} value={d.id} style={{ background: '#0B132B', color: '#FFFFFF' }}>
+                    {d.name} ({d.record_count || 0} rows)
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
 
+          {/* Right: Refresh Timestamp & Action Trigger */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ fontSize: '0.64rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} />
+              <span>Synced {lastRefreshTime}</span>
+            </div>
+
+            <button
+              onClick={handleRefreshAll}
+              title="Synchronize real-time intelligence from backend data store"
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.10)',
+                color: '#CBD5E1',
+                padding: '5px 10px',
+                borderRadius: '6px',
+                fontSize: '0.68rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.10)';
+                e.currentTarget.style.color = '#FFFFFF';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.color = '#CBD5E1';
+              }}
+            >
+              <RefreshCw size={11} className={isLoading ? 'animate-spin' : ''} />
+              <span>Sync Telemetry</span>
+            </button>
+
+            {/* Seamless In-Place Ingestion Button (Hero Action) */}
+            <div>
               <label
                 style={{
                   background: 'rgba(255, 255, 255, 0.08)',
                   color: '#FFFFFF',
-                  fontSize: '12px',
-                  fontWeight: 700,
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
                   height: '32px',
                   padding: '0 16px',
                   borderRadius: '18px',
@@ -414,7 +470,6 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 />
               </label>
             </div>
-
           </div>
         </div>
       </FadeUp>
@@ -422,7 +477,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
       {/* Real-time Notice Feedback */}
       {uploadError && (
         <div style={{ padding: '6px 12px', background: 'rgba(248, 113, 113, 0.08)', border: '1px solid rgba(248, 113, 113, 0.18)', borderRadius: '10px', color: '#F87171', fontSize: '0.74rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 1 }}>
-          <span>Connection Failed: {uploadError}</span>
+          <span>Connection Failed: {typeof uploadError === 'string' && !uploadError.includes('[object') ? uploadError : 'Intelligence Service Temporarily Unavailable'}</span>
           <button onClick={() => setUploadError(null)} style={{ background: 'none', border: 'none', color: '#F87171', cursor: 'pointer', fontWeight: 700 }}>✕</button>
         </div>
       )}
@@ -508,7 +563,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
             </div>
             <div>
               <div style={{ fontSize: '13px', fontWeight: 800, color: '#FDE68A', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>{intel.quarantineReason || 'UNVERIFIED SCHEMA CONTRACT'}</span>
+                <span>⚠ {intel.quarantineReason || 'UNVERIFIED SCHEMA CONTRACT'}</span>
                 <span style={{ fontSize: '10px', background: 'rgba(245, 158, 11, 0.2)', padding: '1px 6px', borderRadius: '4px', color: '#F59E0B', fontWeight: 700 }}>
                   CONFIDENCE CAPPED (44%)
                 </span>
@@ -517,7 +572,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 </span>
               </div>
               <div style={{ fontSize: '11.5px', color: '#CBD5E1', marginTop: '2px' }}>
-                Automated causal DAG generation, governance councils, and strategic intervention plans are suspended. Operating under unverified schema quarantine.
+                No recognized enterprise business metrics detected.
               </div>
             </div>
           </div>
@@ -567,15 +622,23 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', margin: '2px 0 2px 0' }}>
-                  <span style={{ fontSize: '1.45rem', fontWeight: 800, color: '#F1F5F9', lineHeight: 1, letterSpacing: '-0.025em' }}>
-                    {intel.healthScore}
-                  </span>
-                  <span style={{ fontSize: '0.80rem', color: '#64748B', fontWeight: 700 }}>/ 100</span>
+                  {intel.healthScore !== null ? (
+                    <>
+                      <span style={{ fontSize: '1.45rem', fontWeight: 800, color: '#F1F5F9', lineHeight: 1, letterSpacing: '-0.025em' }}>
+                        {intel.healthScore}
+                      </span>
+                      <span style={{ fontSize: '0.80rem', color: '#64748B', fontWeight: 700 }}>/ 100</span>
+                    </>
+                  ) : (
+                    <span style={{ fontSize: '1.10rem', fontWeight: 800, color: '#F59E0B', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                      Not Assessable
+                    </span>
+                  )}
                 </div>
 
                 {/* Severity Meter Track */}
                 <div style={{ height: '3px', width: '100%', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '2px', overflow: 'hidden', margin: '4px 0 3px 0' }}>
-                  <div style={{ width: `${Math.max(intel.healthScore, 5)}%`, height: '100%', background: intel.healthStatusColor, transition: 'width 0.6s ease' }} />
+                  <div style={{ width: intel.healthScore !== null ? `${Math.max(intel.healthScore, 5)}%` : '0%', height: '100%', background: intel.healthStatusColor, transition: 'width 0.6s ease' }} />
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -591,7 +654,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               {/* Pillar 2: Primary Risk with SLA Governance & Empirical Baseline */}
               <div style={{ minWidth: 0, borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#F87171', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ fontSize: '0.68rem', color: intel.intelligenceSuppressed ? '#F59E0B' : '#F87171', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <AlertTriangle size={11} />
                     <span>Primary Risk ({intel.primaryRisk.severity})</span>
                   </div>
@@ -623,7 +686,7 @@ export const EnterpriseCommandCenterView: React.FC = () => {
                   <span style={{ color: '#94A3B8' }}>{intel.primaryRisk.isConfiguredSLA ? 'Configured SLA: ' : 'Baseline: '}</span>
                   <strong style={{ color: intel.primaryRisk.isConfiguredSLA ? '#10B981' : '#CBD5E1' }}>{intel.primaryRisk.benchmarkSLA}</strong>
                   <span style={{ color: '#64748B' }}> • </span>
-                  <span style={{ color: '#F87171', fontWeight: 700 }}>{intel.primaryRisk.varianceText}</span>
+                  <span style={{ color: intel.intelligenceSuppressed ? '#F59E0B' : '#F87171', fontWeight: 700 }}>{intel.primaryRisk.varianceText}</span>
                 </div>
               </div>
 
@@ -631,12 +694,12 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               <div style={{ minWidth: 0, borderRight: '1px solid rgba(255, 255, 255, 0.04)', paddingRight: '18px' }}>
                 <div style={{ fontSize: '0.68rem', color: '#64748B', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
                   <GitMerge size={11} color="#38BDF8" />
-                  <span>Root Cause & Attribution</span>
+                  <span>Root Cause</span>
                 </div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.01em' }} title={intel.rootCause.datasetEvidence}>
-                  {intel.rootCause.datasetEvidence}
+                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.01em' }} title={intel.rootCause.title}>
+                  {intel.rootCause.title}
                 </div>
-                <div style={{ fontSize: '0.66rem', color: '#38BDF8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 700 }} title={intel.rootCause.businessInterpretation}>
+                <div style={{ fontSize: '0.66rem', color: intel.intelligenceSuppressed ? '#94A3B8' : '#38BDF8', marginTop: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 700 }} title={intel.rootCause.businessInterpretation}>
                   {intel.rootCause.businessInterpretation}
                 </div>
               </div>
@@ -854,297 +917,322 @@ export const EnterpriseCommandCenterView: React.FC = () => {
               </Link>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', alignItems: 'stretch' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: intel.recommendedPrograms.length === 0 ? '1fr' : 'repeat(2, 1fr)', gap: '12px', alignItems: 'stretch' }}>
               
-              {intel.recommendedPrograms.map((program, idx) => (
+              {intel.recommendedPrograms.length === 0 ? (
                 <div
-                  key={idx}
                   style={{
                     ...cardStyle,
-                    padding: '16px 20px',
+                    padding: '24px',
+                    textAlign: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.10)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
                   }}
                 >
-                  <div>
-                    {/* Header: Title + Priority, Horizon & Owner Badges */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', flexWrap: 'wrap', gap: '6px' }}>
-                      <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, letterSpacing: '-0.015em' }}>
-                        {program.title}
-                      </span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                        <span
-                          style={{
-                            fontSize: '0.62rem',
-                            fontWeight: 800,
-                            color: program.priority === 'Critical' ? '#F87171' : program.priority === 'High' ? '#FB923C' : '#38BDF8',
-                            padding: '2px 7px',
-                            background: 'rgba(255, 255, 255, 0.04)',
-                            borderRadius: '4px',
-                            border: '1px solid rgba(255, 255, 255, 0.06)',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          {program.priority} Priority
-                        </span>
-
-                        {/* Chartered Governance Owner Badge */}
-                        {program.ownerType === 'UNASSIGNED' && !claimedPrograms[program.title] ? (
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <span
-                              style={{
-                                fontSize: '0.60rem',
-                                fontWeight: 700,
-                                color: '#94A3B8',
-                                padding: '2px 6px',
-                                background: 'rgba(255, 255, 255, 0.04)',
-                                borderRadius: '4px',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
-                              }}
-                            >
-                              Owner: Unassigned Governance Role
-                            </span>
-                            <button
-                              onClick={() => handleClaimProgram(program.title)}
-                              title="No active principal assigned. Authenticated users can claim program stewardship."
-                              style={{
-                                fontSize: '0.58rem',
-                                fontWeight: 800,
-                                color: '#38BDF8',
-                                background: 'rgba(56, 189, 248, 0.12)',
-                                border: '1px solid rgba(56, 189, 248, 0.25)',
-                                padding: '2px 7px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '3px',
-                                textTransform: 'uppercase',
-                                transition: 'all 0.15s ease',
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = 'rgba(56, 189, 248, 0.22)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = 'rgba(56, 189, 248, 0.12)';
-                              }}
-                            >
-                              <ShieldCheck size={10} />
-                              <span>[Claim Ownership]</span>
-                            </button>
-                          </div>
-                        ) : claimedPrograms[program.title] ? (
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <span
-                              style={{
-                                fontSize: '0.60rem',
-                                fontWeight: 700,
-                                color: '#E2E8F0',
-                                padding: '2px 6px',
-                                background: 'rgba(255, 255, 255, 0.04)',
-                                borderRadius: '4px',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
-                              }}
-                            >
-                              Owner: {claimedPrograms[program.title]}
-                            </span>
-                            <span
-                              title="Stewardship claimed in active session."
-                              style={{
-                                fontSize: '0.56rem',
-                                fontWeight: 800,
-                                color: '#10B981',
-                                background: 'rgba(16, 185, 129, 0.10)',
-                                border: '1px solid rgba(16, 185, 129, 0.20)',
-                                padding: '2px 6px',
-                                borderRadius: '4px',
-                                letterSpacing: '0.03em',
-                                cursor: 'help',
-                              }}
-                            >
-                              [GOVERNANCE CLAIMED]
-                            </span>
-                          </div>
-                        ) : (
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <span
-                              style={{
-                                fontSize: '0.60rem',
-                                fontWeight: 700,
-                                color: '#E2E8F0',
-                                padding: '2px 6px',
-                                background: 'rgba(255, 255, 255, 0.04)',
-                                borderRadius: '4px',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
-                              }}
-                            >
-                              Owner: {program.owner}
-                            </span>
-                            <span
-                              title="Program assigned to chartered enterprise governance council."
-                              style={{
-                                fontSize: '0.56rem',
-                                fontWeight: 800,
-                                color: '#38BDF8',
-                                background: 'rgba(56, 189, 248, 0.10)',
-                                border: '1px solid rgba(56, 189, 248, 0.20)',
-                                padding: '2px 6px',
-                                borderRadius: '4px',
-                                letterSpacing: '0.03em',
-                                cursor: 'help',
-                              }}
-                            >
-                              [GOVERNANCE GROUP]
-                            </span>
-                          </div>
-                        )}
-
-                        <span
-                          style={{
-                            fontSize: '0.62rem',
-                            fontWeight: 700,
-                            color: '#94A3B8',
-                            padding: '2px 7px',
-                            background: 'rgba(15, 20, 30, 0.60)',
-                            borderRadius: '4px',
-                            border: '0.5px solid rgba(255, 255, 255, 0.06)',
-                          }}
-                        >
-                          {program.executionType}
-                        </span>
-
-                        <span
-                          style={{
-                            fontSize: '0.62rem',
-                            fontWeight: 700,
-                            color: '#94A3B8',
-                            padding: '2px 7px',
-                            background: 'rgba(15, 20, 30, 0.60)',
-                            borderRadius: '4px',
-                          }}
-                        >
-                          {program.executionHorizon}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Program Objective */}
-                    <p style={{ fontSize: '0.74rem', color: '#CBD5E1', margin: '0 0 10px 0', lineHeight: 1.45 }}>
-                      {program.objective}
-                    </p>
-
-                    {/* Evidence-Based Program Metadata Grid (4-Cell Consolidated Executive Summary) */}
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(2, 1fr)',
-                        gap: '8px',
-                        padding: '10px 12px',
-                        background: 'rgba(10, 15, 24, 0.70)',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255, 255, 255, 0.04)',
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
-                          Addresses Root Cause
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: '#38BDF8', fontWeight: 700, marginTop: '1px' }}>
-                          {program.rootCauseAddressed}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
-                          Expected Outcome
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700, marginTop: '1px' }}>
-                          {program.expectedOutcomeRange}
-                        </div>
-                      </div>
-                      <div>
-                        <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
-                          Cost Model & Capital
-                        </div>
-                        <div style={{ fontSize: '0.70rem', color: '#94A3B8', fontWeight: 600, marginTop: '1px' }}>
-                          {program.costModel} • {program.capitalRequirement}
-                        </div>
-                      </div>
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '0.58rem',
-                            color: '#64748B',
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '3px',
-                            cursor: 'help',
-                          }}
-                          title="Derived from connected business indicators and statistical causal attribution methods."
-                        >
-                          <span>Decision Signals</span>
-                          <span style={{ color: '#38BDF8' }}>ℹ</span>
-                        </div>
-                        <div style={{ fontSize: '0.70rem', color: '#38BDF8', fontWeight: 700, marginTop: '1px' }} title="Derived from connected business indicators and statistical causal attribution methods.">
-                          {program.evidenceFeatures && program.evidenceFeatures.length > 0
-                            ? program.evidenceFeatures.slice(0, 3).map((f) => `${f.businessLabel} (${f.importanceScore})`).join(' • ')
-                            : 'Signal Attribution Unavailable'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Executive Traceability Lineage */}
-                    <div
-                      title={`Complete Decision Traceability: ${program.traceabilityLineage}`}
-                      style={{
-                        marginTop: '8px',
-                        padding: '4px 8px',
-                        background: 'rgba(56, 189, 248, 0.04)',
-                        borderRadius: '5px',
-                        border: '1px solid rgba(56, 189, 248, 0.10)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        cursor: 'help',
-                      }}
-                    >
-                      <span style={{ fontSize: '0.58rem', color: '#38BDF8', fontWeight: 800, textTransform: 'uppercase', flexShrink: 0 }}>Lineage:</span>
-                      <span style={{ fontSize: '0.64rem', color: '#94A3B8', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        Risk → Driver → KPI → Initiative → Owner
-                      </span>
-                    </div>
+                  <AlertTriangle size={24} color="#F59E0B" />
+                  <div style={{ fontSize: '0.90rem', fontWeight: 700, color: '#FDE68A' }}>
+                    {intel.intelligenceSuppressed ? 'Intervention Programs & Governance Councils Suspended' : 'No Active Programs'}
                   </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '4px' }}>
-                    <Link
-                      to={program.linkTo}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        fontSize: '0.72rem',
-                        fontWeight: 700,
-                        color: '#38BDF8',
-                        textDecoration: 'none',
-                      }}
-                    >
-                      <span>{program.ctaLabel || 'Deploy Remediation Playbook'}</span>
-                      <ArrowRight size={11} />
-                    </Link>
+                  <div style={{ fontSize: '0.75rem', color: '#94A3B8', maxWidth: '500px' }}>
+                    {intel.intelligenceSuppressed
+                      ? 'Automated intervention playbooks and chartered governance groups require verified enterprise business metrics. Complete schema verification to generate actionable programs.'
+                      : 'No strategic programs are currently recommended.'}
                   </div>
                 </div>
-              ))}
+              ) : (
+                intel.recommendedPrograms.map((program, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      ...cardStyle,
+                      padding: '16px 20px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.10)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                  >
+                    <div>
+                      {/* Header: Title + Priority, Horizon & Owner Badges */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', flexWrap: 'wrap', gap: '6px' }}>
+                        <span style={{ fontSize: '0.98rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, letterSpacing: '-0.015em' }}>
+                          {program.title}
+                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span
+                            style={{
+                              fontSize: '0.62rem',
+                              fontWeight: 800,
+                              color: program.priority === 'Critical' ? '#F87171' : program.priority === 'High' ? '#FB923C' : '#38BDF8',
+                              padding: '2px 7px',
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              borderRadius: '4px',
+                              border: '1px solid rgba(255, 255, 255, 0.06)',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {program.priority} Priority
+                          </span>
+
+                          {/* Chartered Governance Owner Badge */}
+                          {program.ownerType === 'UNASSIGNED' && !claimedPrograms[program.title] ? (
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.60rem',
+                                  fontWeight: 700,
+                                  color: '#94A3B8',
+                                  padding: '2px 6px',
+                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  borderRadius: '4px',
+                                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                                }}
+                              >
+                                Owner: Unassigned Governance Role
+                              </span>
+                              <button
+                                onClick={() => handleClaimProgram(program.title)}
+                                title="No active principal assigned. Authenticated users can claim program stewardship."
+                                style={{
+                                  fontSize: '0.58rem',
+                                  fontWeight: 800,
+                                  color: '#38BDF8',
+                                  background: 'rgba(56, 189, 248, 0.12)',
+                                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                                  padding: '2px 7px',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px',
+                                  textTransform: 'uppercase',
+                                  transition: 'all 0.15s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = 'rgba(56, 189, 248, 0.22)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = 'rgba(56, 189, 248, 0.12)';
+                                }}
+                              >
+                                <ShieldCheck size={10} />
+                                <span>[Claim Ownership]</span>
+                              </button>
+                            </div>
+                          ) : claimedPrograms[program.title] ? (
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.60rem',
+                                  fontWeight: 700,
+                                  color: '#E2E8F0',
+                                  padding: '2px 6px',
+                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  borderRadius: '4px',
+                                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                                }}
+                              >
+                                Owner: {claimedPrograms[program.title]}
+                              </span>
+                              <span
+                                title="Stewardship claimed in active session."
+                                style={{
+                                  fontSize: '0.56rem',
+                                  fontWeight: 800,
+                                  color: '#10B981',
+                                  background: 'rgba(16, 185, 129, 0.10)',
+                                  border: '1px solid rgba(16, 185, 129, 0.20)',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  letterSpacing: '0.03em',
+                                  cursor: 'help',
+                                }}
+                              >
+                                [GOVERNANCE CLAIMED]
+                              </span>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.60rem',
+                                  fontWeight: 700,
+                                  color: '#E2E8F0',
+                                  padding: '2px 6px',
+                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  borderRadius: '4px',
+                                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                                }}
+                              >
+                                Owner: {program.owner}
+                              </span>
+                              <span
+                                title="Program assigned to chartered enterprise governance council."
+                                style={{
+                                  fontSize: '0.56rem',
+                                  fontWeight: 800,
+                                  color: '#38BDF8',
+                                  background: 'rgba(56, 189, 248, 0.10)',
+                                  border: '1px solid rgba(56, 189, 248, 0.20)',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  letterSpacing: '0.03em',
+                                  cursor: 'help',
+                                }}
+                              >
+                                [GOVERNANCE GROUP]
+                              </span>
+                            </div>
+                          )}
+
+                          <span
+                            style={{
+                              fontSize: '0.62rem',
+                              fontWeight: 700,
+                              color: '#94A3B8',
+                              padding: '2px 7px',
+                              background: 'rgba(15, 20, 30, 0.60)',
+                              borderRadius: '4px',
+                              border: '0.5px solid rgba(255, 255, 255, 0.06)',
+                            }}
+                          >
+                            {program.executionType}
+                          </span>
+
+                          <span
+                            style={{
+                              fontSize: '0.62rem',
+                              fontWeight: 700,
+                              color: '#94A3B8',
+                              padding: '2px 7px',
+                              background: 'rgba(15, 20, 30, 0.60)',
+                              borderRadius: '4px',
+                            }}
+                          >
+                            {program.executionHorizon}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Program Objective */}
+                      <p style={{ fontSize: '0.74rem', color: '#CBD5E1', margin: '0 0 10px 0', lineHeight: 1.45 }}>
+                        {program.objective}
+                      </p>
+
+                      {/* Evidence-Based Program Metadata Grid (4-Cell Consolidated Executive Summary) */}
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: '8px',
+                          padding: '10px 12px',
+                          background: 'rgba(10, 15, 24, 0.70)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 255, 255, 0.04)',
+                        }}
+                      >
+                        <div>
+                          <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                            Addresses Root Cause
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: '#38BDF8', fontWeight: 700, marginTop: '1px' }}>
+                            {program.rootCauseAddressed}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                            Expected Outcome
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: '#10B981', fontWeight: 700, marginTop: '1px' }}>
+                            {program.expectedOutcomeRange}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>
+                            Cost Model & Capital
+                          </div>
+                          <div style={{ fontSize: '0.70rem', color: '#94A3B8', fontWeight: 600, marginTop: '1px' }}>
+                            {program.costModel} • {program.capitalRequirement}
+                          </div>
+                        </div>
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '0.58rem',
+                              color: '#64748B',
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '3px',
+                              cursor: 'help',
+                            }}
+                            title="Derived from connected business indicators and statistical causal attribution methods."
+                          >
+                            <span>Decision Signals</span>
+                            <span style={{ color: '#38BDF8' }}>ℹ</span>
+                          </div>
+                          <div style={{ fontSize: '0.70rem', color: '#38BDF8', fontWeight: 700, marginTop: '1px' }} title="Derived from connected business indicators and statistical causal attribution methods.">
+                            {program.evidenceFeatures && program.evidenceFeatures.length > 0
+                              ? program.evidenceFeatures.slice(0, 3).map((f) => `${f.businessLabel} (${f.importanceScore})`).join(' • ')
+                              : 'Signal Attribution Unavailable'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Executive Traceability Lineage */}
+                      <div
+                        title={`Complete Decision Traceability: ${program.traceabilityLineage}`}
+                        style={{
+                          marginTop: '8px',
+                          padding: '4px 8px',
+                          background: 'rgba(56, 189, 248, 0.04)',
+                          borderRadius: '5px',
+                          border: '1px solid rgba(56, 189, 248, 0.10)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          cursor: 'help',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.58rem', color: '#38BDF8', fontWeight: 800, textTransform: 'uppercase', flexShrink: 0 }}>Lineage:</span>
+                        <span style={{ fontSize: '0.64rem', color: '#94A3B8', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          Risk → Driver → KPI → Initiative → Owner
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '4px' }}>
+                      <Link
+                        to={program.linkTo}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          color: '#38BDF8',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        <span>{program.ctaLabel || 'Deploy Remediation Playbook'}</span>
+                        <ArrowRight size={11} />
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
 
             </div>
 

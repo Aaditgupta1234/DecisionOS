@@ -47,10 +47,28 @@ class ExecutiveSummaryBuilder:
         findings: Optional[List[DiagnosticFinding]] = None,
         root_causes: Optional[List[RootCauseAnalysis]] = None,
         recommendations: Optional[List[Recommendation]] = None,
+        is_quarantined: bool = False,
     ) -> ExecutiveSummary:
         """
         Synthesizes a complete ExecutiveSummary data object with robust fallback handling.
         """
+        if is_quarantined:
+            return ExecutiveSummary(
+                dataset_id=dataset_id,
+                generated_at=datetime.now(timezone.utc),
+                primary_issue="UNVERIFIED SCHEMA CONTRACT",
+                severity="WARNING",
+                top_root_cause=None,
+                top_recommendation=None,
+                key_risks=[],
+                overall_confidence=0.44,
+                confidence_breakdown={"findings": 0.44, "root_causes": 0.44, "recommendations": 0.44},
+                business_health_score=None,
+                business_health_status=BusinessHealthStatus.NOT_ASSESSABLE,
+                expected_business_impact="Intelligence generation suspended: unverified schema contract.",
+                health_score_explanation={"base_score": 0, "final_score": 0, "status": "NOT_ASSESSABLE"},
+            )
+
         finding_list = findings or []
         rca_list = root_causes or []
         rec_list = recommendations or []

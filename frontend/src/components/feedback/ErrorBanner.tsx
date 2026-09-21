@@ -2,11 +2,24 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 
 interface ErrorBannerProps {
-  message: string;
+  message?: any;
   onRetry?: () => void;
 }
 
 export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onRetry }) => {
+  let displayMessage = "Intelligence Service Temporarily Unavailable";
+  if (typeof message === "string" && message.trim() !== "" && message !== "[object Object]") {
+    displayMessage = message;
+  } else if (message && typeof message === "object") {
+    const extracted =
+      message?.response?.data?.message ||
+      message?.response?.data?.detail ||
+      message?.message;
+    if (typeof extracted === "string" && extracted.trim() !== "" && extracted !== "[object Object]") {
+      displayMessage = extracted;
+    }
+  }
+
   return (
     <div
       style={{
@@ -23,7 +36,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onRetry }) =>
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <AlertCircle size={18} />
-        <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{message}</span>
+        <span style={{ fontSize: '0.875rem', fontWeight: 500 }}>{displayMessage}</span>
       </div>
       {onRetry && (
         <button

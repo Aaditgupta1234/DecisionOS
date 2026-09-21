@@ -377,7 +377,7 @@
 /* DEX Product Identity Core Tag */
 .dex-identity-tag {
   position: absolute;
-  bottom: -32px;
+  bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;

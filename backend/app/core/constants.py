@@ -245,6 +245,7 @@ class BusinessHealthStatus(str, Enum):
     WATCH_LIST = "WATCH_LIST"    # 60 - 74
     AT_RISK = "AT_RISK"          # 40 - 59
     CRITICAL = "CRITICAL"        # 0 - 39
+    NOT_ASSESSABLE = "NOT_ASSESSABLE"
 
 
 class ReportExportFormat(str, Enum):

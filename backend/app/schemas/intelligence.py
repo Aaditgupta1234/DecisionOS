@@ -13,8 +13,8 @@ class BusinessHealthResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     dataset_id: UUID = Field(..., description="Target dataset UUID.")
-    score: int = Field(..., ge=0, le=100, description="Composite health index [0 - 100].")
-    status: BusinessHealthStatus = Field(..., description="Discrete classification (EXCELLENT, HEALTHY, WATCH_LIST, AT_RISK, CRITICAL).")
+    score: Optional[int] = Field(None, ge=0, le=100, description="Composite health index [0 - 100].")
+    status: BusinessHealthStatus = Field(..., description="Discrete classification (EXCELLENT, HEALTHY, WATCH_LIST, AT_RISK, CRITICAL, NOT_ASSESSABLE).")
     description: str = Field(..., description="High-level health condition description.")
     health_score_explanation: Optional[Dict[str, Any]] = Field(None, description="Detailed penalty and bonus arithmetic breakdown.")
 
@@ -32,7 +32,7 @@ class ExecutiveSummaryResponse(BaseModel):
     key_risks: List[str] = Field(default_factory=list, description="Top executive risk bullet points.")
     overall_confidence: float = Field(..., description="Overall confidence score [0.0 - 1.0].")
     confidence_breakdown: Dict[str, float] = Field(default_factory=dict, description="Confidence per pipeline stage.")
-    business_health_score: int = Field(..., description="Health score index [0 - 100].")
+    business_health_score: Optional[int] = Field(None, description="Health score index [0 - 100].")
     business_health_status: BusinessHealthStatus = Field(..., description="Health status classification.")
     expected_business_impact: str = Field(..., description="Narrative summary of projected performance recovery.")
     health_score_explanation: Optional[Dict[str, Any]] = Field(None, description="Detailed penalty and bonus arithmetic breakdown.")

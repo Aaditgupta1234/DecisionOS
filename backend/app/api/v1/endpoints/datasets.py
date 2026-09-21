@@ -47,10 +47,17 @@ def upload(
     current_user: User = Depends(require_admin),
 ) -> Any:
     """Uploads a CSV dataset, runs validation, extracts headers, dtypes, and caches top 20 records."""
-    dataset = upload_dataset(db=db, file=file, current_user=current_user, organization_id=organization_id)
+    dataset = upload_dataset(
+        db=db,
+        file=file,
+        current_user=current_user,
+        organization_id=organization_id,
+    )
+    meta = dataset.metadata_json or {}
     return SuccessResponse(
         message="Dataset uploaded and validated successfully.",
         data=DatasetUploadResponse(
+            id=dataset.id,
             dataset_id=dataset.id,
             name=dataset.name,
             original_filename=dataset.original_filename,
@@ -59,6 +66,9 @@ def upload(
             record_count=dataset.record_count,
             column_count=dataset.column_count,
             uploaded_by=dataset.uploaded_by,
+            metadata_json=meta,
+            schema_verified=meta.get("schema_verified", False),
+            dataset_status=meta.get("dataset_status", "UNVERIFIED_SCHEMA"),
         ),
     )
 
