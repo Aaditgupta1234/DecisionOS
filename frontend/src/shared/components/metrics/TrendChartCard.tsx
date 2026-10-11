@@ -9,6 +9,8 @@ import {
   CartesianGrid,
 } from 'recharts';
 
+import { TrendingUp } from 'lucide-react';
+
 interface DataPoint {
   period: string;
   value: number;
@@ -29,25 +31,54 @@ export const TrendChartCard: React.FC<Props> = ({
 }) => {
   const [periodMode, setPeriodMode] = useState<'MoM' | 'QoQ'>('MoM');
 
-  const defaultDataMoM: DataPoint[] = [
-    { period: 'Jan', value: 320000, comparisonValue: 290000 },
-    { period: 'Feb', value: 345000, comparisonValue: 310000 },
-    { period: 'Mar', value: 390000, comparisonValue: 330000 },
-    { period: 'Apr', value: 410000, comparisonValue: 360000 },
-    { period: 'May', value: 460000, comparisonValue: 390000 },
-    { period: 'Jun', value: 490000, comparisonValue: 420000 },
-    { period: 'Jul', value: 540000, comparisonValue: 460000 },
-    { period: 'Aug', value: 610000, comparisonValue: 510000 },
-  ];
+  const hasData = data && data.length > 0;
 
-  const defaultDataQoQ: DataPoint[] = [
-    { period: 'Q1 2025', value: 1055000, comparisonValue: 930000 },
-    { period: 'Q2 2025', value: 1360000, comparisonValue: 1170000 },
-    { period: 'Q3 2025', value: 1640000, comparisonValue: 1390000 },
-    { period: 'Q4 2025', value: 1980000, comparisonValue: 1620000 },
-  ];
+  if (!hasData) {
+    return (
+      <div
+        data-testid="trend-chart-empty-state"
+        style={{
+          background: '#090C12',
+          border: '1px solid #1A2230',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#FFFFFF', margin: 0 }}>
+              {title}
+            </h3>
+            <span style={{ fontSize: '11px', color: '#64748B' }}>
+              Historical transactional progression vs prior period
+            </span>
+          </div>
+        </div>
 
-  const chartData = data && data.length > 0 ? data : periodMode === 'MoM' ? defaultDataMoM : defaultDataQoQ;
+        <div
+          style={{
+            background: '#04060A',
+            border: '1px dashed #1E293B',
+            borderRadius: '8px',
+            padding: '36px 20px',
+            textAlign: 'center',
+            color: '#64748B',
+          }}
+        >
+          <TrendingUp size={24} color="#475569" style={{ margin: '0 auto 8px', display: 'block' }} />
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#94A3B8', marginBottom: '4px' }}>
+            No Historical Time-Series Available
+          </div>
+          <div style={{ fontSize: '11.5px', color: '#64748B', maxWidth: '420px', margin: '0 auto' }}>
+            Period-over-period trend analysis requires multiple time-series observations (e.g. order date sequence) in the active dataset.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const chartData = data;
 
   return (
     <div style={{
